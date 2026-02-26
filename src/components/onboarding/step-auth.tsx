@@ -3,7 +3,8 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
-import { signIn } from '@/lib/auth-client';
+import { signIn, useSession } from '@/lib/auth-client';
+import { useEffect } from 'react';
 
 /**
  * Step 7: Auth Prompt
@@ -13,9 +14,19 @@ import { signIn } from '@/lib/auth-client';
  * - Also show "ข้าม" (Skip) link for guests
  * - User has ALREADY seen value
  * - **CRITICAL: Auth MUST come AFTER teaser result (Step 6)**
+ * - If user is already authenticated, automatically skip this step
  */
 export function StepAuth() {
   const { nextStep } = useOnboardingStore();
+  const { data: session, isPending } = useSession();
+
+  // Auto-skip if user is already authenticated
+  useEffect(() => {
+    if (session && !isPending) {
+      console.log('[StepAuth] User already authenticated, auto-skipping to next step');
+      nextStep();
+    }
+  }, [session, isPending, nextStep]);
 
   const handleGoogleLogin = async () => {
     console.log('[Onboarding] Google login clicked');

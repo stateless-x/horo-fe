@@ -26,9 +26,15 @@ export default function DashboardPage() {
   const router = useRouter();
 
   // Redirect unauthenticated users to login
+  // Redirect incomplete onboarding to fortune
   useEffect(() => {
-    if (!session && !sessionLoading) {
-      router.push('/login');
+    if (!sessionLoading) {
+      if (!session) {
+        router.push('/login');
+      } else if (!(session.user as any)?.onboardingCompleted) {
+        // User is authenticated but hasn't completed onboarding
+        router.push('/fortune');
+      }
     }
   }, [session, sessionLoading, router]);
 

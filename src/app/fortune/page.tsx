@@ -26,10 +26,10 @@ export default function FortunePage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
-  // Redirect authenticated users to dashboard
-  // (they should use /login if they want to log in again)
+  // Redirect authenticated users who have completed onboarding to dashboard
+  // Allow authenticated users who haven't completed onboarding to go through the flow
   useEffect(() => {
-    if (session && !isPending) {
+    if (session && !isPending && (session.user as any)?.onboardingCompleted) {
       router.push('/dashboard');
     }
   }, [session, isPending, router]);

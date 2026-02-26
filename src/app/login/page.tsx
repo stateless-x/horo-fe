@@ -21,10 +21,18 @@ export default function LoginPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
-  // Redirect authenticated users to dashboard
+  // Redirect authenticated users based on onboarding status
   useEffect(() => {
     if (session && !isPending) {
-      router.push('/dashboard');
+      // Check if user has completed onboarding
+      const onboardingCompleted = (session.user as any)?.onboardingCompleted;
+
+      if (onboardingCompleted) {
+        router.push('/dashboard');
+      } else {
+        // Redirect to fortune flow to complete onboarding
+        router.push('/fortune');
+      }
     }
   }, [session, isPending, router]);
 

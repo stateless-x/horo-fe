@@ -18,17 +18,27 @@ export function StepAuth() {
   const { nextStep } = useOnboardingStore();
 
   const handleGoogleLogin = async () => {
-    await signIn.social({
-      provider: 'google',
-      callbackURL: '/dashboard',
-    });
+    console.log('[Onboarding] Google login clicked');
+    try {
+      await signIn.social({
+        provider: 'google',
+        callbackURL: '/dashboard',
+      });
+    } catch (error) {
+      console.error('[Onboarding] Google login error:', error);
+    }
   };
 
   const handleXLogin = async () => {
-    await signIn.social({
-      provider: 'twitter',
-      callbackURL: '/dashboard',
-    });
+    console.log('[Onboarding] X login clicked');
+    try {
+      await signIn.social({
+        provider: 'twitter',
+        callbackURL: '/dashboard',
+      });
+    } catch (error) {
+      console.error('[Onboarding] X login error:', error);
+    }
   };
 
   const handleSkip = () => {
@@ -64,6 +74,7 @@ export function StepAuth() {
         >
           {/* Google OAuth */}
           <Button
+            type="button"
             onClick={handleGoogleLogin}
             variant="outline"
             size="lg"
@@ -92,6 +103,7 @@ export function StepAuth() {
 
           {/* X OAuth */}
           <Button
+            type="button"
             onClick={handleXLogin}
             variant="outline"
             size="lg"

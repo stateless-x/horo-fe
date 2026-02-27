@@ -110,7 +110,12 @@ export default function FortuneDetailPage() {
   // Generate fortune reading
   useEffect(() => {
     async function generateFortune() {
-      if (!session || sessionLoading) return;
+      if (!session || sessionLoading) {
+        console.log('[FortuneDetail] Waiting for session...', { session: !!session, sessionLoading });
+        return;
+      }
+
+      console.log('[FortuneDetail] Session loaded, generating fortune for user:', session.user.id);
 
       try {
         // Check if user has birth data in the onboarding store
@@ -153,6 +158,13 @@ export default function FortuneDetailPage() {
         await api.post('/api/onboarding/complete', {});
       } catch (err: any) {
         console.error('Fortune generation error:', err);
+
+        // If not authenticated, redirect to login
+        if (err?.status === 401) {
+          console.log('Not authenticated, redirecting to /login');
+          router.push('/login');
+          return;
+        }
 
         // If user doesn't have a birth profile (404) or validation error (422)
         // redirect them to complete onboarding

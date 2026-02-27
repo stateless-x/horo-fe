@@ -11,7 +11,18 @@ export const api = {
     });
 
     if (!res.ok) {
-      throw new Error(`API error: ${res.statusText}`);
+      const error: any = new Error(`API error: ${res.statusText}`);
+      error.status = res.status;
+      error.statusText = res.statusText;
+
+      try {
+        const body = await res.json();
+        error.body = body;
+      } catch (e) {
+        // Response body is not JSON
+      }
+
+      throw error;
     }
 
     return res.json();
@@ -28,7 +39,18 @@ export const api = {
     });
 
     if (!res.ok) {
-      throw new Error(`API error: ${res.statusText}`);
+      const error: any = new Error(`API error: ${res.statusText}`);
+      error.status = res.status;
+      error.statusText = res.statusText;
+
+      try {
+        const body = await res.json();
+        error.body = body;
+      } catch (e) {
+        // Response body is not JSON
+      }
+
+      throw error;
     }
 
     return res.json();

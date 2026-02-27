@@ -55,6 +55,8 @@ export default function FortuneDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [shareStatus, setShareStatus] = useState<'idle' | 'copying' | 'copied'>('idle');
   const [hasAttemptedGeneration, setHasAttemptedGeneration] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 3;
 
   // Handle share functionality
   // Memoized to prevent recreation on every render, which is important because:
@@ -129,6 +131,14 @@ export default function FortuneDetailPage() {
       return;
     }
 
+    // Prevent infinite retries - max 3 attempts
+    if (retryCount >= MAX_RETRIES) {
+      console.log('[FortuneDetail] Max retries reached, giving up');
+      setError('ไม่สามารถโหลดดวงชะตาได้ กรุณาลองใหม่ภายหลัง');
+      setLoadingState('complete');
+      return;
+    }
+
     async function generateFortune() {
       console.log('[FortuneDetail] Session loaded, generating fortune for user:', session?.user?.id);
       setHasAttemptedGeneration(true);
@@ -174,13 +184,22 @@ export default function FortuneDetailPage() {
         await api.post('/api/onboarding/complete', {});
       } catch (err: any) {
         console.error('Fortune generation error:', err);
+        setRetryCount(prev => prev + 1);
 
         // If not authenticated, redirect to login
-        // But only if we haven't just come from there (prevent infinite loop)
+        // But only if we haven't exceeded retry limit (prevent infinite loop)
         if (err?.status === 401) {
-          console.log('Not authenticated, redirecting to /login');
-          // Add a delay to prevent immediate redirect loop
-          setTimeout(() => router.push('/login'), 500);
+          if (retryCount >= MAX_RETRIES - 1) {
+            console.log('[FortuneDetail] Max retries reached on 401, showing error');
+            setError('ไม่สามารถยืนยันตัวตนได้ กรุณาเข้าสู่ระบบใหม่');
+            setLoadingState('complete');
+            setTimeout(() => router.push('/login'), 3000);
+          } else {
+            console.log(`[FortuneDetail] Not authenticated, retry ${retryCount + 1}/${MAX_RETRIES}`);
+            // Exponential backoff: 1s, 2s, 4s
+            const delay = Math.pow(2, retryCount) * 1000;
+            setTimeout(() => router.push('/login'), delay);
+          }
           return;
         }
 

@@ -40,11 +40,13 @@ export default function DashboardPage() {
     }
   }, [session, sessionLoading, router]);
 
-  const { data: dailyReading, isLoading } = useQuery({
+  const { data: dailyReading, isLoading, error } = useQuery({
     queryKey: ['daily-reading'],
     queryFn: () => api.get('/fortune/daily'),
     staleTime: 1000 * 60 * 60, // 1 hour
     enabled: !!session, // Only fetch when authenticated
+    retry: 3, // Max 3 retries
+    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000), // Exponential backoff: 1s, 2s, 4s, max 30s
   });
 
   // Handle share functionality

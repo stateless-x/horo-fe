@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
-import { signIn, useSession } from '@/lib/auth-client';
+import { signIn, useSession, getCallbackUrl } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
@@ -41,7 +41,7 @@ export default function LoginPage() {
     try {
       await signIn.social({
         provider: 'google',
-        callbackURL: '/dashboard',
+        callbackURL: getCallbackUrl('/dashboard'),
       });
     } catch (error) {
       console.error('[Login] Google login error:', error);
@@ -53,7 +53,7 @@ export default function LoginPage() {
     try {
       await signIn.social({
         provider: 'twitter',
-        callbackURL: '/dashboard',
+        callbackURL: getCallbackUrl('/dashboard'),
       });
     } catch (error) {
       console.error('[Login] X login error:', error);

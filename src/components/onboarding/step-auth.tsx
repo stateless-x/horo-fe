@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
-import { signIn, useSession } from '@/lib/auth-client';
+import { signIn, useSession, getCallbackUrl } from '@/lib/auth-client';
 import { useEffect } from 'react';
 
 /**
@@ -33,7 +33,7 @@ export function StepAuth() {
     try {
       await signIn.social({
         provider: 'google',
-        callbackURL: '/dashboard',
+        callbackURL: getCallbackUrl('/dashboard'),
       });
     } catch (error) {
       console.error('[Onboarding] Google login error:', error);
@@ -45,7 +45,7 @@ export function StepAuth() {
     try {
       await signIn.social({
         provider: 'twitter',
-        callbackURL: '/dashboard',
+        callbackURL: getCallbackUrl('/dashboard'),
       });
     } catch (error) {
       console.error('[Onboarding] X login error:', error);

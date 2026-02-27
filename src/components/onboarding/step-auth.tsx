@@ -54,11 +54,6 @@ export function StepAuth() {
     }
   };
 
-  const handleSkip = () => {
-    // Continue as guest
-    nextStep();
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -127,16 +122,6 @@ export function StepAuth() {
             </svg>
             เข้าสู่ระบบด้วย X
           </Button>
-
-          {/* Skip as Guest */}
-          <div className="text-center pt-4">
-            <button
-              onClick={handleSkip}
-              className="text-ashGray hover:text-ghostWhite text-sm transition-colors underline"
-            >
-              ข้าม (ใช้งานแบบผู้เยี่ยมชม)
-            </button>
-          </div>
         </motion.div>
 
         <motion.p

@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ClientDate } from '@/components/client-date';
 
 /**
@@ -24,6 +24,7 @@ import { ClientDate } from '@/components/client-date';
 export default function DashboardPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const router = useRouter();
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copying' | 'copied'>('idle');
 
   // Redirect unauthenticated users to login
   // Redirect incomplete onboarding to fortune detail page
@@ -45,6 +46,51 @@ export default function DashboardPage() {
     staleTime: 1000 * 60 * 60, // 1 hour
     enabled: !!session, // Only fetch when authenticated
   });
+
+  // Handle share functionality
+  const handleShare = async () => {
+    const shareText = `ดวงชะตาวันนี้ของฉัน 🔮
+
+เลขมงคล: 7
+สีมงคล: น้ำเงิน
+ทิศมงคล: ทิศตะวันออก
+
+วันนี้เป็นวันที่ดีสำหรับการเริ่มต้นสิ่งใหม่!
+
+มาดูดวงของคุณกันเถอะ!`;
+
+    const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/fortune`;
+
+    try {
+      // Try Web Share API (mobile)
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({
+          title: 'Horo - ดวงชะตาวันนี้',
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        // Fallback: Copy to clipboard (desktop)
+        const fullText = `${shareText}\n\n${shareUrl}`;
+        await navigator.clipboard.writeText(fullText);
+        setShareStatus('copied');
+
+        // Reset status after 2 seconds
+        setTimeout(() => setShareStatus('idle'), 2000);
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      // Fallback to clipboard even if share fails
+      try {
+        const fullText = `${shareText}\n\n${shareUrl}`;
+        await navigator.clipboard.writeText(fullText);
+        setShareStatus('copied');
+        setTimeout(() => setShareStatus('idle'), 2000);
+      } catch (clipboardError) {
+        console.error('Clipboard error:', clipboardError);
+      }
+    }
+  };
 
   // Show loading state while checking session or fetching data
   if (sessionLoading || isLoading || !session) {
@@ -124,8 +170,20 @@ export default function DashboardPage() {
               </div>
 
               {/* Share Button */}
-              <button className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-md transition-colors">
-                แชร์ดวงชะตาของเจ้า
+              <button
+                onClick={handleShare}
+                className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-md transition-colors font-heading"
+              >
+                {shareStatus === 'copied' ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    คัดลอกแล้ว!
+                  </span>
+                ) : (
+                  'แชร์ดวงชะตาของเจ้า'
+                )}
               </button>
             </CardContent>
           </Card>

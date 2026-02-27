@@ -53,6 +53,52 @@ export default function FortuneDetailPage() {
   const [fortuneReading, setFortuneReading] = useState<FortuneReading | null>(null);
   const [narrativeChunks, setNarrativeChunks] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copying' | 'copied'>('idle');
+
+  // Handle share functionality
+  const handleShare = async () => {
+    if (!fortuneReading) return;
+
+    const shareText = `ดวงชะตาของฉัน: ${fortuneReading.baziChart.element} 🔮
+
+สีมงคล: ${fortuneReading.thaiAstrology.color}
+เลขมงคล: ${fortuneReading.thaiAstrology.luckyNumber}
+ดาวประจำวัน: ${fortuneReading.thaiAstrology.planet}
+
+มาดูดวงของคุณกันเถอะ!`;
+
+    const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/fortune`;
+
+    try {
+      // Try Web Share API (mobile)
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({
+          title: 'Horo - ดวงชะตาของฉัน',
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        // Fallback: Copy to clipboard (desktop)
+        const fullText = `${shareText}\n\n${shareUrl}`;
+        await navigator.clipboard.writeText(fullText);
+        setShareStatus('copied');
+
+        // Reset status after 2 seconds
+        setTimeout(() => setShareStatus('idle'), 2000);
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      // Fallback to clipboard even if share fails
+      try {
+        const fullText = `${shareText}\n\n${shareUrl}`;
+        await navigator.clipboard.writeText(fullText);
+        setShareStatus('copied');
+        setTimeout(() => setShareStatus('idle'), 2000);
+      } catch (clipboardError) {
+        console.error('Clipboard error:', clipboardError);
+      }
+    }
+  };
 
   // Redirect unauthenticated users
   useEffect(() => {
@@ -67,9 +113,14 @@ export default function FortuneDetailPage() {
       if (!session || sessionLoading) return;
 
       try {
-        // Step 1: Save birth profile
-        setLoadingState('saving-profile');
-        await api.post('/fortune/profile', profile);
+        // Check if user has birth data in the onboarding store
+        const hasStoreData = profile.name && profile.birthDate && profile.gender;
+
+        // Step 1: Save birth profile (only if coming from onboarding flow)
+        if (hasStoreData) {
+          setLoadingState('saving-profile');
+          await api.post('/fortune/profile', profile);
+        }
 
         // Step 2: Fetch chart data
         setLoadingState('generating-chart');
@@ -100,15 +151,24 @@ export default function FortuneDetailPage() {
 
         // Mark onboarding as complete
         await api.post('/api/onboarding/complete', {});
-      } catch (err) {
+      } catch (err: any) {
         console.error('Fortune generation error:', err);
+
+        // If user doesn't have a birth profile (404) or validation error (422)
+        // redirect them to complete onboarding
+        if (err?.status === 404 || err?.status === 422) {
+          console.log('Birth profile not found or invalid, redirecting to /fortune');
+          router.push('/fortune');
+          return;
+        }
+
         setError('ไม่สามารถสร้างดวงชะตาได้ กรุณาลองใหม่อีกครั้ง');
         setLoadingState('complete');
       }
     }
 
     generateFortune();
-  }, [session, sessionLoading, profile]);
+  }, [session, sessionLoading, profile, router]);
 
   // Loading skeleton
   if (sessionLoading || !session || loadingState !== 'complete') {
@@ -453,9 +513,19 @@ export default function FortuneDetailPage() {
             ไปยังแดชบอร์ด
           </button>
           <button
-            className="flex-1 py-3 md:py-4 border-2 border-darkPurple hover:border-amethyst text-ghostWhite rounded-lg transition-all font-heading text-sm md:text-base"
+            onClick={handleShare}
+            className="flex-1 py-3 md:py-4 border-2 border-darkPurple hover:border-amethyst text-ghostWhite rounded-lg transition-all font-heading text-sm md:text-base relative"
           >
-            แชร์ดวงชะตา
+            {shareStatus === 'copied' ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                คัดลอกแล้ว!
+              </span>
+            ) : (
+              'แชร์ดวงชะตา'
+            )}
           </button>
         </motion.div>
       </div>

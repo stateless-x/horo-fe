@@ -124,7 +124,7 @@ export default function FortuneDetailPage() {
     }
 
     async function generateFortune() {
-      console.log('[FortuneDetail] Session loaded, generating fortune for user:', session.user.id);
+      console.log('[FortuneDetail] Session loaded, generating fortune for user:', session?.user?.id);
 
       try {
         // Check if user has birth data in the onboarding store

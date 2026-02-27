@@ -31,6 +31,14 @@ export function StepAuth() {
   const handleGoogleLogin = async () => {
     console.log('[Onboarding] Google login clicked');
     try {
+      // Save profile to sessionStorage before OAuth redirect
+      // This ensures data survives the OAuth redirect chain
+      const { profile } = useOnboardingStore.getState();
+      if (profile && Object.keys(profile).length > 0) {
+        sessionStorage.setItem('horo-pending-profile', JSON.stringify(profile));
+        console.log('[Onboarding] Saved profile to sessionStorage before OAuth');
+      }
+
       // Redirect to fortune detail page after auth to show full reading
       await signIn.social({
         provider: 'google',
@@ -44,6 +52,14 @@ export function StepAuth() {
   const handleXLogin = async () => {
     console.log('[Onboarding] X login clicked');
     try {
+      // Save profile to sessionStorage before OAuth redirect
+      // This ensures data survives the OAuth redirect chain
+      const { profile } = useOnboardingStore.getState();
+      if (profile && Object.keys(profile).length > 0) {
+        sessionStorage.setItem('horo-pending-profile', JSON.stringify(profile));
+        console.log('[Onboarding] Saved profile to sessionStorage before OAuth');
+      }
+
       // Redirect to fortune detail page after auth to show full reading
       await signIn.social({
         provider: 'twitter',

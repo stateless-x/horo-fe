@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Clock, HelpCircle } from 'lucide-react';
 import { Button, Card } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { THAI_TIME_PERIODS } from '@/lib-packages/shared';
@@ -55,14 +56,28 @@ export function StepBirthTime() {
       className="min-h-screen flex items-center justify-center p-6"
     >
       <div className="w-full max-w-2xl space-y-8">
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-2xl md:text-3xl text-center text-ghostWhite font-heading"
-        >
-          ถ้าอยากรู้โชคชะตาที่แม่นขึ้นกว่าเดิม จงบอกช่วงเวลาที่เจ้าเกิดมาซะ
-        </motion.h1>
+        <div className="space-y-4">
+          <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-2xl md:text-3xl text-center text-ghostWhite font-heading leading-relaxed"
+          >
+            ถ้าอยากรู้โชคชะตาที่แม่นขึ้นกว่าเดิม
+            <br />
+            จงบอกช่วงเวลาที่เจ้าเกิดมาซะ
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center text-ashGray text-sm md:text-base"
+          >
+            <Clock className="inline-block w-4 h-4 mr-1" />
+            เวลาเกิดช่วยให้การดูดวงแม่นยำยิ่งขึ้น
+          </motion.p>
+        </div>
 
         <div className="space-y-6">
           {/* Time Period Grid */}
@@ -75,39 +90,54 @@ export function StepBirthTime() {
                 onClick={() => handleSelect(index)}
               >
                 <Card
-                  className={`p-4 h-20 flex flex-col items-center justify-center transition-all ${
+                  className={`p-4 h-24 flex flex-col items-center justify-center gap-1 transition-all ${
                     selectedPeriod === index
-                      ? 'border-royalPurple shadow-[0_0_20px_rgba(107,33,168,0.5)]'
-                      : 'hover:border-amethyst'
+                      ? 'border-royalPurple bg-royalPurple/5 shadow-[0_0_20px_rgba(107,33,168,0.5)]'
+                      : 'hover:border-amethyst hover:bg-amethyst/5'
                   }`}
                 >
-                  <p className="text-sm text-ashGray">{period.label}</p>
-                  <p className="text-base font-heading text-ghostWhite">
+                  <p className="text-lg font-heading text-ghostWhite">
                     {period.name}
                   </p>
+                  <p className="text-xs text-ashGray">{period.label}</p>
                 </Card>
               </motion.button>
             ))}
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-3">
-            <Button
-              onClick={handleSubmit}
-              size="lg"
-              className="w-full"
-              disabled={selectedPeriod === null}
-            >
-              ถัดไป
-            </Button>
+          {/* Unknown Option - More Prominent */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="p-4 border-darkPurple bg-deepNight/50">
+              <button
+                onClick={handleUnknown}
+                className="w-full flex items-center justify-center gap-3 py-2 text-ashGray hover:text-ghostWhite transition-colors group"
+              >
+                <HelpCircle className="w-5 h-5 group-hover:text-amethyst transition-colors" />
+                <div className="text-left">
+                  <p className="text-base font-heading text-ghostWhite">
+                    ไม่แน่ใจ หรือ ไม่ทราบเวลาเกิด
+                  </p>
+                  <p className="text-xs text-ashGray">
+                    คุณจะได้รับการทำนายจากโหราศาสตร์ไทยเท่านั้น
+                  </p>
+                </div>
+              </button>
+            </Card>
+          </motion.div>
 
-            <button
-              onClick={handleUnknown}
-              className="w-full text-ashGray hover:text-ghostWhite text-sm transition-colors"
-            >
-              ไม่ทราบเวลาเกิด
-            </button>
-          </div>
+          {/* Submit Button */}
+          <Button
+            onClick={handleSubmit}
+            size="lg"
+            className="w-full"
+            disabled={selectedPeriod === null}
+          >
+            {selectedPeriod !== null ? 'ถัดไป' : 'กรุณาเลือกช่วงเวลา'}
+          </Button>
         </div>
       </div>
     </motion.div>

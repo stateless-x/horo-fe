@@ -54,6 +54,7 @@ export default function FortuneDetailPage() {
   const [narrativeChunks, setNarrativeChunks] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [shareStatus, setShareStatus] = useState<'idle' | 'copying' | 'copied'>('idle');
+  const [hasAttemptedGeneration, setHasAttemptedGeneration] = useState(false);
 
   // Handle share functionality
   // Memoized to prevent recreation on every render, which is important because:
@@ -123,8 +124,14 @@ export default function FortuneDetailPage() {
       return;
     }
 
+    // Prevent infinite redirect loops - only attempt once per page load
+    if (hasAttemptedGeneration) {
+      return;
+    }
+
     async function generateFortune() {
       console.log('[FortuneDetail] Session loaded, generating fortune for user:', session?.user?.id);
+      setHasAttemptedGeneration(true);
 
       try {
         // Check if user has birth data in the onboarding store
@@ -169,9 +176,11 @@ export default function FortuneDetailPage() {
         console.error('Fortune generation error:', err);
 
         // If not authenticated, redirect to login
+        // But only if we haven't just come from there (prevent infinite loop)
         if (err?.status === 401) {
           console.log('Not authenticated, redirecting to /login');
-          router.push('/login');
+          // Add a delay to prevent immediate redirect loop
+          setTimeout(() => router.push('/login'), 500);
           return;
         }
 
@@ -195,7 +204,8 @@ export default function FortuneDetailPage() {
     // - loadingState: indirectly checked via guard above, but not in deps to avoid re-runs
     // - profile: read from store but not a dependency - we read latest value when effect runs
     // - router: stable reference from Next.js, not needed in deps
-  }, [session, sessionLoading]);
+    // - hasAttemptedGeneration: checked via guard above to prevent retries
+  }, [session, sessionLoading, hasAttemptedGeneration]);
 
   // Loading skeleton
   if (sessionLoading || !session || loadingState !== 'complete') {

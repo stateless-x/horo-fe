@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
-import { signIn, useSession, getCallbackUrl } from '@/lib/auth-client';
+import { useSession, getOAuthUrl } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
@@ -36,28 +36,18 @@ export default function LoginPage() {
     }
   }, [session, isPending, router]);
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     console.log('[Login] Google login clicked');
-    try {
-      await signIn.social({
-        provider: 'google',
-        callbackURL: getCallbackUrl('/dashboard'),
-      });
-    } catch (error) {
-      console.error('[Login] Google login error:', error);
-    }
+    // Direct redirect to backend OAuth endpoint
+    // This avoids cross-origin cookie issues
+    window.location.href = getOAuthUrl('google', '/dashboard');
   };
 
-  const handleXLogin = async () => {
+  const handleXLogin = () => {
     console.log('[Login] X login clicked');
-    try {
-      await signIn.social({
-        provider: 'twitter',
-        callbackURL: getCallbackUrl('/dashboard'),
-      });
-    } catch (error) {
-      console.error('[Login] X login error:', error);
-    }
+    // Direct redirect to backend OAuth endpoint
+    // This avoids cross-origin cookie issues
+    window.location.href = getOAuthUrl('twitter', '/dashboard');
   };
 
   // Show loading state while checking session

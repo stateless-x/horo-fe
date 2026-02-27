@@ -40,3 +40,13 @@ export function getCallbackUrl(path: string): string {
   // Fallback to env variable for SSR
   return `${appUrl}${path}`;
 }
+
+/**
+ * Get OAuth sign-in URL that redirects directly to backend
+ * This approach avoids cross-origin cookie issues by having the backend
+ * handle the entire OAuth flow, including state management
+ */
+export function getOAuthUrl(provider: 'google' | 'twitter', redirectTo: string = '/dashboard'): string {
+  const callbackUrl = encodeURIComponent(getCallbackUrl(redirectTo));
+  return `${apiUrl}/api/auth/signin/${provider}?callbackURL=${callbackUrl}`;
+}

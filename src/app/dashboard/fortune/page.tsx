@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent } from '@/lib-packages/ui';
 import { useSession } from '@/lib/auth-client';
@@ -56,7 +56,11 @@ export default function FortuneDetailPage() {
   const [shareStatus, setShareStatus] = useState<'idle' | 'copying' | 'copied'>('idle');
 
   // Handle share functionality
-  const handleShare = async () => {
+  // Memoized to prevent recreation on every render, which is important because:
+  // 1. This function is passed as onClick handler to a button
+  // 2. Prevents unnecessary re-renders if the button component is memoized in the future
+  // 3. The function only needs to change when fortuneReading changes
+  const handleShare = useCallback(async () => {
     if (!fortuneReading) return;
 
     const shareText = `ดวงชะตาของฉัน: ${fortuneReading.baziChart.element} 🔮
@@ -98,23 +102,28 @@ export default function FortuneDetailPage() {
         console.error('Clipboard error:', clipboardError);
       }
     }
-  };
+  }, [fortuneReading]); // Only recreate when fortuneReading changes
 
   // Redirect unauthenticated users
   useEffect(() => {
     if (!sessionLoading && !session) {
       router.push('/login');
     }
-  }, [session, sessionLoading, router]);
+  }, [session, sessionLoading]);
 
   // Generate fortune reading
   useEffect(() => {
-    async function generateFortune() {
-      if (!session || sessionLoading) {
-        console.log('[FortuneDetail] Waiting for session...', { session: !!session, sessionLoading });
-        return;
-      }
+    // Prevent re-running if already loading or complete
+    if (loadingState !== 'initializing') {
+      return;
+    }
 
+    // Wait for session to load
+    if (!session || sessionLoading) {
+      return;
+    }
+
+    async function generateFortune() {
       console.log('[FortuneDetail] Session loaded, generating fortune for user:', session.user.id);
 
       try {
@@ -180,7 +189,13 @@ export default function FortuneDetailPage() {
     }
 
     generateFortune();
-  }, [session, sessionLoading, profile, router]);
+    // Dependencies: Only run when session becomes available
+    // - session: needed to know when user is authenticated
+    // - sessionLoading: needed to wait for auth check to complete
+    // - loadingState: indirectly checked via guard above, but not in deps to avoid re-runs
+    // - profile: read from store but not a dependency - we read latest value when effect runs
+    // - router: stable reference from Next.js, not needed in deps
+  }, [session, sessionLoading]);
 
   // Loading skeleton
   if (sessionLoading || !session || loadingState !== 'complete') {

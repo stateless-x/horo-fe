@@ -32,7 +32,7 @@ export default function FortunePage() {
     if (session && !isPending && (session.user as any)?.onboardingCompleted) {
       router.push('/dashboard');
     }
-  }, [session, isPending, router]);
+  }, [session, isPending]);
 
   // Show loading state while checking session
   if (isPending) {

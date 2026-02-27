@@ -19,6 +19,10 @@ if (process.env.NODE_ENV === 'development') {
 
 export const authClient = createAuthClient({
   baseURL: apiUrl,
+  // Enable credentials for cross-origin requests
+  fetchOptions: {
+    credentials: 'include',
+  },
 });
 
 // Export hooks for easy use

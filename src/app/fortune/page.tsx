@@ -4,6 +4,7 @@ import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useOnboardingStore } from '@/stores/onboarding';
 
 /**
  * Fortune Telling Onboarding Page
@@ -18,21 +19,32 @@ import { useEffect } from 'react';
  * 7. Auth prompt (Google/X OAuth)
  * 8. Redirect to dashboard
  *
- * This route is for:
- * - First-time users who clicked "ดูดวงของเจ้า" from landing page
- * - Users who want to create a new fortune reading
+ * Features:
+ * - Persists onboarding data in localStorage for 15 minutes
+ * - Redirects logged-in users with completed onboarding to dashboard
+ * - Only non-logged-in users can access onboarding
+ * - Auto-clears expired onboarding data
  */
 export default function FortunePage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
+  const { isExpired, reset } = useOnboardingStore();
 
-  // Redirect authenticated users who have completed onboarding to dashboard
-  // Allow authenticated users who haven't completed onboarding to go through the flow
+  // Check for expired data and clear it
   useEffect(() => {
-    if (session && !isPending && (session.user as any)?.onboardingCompleted) {
+    if (isExpired()) {
+      console.log('[Fortune] Onboarding data expired, resetting');
+      reset();
+    }
+  }, [isExpired, reset]);
+
+  // Redirect logged-in users to dashboard
+  useEffect(() => {
+    if (!isPending && session) {
+      console.log('[Fortune] User is logged in, redirecting to dashboard');
       router.push('/dashboard');
     }
-  }, [session, isPending]);
+  }, [session, isPending, router]);
 
   // Show loading state while checking session
   if (isPending) {
@@ -43,6 +55,6 @@ export default function FortunePage() {
     );
   }
 
-  // Show onboarding flow for non-authenticated users
+  // Only show onboarding flow for non-logged-in users
   return <OnboardingFlow />;
 }

@@ -55,8 +55,28 @@ export default function FortuneDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [shareStatus, setShareStatus] = useState<'idle' | 'copying' | 'copied'>('idle');
   const [hasAttemptedGeneration, setHasAttemptedGeneration] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 3;
+
+  // Get retry count from sessionStorage (persists across redirects)
+  const getRetryCount = () => {
+    if (typeof window === 'undefined') return 0;
+    const stored = sessionStorage.getItem('fortune_retry_count');
+    return stored ? parseInt(stored, 10) : 0;
+  };
+
+  const incrementRetryCount = () => {
+    if (typeof window === 'undefined') return 0;
+    const current = getRetryCount();
+    const next = current + 1;
+    sessionStorage.setItem('fortune_retry_count', next.toString());
+    return next;
+  };
+
+  const resetRetryCount = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('fortune_retry_count');
+    }
+  };
 
   // Handle share functionality
   // Memoized to prevent recreation on every render, which is important because:
@@ -132,10 +152,12 @@ export default function FortuneDetailPage() {
     }
 
     // Prevent infinite retries - max 3 attempts
-    if (retryCount >= MAX_RETRIES) {
+    const currentRetries = getRetryCount();
+    if (currentRetries >= MAX_RETRIES) {
       console.log('[FortuneDetail] Max retries reached, giving up');
       setError('ไม่สามารถโหลดดวงชะตาได้ กรุณาลองใหม่ภายหลัง');
       setLoadingState('complete');
+      resetRetryCount();
       return;
     }
 
@@ -182,23 +204,32 @@ export default function FortuneDetailPage() {
 
         // Mark onboarding as complete
         await api.post('/api/onboarding/complete', {});
+
+        // Success! Reset retry count
+        resetRetryCount();
       } catch (err: any) {
         console.error('Fortune generation error:', err);
-        setRetryCount(prev => prev + 1);
+
+        // Increment retry count (persists across page reloads)
+        const newRetryCount = incrementRetryCount();
 
         // If not authenticated, redirect to login
         // But only if we haven't exceeded retry limit (prevent infinite loop)
         if (err?.status === 401) {
-          if (retryCount >= MAX_RETRIES - 1) {
+          if (newRetryCount >= MAX_RETRIES) {
             console.log('[FortuneDetail] Max retries reached on 401, showing error');
             setError('ไม่สามารถยืนยันตัวตนได้ กรุณาเข้าสู่ระบบใหม่');
             setLoadingState('complete');
+            resetRetryCount();
             setTimeout(() => router.push('/login'), 3000);
           } else {
-            console.log(`[FortuneDetail] Not authenticated, retry ${retryCount + 1}/${MAX_RETRIES}`);
+            console.log(`[FortuneDetail] Not authenticated, retry ${newRetryCount}/${MAX_RETRIES}`);
             // Exponential backoff: 1s, 2s, 4s
-            const delay = Math.pow(2, retryCount) * 1000;
-            setTimeout(() => router.push('/login'), delay);
+            const delay = Math.pow(2, newRetryCount - 1) * 1000;
+            setTimeout(() => {
+              setHasAttemptedGeneration(false); // Allow retry
+              window.location.reload(); // Force reload to retry
+            }, delay);
           }
           return;
         }

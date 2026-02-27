@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
-import { useSession, getOAuthUrl } from '@/lib/auth-client';
+import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
 import { useEffect } from 'react';
 
 /**
@@ -28,18 +28,28 @@ export function StepAuth() {
     }
   }, [session, isPending, nextStep]);
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     console.log('[Onboarding] Google login clicked');
-    // Direct redirect to backend OAuth endpoint
-    // This avoids cross-origin cookie issues
-    window.location.href = getOAuthUrl('google', '/dashboard');
+    try {
+      await signIn.social({
+        provider: 'google',
+        callbackURL: getCallbackUrl('/dashboard'),
+      });
+    } catch (error) {
+      console.error('[Onboarding] Google login error:', error);
+    }
   };
 
-  const handleXLogin = () => {
+  const handleXLogin = async () => {
     console.log('[Onboarding] X login clicked');
-    // Direct redirect to backend OAuth endpoint
-    // This avoids cross-origin cookie issues
-    window.location.href = getOAuthUrl('twitter', '/dashboard');
+    try {
+      await signIn.social({
+        provider: 'twitter',
+        callbackURL: getCallbackUrl('/dashboard'),
+      });
+    } catch (error) {
+      console.error('[Onboarding] X login error:', error);
+    }
   };
 
   const handleSkip = () => {

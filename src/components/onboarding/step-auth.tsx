@@ -31,9 +31,10 @@ export function StepAuth() {
   const handleGoogleLogin = async () => {
     console.log('[Onboarding] Google login clicked');
     try {
+      // Redirect to fortune detail page after auth to show full reading
       await signIn.social({
         provider: 'google',
-        callbackURL: getCallbackUrl('/dashboard'),
+        callbackURL: getCallbackUrl('/dashboard/fortune'),
       });
     } catch (error) {
       console.error('[Onboarding] Google login error:', error);
@@ -43,9 +44,10 @@ export function StepAuth() {
   const handleXLogin = async () => {
     console.log('[Onboarding] X login clicked');
     try {
+      // Redirect to fortune detail page after auth to show full reading
       await signIn.social({
         provider: 'twitter',
-        callbackURL: getCallbackUrl('/dashboard'),
+        callbackURL: getCallbackUrl('/dashboard/fortune'),
       });
     } catch (error) {
       console.error('[Onboarding] X login error:', error);

@@ -20,9 +20,11 @@ export function OnboardingFlow() {
   const { currentStep } = useOnboardingStore();
   const router = useRouter();
 
-  // Handle navigation to dashboard
+  // Handle navigation after onboarding completes
   useEffect(() => {
     if (currentStep === 'dashboard') {
+      // Note: Users who authenticate are redirected to /dashboard/fortune via OAuth callback
+      // This path is for guest users who skip authentication
       router.push('/dashboard');
     }
   }, [currentStep, router]);

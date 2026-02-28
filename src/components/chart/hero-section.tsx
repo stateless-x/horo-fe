@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
 interface HeroSectionProps {
@@ -20,16 +20,6 @@ export function HeroSection({
   elementAccent,
   loadingState = 'complete',
 }: HeroSectionProps) {
-  const [showShimmer, setShowShimmer] = useState(false);
-
-  // Trigger shimmer when fortune loads
-  useEffect(() => {
-    if (loadingState === 'complete') {
-      setShowShimmer(true);
-      const timer = setTimeout(() => setShowShimmer(false), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [loadingState]);
 
   return (
     <div className="relative rounded-3xl md:rounded-[32px] p-6 sm:p-8 md:p-12 text-center overflow-hidden">
@@ -54,10 +44,14 @@ export function HeroSection({
 
       {/* Floating badge with glow */}
       <div className="inline-flex items-center justify-center mb-6 md:mb-8">
-        <div
+        <motion.div
           className="relative group cursor-default"
-          style={{
-            animation: 'floatBadge 3s ease-in-out infinite',
+          initial={{ y: 0 }}
+          animate={{ y: [-8, 0, -8] }}
+          transition={{
+            duration: 3,
+            repeat: 2,
+            ease: "easeInOut"
           }}
         >
           <div
@@ -70,10 +64,19 @@ export function HeroSection({
               boxShadow: `0 0 30px ${elementAccent ? `${elementAccent}30` : 'rgba(161,106,203,0.2)'}`,
             }}
           >
-            <Sparkles className="w-4 h-4 animate-pulse" style={{ color: elementAccent || '#a16acb' }} />
+            <motion.div
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{
+                duration: 2,
+                repeat: 2,
+                ease: "easeInOut"
+              }}
+            >
+              <Sparkles className="w-4 h-4" style={{ color: elementAccent || '#a16acb' }} />
+            </motion.div>
             <span>คำทำนายของเจ้าพร้อมแล้ว</span>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* User name with glow effect */}
@@ -102,12 +105,16 @@ export function HeroSection({
       {/* Personality traits as floating bubbles */}
       <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 max-w-3xl mx-auto">
         {personalityTraits.map((trait, index) => (
-          <div
+          <motion.div
             key={index}
             className="group relative cursor-default"
-            style={{
-              animation: `floatTrait 3s ease-in-out infinite`,
-              animationDelay: `${index * 0.2}s`,
+            initial={{ y: 0 }}
+            animate={{ y: [-5, 0, -5] }}
+            transition={{
+              duration: 3,
+              repeat: 2,
+              delay: index * 0.2,
+              ease: "easeInOut"
             }}
           >
             <div
@@ -125,80 +132,28 @@ export function HeroSection({
             >
               {trait}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* Element energy pulse glow behind name */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl -z-10 pointer-events-none element-pulse"
+      <motion.div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl -z-10 pointer-events-none"
         style={{
           backgroundColor: elementAccent ? `${elementAccent}1a` : 'rgba(161,106,203,0.1)',
         }}
+        initial={{ opacity: 0.05, scale: 0.95 }}
+        animate={{
+          opacity: [0.05, 0.15, 0.05],
+          scale: [0.95, 1.05, 0.95]
+        }}
+        transition={{
+          duration: 4,
+          repeat: 1.5,
+          ease: "easeInOut"
+        }}
       />
 
-      {/* Shimmer effect on first load */}
-      {showShimmer && (
-        <div className="absolute inset-0 -z-10 shimmer-sweep" />
-      )}
-
-      <style jsx>{`
-        @keyframes elementPulse {
-          0%, 100% {
-            opacity: 0.05;
-            transform: translate(-50%, -50%) scale(0.95);
-          }
-          50% {
-            opacity: 0.15;
-            transform: translate(-50%, -50%) scale(1.05);
-          }
-        }
-
-        .element-pulse {
-          animation: elementPulse 4s ease-in-out infinite;
-        }
-
-        @keyframes shimmerSweep {
-          0% {
-            background-position: -500px 0;
-          }
-          100% {
-            background-position: 500px 0;
-          }
-        }
-
-        .shimmer-sweep {
-          background: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(161, 106, 203, 0.1) 25%,
-            rgba(161, 106, 203, 0.2) 50%,
-            rgba(161, 106, 203, 0.1) 75%,
-            transparent 100%
-          );
-          background-size: 500px 100%;
-          animation: shimmerSweep 2s ease-in-out;
-          border-radius: 1rem;
-        }
-
-        @keyframes floatBadge {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-8px);
-          }
-        }
-
-        @keyframes floatTrait {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-5px);
-          }
-        }
-      `}</style>
     </div>
   );
 }

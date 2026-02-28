@@ -1,3 +1,6 @@
+'use client';
+
+import { motion } from "framer-motion";
 import { AlertTriangle, Sparkles, Shield, Heart } from "lucide-react";
 import type { ElementProfile } from "@/lib-packages/shared/types/astrology";
 import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
@@ -47,19 +50,30 @@ export function ElementProfileSection({
         {/* Element visual with animated rings - responsive sizing */}
         <div className="flex justify-center mb-6 md:mb-8 relative">
           {/* Outer pulsing ring */}
-          <div
-            className="absolute w-24 h-24 md:w-32 md:h-32 rounded-full animate-pulse"
+          <motion.div
+            className="absolute w-24 h-24 md:w-32 md:h-32 rounded-full"
             style={{
               background: `radial-gradient(circle, ${elementColor.glow}40, transparent)`,
+            }}
+            animate={{ opacity: [1, 0.5, 1] }}
+            transition={{
+              duration: 2,
+              repeat: 2,
+              ease: "easeInOut"
             }}
           />
 
           {/* Middle ring */}
-          <div
+          <motion.div
             className="absolute w-20 h-20 md:w-28 md:h-28 rounded-full border-2 opacity-30"
             style={{
               borderColor: elementColor.primary,
-              animation: "spin 20s linear infinite",
+            }}
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 20,
+              repeat: 0.3,
+              ease: "linear"
             }}
           />
 
@@ -232,7 +246,16 @@ export function ElementProfileSection({
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-amber-400/5 to-transparent" />
-          <AlertTriangle className="text-amber-400 w-5 h-5 md:w-6 md:h-6 flex-shrink-0 mt-0.5 relative z-10 animate-pulse" />
+          <motion.div
+            animate={{ opacity: [1, 0.5, 1] }}
+            transition={{
+              duration: 2,
+              repeat: 2,
+              ease: "easeInOut"
+            }}
+          >
+            <AlertTriangle className="text-amber-400 w-5 h-5 md:w-6 md:h-6 flex-shrink-0 mt-0.5 relative z-10" />
+          </motion.div>
           <div className="relative z-10">
             <p className="text-ghostWhite font-thai text-sm md:text-base lg:text-lg leading-relaxed">
               <span className="text-amber-400 font-medium">ระวังธาตุ:</span>{" "}
@@ -243,17 +266,6 @@ export function ElementProfileSection({
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 }

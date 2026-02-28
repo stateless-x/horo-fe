@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
@@ -12,11 +12,19 @@ import { ClientDate } from '@/components/client-date';
  *
  * Entry point for new users. Shows what the app does and provides clear CTAs.
  * Returning users with valid session are automatically redirected to dashboard.
+ *
+ * Performance optimizations:
+ * - Lazy loads video after component mount
+ * - Respects reduced motion preferences
+ * - Auto-stopping animations (no infinite loops)
+ * - Mobile-optimized touch interactions
  */
 export default function LandingPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
@@ -25,27 +33,46 @@ export default function LandingPage() {
     }
   }, [session, isPending, router]);
 
+  // Lazy load video after component mounts
+  useEffect(() => {
+    // Delay video load to prioritize critical content
+    const timer = setTimeout(() => {
+      setVideoLoaded(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Don't render landing page for authenticated users
   if (session) {
     return null;
   }
 
+  // Animation variants that respect reduced motion preference
+  const fadeInUp = shouldReduceMotion
+    ? { opacity: 1, y: 0 }
+    : { opacity: 1, y: 0 };
+  const fadeInUpInitial = shouldReduceMotion
+    ? { opacity: 1, y: 0 }
+    : { opacity: 0, y: 30 };
+
   return (
     <div className="min-h-screen relative overflow-x-hidden">
       {/* Hero Section with Ambient Video */}
       <section className="relative min-h-screen flex items-center justify-center">
-        {/* Ambient Video Background */}
+        {/* Ambient Video Background - Lazy loaded for performance */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-20"
-          >
-            <source src="/horo.webm" type="video/webm" />
-          </video>
+          {videoLoaded && !shouldReduceMotion && (
+            <video
+              ref={videoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover opacity-20"
+            >
+              <source src="/horo.webm" type="video/webm" />
+            </video>
+          )}
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-voidBlack/80 via-voidBlack/60 to-voidBlack" />
         </div>
@@ -72,9 +99,9 @@ export default function LandingPage() {
               {/* Primary CTA */}
               <Link href="/fortune">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all shadow-lg shadow-royalPurple/50"
+                  className="px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all shadow-lg shadow-royalPurple/50 touch-manipulation"
                 >
                   ดูดวงของเจ้า
                 </motion.button>
@@ -83,9 +110,9 @@ export default function LandingPage() {
               {/* Secondary CTA */}
               <Link href="/login">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-10 py-4 border-2 border-darkPurple hover:border-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all"
+                  className="px-10 py-4 border-2 border-darkPurple hover:border-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all touch-manipulation"
                 >
                   เข้าสู่ระบบ
                 </motion.button>
@@ -102,7 +129,7 @@ export default function LandingPage() {
           >
             <motion.div
               animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
+              transition={{ repeat: 3, duration: 1.5, ease: "easeInOut" }}
               className="text-ashGray/60 text-xs flex flex-col items-center gap-1"
             >
               <svg
@@ -147,30 +174,54 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative"
+            className="relative group"
           >
-            <div className="bg-deepNight border border-darkPurple rounded-xl p-8 relative overflow-hidden">
+            {/* Ambient glow */}
+            <div className="absolute inset-0 rounded-2xl blur-2xl opacity-20 bg-amethyst/30 -z-10" />
+
+            <div
+              className="relative rounded-2xl p-8 md:p-10 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(161,106,203,0.08), rgba(15, 10, 26, 0.8))',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              {/* Decorative orbs */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-15 bg-amethyst" />
+              <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl opacity-10 bg-royalPurple" />
+
               {/* Blur Overlay */}
-              <div className="absolute inset-0 backdrop-blur-sm bg-voidBlack/30 z-10 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-paleOrchid text-lg mb-4 font-oracle">
+              <div className="absolute inset-0 backdrop-blur-sm bg-voidBlack/40 z-10 flex items-center justify-center">
+                <div className="text-center px-4">
+                  <motion.p
+                    className="text-paleOrchid text-base md:text-lg mb-4 font-oracle"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                  >
                     เข้าสู่ระบบเพื่อปลดล็อก
-                  </p>
+                  </motion.p>
                   <Link href="/fortune">
-                    <button className="px-6 py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading rounded-lg transition-all">
+                    <motion.button
+                      whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading rounded-lg transition-all shadow-lg shadow-royalPurple/50 touch-manipulation"
+                    >
                       ดูดวงของเจ้า
-                    </button>
+                    </motion.button>
                   </Link>
                 </div>
               </div>
 
               {/* Sample Content (blurred) */}
-              <div className="space-y-6">
+              <div className="space-y-6 relative">
                 <div className="text-center">
                   <p className="text-sm text-ashGray mb-2">องค์ประกอบหลัก</p>
                   <p className="text-3xl font-heading text-amethyst">ธาตุไฟ</p>
                 </div>
-                <hr className="border-darkPurple" />
+                <hr className="border-darkPurple/50" />
                 <p className="text-ghostWhite font-oracle leading-relaxed">
                   เจ้าถือกำเนิดในราศีแห่งไฟ มีพลังแห่งการเปลี่ยนแปลงและความหลงใหล
                   ช่วงชีวิตนี้ดวงชะตากำลังเปิดประตูใหม่ให้เจ้า...
@@ -200,26 +251,42 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-deepNight border border-darkPurple rounded-xl p-8"
+            className="relative group"
           >
-            <p className="text-ghostWhite font-oracle text-lg leading-relaxed mb-6">
-              วันนี้ธาตุไฟเด่น คนเกิดวันอังคารและวันเสาร์มีโอกาสดี
-              เหมาะกับการเริ่มต้นสิ่งใหม่และการตัดสินใจสำคัญ
-              ระวังเรื่องการสื่อสารที่อาจเกิดความเข้าใจผิด
-            </p>
-            <p className="text-ashGray text-sm font-oracle">
-              ต้องการดูดวงเฉพาะของเจ้า?{' '}
-              <Link
-                href="/fortune"
-                className="text-amethyst hover:text-lavenderGlow underline"
-              >
-                ดูดวงตอนนี้
-              </Link>
-            </p>
+            {/* Ambient glow */}
+            <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
+
+            <div
+              className="relative rounded-2xl p-8 md:p-10 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              {/* Decorative orbs */}
+              <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amethyst" />
+              <div className="absolute -bottom-16 -left-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-royalPurple" />
+
+              <p className="text-ghostWhite font-oracle text-base md:text-lg leading-relaxed mb-6 relative z-10">
+                วันนี้ธาตุไฟเด่น คนเกิดวันอังคารและวันเสาร์มีโอกาสดี
+                เหมาะกับการเริ่มต้นสิ่งใหม่และการตัดสินใจสำคัญ
+                ระวังเรื่องการสื่อสารที่อาจเกิดความเข้าใจผิด
+              </p>
+              <p className="text-ashGray text-sm font-oracle relative z-10">
+                ต้องการดูดวงเฉพาะของเจ้า?{' '}
+                <Link
+                  href="/fortune"
+                  className="text-amethyst hover:text-lavenderGlow underline transition-colors"
+                >
+                  ดูดวงตอนนี้
+                </Link>
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -236,24 +303,40 @@ export default function LandingPage() {
             ศาสตร์ที่เราใช้
           </motion.h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
             {/* Bazi */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-deepNight border border-darkPurple rounded-xl p-8"
+              transition={{ duration: 0.6 }}
+              className="relative group"
             >
-              <h3 className="text-2xl font-heading text-amethyst mb-4">
-                Bazi (四柱命理)
-              </h3>
-              <p className="text-ghostWhite font-oracle leading-relaxed mb-4">
-                ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากเสาสี่ที่ (ปี เดือน วัน
-                ชั่วโมง) และธาตุทั้งห้า
-              </p>
-              <p className="text-ashGray text-sm font-oracle">
-                จุดเด่น: วิเคราะห์วงจรชีวิต 10 ปี และพลังธาตุในชาติ
-              </p>
+              {/* Ambient glow */}
+              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-amethyst/30 -z-10" />
+
+              <div
+                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                }}
+              >
+                {/* Decorative orb */}
+                <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amethyst" />
+
+                <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
+                  Bazi (四柱命理)
+                </h3>
+                <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
+                  ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากเสาสี่ที่ (ปี เดือน วัน
+                  ชั่วโมง) และธาตุทั้งห้า
+                </p>
+                <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
+                  จุดเด่น: วิเคราะห์วงจรชีวิต 10 ปี และพลังธาตุในชาติ
+                </p>
+              </div>
             </motion.div>
 
             {/* Thai Astrology */}
@@ -261,18 +344,34 @@ export default function LandingPage() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-deepNight border border-darkPurple rounded-xl p-8"
+              transition={{ duration: 0.6 }}
+              className="relative group"
             >
-              <h3 className="text-2xl font-heading text-amethyst mb-4">
-                โหราศาสตร์ไทย
-              </h3>
-              <p className="text-ghostWhite font-oracle leading-relaxed mb-4">
-                ภูมิปัญญาไทยที่ดูดวงจากวันเกิด นพเคราะห์ และจักรนพคุณ
-                เพื่อดูความสัมพันธ์และโชคลาภ
-              </p>
-              <p className="text-ashGray text-sm font-oracle">
-                จุดเด่น: วิเคราะห์ความสัมพันธ์ โชคลาภ และจังหวะเวลา
-              </p>
+              {/* Ambient glow */}
+              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
+
+              <div
+                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                }}
+              >
+                {/* Decorative orb */}
+                <div className="absolute -top-16 -left-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-royalPurple" />
+
+                <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
+                  โหราศาสตร์ไทย
+                </h3>
+                <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
+                  ภูมิปัญญาไทยที่ดูดวงจากวันเกิด นพเคราะห์ และจักรนพคุณ
+                  เพื่อดูความสัมพันธ์และโชคลาภ
+                </p>
+                <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
+                  จุดเด่น: วิเคราะห์ความสัมพันธ์ โชคลาภ และจังหวะเวลา
+                </p>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -290,9 +389,9 @@ export default function LandingPage() {
           </h2>
           <Link href="/fortune">
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-12 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl rounded-lg transition-all shadow-xl shadow-royalPurple/50"
+              className="px-12 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl rounded-lg transition-all shadow-xl shadow-royalPurple/50 touch-manipulation"
             >
               เริ่มดูดวงเลย
             </motion.button>

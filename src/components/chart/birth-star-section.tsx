@@ -22,41 +22,51 @@ function AttributeBadge({
   value,
   tooltip,
 }: AttributeBadgeProps) {
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   return (
-    <div className="relative">
-      <div
-        className="bg-charcoal border border-darkPurple/50 rounded-lg p-4 cursor-help transition-colors duration-200 hover:bg-darkPurple/30"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-        onClick={() => setShowTooltip(!showTooltip)}
+    <div
+      className="relative h-32 cursor-pointer"
+      style={{ perspective: '1000px' }}
+      onClick={() => setIsFlipped(!isFlipped)}
+    >
+      <motion.div
+        className="relative w-full h-full"
+        style={{ transformStyle: 'preserve-3d' }}
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
+        transition={{ duration: 0.4, ease: 'easeInOut' }}
       >
-        <Icon className="text-lavenderGlow w-5 h-5 mb-2 mx-auto" />
-        <p className="text-ashGray font-thai text-xs text-center mb-1">
-          {label}
-        </p>
-        <p className="text-ghostWhite font-heading font-medium text-base text-center">
-          {value}
-        </p>
-      </div>
+        {/* Front of card */}
+        <div
+          className="absolute inset-0 bg-charcoal border border-darkPurple/50 rounded-lg p-4 flex flex-col items-center justify-center"
+          style={{
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+          }}
+        >
+          <Icon className="text-lavenderGlow w-5 h-5 mb-2" />
+          <p className="text-ashGray font-thai text-sm text-center mb-1">
+            {label}
+          </p>
+          <p className="text-ghostWhite font-heading font-medium text-lg text-center">
+            {value}
+          </p>
+        </div>
 
-      {/* Tooltip */}
-      <AnimatePresence>
-        {showTooltip && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: 0.15 }}
-            className="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48"
-          >
-            <div className="bg-darkPurple border border-royalPurple/30 rounded-md shadow-xl shadow-amethyst/5 px-3 py-2">
-              <p className="text-paleOrchid font-thai text-sm">{tooltip}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Back of card */}
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-darkPurple to-royalPurple/50 border border-amethyst/50 rounded-lg p-4 flex items-center justify-center"
+          style={{
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+          }}
+        >
+          <p className="text-paleOrchid font-thai text-sm text-center leading-relaxed">
+            {tooltip}
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -74,10 +84,10 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
 
       {/* Planet name and description */}
       <div className="text-center mb-8">
-        <h3 className="font-heading text-2xl font-semibold text-amethyst mb-2">
+        <h3 className="font-heading text-2xl md:text-3xl font-semibold text-amethyst mb-2">
           {birthStar.planet}
         </h3>
-        <p className="font-oracle text-base font-light text-ghostWhite leading-relaxed max-w-2xl mx-auto">
+        <p className="font-oracle text-lg md:text-xl font-light text-ghostWhite leading-[1.75] max-w-2xl mx-auto">
           {birthStar.planetDescription}
         </p>
       </div>
@@ -112,7 +122,7 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
 
       {/* Hint text */}
       <p className="text-center text-ashGray font-thai text-xs">
-        แตะหรือวางเมาส์บนแต่ละช่องเพื่อดูวิธีใช้
+        แตะการ์ดเพื่อดูวิธีใช้
       </p>
     </div>
   );

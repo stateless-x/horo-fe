@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Users, Briefcase, Heart, Sparkles } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import type {
   EnrichedPillar,
   PillarInterpretation,
   PillarInteraction,
 } from "@/lib-packages/shared/types/astrology";
 import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
+import { PillarDetailModal } from "./pillar-detail-modal";
 
 interface FourPillarsSectionProps {
   pillars: {
@@ -40,18 +40,10 @@ export function FourPillarsSection({
   pillarInterpretations,
   pillarInteractions,
 }: FourPillarsSectionProps) {
-  const [expandedPillar, setExpandedPillar] = useState<string | null>(null);
-  const [showHint, setShowHint] = useState(true);
+  const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
 
-  // Hide hint after first interaction
-  useEffect(() => {
-    if (expandedPillar !== null && showHint) {
-      setShowHint(false);
-    }
-  }, [expandedPillar, showHint]);
-
-  const togglePillar = (pillarKey: string) => {
-    setExpandedPillar(expandedPillar === pillarKey ? null : pillarKey);
+  const openPillarModal = (pillarKey: string) => {
+    setSelectedPillar(pillarKey);
   };
 
   const renderPillar = (
@@ -60,12 +52,7 @@ export function FourPillarsSection({
   ) => {
     const Icon = PILLAR_ICONS[pillarKey];
     const isDay = pillarKey === "day";
-    const isExpanded = expandedPillar === pillarKey;
     const elementColor = ELEMENT_COLORS[pillar.stemElement];
-
-    const interpretation = pillarInterpretations.find(
-      (p) => p.pillarKey === pillarKey,
-    );
 
     return (
       <div
@@ -74,17 +61,16 @@ export function FourPillarsSection({
       >
         {/* Pillar card */}
         <button
-          onClick={() => togglePillar(pillarKey)}
+          onClick={() => openPillarModal(pillarKey)}
           className={`
             w-full bg-deepNight rounded-xl p-5 transition-all duration-200 cursor-pointer
-            hover:bg-darkPurple/20
+            hover:bg-darkPurple/20 hover:border-royalPurple/50
             ${
               isDay
                 ? "border-amethyst/50 bg-darkPurple/20 shadow-lg shadow-amethyst/10 transform md:-translate-y-2"
                 : "border-darkPurple/50"
             }
-            ${isExpanded ? "border-royalPurple/50 bg-darkPurple/20" : ""}
-            border hover:border-royalPurple/50
+            border
           `}
           style={{
             minHeight: isDay ? "200px" : "180px",
@@ -107,7 +93,7 @@ export function FourPillarsSection({
             </p>
 
             {/* Life area */}
-            <p className="font-thai text-sm text-ghostWhite mb-2">
+            <p className="font-thai text-base text-ghostWhite mb-2">
               {pillar.lifeArea}
             </p>
 
@@ -121,67 +107,6 @@ export function FourPillarsSection({
             />
           </div>
         </button>
-
-        {/* Expanded detail panel */}
-        <AnimatePresence>
-          {isExpanded && interpretation && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="mt-4"
-            >
-              <div className="bg-darkPurple/20 border border-darkPurple/50 rounded-lg p-6">
-                <h4 className="font-heading text-lg font-medium text-lavenderGlow mb-4">
-                  {PILLAR_LABELS[pillarKey]} — {pillar.stemChinese}
-                  {pillar.branchChinese}
-                </h4>
-
-                {/* Stem and Branch details */}
-                <div className="space-y-2 mb-4 text-sm">
-                  <p className="text-ghostWhite font-oracle">
-                    <span className="text-lavenderGlow font-heading font-medium">
-                      天干 Heavenly Stem:
-                    </span>{" "}
-                    {pillar.stemChinese} ({pillar.stemPinyin}) — ธาตุ
-                    {pillar.stemElement}{" "}
-                    {pillar.stemYinYang === "yang" ? "Yang" : "Yin"}
-                  </p>
-                  <p className="text-ghostWhite font-oracle">
-                    <span className="text-lavenderGlow font-heading font-medium">
-                      地支 Earthly Branch:
-                    </span>{" "}
-                    {pillar.branchChinese} ({pillar.branchPinyin}) —{" "}
-                    {pillar.branchAnimal}
-                  </p>
-                </div>
-
-                {/* Interpretation */}
-                <div className="mb-4">
-                  <h5 className="text-lavenderGlow font-heading font-medium text-sm mb-2">
-                    ความหมาย:
-                  </h5>
-                  <p className="text-ghostWhite font-oracle font-light leading-relaxed text-sm">
-                    {interpretation.interpretation}
-                  </p>
-                </div>
-
-                {/* Pillar relationships */}
-                {interpretation.pillarRelationships && (
-                  <div>
-                    <h5 className="text-lavenderGlow font-heading font-medium text-sm mb-2">
-                      ความสัมพันธ์กับเสาอื่น:
-                    </h5>
-                    <p className="text-ghostWhite font-oracle font-light leading-relaxed text-sm">
-                      {interpretation.pillarRelationships}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     );
   };
@@ -210,18 +135,25 @@ export function FourPillarsSection({
       </div>
 
       {/* Hint text */}
-      <AnimatePresence>
-        {showHint && (
-          <motion.p
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center text-ashGray font-thai text-sm"
-          >
-            แตะที่เสาเพื่อดูรายละเอียด
-          </motion.p>
-        )}
-      </AnimatePresence>
+      <p className="text-center text-ashGray font-thai text-sm">
+        แตะที่เสาเพื่อดูรายละเอียด
+      </p>
+
+      {/* Pillar Detail Modal */}
+      <PillarDetailModal
+        isOpen={selectedPillar !== null}
+        onClose={() => setSelectedPillar(null)}
+        pillar={
+          selectedPillar
+            ? (pillars[selectedPillar as keyof typeof pillars] ?? null)
+            : null
+        }
+        pillarKey={selectedPillar}
+        interpretation={
+          pillarInterpretations.find((p) => p.pillarKey === selectedPillar) ||
+          null
+        }
+      />
     </div>
   );
 }

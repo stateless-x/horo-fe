@@ -62,12 +62,12 @@ export function ElementProfileSection({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {/* Strengths */}
         <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <h3 className="text-lavenderGlow font-heading font-medium text-sm mb-3">
+          <h3 className="text-lavenderGlow font-heading font-medium text-base mb-3">
             จุดแข็ง
           </h3>
           <ul className="space-y-1.5">
             {elementProfile.strengths.map((strength, index) => (
-              <li key={index} className="text-ghostWhite font-thai text-sm">
+              <li key={index} className="text-ghostWhite font-thai text-base">
                 {strength}
               </li>
             ))}
@@ -76,12 +76,12 @@ export function ElementProfileSection({
 
         {/* Weaknesses */}
         <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <h3 className="text-lavenderGlow font-heading font-medium text-sm mb-3">
+          <h3 className="text-lavenderGlow font-heading font-medium text-base mb-3">
             จุดอ่อน
           </h3>
           <ul className="space-y-1.5">
             {elementProfile.weaknesses.map((weakness, index) => (
-              <li key={index} className="text-ghostWhite font-thai text-sm">
+              <li key={index} className="text-ghostWhite font-thai text-base">
                 {weakness}
               </li>
             ))}
@@ -90,12 +90,12 @@ export function ElementProfileSection({
 
         {/* Compatible elements */}
         <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <h3 className="text-lavenderGlow font-heading font-medium text-sm mb-3">
+          <h3 className="text-lavenderGlow font-heading font-medium text-base mb-3">
             เข้ากันดี
           </h3>
           <ul className="space-y-1.5">
             {elementProfile.compatibleElements.map((element, index) => (
-              <li key={index} className="text-ghostWhite font-thai text-sm">
+              <li key={index} className="text-ghostWhite font-thai text-base">
                 {elementNames[element]}
               </li>
             ))}
@@ -107,7 +107,7 @@ export function ElementProfileSection({
       <div className="bg-darkPurple/20 border border-amber-400/20 rounded-lg p-4 flex items-start gap-3">
         <AlertTriangle className="text-amber-400 w-5 h-5 flex-shrink-0 mt-0.5" />
         <div>
-          <p className="text-ashGray font-thai text-sm">
+          <p className="text-ashGray font-thai text-base">
             <span className="text-amber-400 font-medium">ระวังธาตุ:</span>{" "}
             {elementNames[elementProfile.conflictingElement]} (ข่มธาตุของเจ้า)
           </p>

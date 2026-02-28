@@ -16,6 +16,9 @@ import { BirthStarSection } from '@/components/chart/birth-star-section';
 import { FortuneReadingsSection } from '@/components/chart/fortune-readings-section';
 import { RecommendationsSection } from '@/components/chart/recommendations-section';
 import { StickyActionBar } from '@/components/chart/sticky-action-bar';
+import { ShareSheet } from '@/components/share/share-sheet';
+import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
+import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { api } from '@/lib/api';
 
@@ -41,6 +44,8 @@ export default function FortuneChartPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [showShareSheet, setShowShareSheet] = useState(false);
+  const [activeTab, setActiveTab] = useState<FortuneTab>('fortune');
 
   // State management
   const { loadingState, error, setShareStatus } = useFortuneStore();
@@ -58,26 +63,9 @@ export default function FortuneChartPage() {
     }
   }, [session, sessionLoading, router]);
 
-  // Handle share action
-  const handleShare = async () => {
-    setShareStatus('copying');
-    try {
-      const url = window.location.href;
-      if (navigator.share) {
-        await navigator.share({
-          title: 'ดวงชะตาของฉัน',
-          text: 'มาดูดวงชะตาของฉันกันเถอะ!',
-          url,
-        });
-      } else {
-        await navigator.clipboard.writeText(url);
-        setShareStatus('copied');
-        setTimeout(() => setShareStatus('idle'), 2000);
-      }
-    } catch (err) {
-      console.error('Share failed:', err);
-      setShareStatus('idle');
-    }
+  // Handle share action - open ShareSheet
+  const handleShare = () => {
+    setShowShareSheet(true);
   };
 
   // Handle new reading action - regenerate with same birth data
@@ -132,7 +120,7 @@ export default function FortuneChartPage() {
   return (
     <div className="min-h-screen pb-24">
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        {/* Section 1: Hero */}
+        {/* Section 1: Hero - Always visible */}
         <motion.div
           initial={{ opacity: 0, translateY: 12 }}
           animate={{ opacity: 1, translateY: 0 }}
@@ -147,7 +135,7 @@ export default function FortuneChartPage() {
           />
         </motion.div>
 
-        {/* Section 2: Element Profile */}
+        {/* Section 2: Element Profile - Always visible */}
         <motion.div
           initial={{ opacity: 0, translateY: 12 }}
           animate={{ opacity: 1, translateY: 0 }}
@@ -155,46 +143,53 @@ export default function FortuneChartPage() {
         >
           <ElementProfileSection elementProfile={chartData.elementProfile} />
         </motion.div>
+      </div>
 
-        {/* Section 3: Four Pillars */}
-        <motion.div
-          initial={{ opacity: 0, translateY: 12 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.2 }}
-        >
-          <FourPillarsSection
-            pillars={chartData.pillars}
-            pillarInterpretations={chartData.pillarInterpretations}
-            pillarInteractions={chartData.pillarInteractions}
-          />
-        </motion.div>
+      {/* Tab Navigation - Sticky when scrolled past */}
+      <FortuneTabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Section 4: Birth Star */}
-        <motion.div
-          initial={{ opacity: 0, translateY: 12 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.3 }}
-        >
-          <BirthStarSection birthStar={chartData.birthStar} />
-        </motion.div>
+      {/* Tab Content */}
+      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+        {/* Tab 1: Fortune Readings */}
+        {activeTab === 'fortune' && (
+          <motion.div
+            initial={{ opacity: 0, translateY: 12 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="space-y-8"
+          >
+            <FortuneReadingsSection fortuneReadings={chartData.fortuneReadings} />
+            <CompatibilityCTA />
+          </motion.div>
+        )}
 
-        {/* Section 5: Fortune Readings */}
-        <motion.div
-          initial={{ opacity: 0, translateY: 12 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.4 }}
-        >
-          <FortuneReadingsSection fortuneReadings={chartData.fortuneReadings} />
-        </motion.div>
+        {/* Tab 2: Four Pillars + Birth Star */}
+        {activeTab === 'pillars' && (
+          <motion.div
+            initial={{ opacity: 0, translateY: 12 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="space-y-8"
+          >
+            <FourPillarsSection
+              pillars={chartData.pillars}
+              pillarInterpretations={chartData.pillarInterpretations}
+              pillarInteractions={chartData.pillarInteractions}
+            />
+            <BirthStarSection birthStar={chartData.birthStar} />
+          </motion.div>
+        )}
 
-        {/* Section 6: Recommendations */}
-        <motion.div
-          initial={{ opacity: 0, translateY: 12 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.5 }}
-        >
-          <RecommendationsSection recommendations={chartData.recommendations} />
-        </motion.div>
+        {/* Tab 3: Recommendations */}
+        {activeTab === 'recommendations' && (
+          <motion.div
+            initial={{ opacity: 0, translateY: 12 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <RecommendationsSection recommendations={chartData.recommendations} />
+          </motion.div>
+        )}
       </div>
 
       {/* Sticky Action Bar */}
@@ -202,6 +197,19 @@ export default function FortuneChartPage() {
         onShare={handleShare}
         onNewReading={handleNewReading}
         isRegenerating={isRegenerating}
+      />
+
+      {/* Share Sheet */}
+      <ShareSheet
+        isOpen={showShareSheet}
+        onClose={() => setShowShareSheet(false)}
+        shareData={{
+          url: typeof window !== 'undefined' ? window.location.href : '',
+          userName: session.user.name,
+          element: chartData.elementProfile.primaryElement,
+          luckyColor: chartData.birthStar.luckyColor,
+          luckyNumber: chartData.birthStar.luckyNumber,
+        }}
       />
     </div>
   );

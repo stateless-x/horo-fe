@@ -154,17 +154,64 @@ export function RecommendationsSection({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="bg-charcoal border border-darkPurple/50 rounded-lg p-4"
+                className="bg-charcoal border border-darkPurple/50 rounded-lg p-5 space-y-4"
               >
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-ghostWhite font-heading font-medium text-base">
+                {/* Header with month and rating */}
+                <div className="flex items-center justify-between">
+                  <h4 className="text-ghostWhite font-heading font-medium text-lg">
                     {recommendations.monthlyHighlights[selectedMonth].month}
                   </h4>
                   {renderDotRating(recommendations.monthlyHighlights[selectedMonth].rating)}
                 </div>
-                <p className="text-ashGray font-thai text-base leading-relaxed">
+
+                {/* Summary note */}
+                <p className="text-amethyst font-thai text-base font-medium">
                   {recommendations.monthlyHighlights[selectedMonth].note}
                 </p>
+
+                {/* Detailed description */}
+                <p className="text-ashGray font-thai text-base leading-relaxed">
+                  {recommendations.monthlyHighlights[selectedMonth].description}
+                </p>
+
+                {/* Highlights badges */}
+                {recommendations.monthlyHighlights[selectedMonth].highlights &&
+                 recommendations.monthlyHighlights[selectedMonth].highlights!.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {recommendations.monthlyHighlights[selectedMonth].highlights!.map((highlight, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 bg-amethyst/10 border border-amethyst/30 rounded-full text-lavenderGlow font-thai text-sm"
+                      >
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Advice */}
+                {recommendations.monthlyHighlights[selectedMonth].advice && (
+                  <div className="bg-royalPurple/10 border border-royalPurple/30 rounded-lg p-3">
+                    <p className="text-lavenderGlow font-thai text-sm font-medium mb-1">
+                      คำแนะนำ:
+                    </p>
+                    <p className="text-ghostWhite font-thai text-sm leading-relaxed">
+                      {recommendations.monthlyHighlights[selectedMonth].advice}
+                    </p>
+                  </div>
+                )}
+
+                {/* Warning */}
+                {recommendations.monthlyHighlights[selectedMonth].warning && (
+                  <div className="bg-red-900/10 border border-red-500/30 rounded-lg p-3">
+                    <p className="text-red-400 font-thai text-sm font-medium mb-1">
+                      ข้อควรระวัง:
+                    </p>
+                    <p className="text-red-200 font-thai text-sm leading-relaxed">
+                      {recommendations.monthlyHighlights[selectedMonth].warning}
+                    </p>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

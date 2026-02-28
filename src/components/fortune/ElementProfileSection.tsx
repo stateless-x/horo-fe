@@ -41,7 +41,7 @@ export function ElementProfileSection({
         />
         <div
           className="absolute -bottom-16 -left-16 md:-bottom-24 md:-left-24 w-32 h-32 md:w-48 md:h-48 rounded-full blur-2xl md:blur-3xl opacity-10"
-          style={{ backgroundColor: elementColor.accent }}
+          style={{ backgroundColor: elementColor.primary }}
         />
 
         {/* Element visual with animated rings - responsive sizing */}
@@ -78,7 +78,7 @@ export function ElementProfileSection({
               <div
                 className="w-full h-full rounded-full opacity-50"
                 style={{
-                  background: `radial-gradient(circle at 30% 30%, ${elementColor.accent}, transparent)`,
+                  background: `radial-gradient(circle at 30% 30%, ${elementColor.primary}, transparent)`,
                 }}
               />
             </div>
@@ -119,11 +119,11 @@ export function ElementProfileSection({
             <div className="flex items-center gap-2 mb-3 md:mb-4">
               <Sparkles
                 className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 flex-shrink-0"
-                style={{ color: elementColor.accent }}
+                style={{ color: elementColor.primary }}
               />
               <h3
                 className="font-heading font-medium text-base md:text-lg transition-colors duration-300"
-                style={{ color: elementColor.accent }}
+                style={{ color: elementColor.primary }}
               >
                 จุดแข็ง
               </h3>
@@ -157,11 +157,11 @@ export function ElementProfileSection({
             <div className="flex items-center gap-2 mb-3 md:mb-4">
               <Shield
                 className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 flex-shrink-0"
-                style={{ color: elementColor.accent }}
+                style={{ color: elementColor.primary }}
               />
               <h3
                 className="font-heading font-medium text-base md:text-lg transition-colors duration-300"
-                style={{ color: elementColor.accent }}
+                style={{ color: elementColor.primary }}
               >
                 จุดอ่อน
               </h3>
@@ -195,11 +195,11 @@ export function ElementProfileSection({
             <div className="flex items-center gap-2 mb-3 md:mb-4">
               <Heart
                 className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 flex-shrink-0"
-                style={{ color: elementColor.accent }}
+                style={{ color: elementColor.primary }}
               />
               <h3
                 className="font-heading font-medium text-base md:text-lg transition-colors duration-300"
-                style={{ color: elementColor.accent }}
+                style={{ color: elementColor.primary }}
               >
                 ธาตุที่เข้ากัน
               </h3>

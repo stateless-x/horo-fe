@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, Button, Input } from '@/lib-packages/ui';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { THAI_MONTHS, BE_OFFSET, toGregorianYear } from '@/lib-packages/shared';
+import { THAI_MONTHS, BE_OFFSET, createUTCDateFromBE } from '@/lib-packages/shared';
 import { Loader2, ArrowLeft } from 'lucide-react';
 
 /**
@@ -88,11 +88,8 @@ export default function CompatibilityPage() {
 
       setCalculationStep('ประมวลผลความสัมพันธ์...');
 
-      // Convert BE year to Gregorian
-      const gregorianYear = toGregorianYear(yearNum);
-      // Create date in UTC to avoid timezone issues
-      // monthNum is 1-12, but Date.UTC expects 0-11
-      const birthDate = new Date(Date.UTC(gregorianYear, monthNum - 1, dayNum));
+      // Create UTC date from Buddhist Era date (prevents timezone bugs)
+      const birthDate = createUTCDateFromBE(dayNum, monthNum, yearNum);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortune/compatibility`, {
         method: 'POST',

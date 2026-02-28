@@ -15,6 +15,41 @@ export function toGregorianYear(buddhistYear: number): number {
 }
 
 /**
+ * Creates a UTC Date from Thai Buddhist Era date components
+ * This prevents timezone issues when converting dates
+ *
+ * @param day - Day of month (1-31)
+ * @param month - Month (1-12, NOT 0-11)
+ * @param buddhistYear - Year in Buddhist Era (e.g., 2540)
+ * @returns Date object in UTC
+ *
+ * @example
+ * createUTCDateFromBE(25, 4, 2540) // April 25, 1997 00:00:00 UTC
+ */
+export function createUTCDateFromBE(day: number, month: number, buddhistYear: number): Date {
+  const gregorianYear = toGregorianYear(buddhistYear);
+  // Date.UTC expects month as 0-11, so subtract 1
+  return new Date(Date.UTC(gregorianYear, month - 1, day));
+}
+
+/**
+ * Creates a UTC Date from Gregorian date components
+ * This prevents timezone issues when converting dates
+ *
+ * @param day - Day of month (1-31)
+ * @param month - Month (1-12, NOT 0-11)
+ * @param gregorianYear - Year in Gregorian calendar (e.g., 1997)
+ * @returns Date object in UTC
+ *
+ * @example
+ * createUTCDate(25, 4, 1997) // April 25, 1997 00:00:00 UTC
+ */
+export function createUTCDate(day: number, month: number, gregorianYear: number): Date {
+  // Date.UTC expects month as 0-11, so subtract 1
+  return new Date(Date.UTC(gregorianYear, month - 1, day));
+}
+
+/**
  * Formats a date to Thai Buddhist Era format
  * @param date - ISO date string or Date object
  * @returns Formatted date string like "25 ก.พ. 2569"

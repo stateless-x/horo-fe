@@ -20,6 +20,7 @@ import { StickyActionBar } from '@/components/chart/sticky-action-bar';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
+import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { api } from '@/lib/api';
 
@@ -120,6 +121,9 @@ export default function FortuneChartPage() {
 
   return (
     <div className="min-h-screen pb-24">
+      {/* Scroll Indicator - Bottom Center */}
+      <ScrollIndicator />
+
       {/* Settings Icon - Top Right */}
       <div className="fixed top-4 right-4 z-50">
         <button

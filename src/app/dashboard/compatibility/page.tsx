@@ -127,28 +127,143 @@ export default function CompatibilityPage() {
   // Loading state during calculation
   if (calculating) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+        {/* Animated background particles */}
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-royalPurple/20 rounded-full"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              animate={{
+                y: [null, Math.random() * window.innerHeight],
+                x: [null, Math.random() * window.innerWidth],
+                opacity: [0.2, 0.8, 0.2],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </div>
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center space-y-6 max-w-md"
+          className="text-center space-y-8 max-w-md relative z-10"
         >
+          {/* Animated spinner with pulsing glow */}
           <div className="relative">
-            <div className="w-24 h-24 mx-auto">
-              <div className="absolute inset-0 border-4 border-royalPurple/30 rounded-full" />
-              <div className="absolute inset-0 border-4 border-t-royalPurple rounded-full animate-spin" />
+            <div className="w-32 h-32 mx-auto relative">
+              {/* Outer glow ring */}
+              <motion.div
+                className="absolute inset-0 border-4 border-royalPurple/20 rounded-full"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+
+              {/* Middle ring */}
+              <motion.div
+                className="absolute inset-2 border-4 border-amethyst/40 rounded-full"
+                animate={{
+                  rotate: 360,
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+
+              {/* Inner spinning ring */}
+              <motion.div
+                className="absolute inset-4 border-4 border-t-royalPurple border-r-transparent border-b-transparent border-l-transparent rounded-full"
+                animate={{
+                  rotate: 360,
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+
+              {/* Center dot */}
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center"
+                animate={{
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <div className="w-4 h-4 bg-gradient-to-br from-royalPurple to-amethyst rounded-full shadow-lg shadow-royalPurple/50" />
+              </motion.div>
             </div>
           </div>
-          <div className="space-y-2">
-            <h2 className="text-2xl font-heading text-ghostWhite">กำลังคำนวณ...</h2>
+
+          {/* Text content */}
+          <div className="space-y-3">
+            <motion.h2
+              className="text-3xl font-heading text-ghostWhite"
+              animate={{
+                opacity: [0.8, 1, 0.8],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              กำลังคำนวณ...
+            </motion.h2>
+
             <motion.p
               key={calculationStep}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-lg text-ashGray font-oracle"
+              exit={{ opacity: 0, y: -10 }}
+              className="text-lg text-ashGray font-oracle min-h-[28px]"
             >
               {calculationStep}
             </motion.p>
+
+            {/* Progress indicator */}
+            <div className="flex justify-center gap-2 mt-4">
+              {[...Array(3)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="w-2 h-2 bg-royalPurple/60 rounded-full"
+                  animate={{
+                    scale: [1, 1.5, 1],
+                    opacity: [0.4, 1, 0.4],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: i * 0.2,
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>

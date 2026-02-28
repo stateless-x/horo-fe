@@ -30,11 +30,11 @@ export default function CompatibilityPage() {
   const [compatibilityResult, setCompatibilityResult] = useState<any>(null);
   const [error, setError] = useState('');
 
-  // Date picker state - simple numbers instead of select wheels
+  // Date picker state
   const currentYear = new Date().getFullYear() + BE_OFFSET;
-  const [day, setDay] = useState('');
-  const [month, setMonth] = useState('');
-  const [year, setYear] = useState('');
+  const [day, setDay] = useState('1');
+  const [month, setMonth] = useState('1');
+  const [year, setYear] = useState((currentYear - 25).toString());
 
   // Redirect unauthenticated users to login
   useEffect(() => {
@@ -74,26 +74,6 @@ export default function CompatibilityPage() {
     const monthNum = parseInt(month);
     const yearNum = parseInt(year);
 
-    if (!day || !month || !year) {
-      setError('กรุณากรอกวันเกิดให้ครบถ้วน');
-      return;
-    }
-
-    if (dayNum < 1 || dayNum > 31) {
-      setError('วันที่ไม่ถูกต้อง (1-31)');
-      return;
-    }
-
-    if (monthNum < 1 || monthNum > 12) {
-      setError('เดือนไม่ถูกต้อง (1-12)');
-      return;
-    }
-
-    if (yearNum < 2400 || yearNum > currentYear) {
-      setError(`ปี พ.ศ. ไม่ถูกต้อง (2400-${currentYear})`);
-      return;
-    }
-
     setCalculating(true);
     setError('');
     setHasResult(false);
@@ -110,6 +90,7 @@ export default function CompatibilityPage() {
 
       // Convert BE year to Gregorian
       const gregorianYear = toGregorianYear(yearNum);
+      // monthNum is 1-12, but Date expects 0-11
       const birthDate = new Date(gregorianYear, monthNum - 1, dayNum);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortune/compatibility`, {
@@ -487,15 +468,17 @@ export default function CompatibilityPage() {
                     <label className="block text-xs text-ashGray/70 mb-2 text-center">
                       วัน
                     </label>
-                    <Input
-                      type="number"
+                    <select
                       value={day}
                       onChange={(e) => setDay(e.target.value)}
-                      placeholder="1-31"
-                      min="1"
-                      max="31"
-                      className="text-center text-base"
-                    />
+                      className="w-full h-12 bg-charcoal border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent transition-all cursor-pointer hover:border-royalPurple/50"
+                    >
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                        <option key={d} value={d}>
+                          {d}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Month */}
@@ -503,15 +486,17 @@ export default function CompatibilityPage() {
                     <label className="block text-xs text-ashGray/70 mb-2 text-center">
                       เดือน
                     </label>
-                    <Input
-                      type="number"
+                    <select
                       value={month}
                       onChange={(e) => setMonth(e.target.value)}
-                      placeholder="1-12"
-                      min="1"
-                      max="12"
-                      className="text-center text-base"
-                    />
+                      className="w-full h-12 bg-charcoal border border-darkPurple rounded-lg text-center text-sm text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent transition-all cursor-pointer hover:border-royalPurple/50"
+                    >
+                      {THAI_MONTHS.map((m, i) => (
+                        <option key={i} value={i + 1}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Year (Buddhist Era) */}
@@ -519,19 +504,21 @@ export default function CompatibilityPage() {
                     <label className="block text-xs text-ashGray/70 mb-2 text-center">
                       พ.ศ.
                     </label>
-                    <Input
-                      type="number"
+                    <select
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      placeholder={currentYear.toString()}
-                      min="2400"
-                      max={currentYear}
-                      className="text-center text-base"
-                    />
+                      className="w-full h-12 bg-charcoal border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent transition-all cursor-pointer hover:border-royalPurple/50"
+                    >
+                      {Array.from({ length: 80 }, (_, i) => currentYear - i).map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <p className="text-xs text-ashGray/60 mt-2 text-center">
-                  ตัวอย่าง: วันที่ 15 เดือน 6 พ.ศ. 2540
+                  ตัวอย่าง: 15 มิถุนายน 2540
                 </p>
               </div>
 
@@ -539,7 +526,7 @@ export default function CompatibilityPage() {
                 onClick={handleCalculate}
                 size="lg"
                 className="w-full"
-                disabled={!partnerName || calculating}
+                disabled={!partnerName.trim() || calculating}
               >
                 {calculating ? (
                   <>

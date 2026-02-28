@@ -20,7 +20,15 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareEnabled: true,
     crossLinks: [
       { label: 'ดูดวงคู่', href: '/dashboard/compatibility', icon: Heart },
-      { label: 'ดูดวงรายวัน', href: '/dashboard', icon: Calendar },
+      { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
+    ],
+  },
+  '/dashboard/today': {
+    shareCta: 'แชร์ดวงวันนี้ให้เพื่อน!',
+    shareEnabled: true,
+    crossLinks: [
+      { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },
+      { label: 'ดูดวงคู่', href: '/dashboard/compatibility', icon: Heart },
     ],
   },
   '/dashboard': {
@@ -36,7 +44,7 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareEnabled: true,
     crossLinks: [
       { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },
-      { label: 'ดูดวงรายวัน', href: '/dashboard', icon: Calendar },
+      { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
     ],
   },
 };

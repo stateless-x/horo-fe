@@ -5,20 +5,18 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
+import { Eye, Sparkles, Moon } from 'lucide-react';
 import { ClientDate } from '@/components/client-date';
+import { ScrollIndicator } from '@/components/ui/scroll-indicator';
+import { ElementShowcase } from '@/components/landing/element-showcase';
+import { ReadingCategories } from '@/components/landing/reading-categories';
 import { SEOSections } from '@/components/seo/seo-sections';
 
 /**
  * Landing Page
  *
- * Entry point for new users. Shows what the app does and provides clear CTAs.
+ * Narrative scroll experience: Mystery → Intrigue → Understanding → Breadth → Action
  * Returning users with valid session are automatically redirected to dashboard.
- *
- * Performance optimizations:
- * - Lazy loads video after component mount
- * - Respects reduced motion preferences
- * - Auto-stopping animations (no infinite loops)
- * - Mobile-optimized touch interactions
  */
 export default function LandingPage() {
   const { data: session, isPending } = useSession();
@@ -27,40 +25,28 @@ export default function LandingPage() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  // Redirect authenticated users to dashboard
   useEffect(() => {
     if (session && !isPending) {
       router.push('/dashboard');
     }
   }, [session, isPending, router]);
 
-  // Lazy load video after component mounts
   useEffect(() => {
-    // Delay video load to prioritize critical content
     const timer = setTimeout(() => {
       setVideoLoaded(true);
     }, 500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Don't render landing page for authenticated users
   if (session) {
     return null;
   }
 
-  // Animation variants that respect reduced motion preference
-  const fadeInUp = shouldReduceMotion
-    ? { opacity: 1, y: 0 }
-    : { opacity: 1, y: 0 };
-  const fadeInUpInitial = shouldReduceMotion
-    ? { opacity: 1, y: 0 }
-    : { opacity: 0, y: 30 };
-
   return (
     <div className="min-h-screen relative overflow-x-hidden">
-      {/* Hero Section with Ambient Video */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        {/* Ambient Video Background - Lazy loaded for performance */}
+      {/* ===== SECTION 1: Hero — "The Threshold" ===== */}
+      <section className="relative min-h-[100dvh] flex items-center justify-center">
+        {/* Ambient Video Background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {videoLoaded && !shouldReduceMotion && (
             <video
@@ -74,9 +60,19 @@ export default function LandingPage() {
               <source src="/horo.webm" type="video/webm" />
             </video>
           )}
-          {/* Dark overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-voidBlack/80 via-voidBlack/60 to-voidBlack" />
         </div>
+
+        {/* Floating Particles */}
+        {!shouldReduceMotion && (
+          <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
+            <div className="absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-amethyst/40 animate-float-1" />
+            <div className="absolute top-1/3 right-1/4 w-1 h-1 rounded-full bg-lavenderGlow/30 animate-float-2" />
+            <div className="absolute bottom-1/3 left-1/3 w-2 h-2 rounded-full bg-amethyst/20 animate-float-3" />
+            <div className="absolute top-2/3 right-1/3 w-1 h-1 rounded-full bg-lavenderGlow/25 animate-float-1 [animation-delay:2s]" />
+            <div className="absolute top-1/2 left-2/3 w-1.5 h-1.5 rounded-full bg-amethyst/30 animate-float-2 [animation-delay:3s]" />
+          </div>
+        )}
 
         {/* Hero Content */}
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
@@ -85,155 +81,55 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {/* Main Heading */}
-            <h1 className="text-5xl md:text-7xl font-heading text-ghostWhite mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-7xl font-heading text-ghostWhite mb-6 tracking-tight">
               เปิดประตูสู่ชะตา
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-paleOrchid/80 mb-12 font-oracle font-light">
+            <p className="text-lg md:text-2xl text-paleOrchid/80 mb-6 font-oracle font-light">
               ดูดวงด้วยศาสตร์จีนโบราณ × โหราศาสตร์ไทย
             </p>
 
+            {/* Decorative line */}
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mx-auto mb-10 h-px w-48 bg-gradient-to-r from-transparent via-lavenderGlow/40 to-transparent origin-center"
+            />
+
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              {/* Primary CTA */}
-              <Link href="/fortune">
+              <Link href="/fortune" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all shadow-lg shadow-royalPurple/50 touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all shadow-lg shadow-royalPurple/50 touch-manipulation"
                 >
                   ดูดวงของเจ้า
                 </motion.button>
               </Link>
 
-              {/* Secondary CTA */}
-              <Link href="/login">
+              <Link href="/login" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-10 py-4 border-2 border-darkPurple hover:border-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 border-2 border-darkPurple hover:border-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all touch-manipulation"
                 >
                   เข้าสู่ระบบ
                 </motion.button>
               </Link>
             </div>
           </motion.div>
-
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 1 }}
-            className="mt-16 flex justify-center"
-          >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: 3, duration: 1.5, ease: "easeInOut" }}
-              className="text-ashGray/60 text-xs flex flex-col items-center gap-1"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </motion.div>
-          </motion.div>
         </div>
+
+        {/* Scroll Indicator */}
+        <ScrollIndicator showDelay={1500} />
       </section>
 
-      {/* Sample Fortune Section */}
-      <section className="py-20 px-6 relative">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-heading text-ghostWhite mb-4">
-              ดวงของเจ้าจะเป็นอย่างไร
-            </h2>
-            <p className="text-ashGray font-oracle">
-              ตัวอย่างดวงที่ผู้ใช้จะได้รับ — ลึกลับและแม่นยำ
-            </p>
-          </motion.div>
+      {/* ===== SECTION 2: Five Elements ===== */}
+      <ElementShowcase />
 
-          {/* Blurred Sample Card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative group"
-          >
-            {/* Ambient glow */}
-            <div className="absolute inset-0 rounded-2xl blur-2xl opacity-20 bg-amethyst/30 -z-10" />
-
-            <div
-              className="relative rounded-2xl p-8 md:p-10 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02]"
-              style={{
-                background: 'linear-gradient(135deg, rgba(161,106,203,0.08), rgba(15, 10, 26, 0.8))',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              {/* Decorative orbs */}
-              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-15 bg-amethyst" />
-              <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl opacity-10 bg-royalPurple" />
-
-              {/* Blur Overlay */}
-              <div className="absolute inset-0 backdrop-blur-sm bg-voidBlack/40 z-10 flex items-center justify-center">
-                <div className="text-center px-4">
-                  <motion.p
-                    className="text-paleOrchid text-base md:text-lg mb-4 font-oracle"
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    เข้าสู่ระบบเพื่อปลดล็อก
-                  </motion.p>
-                  <Link href="/fortune">
-                    <motion.button
-                      whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-6 py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading rounded-lg transition-all shadow-lg shadow-royalPurple/50 touch-manipulation"
-                    >
-                      ดูดวงของเจ้า
-                    </motion.button>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Sample Content (blurred) */}
-              <div className="space-y-6 relative">
-                <div className="text-center">
-                  <p className="text-sm text-ashGray mb-2">องค์ประกอบหลัก</p>
-                  <p className="text-3xl font-heading text-amethyst">ธาตุไฟ</p>
-                </div>
-                <hr className="border-darkPurple/50" />
-                <p className="text-ghostWhite font-oracle leading-relaxed">
-                  เจ้าถือกำเนิดในราศีแห่งไฟ มีพลังแห่งการเปลี่ยนแปลงและความหลงใหล
-                  ช่วงชีวิตนี้ดวงชะตากำลังเปิดประตูใหม่ให้เจ้า...
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Daily Generic Horoscope */}
+      {/* ===== SECTION 3: Daily Oracle ===== */}
       <section className="py-20 px-6 bg-deepNight/30">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -243,8 +139,9 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
+            <Eye className="w-8 h-8 text-lavenderGlow/60 mx-auto mb-4" />
             <h2 className="text-3xl md:text-4xl font-heading text-ghostWhite mb-4">
-              ดวงประจำวันนี้
+              คำทำนายประจำวัน
             </h2>
             <p className="text-ashGray font-oracle">
               <ClientDate />
@@ -252,8 +149,8 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative group"
@@ -262,13 +159,17 @@ export default function LandingPage() {
             <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
 
             <div
-              className="relative rounded-2xl p-8 md:p-10 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02]"
+              className="relative rounded-2xl p-6 md:p-10 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.01]"
               style={{
                 background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
               }}
             >
+              {/* Decorative side lines */}
+              <div className="absolute left-0 top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-amethyst/20 to-transparent" />
+              <div className="absolute right-0 top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-amethyst/20 to-transparent" />
+
               {/* Decorative orbs */}
               <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amethyst" />
               <div className="absolute -bottom-16 -left-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-royalPurple" />
@@ -292,7 +193,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* About Systems */}
+      {/* ===== SECTION 4: Two Ancient Systems ===== */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.h2
@@ -304,7 +205,7 @@ export default function LandingPage() {
             ศาสตร์ที่เราใช้
           </motion.h2>
 
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 relative">
             {/* Bazi */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -313,20 +214,24 @@ export default function LandingPage() {
               transition={{ duration: 0.6 }}
               className="relative group"
             >
-              {/* Ambient glow */}
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-amethyst/30 -z-10" />
 
               <div
-                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1"
+                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1 h-full"
                 style={{
                   background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
                   backdropFilter: 'blur(10px)',
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
                 }}
               >
-                {/* Decorative orb */}
+                {/* Watermark */}
+                <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                  命
+                </span>
+
                 <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amethyst" />
 
+                <Sparkles className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
                 <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
                   Bazi (四柱命理)
                 </h3>
@@ -340,6 +245,20 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
+            {/* Connector — desktop only */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+            >
+              <span className="text-amethyst/40 text-2xl font-heading">×</span>
+            </motion.div>
+
+            {/* Divider — mobile only */}
+            <div className="md:hidden h-px bg-gradient-to-r from-transparent via-darkPurple/50 to-transparent" />
+
             {/* Thai Astrology */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -348,20 +267,24 @@ export default function LandingPage() {
               transition={{ duration: 0.6 }}
               className="relative group"
             >
-              {/* Ambient glow */}
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
 
               <div
-                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1"
+                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1 h-full"
                 style={{
                   background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
                   backdropFilter: 'blur(10px)',
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
                 }}
               >
-                {/* Decorative orb */}
+                {/* Watermark */}
+                <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                  ๙
+                </span>
+
                 <div className="absolute -top-16 -left-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-royalPurple" />
 
+                <Moon className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
                 <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
                   โหราศาสตร์ไทย
                 </h3>
@@ -378,29 +301,48 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 px-6 text-center">
+      {/* ===== SECTION 5: Six Readings ===== */}
+      <ReadingCategories />
+
+      {/* ===== SECTION 6: Final CTA — "The Invitation" ===== */}
+      <section className="py-24 px-6 text-center relative">
+        {/* Top divider */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-royalPurple/30 to-transparent" />
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          className="max-w-3xl mx-auto"
         >
-          <h2 className="text-3xl md:text-5xl font-heading text-ghostWhite mb-6">
+          <h2 className="text-3xl md:text-5xl font-heading text-ghostWhite mb-4">
             พร้อมที่จะรู้จักชะตาของเจ้าหรือยัง
           </h2>
+          <p className="text-ashGray font-oracle mb-10">
+            ไม่เสียค่าใช้จ่าย ใช้เวลาไม่ถึง 2 นาที
+          </p>
+
           <Link href="/fortune">
-            <motion.button
-              whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-12 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl rounded-lg transition-all shadow-xl shadow-royalPurple/50 touch-manipulation"
-            >
-              เริ่มดูดวงเลย
-            </motion.button>
+            <div className="relative inline-block">
+              {/* Glow pulse behind button */}
+              <div className="absolute inset-0 bg-royalPurple rounded-lg blur-xl animate-ctaGlow" />
+              <motion.button
+                whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative px-14 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl rounded-lg transition-all shadow-xl shadow-royalPurple/50 touch-manipulation"
+              >
+                เริ่มดูดวงเลย
+              </motion.button>
+            </div>
           </Link>
+
+          <p className="text-ashGray/60 text-sm font-oracle mt-6">
+            ดูดวงด้วย Bazi × โหราศาสตร์ไทย
+          </p>
         </motion.div>
       </section>
 
-      {/* SEO Content Sections - Server-side rendered for search engines */}
+      {/* ===== SEO Content — collapsed, crawlable ===== */}
       <SEOSections />
     </div>
   );

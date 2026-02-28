@@ -3,8 +3,10 @@ import Script from 'next/script';
 /**
  * SEO Content Sections
  *
- * Server-side rendered component for SEO optimization
- * Contains structured data, FAQ, glossary, and long-tail content
+ * Server-side rendered component for SEO optimization.
+ * JSON-LD structured data is invisible in <head>.
+ * All text content is collapsed in a <details> element —
+ * crawlable by search engines but hidden from users by default.
  */
 export function SEOSections() {
   const structuredData = {
@@ -101,267 +103,111 @@ export function SEOSections() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* SEO Hero Content */}
-      <section className="max-w-3xl mx-auto px-6 py-8 md:py-12">
-        <div className="prose prose-invert prose-lg max-w-none">
-          <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite mb-4 leading-tight">
-            ดูดวงออนไลน์ฟรี ด้วย AI - ผสานโหราศาสตร์ไทย × Bazi (ซื่อจู๋)
-          </h1>
-          <p className="text-ghostWhite/80 font-oracle text-base md:text-lg leading-relaxed mb-4">
-            <strong className="text-amethyst">สายมู</strong> คือแพลตฟอร์มดูดวงออนไลน์ที่ใช้ปัญญาประดิษฐ์ (AI)
-            วิเคราะห์ชะตาชีวิตของคุณด้วยโหราศาสตร์ไทยและ Bazi (ซื่อจู๋ - 四柱命理)
-            ศาสตร์โหราจีนโบราณที่มีความแม่นยำสูง รับคำทำนายเฉพาะบุคคลเกี่ยวกับ
-            <strong> ดวงความรัก การเงิน อาชีพการงาน</strong> และ<strong>เส้นทางชีวิต</strong>
-            โดยไม่เสียค่าใช้จ่าย
-          </p>
-          <p className="text-ashGray font-oracle text-sm md:text-base leading-relaxed">
-            ระบบของเราผสานภูมิปัญญาไทยดั้งเดิม เช่น ดูดวงตามวันเกิด นพเคราะห์ และจักรนพคุณ
-            เข้ากับ Bazi ที่วิเคราะห์จากเสาสี่เกิด (ปี เดือน วัน เวลา) และธาตุทั้งห้า
-            (ไม้ ไฟ ดิน โลหะ น้ำ) เพื่อให้คำแนะนำที่ครอบคลุมและลึกซึ้ง
-          </p>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="max-w-3xl mx-auto px-6 py-8 md:py-12">
-        <h2 className="text-2xl md:text-3xl font-heading text-ghostWhite mb-6">
-          วิธีการทำงานของระบบดูดวง AI
-        </h2>
-        <div className="space-y-6">
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-xl font-heading text-amethyst mb-3 flex items-center gap-2">
-              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-royalPurple/20 flex items-center justify-center text-sm">1</span>
-              กรอกข้อมูลเกิด
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              ระบุวันเดือนปีเกิด (ตามปฏิทินสากล) และเวลาเกิด (ถ้ารู้จะยิ่งแม่นยำ)
-              ระบบจะแปลงเป็นข้อมูล Bazi และคำนวณดวงชะตาไทยโดยอัตโนมัติ
-            </p>
-          </div>
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-xl font-heading text-amethyst mb-3 flex items-center gap-2">
-              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-royalPurple/20 flex items-center justify-center text-sm">2</span>
-              AI วิเคราะห์ชะตา
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              ปัญญาประดิษฐ์ของเราวิเคราะห์เสาสี่เกิด (ปี เดือน วัน ชั่วโมง) ธาตุทั้งห้า
-              และนพเคราะห์ในดวงชะตาไทย รวมถึงวงจรชีวิต 10 ปี (大運) และดวงประจำปี
-            </p>
-          </div>
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-xl font-heading text-amethyst mb-3 flex items-center gap-2">
-              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-royalPurple/20 flex items-center justify-center text-sm">3</span>
-              รับคำทำนายเฉพาะบุคคล
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              ได้รับคำทำนายที่ปรับแต่งเฉพาะคุณ ครอบคลุมทุกด้านของชีวิต: บุคลิกภาพ ความรัก การเงิน
-              อาชีพ สุขภาพ และคำแนะนำเพื่อพัฒนาตนเอง
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Features / Services */}
-      <section className="max-w-3xl mx-auto px-6 py-8 md:py-12">
-        <h2 className="text-2xl md:text-3xl font-heading text-ghostWhite mb-6">
-          บริการดูดวงครบวงจร
-        </h2>
-        <div className="space-y-5">
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-lg md:text-xl font-heading text-amethyst mb-2">
-              💕 ดูดวงความรัก - วิเคราะห์ชะตารัก
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              ตรวจสอบดวงความรักและความสัมพันธ์ วิเคราะห์ความเข้ากันได้กับคู่ครอง (ดูดวงคู่)
-              ดูจังหวะเวลาที่ดีสำหรับความรัก และคำแนะนำในการรักษาความสัมพันธ์ให้ยั่งยืน
-              ด้วยหลักโหราศาสตร์ไทยและ Bazi ที่วิเคราะห์ธาตุและนพเคราะห์ในดวงความรัก
-            </p>
-          </div>
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-lg md:text-xl font-heading text-amethyst mb-2">
-              💼 ดูดวงการงาน - เส้นทางอาชีพ
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              ค้นหาอาชีพที่เหมาะสมกับชะตาของคุณ วิเคราะห์จุดแข็ง จุดอ่อน และโอกาสในการทำงาน
-              ดูช่วงเวลาที่เหมาะสำหรับการเปลี่ยนงาน เริ่มธุรกิจ หรือขอเลื่อนตำแหน่ง
-              พร้อมคำแนะนำการพัฒนาทักษะตามธาตุในชาติ
-            </p>
-          </div>
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-lg md:text-xl font-heading text-amethyst mb-2">
-              💰 ดูดวงการเงิน - โชคลาภทรัพย์สิน
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              วิเคราะห์ดวงการเงินและโชคลาภ ดูโอกาสรับทรัพย์ ช่วงเวลาที่เหมาะสำหรับการลงทุน
-              และคำเตือนเรื่องการเงินที่ควรระวัง ตามหลัก Bazi และดวงชะตาไทยที่มองธาตุเงินทอง
-              พร้อมคำแนะนำในการเสริมดวงการเงิน
-            </p>
-          </div>
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-lg md:text-xl font-heading text-amethyst mb-2">
-              📅 ดูดวงประจำปี - วิเคราะห์ดวงรายปี
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              รับคำทำนายดวงประจำปีที่ครอบคลุมทุกด้าน วิเคราะห์โชคชะตาในแต่ละเดือน
-              ดูจังหวะเวลาที่ดีและช่วงที่ควรระวัง พร้อมคำแนะนำการเสริมดวงด้วยสี เลขมงคล
-              และวิธีการต่างๆ ตามหลัก Bazi และโหราศาสตร์ไทย
-            </p>
-          </div>
-          <div className="rounded-lg border border-darkPurple/30 p-5 md:p-6 bg-deepNight/40">
-            <h3 className="text-lg md:text-xl font-heading text-amethyst mb-2">
-              ⚖️ ดูดวงธาตุ - สมดุลห้าธาตุ
-            </h3>
-            <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-              ตรวจสอบความสมดุลของธาตุทั้งห้า (ไม้ ไฟ ดิน โลหะ น้ำ) ในชาติของคุณ
-              ดูธาตุที่ขาดหรือเกิน และรับคำแนะนำการปรับสมดุลธาตุด้วยสี อัญมณี ทิศทาง
-              และกิจกรรมต่างๆ เพื่อเสริมดวงและปรับปรุงคุณภาพชีวิต ตามหลัก Bazi
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="max-w-3xl mx-auto px-6 py-8 md:py-12">
-        <h2 className="text-2xl md:text-3xl font-heading text-ghostWhite mb-6">
-          คำถามที่พบบ่อย (FAQ)
-        </h2>
-        <div className="space-y-3">
-          {[
-            {
-              q: "สายมู คืออะไร?",
-              a: "สายมู เป็นแพลตฟอร์มดูดวงออนไลน์ที่ใช้ปัญญาประดิษฐ์ (AI) วิเคราะห์ชะตาชีวิตด้วยโหราศาสตร์ไทยและ Bazi (ซื่อจู๋) เพื่อให้คำทำนายที่แม่นยำและเฉพาะบุคคล"
-            },
-            {
-              q: "Bazi (ซื่อจู๋) คืออะไร?",
-              a: "Bazi หรือ ซื่อจู๋ (四柱命理) คือศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาจากเสาสี่เกิด (ปี เดือน วัน ชั่วโมง) และธาตุทั้งห้า (ไม้ ไฟ ดิน โลหะ น้ำ) เพื่อทำนายบุคลิก โชคลาภ และเส้นทางชีวิต"
-            },
-            {
-              q: "ดูดวงฟรีได้จริงหรือไม่?",
-              a: "ใช่ สายมู ให้บริการดูดวงออนไลน์ฟรี 100% คุณสามารถรับคำทำนายเบื้องต้นและดูดวงประจำวันได้โดยไม่เสียค่าใช้จ่าย"
-            },
-            {
-              q: "ต้องใช้ข้อมูลอะไรบ้างในการดูดวง?",
-              a: "ต้องใช้วันเดือนปีเกิด (วันที่เกิดตามปฏิทินสากล) และเวลาเกิด (ถ้ารู้จะแม่นยำกว่า) ระบบจะคำนวณ Bazi และดวงชะตาไทยให้โดยอัตโนมัติ"
-            },
-            {
-              q: "AI ดูดวงแม่นจริงหรือ?",
-              a: "AI ของเราได้รับการฝึกฝนด้วยหลักการโหราศาสตร์ไทยและ Bazi แบบดั้งเดิม ผสมผสานกับการวิเคราะห์ข้อมูลจำนวนมาก ให้คำทำนายที่สอดคล้องกับหลักโหราศาสตร์และปรับแต่งให้เข้ากับบริบทสมัยใหม่"
-            },
-            {
-              q: "ข้อมูลส่วนตัวปลอดภัยไหม?",
-              a: "เราใช้มาตรฐานความปลอดภัยระดับสูง เข้ารหัสข้อมูลทั้งหมด และไม่แชร์ข้อมูลส่วนตัวกับบุคคลที่สาม คุณสามารถลบข้อมูลได้ตลอดเวลา"
-            }
-          ].map((faq, index) => (
-            <details
-              key={index}
-              className="group rounded-lg border border-darkPurple/30 bg-deepNight/40 overflow-hidden"
+      {/* Collapsed SEO Content — crawlable but hidden from users */}
+      <section className="border-t border-darkPurple/20 mt-16">
+        <details className="max-w-3xl mx-auto px-6 py-8">
+          <summary className="cursor-pointer text-ashGray/50 text-sm font-oracle hover:text-ashGray/70 transition-colors list-none flex items-center gap-2">
+            <svg
+              className="w-4 h-4 transition-transform [[open]>&]:rotate-90"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <summary className="cursor-pointer p-4 md:p-5 font-heading text-ghostWhite hover:text-amethyst transition-colors list-none flex items-center justify-between">
-                <span className="text-base md:text-lg">{faq.q}</span>
-                <svg
-                  className="w-5 h-5 text-amethyst transition-transform group-open:rotate-180"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </summary>
-              <div className="px-4 md:px-5 pb-4 md:pb-5 text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-                {faq.a}
-              </div>
-            </details>
-          ))}
-        </div>
-      </section>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            เกี่ยวกับสายมู — ดูดวงออนไลน์ด้วย AI
+          </summary>
 
-      {/* Long-tail SEO Content */}
-      <section className="max-w-3xl mx-auto px-6 py-8 md:py-12">
-        <h2 className="text-2xl md:text-3xl font-heading text-ghostWhite mb-6">
-          ทำไมต้องดูดวงด้วย AI?
-        </h2>
-        <div className="prose prose-invert prose-lg max-w-none">
-          <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed mb-4">
-            การดูดวงด้วยปัญญาประดิษฐ์ (AI) นำเสนอมุมมองใหม่ในการทำนายชะตาชีวิต
-            ด้วยการผสมผสานระหว่างภูมิปัญญาโบราณกับเทคโนโลยีสมัยใหม่
-            AI สามารถวิเคราะห์ข้อมูลจำนวนมหาศาลและหารูปแบบที่ซับซ้อนได้อย่างรวดเร็ว
-            ทำให้สามารถให้คำทำนายที่ละเอียด ครอบคลุม และปรับแต่งเฉพาะบุคคลได้ดีกว่าการดูดวงแบบทั่วไป
-          </p>
-          <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-3 mt-6">
-            ความแตกต่างระหว่างโหราศาสตร์ไทยกับ Bazi
-          </h3>
-          <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed mb-4">
-            <strong>โหราศาสตร์ไทย</strong> เน้นการวิเคราะห์จากวันเกิด นพเคราะห์ และจักรนพคุณ
-            มักใช้ในการดูความสัมพันธ์ โชคลาภ และจังหวะเวลา มีความเชื่อมโยงกับวัฒนธรรมและความเชื่อไทย
-            เหมาะสำหรับการดูดวงรายวัน เลือกฤกษ์ยาม และตรวจสอบความเข้ากันได้
-          </p>
-          <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed mb-4">
-            <strong>Bazi (ซื่อจู๋)</strong> หรือ เสาสี่เกิด วิเคราะห์จากปี เดือน วัน และชั่วโมงเกิด
-            โดยแปลงเป็นธาตุและดาวทั้ง 60 องค์ ให้มุมมองที่ลึกซึ้งเกี่ยวกับบุคลิกภาพ พรสวรรค์ จุดแข็ง จุดอ่อน
-            และวงจรชีวิต 10 ปี (大運) เหมาะสำหรับการวางแผนชีวิตระยะยาว การเลือกอาชีพ
-            และการพัฒนาตนเอง
-          </p>
-          <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-3 mt-6">
-            ห้าธาตุใน Bazi มีความหมายอย่างไร?
-          </h3>
-          <ul className="space-y-3 text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-            <li className="flex items-start gap-2">
-              <span className="text-amethyst flex-shrink-0">🌳</span>
-              <span><strong>ธาตุไม้ (Wood):</strong> แทนการเติบโต ความคิดสร้างสรรค์ และความยืดหยุ่น คนที่มีธาตุไม้เด่นมักมีความคิดริเริ่ม มีจิตใจเมตตา</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-amethyst flex-shrink-0">🔥</span>
-              <span><strong>ธาตุไฟ (Fire):</strong> แทนพลังงาน ความกระตือรือร้น และความหลงใหล คนที่มีธาตุไฟเด่นมักมีบุคลิกโดดเด่น กล้าแสดงออก</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-amethyst flex-shrink-0">⛰️</span>
-              <span><strong>ธาตุดิน (Earth):</strong> แทนความมั่นคง ความน่าเชื่อถือ และการบำรุงเลี้ยง คนที่มีธาตุดินเด่นมักเป็นคนอดทน รักความสงบ</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-amethyst flex-shrink-0">⚙️</span>
-              <span><strong>ธาตุโลหะ (Metal):</strong> แทนความมีระเบียบ ความยุติธรรม และความแข็งแกร่ง คนที่มีธาตุโลหะเด่นมักมีหลักการ ชอบความเป็นระเบียบ</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-amethyst flex-shrink-0">💧</span>
-              <span><strong>ธาตุน้ำ (Water):</strong> แทนปัญญา ความลึกลับ และการปรับตัว คนที่มีธาตุน้ำเด่นมักมีสติปัญญาดี ชอบค้นคว้าหาความรู้</span>
-            </li>
-          </ul>
-          <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed mt-4">
-            ความสมดุลของธาตุทั้งห้านี้ส่งผลต่อบุคลิกภาพ โชคชะตา และเส้นทางชีวิตของคุณ
-            การเสริมธาตุที่ขาดหรือปรับธาตุที่เกินจะช่วยให้ชีวิตมีความสมดุลมากขึ้น
-          </p>
-        </div>
-      </section>
-
-      {/* Glossary */}
-      <section className="max-w-3xl mx-auto px-6 py-8 md:py-12 mb-12">
-        <h2 className="text-2xl md:text-3xl font-heading text-ghostWhite mb-6">
-          อภิธานศัพท์โหราศาสตร์
-        </h2>
-        <div className="grid gap-4">
-          {[
-            { term: "Bazi (ซื่อจู๋)", def: "ศาสตร์โหราจีนที่วิเคราะห์จากเสาสี่เกิด (ปี เดือน วัน ชั่วโมง)" },
-            { term: "เสาสี่เกิด", def: "สี่เสาหลักในดวงชะตา Bazi ประกอบด้วย เสาปี เสาเดือน เสาวัน และเสาชั่วโมง" },
-            { term: "ห้าธาตุ", def: "ไม้ ไฟ ดิน โลหะ น้ำ - องค์ประกอบพื้นฐานใน Bazi ที่สื่อถึงพลังงานและบุคลิก" },
-            { term: "นพเคราะห์", def: "เทพเจ้าทั้งเก้าในโหราศาสตร์ไทย ได้แก่ อาทิตย์ จันทร์ อังคาร พุธ พฤหัส ศุกร์ เสาร์ ราหู เกตุ" },
-            { term: "จักรนพคุณ", def: "วงจรโชคชะตาในโหราศาสตร์ไทย หมุนเวียนทุก 9 ปี" },
-            { term: "วงจร 10 ปี (大運)", def: "วงจรชะตาชีวิตใน Bazi ที่เปลี่ยนทุก 10 ปี บ่งบอกช่วงเวลาโชคดีและโชคร้าย" },
-            { term: "ดวงชะตา", def: "แผนภูมิโหราศาสตร์ที่แสดงตำแหน่งดาวและธาตุ ณ เวลาเกิด" },
-            { term: "ดูดวงคู่", def: "การวิเคราะห์ความเข้ากันได้ระหว่างสองคนด้วยการเปรียบเทียบดวงชะตา" }
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="rounded-lg border border-darkPurple/30 p-4 md:p-5 bg-deepNight/40"
-            >
-              <h3 className="text-base md:text-lg font-heading text-amethyst mb-2">
-                {item.term}
-              </h3>
-              <p className="text-ghostWhite/80 font-oracle text-sm md:text-base leading-relaxed">
-                {item.def}
+          <div className="mt-6 space-y-8 text-ashGray/40 text-xs leading-relaxed font-oracle">
+            {/* About */}
+            <div>
+              <h2 className="text-sm text-ashGray/50 font-heading mb-2">
+                ดูดวงออนไลน์ฟรี ด้วย AI — ผสานโหราศาสตร์ไทย × Bazi (ซื่อจู๋)
+              </h2>
+              <p>
+                สายมู คือแพลตฟอร์มดูดวงออนไลน์ที่ใช้ปัญญาประดิษฐ์ (AI)
+                วิเคราะห์ชะตาชีวิตของคุณด้วยโหราศาสตร์ไทยและ Bazi (ซื่อจู๋ - 四柱命理)
+                ศาสตร์โหราจีนโบราณที่มีความแม่นยำสูง รับคำทำนายเฉพาะบุคคลเกี่ยวกับ
+                ดวงความรัก การเงิน อาชีพการงาน และเส้นทางชีวิต โดยไม่เสียค่าใช้จ่าย
+              </p>
+              <p className="mt-2">
+                ระบบของเราผสานภูมิปัญญาไทยดั้งเดิม เช่น ดูดวงตามวันเกิด นพเคราะห์ และจักรนพคุณ
+                เข้ากับ Bazi ที่วิเคราะห์จากเสาสี่เกิด (ปี เดือน วัน เวลา) และธาตุทั้งห้า
+                (ไม้ ไฟ ดิน โลหะ น้ำ) เพื่อให้คำแนะนำที่ครอบคลุมและลึกซึ้ง
               </p>
             </div>
-          ))}
-        </div>
+
+            {/* How it works */}
+            <div>
+              <h2 className="text-sm text-ashGray/50 font-heading mb-2">วิธีการทำงาน</h2>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>กรอกข้อมูลเกิด — ระบุวันเดือนปีเกิดและเวลาเกิด ระบบจะแปลงเป็นข้อมูล Bazi และคำนวณดวงชะตาไทยโดยอัตโนมัติ</li>
+                <li>AI วิเคราะห์ชะตา — วิเคราะห์เสาสี่เกิด ธาตุทั้งห้า นพเคราะห์ และวงจรชีวิต 10 ปี (大運)</li>
+                <li>รับคำทำนายเฉพาะบุคคล — ครอบคลุมทุกด้าน: บุคลิกภาพ ความรัก การเงิน อาชีพ สุขภาพ และคำแนะนำ</li>
+              </ol>
+            </div>
+
+            {/* Services */}
+            <div>
+              <h2 className="text-sm text-ashGray/50 font-heading mb-2">บริการดูดวงครบวงจร</h2>
+              <ul className="space-y-1">
+                <li>ดูดวงความรัก — วิเคราะห์ชะตารัก ความเข้ากันได้กับคู่ครอง จังหวะเวลาความรัก</li>
+                <li>ดูดวงการงาน — อาชีพที่เหมาะสม จุดแข็ง-จุดอ่อน โอกาสในการทำงาน</li>
+                <li>ดูดวงการเงิน — โชคลาภ ช่วงเวลาลงทุน คำเตือนเรื่องการเงิน</li>
+                <li>ดูดวงประจำปี — คำทำนายรายปี จังหวะเวลาดี-ร้าย สีและเลขมงคล</li>
+                <li>ดูดวงธาตุ — สมดุลห้าธาตุ คำแนะนำเสริมดวงด้วยสี อัญมณี ทิศทาง</li>
+              </ul>
+            </div>
+
+            {/* Five elements */}
+            <div>
+              <h2 className="text-sm text-ashGray/50 font-heading mb-2">ห้าธาตุใน Bazi</h2>
+              <ul className="space-y-1">
+                <li>ธาตุไม้ (Wood) — การเติบโต ความคิดสร้างสรรค์ ความยืดหยุ่น</li>
+                <li>ธาตุไฟ (Fire) — พลังงาน ความกระตือรือร้น ความหลงใหล</li>
+                <li>ธาตุดิน (Earth) — ความมั่นคง ความน่าเชื่อถือ การบำรุงเลี้ยง</li>
+                <li>ธาตุโลหะ (Metal) — ความมีระเบียบ ความยุติธรรม ความแข็งแกร่ง</li>
+                <li>ธาตุน้ำ (Water) — ปัญญา ความลึกลับ การปรับตัว</li>
+              </ul>
+            </div>
+
+            {/* Thai vs Bazi */}
+            <div>
+              <h2 className="text-sm text-ashGray/50 font-heading mb-2">ความแตกต่างระหว่างโหราศาสตร์ไทยกับ Bazi</h2>
+              <p>
+                โหราศาสตร์ไทยเน้นวิเคราะห์จากวันเกิด นพเคราะห์ จักรนพคุณ ใช้ดูความสัมพันธ์ โชคลาภ จังหวะเวลา
+                Bazi (ซื่อจู๋) วิเคราะห์จากเสาสี่เกิดและธาตุทั้ง 60 องค์ ให้มุมมองลึกเรื่องบุคลิกภาพ พรสวรรค์ วงจรชีวิต 10 ปี
+                เหมาะสำหรับวางแผนชีวิตระยะยาว
+              </p>
+            </div>
+
+            {/* FAQ */}
+            <div>
+              <h2 className="text-sm text-ashGray/50 font-heading mb-2">คำถามที่พบบ่อย</h2>
+              <dl className="space-y-2">
+                <div><dt className="text-ashGray/50">สายมู คืออะไร?</dt><dd>แพลตฟอร์มดูดวงออนไลน์ด้วย AI ผสานโหราศาสตร์ไทยและ Bazi</dd></div>
+                <div><dt className="text-ashGray/50">ดูดวงฟรีได้จริงหรือไม่?</dt><dd>ใช่ ให้บริการฟรี 100% รับคำทำนายเบื้องต้นและดูดวงประจำวันได้ไม่เสียค่าใช้จ่าย</dd></div>
+                <div><dt className="text-ashGray/50">ต้องใช้ข้อมูลอะไร?</dt><dd>วันเดือนปีเกิดและเวลาเกิด ระบบคำนวณ Bazi และดวงชะตาไทยอัตโนมัติ</dd></div>
+                <div><dt className="text-ashGray/50">AI ดูดวงแม่นจริงหรือ?</dt><dd>ฝึกฝนด้วยหลักโหราศาสตร์ดั้งเดิม ผสมการวิเคราะห์ข้อมูล ให้คำทำนายสอดคล้องกับหลักโหราศาสตร์</dd></div>
+                <div><dt className="text-ashGray/50">ข้อมูลส่วนตัวปลอดภัยไหม?</dt><dd>เข้ารหัสข้อมูลทั้งหมด ไม่แชร์กับบุคคลที่สาม ลบข้อมูลได้ตลอดเวลา</dd></div>
+              </dl>
+            </div>
+
+            {/* Glossary */}
+            <div>
+              <h2 className="text-sm text-ashGray/50 font-heading mb-2">อภิธานศัพท์โหราศาสตร์</h2>
+              <dl className="space-y-1">
+                <div><dt className="text-ashGray/50 inline">Bazi (ซื่อจู๋):</dt> <dd className="inline">ศาสตร์โหราจีนวิเคราะห์จากเสาสี่เกิด</dd></div>
+                <div><dt className="text-ashGray/50 inline">เสาสี่เกิด:</dt> <dd className="inline">สี่เสาหลักในดวงชะตา Bazi — เสาปี เสาเดือน เสาวัน เสาชั่วโมง</dd></div>
+                <div><dt className="text-ashGray/50 inline">ห้าธาตุ:</dt> <dd className="inline">ไม้ ไฟ ดิน โลหะ น้ำ — องค์ประกอบพื้นฐานใน Bazi</dd></div>
+                <div><dt className="text-ashGray/50 inline">นพเคราะห์:</dt> <dd className="inline">เทพเจ้าทั้งเก้าในโหราศาสตร์ไทย</dd></div>
+                <div><dt className="text-ashGray/50 inline">จักรนพคุณ:</dt> <dd className="inline">วงจรโชคชะตาหมุนเวียนทุก 9 ปี</dd></div>
+                <div><dt className="text-ashGray/50 inline">วงจร 10 ปี (大運):</dt> <dd className="inline">วงจรชะตาชีวิตใน Bazi เปลี่ยนทุก 10 ปี</dd></div>
+                <div><dt className="text-ashGray/50 inline">ดูดวงคู่:</dt> <dd className="inline">วิเคราะห์ความเข้ากันได้ระหว่างสองคน</dd></div>
+              </dl>
+            </div>
+          </div>
+        </details>
       </section>
     </>
   );

@@ -24,10 +24,36 @@
 
   /* Custom Animations */
   --animate-glow: glow 1.5s ease-in-out infinite;
+  --animate-ctaGlow: ctaGlow 3s ease-in-out infinite;
+  --animate-float-1: float-1 6s ease-in-out infinite;
+  --animate-float-2: float-2 8s ease-in-out infinite;
+  --animate-float-3: float-3 7s ease-in-out infinite;
 
   @keyframes glow {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
+  }
+
+  @keyframes ctaGlow {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.08); }
+  }
+
+  @keyframes float-1 {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    33% { transform: translateY(-30px) translateX(10px); }
+    66% { transform: translateY(-15px) translateX(-8px); }
+  }
+
+  @keyframes float-2 {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-20px) translateX(-15px); }
+    75% { transform: translateY(-35px) translateX(12px); }
+  }
+
+  @keyframes float-3 {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-25px) translateX(-10px); }
   }
 }
 
@@ -47,6 +73,15 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-heading);
   }
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Film grain overlay - applied globally */

@@ -8,7 +8,7 @@ import { StepGender } from './step-gender';
 import { StepBirthTime } from './step-birth-time';
 import { StepTeaser } from './step-teaser';
 import { StepAuth } from './step-auth';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 

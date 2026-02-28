@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === 'development') {
 
 export const authClient = createAuthClient({
   baseURL: apiUrl,
+  basePath: '/api/auth', // Explicitly set the base path for auth endpoints
   // Enable credentials for cross-origin requests
   fetchOptions: {
     credentials: 'include',

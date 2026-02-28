@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, Button, Input } from '@/lib-packages/ui';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { THAI_MONTHS, BE_OFFSET, toGregorianYear } from '@/lib-packages/shared';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 
 /**
  * Compatibility / เข้าใจดวงของทั้งสองคน
@@ -30,15 +30,11 @@ export default function CompatibilityPage() {
   const [compatibilityResult, setCompatibilityResult] = useState<any>(null);
   const [error, setError] = useState('');
 
-  // Date picker state
+  // Date picker state - simple numbers instead of select wheels
   const currentYear = new Date().getFullYear() + BE_OFFSET;
-  const [day, setDay] = useState(1);
-  const [month, setMonth] = useState(0);
-  const [year, setYear] = useState(currentYear - 25);
-
-  const dayRef = useRef<HTMLSelectElement>(null);
-  const monthRef = useRef<HTMLSelectElement>(null);
-  const yearRef = useRef<HTMLSelectElement>(null);
+  const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
 
   // Redirect unauthenticated users to login
   useEffect(() => {
@@ -46,27 +42,6 @@ export default function CompatibilityPage() {
       router.push('/login');
     }
   }, [session, sessionLoading, router]);
-
-  // Center the selected option in the viewport
-  const centerSelectedOption = (selectElement: HTMLSelectElement | null) => {
-    if (!selectElement) return;
-
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    if (!selectedOption) return;
-
-    const optionHeight = selectedOption.offsetHeight;
-    const selectHeight = selectElement.clientHeight;
-    const scrollTo = selectedOption.offsetTop - (selectHeight / 2) + (optionHeight / 2);
-
-    selectElement.scrollTop = scrollTo;
-  };
-
-  // Center options when values change
-  useEffect(() => {
-    centerSelectedOption(dayRef.current);
-    centerSelectedOption(monthRef.current);
-    centerSelectedOption(yearRef.current);
-  }, [day, month, year]);
 
   // Show loading state while checking session
   if (sessionLoading || !session) {
@@ -89,8 +64,33 @@ export default function CompatibilityPage() {
   }
 
   const handleCalculate = async () => {
+    // Validation
     if (!partnerName.trim()) {
       setError('กรุณากรอกชื่อคู่ของเจ้า');
+      return;
+    }
+
+    const dayNum = parseInt(day);
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
+
+    if (!day || !month || !year) {
+      setError('กรุณากรอกวันเกิดให้ครบถ้วน');
+      return;
+    }
+
+    if (dayNum < 1 || dayNum > 31) {
+      setError('วันที่ไม่ถูกต้อง (1-31)');
+      return;
+    }
+
+    if (monthNum < 1 || monthNum > 12) {
+      setError('เดือนไม่ถูกต้อง (1-12)');
+      return;
+    }
+
+    if (yearNum < 2400 || yearNum > currentYear) {
+      setError(`ปี พ.ศ. ไม่ถูกต้อง (2400-${currentYear})`);
       return;
     }
 
@@ -109,10 +109,10 @@ export default function CompatibilityPage() {
       setCalculationStep('ประมวลผลความสัมพันธ์...');
 
       // Convert BE year to Gregorian
-      const gregorianYear = toGregorianYear(year);
-      const birthDate = new Date(gregorianYear, month, day);
+      const gregorianYear = toGregorianYear(yearNum);
+      const birthDate = new Date(gregorianYear, monthNum - 1, dayNum);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/fortune/compatibility`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortune/compatibility`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -176,23 +176,34 @@ export default function CompatibilityPage() {
 
   if (hasResult && compatibilityResult) {
     return (
-      <div className="min-h-screen p-6">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
+      <div className="min-h-screen p-4 md:p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Header with Back Button */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center space-y-2"
+            className="space-y-4"
           >
-            <h1 className="text-4xl font-heading text-ghostWhite">เข้าใจดวงของทั้งสองคน</h1>
-            <p className="text-ashGray">ความสัมพันธ์ระหว่างเจ้าและ {partnerName}</p>
+            <Button
+              variant="ghost"
+              onClick={() => setHasResult(false)}
+              className="text-ashGray hover:text-ghostWhite -ml-2"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              ดูดวงอีกครั้ง
+            </Button>
+
+            <div className="text-center space-y-2">
+              <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite">เข้าใจดวงของทั้งสองคน</h1>
+              <p className="text-ashGray">ความสัมพันธ์ระหว่างเจ้าและ {partnerName}</p>
+            </div>
           </motion.div>
 
           {/* Element Interaction */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1 }}
           >
             <Card className="bg-gradient-to-br from-darkPurple to-deepNight">
               <CardHeader>
@@ -216,7 +227,7 @@ export default function CompatibilityPage() {
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ delay: 0.4, type: 'spring' }}
+                      transition={{ delay: 0.3, type: 'spring' }}
                       className="text-4xl"
                     >
                       ⟷
@@ -243,48 +254,48 @@ export default function CompatibilityPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-6"
+            transition={{ delay: 0.2 }}
+            className="space-y-4"
           >
             {/* Complementary Strengths */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <span className="text-xl">✨</span>
                   <span>พลังที่เติมเต็มกัน</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-4">
+                <ul className="space-y-3">
                   <li className="flex items-start gap-3">
-                    <span className="text-emerald-400 mt-1 text-lg">●</span>
+                    <span className="text-emerald-400 mt-1 text-lg flex-shrink-0">●</span>
                     <div>
                       <p className="text-ghostWhite font-medium mb-1">
                         ธาตุสนับสนุนกัน
                       </p>
-                      <p className="text-ashGray leading-relaxed">
+                      <p className="text-ashGray leading-relaxed text-sm md:text-base">
                         องค์ประกอบธาตุของทั้งสองคนช่วยเสริมพลังให้กัน ทำให้เกิดความเข้าใจที่ดี
                       </p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-emerald-400 mt-1 text-lg">●</span>
+                    <span className="text-emerald-400 mt-1 text-lg flex-shrink-0">●</span>
                     <div>
                       <p className="text-ghostWhite font-medium mb-1">
                         จุดแข็งเสริมจุดอ่อน
                       </p>
-                      <p className="text-ashGray leading-relaxed">
+                      <p className="text-ashGray leading-relaxed text-sm md:text-base">
                         จุดแข็งของคนหนึ่งช่วยเติมเต็มจุดที่อีกคนต้องการการสนับสนุน
                       </p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-emerald-400 mt-1 text-lg">●</span>
+                    <span className="text-emerald-400 mt-1 text-lg flex-shrink-0">●</span>
                     <div>
                       <p className="text-ghostWhite font-medium mb-1">
                         เป้าหมายที่สอดคล้อง
                       </p>
-                      <p className="text-ashGray leading-relaxed">
+                      <p className="text-ashGray leading-relaxed text-sm md:text-base">
                         ทั้งสองมีทิศทางในชีวิตที่ไปในทางเดียวกัน
                       </p>
                     </div>
@@ -296,31 +307,31 @@ export default function CompatibilityPage() {
             {/* Things to Understand */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <span className="text-xl">💭</span>
                   <span>สิ่งที่ควรเข้าใจ</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-4">
+                <ul className="space-y-3">
                   <li className="flex items-start gap-3">
-                    <span className="text-blue-400 mt-1 text-lg">●</span>
+                    <span className="text-blue-400 mt-1 text-lg flex-shrink-0">●</span>
                     <div>
                       <p className="text-ghostWhite font-medium mb-1">
                         วิธีตัดสินใจที่แตกต่าง
                       </p>
-                      <p className="text-ashGray leading-relaxed">
+                      <p className="text-ashGray leading-relaxed text-sm md:text-base">
                         ทั้งสองคนอาจมีวิธีคิดและตัดสินใจที่ไม่เหมือนกัน ซึ่งเป็นเรื่องปกติ
                       </p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-blue-400 mt-1 text-lg">●</span>
+                    <span className="text-blue-400 mt-1 text-lg flex-shrink-0">●</span>
                     <div>
                       <p className="text-ghostWhite font-medium mb-1">
                         ความต้องการพื้นที่ส่วนตัว
                       </p>
-                      <p className="text-ashGray leading-relaxed">
+                      <p className="text-ashGray leading-relaxed text-sm md:text-base">
                         การให้พื้นที่แก่กันจะช่วยสร้างสมดุลที่ดีในความสัมพันธ์
                       </p>
                     </div>
@@ -332,7 +343,7 @@ export default function CompatibilityPage() {
             {/* Recommendations */}
             <Card className="bg-gradient-to-br from-royalPurple/10 to-amethyst/5 border-royalPurple/30">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <span className="text-xl">💡</span>
                   <span>คำแนะนำ</span>
                 </CardTitle>
@@ -340,20 +351,20 @@ export default function CompatibilityPage() {
               <CardContent>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
-                    <span className="text-amethyst">→</span>
-                    <p className="text-ghostWhite/90 leading-relaxed">
+                    <span className="text-amethyst flex-shrink-0">→</span>
+                    <p className="text-ghostWhite/90 leading-relaxed text-sm md:text-base">
                       สื่อสารอย่างตรงไปตรงมา เปิดใจรับฟังความคิดเห็นของกัน
                     </p>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-amethyst">→</span>
-                    <p className="text-ghostWhite/90 leading-relaxed">
+                    <span className="text-amethyst flex-shrink-0">→</span>
+                    <p className="text-ghostWhite/90 leading-relaxed text-sm md:text-base">
                       ยอมรับและเคารพความแตกต่างของกัน
                     </p>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-amethyst">→</span>
-                    <p className="text-ghostWhite/90 leading-relaxed">
+                    <span className="text-amethyst flex-shrink-0">→</span>
+                    <p className="text-ghostWhite/90 leading-relaxed text-sm md:text-base">
                       ใช้จุดแข็งของแต่ละคนเพื่อสนับสนุนกัน
                     </p>
                   </li>
@@ -366,12 +377,21 @@ export default function CompatibilityPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.3 }}
+            className="space-y-3"
           >
             <Button
               size="lg"
               variant="outline"
               className="w-full"
+              onClick={() => setHasResult(false)}
+            >
+              ดูดวงคู่อีกครั้ง
+            </Button>
+            <Button
+              size="lg"
+              variant="ghost"
+              className="w-full text-ashGray"
               onClick={() => router.push('/dashboard')}
             >
               กลับสู่หน้าหลัก
@@ -383,37 +403,47 @@ export default function CompatibilityPage() {
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-2xl mx-auto space-y-8">
+    <div className="min-h-screen p-4 md:p-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
+          className="space-y-4"
         >
-          <h1 className="text-4xl font-heading text-ghostWhite">เข้าใจดวงของทั้งสองคน</h1>
+          <Button
+            variant="ghost"
+            onClick={() => router.push('/dashboard')}
+            className="text-ashGray hover:text-ghostWhite -ml-2"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            กลับ
+          </Button>
 
-          {/* Value Proposition */}
-          <div className="bg-darkPurple/20 border border-royalPurple/30 rounded-xl p-6 space-y-4">
-            <h3 className="text-xl font-heading text-amethyst">
-              ค้นพบความลับของความสัมพันธ์
-            </h3>
-            <ul className="text-left space-y-2 text-ashGray text-base">
-              <li className="flex items-start gap-2">
-                <span className="text-amethyst mt-1">✨</span>
-                <span>วิเคราะห์ธาตุและดาวประจำวันเกิดของทั้งสองคน</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-amethyst mt-1">💡</span>
-                <span>รับคำแนะนำเฉพาะตัวสำหรับความสัมพันธ์</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-amethyst mt-1">🎯</span>
-                <span>เข้าใจจุดแข็งและสิ่งที่ควรระวัง</span>
-              </li>
-            </ul>
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite">เข้าใจดวงของทั้งสองคน</h1>
+
+            {/* Value Proposition */}
+            <div className="bg-darkPurple/20 border border-royalPurple/30 rounded-xl p-4 md:p-6 space-y-3">
+              <h3 className="text-lg md:text-xl font-heading text-amethyst">
+                ค้นพบความลับของความสัมพันธ์
+              </h3>
+              <ul className="text-left space-y-2 text-ashGray text-sm md:text-base">
+                <li className="flex items-start gap-2">
+                  <span className="text-amethyst mt-1 flex-shrink-0">✨</span>
+                  <span>วิเคราะห์ธาตุและดาวประจำวันเกิดของทั้งสองคน</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amethyst mt-1 flex-shrink-0">💡</span>
+                  <span>รับคำแนะนำเฉพาะตัวสำหรับความสัมพันธ์</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amethyst mt-1 flex-shrink-0">🎯</span>
+                  <span>เข้าใจจุดแข็งและสิ่งที่ควรระวัง</span>
+                </li>
+              </ul>
+            </div>
           </div>
-
         </motion.div>
 
         {/* Error Display */}
@@ -423,18 +453,18 @@ export default function CompatibilityPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-red-500/10 border border-red-500/30 rounded-xl p-4"
           >
-            <p className="text-red-400 text-center">{error}</p>
+            <p className="text-red-400 text-center text-sm md:text-base">{error}</p>
           </motion.div>
         )}
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.1 }}
         >
           <Card>
             <CardHeader>
-              <CardTitle>กรอกข้อมูลคู่ของเจ้า</CardTitle>
+              <CardTitle className="text-lg md:text-xl">กรอกข้อมูลคู่ของเจ้า</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -443,87 +473,66 @@ export default function CompatibilityPage() {
                   value={partnerName}
                   onChange={(e) => setPartnerName(e.target.value)}
                   placeholder="ชื่อคู่ของเจ้า"
+                  className="text-base"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-ashGray mb-2">
+                <label className="block text-sm text-ashGray mb-3">
                   วันเกิด
                 </label>
-                {/* Date Picker Wheels */}
-                <div className="flex gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   {/* Day */}
-                  <div className="flex-1 relative">
-                    <label className="block text-xs text-ashGray/70 mb-1 text-center">
+                  <div>
+                    <label className="block text-xs text-ashGray/70 mb-2 text-center">
                       วัน
                     </label>
-                    <div className="relative">
-                      {/* Center highlight overlay */}
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
-                      <select
-                        ref={dayRef}
-                        value={day}
-                        onChange={(e) => setDay(parseInt(e.target.value))}
-                        className="w-full h-40 bg-deepNight border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                        size={5}
-                      >
-                        {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                          <option key={d} value={d} className="py-1.5">
-                            {d}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <Input
+                      type="number"
+                      value={day}
+                      onChange={(e) => setDay(e.target.value)}
+                      placeholder="1-31"
+                      min="1"
+                      max="31"
+                      className="text-center text-base"
+                    />
                   </div>
 
                   {/* Month */}
-                  <div className="flex-1 relative">
-                    <label className="block text-xs text-ashGray/70 mb-1 text-center">
+                  <div>
+                    <label className="block text-xs text-ashGray/70 mb-2 text-center">
                       เดือน
                     </label>
-                    <div className="relative">
-                      {/* Center highlight overlay */}
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
-                      <select
-                        ref={monthRef}
-                        value={month}
-                        onChange={(e) => setMonth(parseInt(e.target.value))}
-                        className="w-full h-40 bg-deepNight border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                        size={5}
-                      >
-                        {THAI_MONTHS.map((m, i) => (
-                          <option key={i} value={i} className="py-1.5">
-                            {m}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <Input
+                      type="number"
+                      value={month}
+                      onChange={(e) => setMonth(e.target.value)}
+                      placeholder="1-12"
+                      min="1"
+                      max="12"
+                      className="text-center text-base"
+                    />
                   </div>
 
                   {/* Year (Buddhist Era) */}
-                  <div className="flex-1 relative">
-                    <label className="block text-xs text-ashGray/70 mb-1 text-center">
+                  <div>
+                    <label className="block text-xs text-ashGray/70 mb-2 text-center">
                       พ.ศ.
                     </label>
-                    <div className="relative">
-                      {/* Center highlight overlay */}
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
-                      <select
-                        ref={yearRef}
-                        value={year}
-                        onChange={(e) => setYear(parseInt(e.target.value))}
-                        className="w-full h-40 bg-deepNight border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                        size={5}
-                      >
-                        {Array.from({ length: 70 }, (_, i) => currentYear - i).map((y) => (
-                          <option key={y} value={y} className="py-1.5">
-                            {y}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <Input
+                      type="number"
+                      value={year}
+                      onChange={(e) => setYear(e.target.value)}
+                      placeholder={currentYear.toString()}
+                      min="2400"
+                      max={currentYear}
+                      className="text-center text-base"
+                    />
                   </div>
                 </div>
+                <p className="text-xs text-ashGray/60 mt-2 text-center">
+                  ตัวอย่าง: วันที่ 15 เดือน 6 พ.ศ. 2540
+                </p>
               </div>
 
               <Button

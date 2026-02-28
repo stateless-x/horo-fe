@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFortuneGeneration } from '@/hooks/use-fortune-generation';
 import { useFortuneData } from '@/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
@@ -16,6 +17,7 @@ import { FortuneReadingsSection } from '@/components/chart/fortune-readings-sect
 import { RecommendationsSection } from '@/components/chart/recommendations-section';
 import { StickyActionBar } from '@/components/chart/sticky-action-bar';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
+import { api } from '@/lib/api';
 
 /**
  * Fortune Chart Page (Redesigned Dashboard)
@@ -37,6 +39,8 @@ import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
  */
 export default function FortuneChartPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   // State management
   const { loadingState, error, setShareStatus } = useFortuneStore();
@@ -76,9 +80,27 @@ export default function FortuneChartPage() {
     }
   };
 
-  // Handle new reading action
-  const handleNewReading = () => {
-    router.push('/fortune');
+  // Handle new reading action - regenerate with same birth data
+  const handleNewReading = async () => {
+    if (isRegenerating) return;
+
+    try {
+      setIsRegenerating(true);
+
+      // Call backend to clear cache and regenerate
+      await api.delete('/fortune/chart/regenerate');
+
+      // Invalidate and refetch the chart data
+      await queryClient.invalidateQueries({ queryKey: ['fortune', 'chart'] });
+
+      console.log('[FortuneChart] Successfully regenerated new reading');
+    } catch (err) {
+      console.error('[FortuneChart] Regenerate failed:', err);
+      // Fallback: redirect to onboarding if regenerate fails
+      router.push('/fortune');
+    } finally {
+      setIsRegenerating(false);
+    }
   };
 
   // Show loading skeleton while initializing or generating
@@ -176,7 +198,11 @@ export default function FortuneChartPage() {
       </div>
 
       {/* Sticky Action Bar */}
-      <StickyActionBar onShare={handleShare} onNewReading={handleNewReading} />
+      <StickyActionBar
+        onShare={handleShare}
+        onNewReading={handleNewReading}
+        isRegenerating={isRegenerating}
+      />
     </div>
   );
 }

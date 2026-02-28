@@ -51,7 +51,8 @@ export function StepBirthDate() {
   const handleSubmit = () => {
     // Convert Buddhist Era to Gregorian
     const gregorianYear = toGregorianYear(year);
-    const date = new Date(gregorianYear, month, day);
+    // Use UTC to prevent timezone conversion issues (store as UTC midnight)
+    const date = new Date(Date.UTC(gregorianYear, month, day));
 
     updateProfile({
       birthDate: date.toISOString(),

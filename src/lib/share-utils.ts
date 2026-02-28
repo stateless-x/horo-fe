@@ -10,10 +10,6 @@ export interface ShareData {
   element?: string;
   luckyColor?: string;
   luckyNumber?: number;
-  // Compatibility sharing
-  type?: 'fortune' | 'compatibility';
-  partnerName?: string;
-  score?: number;
 }
 
 /**
@@ -23,34 +19,8 @@ export function generateShareText(
   platform: SharePlatform,
   data: ShareData
 ): string {
-  const { userName, element, luckyColor, luckyNumber, url, type = 'fortune', partnerName, score } = data;
+  const { userName, element, luckyColor, luckyNumber, url } = data;
 
-  // Compatibility sharing
-  if (type === 'compatibility') {
-    switch (platform) {
-      case 'line':
-        return `ดูดวงคู่ของ ${userName} และ ${partnerName}
-คะแนนความเข้ากัน: ${score}/100
-ดูผลลัพธ์ฉบับเต็มได้ที่ ${url}`;
-
-      case 'facebook':
-        return `ฉันกับ ${partnerName} ดวงเข้ากัน ${score} คะแนน! มาดูดวงคู่ของเจ้ากันเถอะ`;
-
-      case 'twitter':
-        return `ดูดวงคู่ของ ${userName} และ ${partnerName}
-คะแนน: ${score}/100
-
-มาดูดวงคู่ของเจ้ากันเถอะ! ${url}`;
-
-      case 'copy':
-        return url;
-
-      default:
-        return '';
-    }
-  }
-
-  // Fortune sharing (default)
   switch (platform) {
     case 'line':
       return `ดวงชะตาของ ${userName}

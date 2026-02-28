@@ -1,58 +1,50 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, UserPlus, Edit3 } from 'lucide-react';
+import { Heart } from 'lucide-react';
+import { Button } from '@/lib-packages/ui';
 
 export function CompatibilityCTA() {
   return (
-    <div className="bg-gradient-to-r from-pink-500/10 to-amethyst/10 border border-pink-500/20 rounded-2xl p-6">
-      {/* Header */}
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <Heart className="text-pink-400 w-6 h-6" />
-        <h3 className="font-heading text-xl font-medium text-ghostWhite">
-          ดูดวงคู่ — ดวงของเจ้าเข้ากับใครได้บ้าง?
-        </h3>
-      </div>
+    <Link href="/dashboard/compatibility">
+      <div className="bg-gradient-to-r from-pink-500/10 to-amethyst/10 border border-pink-500/20 rounded-2xl p-6 transition-all duration-200 hover:border-pink-500/40 hover:shadow-lg hover:shadow-pink-500/10 cursor-pointer group">
+        {/* Header */}
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <Heart className="text-pink-400 w-6 h-6 group-hover:scale-110 transition-transform" />
+          <h3 className="font-heading text-xl font-medium text-ghostWhite">
+            เข้าใจดวงของทั้งสองคน
+          </h3>
+        </div>
 
-      {/* Description */}
-      <p className="font-thai text-base text-ashGray text-center mb-6">
-        เลือกวิธีเช็คดวงคู่:
-      </p>
+        {/* Description */}
+        <p className="font-thai text-base text-ashGray text-center mb-4">
+          วิเคราะห์ความสัมพันธ์ผ่านพลังธาตุและดาวประจำวัน
+        </p>
 
-      {/* Options */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Direct entry */}
-        <Link
-          href="/dashboard/compatibility"
-          className="bg-charcoal border border-darkPurple/50 rounded-xl p-5 flex flex-col items-center gap-3 transition-all duration-200 hover:border-pink-500/50 hover:bg-darkPurple/20 group"
+        {/* Features */}
+        <ul className="space-y-2 mb-4 text-sm text-ashGray">
+          <li className="flex items-start gap-2">
+            <span className="text-pink-400 mt-0.5">✨</span>
+            <span>วิเคราะห์ธาตุของทั้งสองคน</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-pink-400 mt-0.5">💡</span>
+            <span>เข้าใจจุดแข็งและสิ่งที่ควรระวัง</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-pink-400 mt-0.5">🎯</span>
+            <span>รับคำแนะนำเฉพาะตัว</span>
+          </li>
+        </ul>
+
+        {/* CTA Button */}
+        <Button
+          className="w-full bg-gradient-to-r from-pink-500 to-amethyst hover:from-pink-600 hover:to-purple-600"
+          size="lg"
         >
-          <Edit3 className="text-pink-400 w-8 h-8 group-hover:scale-110 transition-transform" />
-          <div className="text-center">
-            <h4 className="font-heading text-base font-medium text-ghostWhite mb-1">
-              ใส่ข้อมูลคู่เอง
-            </h4>
-            <p className="font-thai text-sm text-ashGray">
-              กรอกวันเกิดคู่ของเจ้า
-            </p>
-          </div>
-        </Link>
-
-        {/* Invite flow */}
-        <Link
-          href="/dashboard/compatibility?invite=true"
-          className="bg-charcoal border border-darkPurple/50 rounded-xl p-5 flex flex-col items-center gap-3 transition-all duration-200 hover:border-pink-500/50 hover:bg-darkPurple/20 group"
-        >
-          <UserPlus className="text-amethyst w-8 h-8 group-hover:scale-110 transition-transform" />
-          <div className="text-center">
-            <h4 className="font-heading text-base font-medium text-ghostWhite mb-1">
-              ส่งลิงก์ให้คู่กรอก
-            </h4>
-            <p className="font-thai text-sm text-ashGray">
-              ให้คู่ของเจ้ากรอกเอง
-            </p>
-          </div>
-        </Link>
+          ดูดวงคู่
+        </Button>
       </div>
-    </div>
+    </Link>
   );
 }

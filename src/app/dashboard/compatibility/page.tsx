@@ -90,8 +90,9 @@ export default function CompatibilityPage() {
 
       // Convert BE year to Gregorian
       const gregorianYear = toGregorianYear(yearNum);
-      // monthNum is 1-12, but Date expects 0-11
-      const birthDate = new Date(gregorianYear, monthNum - 1, dayNum);
+      // Create date in UTC to avoid timezone issues
+      // monthNum is 1-12, but Date.UTC expects 0-11
+      const birthDate = new Date(Date.UTC(gregorianYear, monthNum - 1, dayNum));
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortune/compatibility`, {
         method: 'POST',

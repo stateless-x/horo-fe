@@ -131,7 +131,7 @@ export default function DashboardPage() {
           className="text-center space-y-2"
         >
           <p className="text-paleOrchid font-oracle">
-            สวัสดี, {session.user.name || "เจ้า"}
+            สวัสดี, {(session.user as any).displayName || session.user.name || "เจ้า"}
           </p>
           <h1 className="text-4xl font-heading text-ghostWhite">
             ดวงชะตาวันนี้

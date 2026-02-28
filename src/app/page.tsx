@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { ClientDate } from '@/components/client-date';
+import { SEOSections } from '@/components/seo/seo-sections';
 
 /**
  * Landing Page
@@ -398,6 +399,9 @@ export default function LandingPage() {
           </Link>
         </motion.div>
       </section>
+
+      {/* SEO Content Sections - Server-side rendered for search engines */}
+      <SEOSections />
     </div>
   );
 }

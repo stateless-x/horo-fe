@@ -77,17 +77,18 @@ export default function SettingsPage() {
 
         // Set birth profile data if exists
         if (response.profile) {
-          const birthDate = new Date(response.profile.birthDate);
+          const profile = response.profile; // Store in const for TypeScript null check
+          const birthDate = new Date(profile.birthDate);
           setDay(birthDate.getDate());
           setMonth(birthDate.getMonth());
           setYear(toBuddhistYear(birthDate.getFullYear()));
-          setGender(response.profile.gender as Gender);
-          setIsTimeUnknown(response.profile.isTimeUnknown);
+          setGender(profile.gender as Gender);
+          setIsTimeUnknown(profile.isTimeUnknown);
 
           // Find matching time period
-          if (!response.profile.isTimeUnknown && response.profile.birthHour !== null) {
+          if (!profile.isTimeUnknown && profile.birthHour !== null) {
             const periodIndex = THAI_TIME_PERIODS.findIndex(
-              (p) => p.chineseHour === response.profile.birthHour
+              (p) => p.chineseHour === profile.birthHour
             );
             if (periodIndex >= 0) {
               setSelectedTimePeriod(periodIndex);

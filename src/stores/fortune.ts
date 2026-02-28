@@ -19,16 +19,11 @@ interface FortuneState {
   // Share functionality
   shareStatus: ShareStatus;
 
-  // Narrative streaming
-  narrativeChunks: string[];
-
   // Actions
   setLoadingState: (state: LoadingState) => void;
   setError: (error: string | null) => void;
   setHasAttemptedGeneration: (attempted: boolean) => void;
   setShareStatus: (status: ShareStatus) => void;
-  addNarrativeChunk: (chunk: string) => void;
-  resetNarrativeChunks: () => void;
   reset: () => void;
 }
 
@@ -38,21 +33,17 @@ export const useFortuneStore = create<FortuneState>((set) => ({
   error: null,
   hasAttemptedGeneration: false,
   shareStatus: 'idle',
-  narrativeChunks: [],
 
   // Actions
   setLoadingState: (state) => set({ loadingState: state }),
   setError: (error) => set({ error }),
   setHasAttemptedGeneration: (attempted) => set({ hasAttemptedGeneration: attempted }),
   setShareStatus: (status) => set({ shareStatus: status }),
-  addNarrativeChunk: (chunk) => set((state) => ({ narrativeChunks: [...state.narrativeChunks, chunk] })),
-  resetNarrativeChunks: () => set({ narrativeChunks: [] }),
   reset: () =>
     set({
       loadingState: 'initializing',
       error: null,
       hasAttemptedGeneration: false,
       shareStatus: 'idle',
-      narrativeChunks: [],
     }),
 }));

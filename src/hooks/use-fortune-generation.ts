@@ -6,30 +6,7 @@ import { useOnboardingStore } from '@/stores/onboarding';
 import { useFortuneStore } from '@/stores/fortune';
 import { useSessionRetry } from './use-session-retry';
 import { getValidProfileWithFallback } from '@/lib/profile-utils';
-
-/**
- * Fortune Reading Interface
- */
-export interface FortuneReading {
-  baziChart: {
-    yearPillar: { stem: string; branch: string };
-    monthPillar: { stem: string; branch: string };
-    dayPillar: { stem: string; branch: string };
-    hourPillar?: { stem: string; branch: string };
-    dayMaster: string;
-    element: string;
-  };
-  thaiAstrology: {
-    day: string;
-    color: string;
-    planet: string;
-    personality: string;
-    luckyNumber: number;
-    luckyDirection: string;
-  };
-  narrative: string;
-  currentAge: number;
-}
+import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
 
 /**
  * Fortune Generation Hook
@@ -51,8 +28,6 @@ export function useFortuneGeneration() {
     setLoadingState,
     setError,
     setHasAttemptedGeneration,
-    addNarrativeChunk,
-    resetNarrativeChunks,
   } = useFortuneStore();
 
   const {
@@ -107,27 +82,11 @@ export function useFortuneGeneration() {
         // Step 2: Fetch chart data (this will return cached data if it exists, not regenerate)
         setLoadingState('generating-chart');
         console.log('[FortuneGeneration] Fetching fortune chart (cached or new)');
-        const reading = await api.get<FortuneReading>('/fortune/chart');
+        const reading = await api.get<StructuredChartResponse>('/fortune/chart');
 
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 
-        // Step 3: Simulate streaming effect by breaking narrative into chunks
-        // In a real implementation, this would use SSE or streaming API
-        resetNarrativeChunks();
-        const words = reading.narrative.split(' ');
-        const chunkSize = 3; // Words per chunk
-        const chunks: string[] = [];
-
-        for (let i = 0; i < words.length; i += chunkSize) {
-          chunks.push(words.slice(i, i + chunkSize).join(' '));
-        }
-
-        // Progressive reveal
-        for (let i = 0; i < chunks.length; i++) {
-          await new Promise(resolve => setTimeout(resolve, 50));
-          addNarrativeChunk(chunks[i]);
-        }
-
+        // Step 3: Mark complete (no streaming simulation needed)
         setLoadingState('complete');
 
         // Mark onboarding as complete

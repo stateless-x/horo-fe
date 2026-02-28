@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useFortuneStore } from '@/stores/fortune';
-import type { FortuneReading } from './use-fortune-generation';
+import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
 
 /**
  * Fortune Share Hook
@@ -10,14 +10,14 @@ import type { FortuneReading } from './use-fortune-generation';
 export function useFortuneShare() {
   const { shareStatus, setShareStatus } = useFortuneStore();
 
-  const handleShare = useCallback(async (fortuneReading: FortuneReading | null) => {
-    if (!fortuneReading) return;
+  const handleShare = useCallback(async (chartData: StructuredChartResponse | null) => {
+    if (!chartData) return;
 
-    const shareText = `ดวงชะตาของฉัน: ${fortuneReading.baziChart.element} 🔮
+    const shareText = `ดวงชะตาของฉัน: ${chartData.elementProfile.primaryElement} 🔮
 
-สีมงคล: ${fortuneReading.thaiAstrology.color}
-เลขมงคล: ${fortuneReading.thaiAstrology.luckyNumber}
-ดาวประจำวัน: ${fortuneReading.thaiAstrology.planet}
+สีมงคล: ${chartData.birthStar.luckyColor}
+เลขมงคล: ${chartData.birthStar.luckyNumber}
+ดาวประจำวัน: ${chartData.birthStar.planet}
 
 มาดูดวงของคุณกันเถอะ!`;
 

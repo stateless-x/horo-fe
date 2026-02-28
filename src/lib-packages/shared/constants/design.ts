@@ -25,3 +25,20 @@ export const ANIMATION = {
 } as const;
 
 export const TOUCH_TARGET = 44; // Minimum touch target size in px
+
+export const ELEMENT_COLORS = {
+  earth: { primary: '#D4A843', glow: 'rgba(212,168,67,0.15)' },
+  fire:  { primary: '#E85D3A', glow: 'rgba(232,93,58,0.15)' },
+  water: { primary: '#4A90D9', glow: 'rgba(74,144,217,0.15)' },
+  wood:  { primary: '#5BA55B', glow: 'rgba(91,165,91,0.15)' },
+  metal: { primary: '#C0C0C0', glow: 'rgba(192,192,192,0.15)' },
+} as const;
+
+export const FORTUNE_CATEGORIES = {
+  life_overview: { label: 'ภาพรวมชีวิต', icon: 'Orbit' },
+  love:          { label: 'ความรัก & เนื้อคู่', icon: 'Heart' },
+  career:        { label: 'การงาน & อาชีพ', icon: 'Briefcase' },
+  finance:       { label: 'การเงิน & โชคลาภ', icon: 'Coins' },
+  health:        { label: 'สุขภาพ & พลังงาน', icon: 'Activity' },
+  family:        { label: 'ครอบครัว & ความสัมพันธ์', icon: 'Home' },
+} as const;

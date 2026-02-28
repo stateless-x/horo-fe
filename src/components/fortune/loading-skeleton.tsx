@@ -18,9 +18,9 @@ export function LoadingSkeleton({ loadingState }: LoadingSkeletonProps) {
       case 'saving-profile':
         return 'กำลังบันทึกข้อมูลของเจ้า...';
       case 'generating-chart':
-        return 'กำลังคำนวณดวงชะตา...';
+        return 'กำลังวิเคราะห์ดวงชะตา...';
       case 'generating-narrative':
-        return 'กำลังมองเห็นอนาคตของเจ้า...';
+        return 'กำลังวิเคราะห์ดวงชะตา...';
       case 'initializing':
       default:
         return 'กำลังเตรียมการ...';

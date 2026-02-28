@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Clock, HelpCircle } from 'lucide-react';
-import { Button, Card } from '@/lib-packages/ui';
-import { useOnboardingStore } from '@/stores/onboarding';
-import { THAI_TIME_PERIODS } from '@/lib-packages/shared';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Clock, HelpCircle } from "lucide-react";
+import { Button, Card } from "@/lib-packages/ui";
+import { useOnboardingStore } from "@/stores/onboarding";
+import { THAI_TIME_PERIODS } from "@/lib-packages/shared";
 
 /**
  * Step 5: Birth Time
@@ -26,7 +26,7 @@ export function StepBirthTime() {
   const handleUnknown = () => {
     updateProfile({
       birthTime: {
-        period: 'unknown',
+        period: "unknown",
         chineseHour: 0,
         isUnknown: true,
       },
@@ -92,8 +92,8 @@ export function StepBirthTime() {
                 <Card
                   className={`p-4 h-24 flex flex-col items-center justify-center gap-1 transition-all ${
                     selectedPeriod === index
-                      ? 'border-royalPurple bg-royalPurple/5 shadow-[0_0_20px_rgba(107,33,168,0.5)]'
-                      : 'hover:border-amethyst hover:bg-amethyst/5'
+                      ? "border-royalPurple bg-royalPurple/5 shadow-[0_0_20px_rgba(107,33,168,0.5)]"
+                      : "hover:border-amethyst hover:bg-amethyst/5"
                   }`}
                 >
                   <p className="text-lg font-heading text-ghostWhite">
@@ -122,7 +122,7 @@ export function StepBirthTime() {
                     ไม่แน่ใจ หรือ ไม่ทราบเวลาเกิด
                   </p>
                   <p className="text-xs text-ashGray">
-                    คุณจะได้รับการทำนายจากโหราศาสตร์ไทยเท่านั้น
+                    เจ้าจะได้รับการทำนายจากโหราศาสตร์ไทยเท่านั้น
                   </p>
                 </div>
               </button>
@@ -136,7 +136,7 @@ export function StepBirthTime() {
             className="w-full"
             disabled={selectedPeriod === null}
           >
-            {selectedPeriod !== null ? 'ถัดไป' : 'กรุณาเลือกช่วงเวลา'}
+            {selectedPeriod !== null ? "ถัดไป" : "กรุณาเลือกช่วงเวลา"}
           </Button>
         </div>
       </div>

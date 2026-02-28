@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Moon, Compass, Palette, Hash, Calendar } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { BirthStarDetail } from '@/lib-packages/shared/types/astrology';
+import { useState } from "react";
+import { Moon, Compass, Palette, Hash, Calendar } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import type { BirthStarDetail } from "@/lib-packages/shared/types/astrology";
 
 interface BirthStarSectionProps {
   birthStar: BirthStarDetail;
@@ -16,7 +16,12 @@ interface AttributeBadgeProps {
   tooltip: string;
 }
 
-function AttributeBadge({ icon: Icon, label, value, tooltip }: AttributeBadgeProps) {
+function AttributeBadge({
+  icon: Icon,
+  label,
+  value,
+  tooltip,
+}: AttributeBadgeProps) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
@@ -28,7 +33,9 @@ function AttributeBadge({ icon: Icon, label, value, tooltip }: AttributeBadgePro
         onClick={() => setShowTooltip(!showTooltip)}
       >
         <Icon className="text-lavenderGlow w-5 h-5 mb-2 mx-auto" />
-        <p className="text-ashGray font-thai text-xs text-center mb-1">{label}</p>
+        <p className="text-ashGray font-thai text-xs text-center mb-1">
+          {label}
+        </p>
         <p className="text-ghostWhite font-heading font-medium text-base text-center">
           {value}
         </p>
@@ -61,7 +68,7 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
       <div className="flex items-center justify-center gap-2 mb-4">
         <Moon className="text-lavenderGlow w-6 h-6" />
         <h2 className="font-heading text-xl font-medium text-ghostWhite">
-          ดาวประจำวันเกิดของคุณ
+          ดาวประจำวันเกิดของเจ้า
         </h2>
       </div>
 

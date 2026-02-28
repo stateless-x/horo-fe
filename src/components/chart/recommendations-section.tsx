@@ -1,11 +1,13 @@
-import { Sparkles, Check, X } from 'lucide-react';
-import type { Recommendations } from '@/lib-packages/shared/types/astrology';
+import { Sparkles, Check, X } from "lucide-react";
+import type { Recommendations } from "@/lib-packages/shared/types/astrology";
 
 interface RecommendationsSectionProps {
   recommendations: Recommendations;
 }
 
-export function RecommendationsSection({ recommendations }: RecommendationsSectionProps) {
+export function RecommendationsSection({
+  recommendations,
+}: RecommendationsSectionProps) {
   const renderDotRating = (rating: number) => {
     return (
       <div className="flex gap-1">
@@ -13,7 +15,7 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
           <div
             key={dot}
             className={`w-2 h-2 rounded-full ${
-              dot <= rating ? 'bg-amethyst' : 'bg-darkPurple/50'
+              dot <= rating ? "bg-amethyst" : "bg-darkPurple/50"
             }`}
           />
         ))}
@@ -33,16 +35,18 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
       {/* Lucky attributes grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <p className="text-lavenderGlow font-thai text-xs mb-2">สีมงคลปีนี้</p>
+          <p className="text-lavenderGlow font-thai text-xs mb-2">
+            สีมงคลปีนี้
+          </p>
           <p className="text-ghostWhite font-heading font-medium text-base">
-            {recommendations.luckyColors.join(', ')}
+            {recommendations.luckyColors.join(", ")}
           </p>
         </div>
 
         <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
           <p className="text-lavenderGlow font-thai text-xs mb-2">เลขมงคล</p>
           <p className="text-ghostWhite font-heading font-medium text-base">
-            {recommendations.luckyNumbers.join(', ')}
+            {recommendations.luckyNumbers.join(", ")}
           </p>
         </div>
 
@@ -65,7 +69,7 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
       {recommendations.monthlyHighlights.length > 0 && (
         <div className="bg-deepNight border border-darkPurple/50 rounded-xl p-6 mb-6">
           <h3 className="text-lavenderGlow font-heading font-medium text-base mb-4">
-            เดือนเด่นของคุณ
+            เดือนเด่นของเจ้า
           </h3>
           <div className="space-y-3">
             {recommendations.monthlyHighlights.map((highlight, index) => (
@@ -78,8 +82,12 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
                     {highlight.month}
                   </p>
                 </div>
-                <div className="flex-shrink-0">{renderDotRating(highlight.rating)}</div>
-                <p className="text-ashGray font-thai text-sm flex-1">{highlight.note}</p>
+                <div className="flex-shrink-0">
+                  {renderDotRating(highlight.rating)}
+                </div>
+                <p className="text-ashGray font-thai text-sm flex-1">
+                  {highlight.note}
+                </p>
               </div>
             ))}
           </div>

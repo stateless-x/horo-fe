@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Card, CardHeader, CardTitle, CardContent } from '@/lib-packages/ui';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { useSession } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { ClientDate } from '@/components/client-date';
+import { motion } from "framer-motion";
+import { Card, CardHeader, CardTitle, CardContent } from "@/lib-packages/ui";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ClientDate } from "@/components/client-date";
 
 /**
  * Main Dashboard - Daily Horoscope (Home)
@@ -24,29 +24,36 @@ import { ClientDate } from '@/components/client-date';
 export default function DashboardPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const router = useRouter();
-  const [shareStatus, setShareStatus] = useState<'idle' | 'copying' | 'copied'>('idle');
+  const [shareStatus, setShareStatus] = useState<"idle" | "copying" | "copied">(
+    "idle",
+  );
 
   // Redirect unauthenticated users to login
   // Redirect incomplete onboarding to fortune detail page
   useEffect(() => {
     if (!sessionLoading) {
       if (!session) {
-        router.push('/login');
+        router.push("/login");
       } else if (!(session.user as any)?.onboardingCompleted) {
         // User is authenticated but hasn't completed onboarding
         // Redirect to fortune detail page to complete the flow
-        router.push('/dashboard/fortune');
+        router.push("/dashboard/fortune");
       }
     }
   }, [session, sessionLoading, router]);
 
-  const { data: dailyReading, isLoading, error } = useQuery({
-    queryKey: ['daily-reading'],
-    queryFn: () => api.get('/fortune/daily'),
+  const {
+    data: dailyReading,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["daily-reading"],
+    queryFn: () => api.get("/fortune/daily"),
     staleTime: 1000 * 60 * 60, // 1 hour
     enabled: !!session, // Only fetch when authenticated
     retry: 3, // Max 3 retries
-    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000), // Exponential backoff: 1s, 2s, 4s, max 30s
+    retryDelay: (attemptIndex) =>
+      Math.min(1000 * Math.pow(2, attemptIndex), 30000), // Exponential backoff: 1s, 2s, 4s, max 30s
   });
 
   // Handle share functionality
@@ -59,15 +66,15 @@ export default function DashboardPage() {
 
 วันนี้เป็นวันที่ดีสำหรับการเริ่มต้นสิ่งใหม่!
 
-มาดูดวงของคุณกันเถอะ!`;
+มาดูดวงของเจ้ากัน!`;
 
-    const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/fortune`;
+    const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/fortune`;
 
     try {
       // Try Web Share API (mobile)
-      if (typeof navigator !== 'undefined' && navigator.share) {
+      if (typeof navigator !== "undefined" && navigator.share) {
         await navigator.share({
-          title: 'Horo - ดวงชะตาวันนี้',
+          title: "Horo - ดวงชะตาวันนี้",
           text: shareText,
           url: shareUrl,
         });
@@ -75,21 +82,21 @@ export default function DashboardPage() {
         // Fallback: Copy to clipboard (desktop)
         const fullText = `${shareText}\n\n${shareUrl}`;
         await navigator.clipboard.writeText(fullText);
-        setShareStatus('copied');
+        setShareStatus("copied");
 
         // Reset status after 2 seconds
-        setTimeout(() => setShareStatus('idle'), 2000);
+        setTimeout(() => setShareStatus("idle"), 2000);
       }
     } catch (error) {
-      console.error('Share error:', error);
+      console.error("Share error:", error);
       // Fallback to clipboard even if share fails
       try {
         const fullText = `${shareText}\n\n${shareUrl}`;
         await navigator.clipboard.writeText(fullText);
-        setShareStatus('copied');
-        setTimeout(() => setShareStatus('idle'), 2000);
+        setShareStatus("copied");
+        setTimeout(() => setShareStatus("idle"), 2000);
       } catch (clipboardError) {
-        console.error('Clipboard error:', clipboardError);
+        console.error("Clipboard error:", clipboardError);
       }
     }
   };
@@ -106,7 +113,7 @@ export default function DashboardPage() {
           transition={{
             duration: 2,
             repeat: Infinity,
-            ease: 'easeInOut',
+            ease: "easeInOut",
           }}
           className="w-16 h-16 border-4 border-royalPurple border-t-transparent rounded-full animate-spin"
         />
@@ -124,9 +131,11 @@ export default function DashboardPage() {
           className="text-center space-y-2"
         >
           <p className="text-paleOrchid font-oracle">
-            สวัสดี, {session.user.name || 'เจ้า'}
+            สวัสดี, {session.user.name || "เจ้า"}
           </p>
-          <h1 className="text-4xl font-heading text-ghostWhite">ดวงชะตาวันนี้</h1>
+          <h1 className="text-4xl font-heading text-ghostWhite">
+            ดวงชะตาวันนี้
+          </h1>
           <p className="text-ashGray">
             <ClientDate />
           </p>
@@ -176,15 +185,23 @@ export default function DashboardPage() {
                 onClick={handleShare}
                 className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-md transition-colors font-heading"
               >
-                {shareStatus === 'copied' ? (
+                {shareStatus === "copied" ? (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     คัดลอกแล้ว!
                   </span>
                 ) : (
-                  'แชร์ดวงชะตาของเจ้า'
+                  "แชร์ดวงชะตาของเจ้า"
                 )}
               </button>
             </CardContent>
@@ -203,11 +220,11 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { name: 'ไม้ (Wood)', value: 20, color: 'bg-green-500' },
-                { name: 'ไฟ (Fire)', value: 15, color: 'bg-red-500' },
-                { name: 'ดิน (Earth)', value: 30, color: 'bg-yellow-700' },
-                { name: 'โลหะ (Metal)', value: 20, color: 'bg-gray-400' },
-                { name: 'น้ำ (Water)', value: 15, color: 'bg-blue-500' },
+                { name: "ไม้ (Wood)", value: 20, color: "bg-green-500" },
+                { name: "ไฟ (Fire)", value: 15, color: "bg-red-500" },
+                { name: "ดิน (Earth)", value: 30, color: "bg-yellow-700" },
+                { name: "โลหะ (Metal)", value: 20, color: "bg-gray-400" },
+                { name: "น้ำ (Water)", value: 15, color: "bg-blue-500" },
               ].map((element) => (
                 <div key={element.name} className="space-y-2">
                   <div className="flex justify-between text-sm">

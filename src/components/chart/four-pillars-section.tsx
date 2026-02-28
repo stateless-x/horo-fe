@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Users, Briefcase, Heart, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { Users, Briefcase, Heart, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import type {
   EnrichedPillar,
   PillarInterpretation,
   PillarInteraction,
-} from '@/lib-packages/shared/types/astrology';
-import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
+} from "@/lib-packages/shared/types/astrology";
+import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
 
 interface FourPillarsSectionProps {
   pillars: {
@@ -29,10 +29,10 @@ const PILLAR_ICONS = {
 };
 
 const PILLAR_LABELS: Record<string, string> = {
-  year: 'เสาปี',
-  month: 'เสาเดือน',
-  day: 'เสาวัน',
-  hour: 'เสาชั่วโมง',
+  year: "เสาปี",
+  month: "เสาเดือน",
+  day: "เสาวัน",
+  hour: "เสาชั่วโมง",
 };
 
 export function FourPillarsSection({
@@ -54,16 +54,24 @@ export function FourPillarsSection({
     setExpandedPillar(expandedPillar === pillarKey ? null : pillarKey);
   };
 
-  const renderPillar = (pillarKey: 'year' | 'month' | 'day' | 'hour', pillar: EnrichedPillar) => {
+  const renderPillar = (
+    pillarKey: "year" | "month" | "day" | "hour",
+    pillar: EnrichedPillar,
+  ) => {
     const Icon = PILLAR_ICONS[pillarKey];
-    const isDay = pillarKey === 'day';
+    const isDay = pillarKey === "day";
     const isExpanded = expandedPillar === pillarKey;
     const elementColor = ELEMENT_COLORS[pillar.stemElement];
 
-    const interpretation = pillarInterpretations.find((p) => p.pillarKey === pillarKey);
+    const interpretation = pillarInterpretations.find(
+      (p) => p.pillarKey === pillarKey,
+    );
 
     return (
-      <div key={pillarKey} className={isDay ? 'md:col-span-1 order-1 md:order-none' : ''}>
+      <div
+        key={pillarKey}
+        className={isDay ? "md:col-span-1 order-1 md:order-none" : ""}
+      >
         {/* Pillar card */}
         <button
           onClick={() => togglePillar(pillarKey)}
@@ -72,20 +80,20 @@ export function FourPillarsSection({
             hover:bg-darkPurple/20
             ${
               isDay
-                ? 'border-amethyst/50 bg-darkPurple/20 shadow-lg shadow-amethyst/10 transform md:-translate-y-2'
-                : 'border-darkPurple/50'
+                ? "border-amethyst/50 bg-darkPurple/20 shadow-lg shadow-amethyst/10 transform md:-translate-y-2"
+                : "border-darkPurple/50"
             }
-            ${isExpanded ? 'border-royalPurple/50 bg-darkPurple/20' : ''}
+            ${isExpanded ? "border-royalPurple/50 bg-darkPurple/20" : ""}
             border hover:border-royalPurple/50
           `}
           style={{
-            minHeight: isDay ? '200px' : '180px',
+            minHeight: isDay ? "200px" : "180px",
           }}
         >
           <div className="flex flex-col items-center text-center h-full">
             {/* Icon */}
             <Icon
-              className={`w-6 h-6 mb-3 ${isDay ? 'text-amethyst' : 'text-lavenderGlow'}`}
+              className={`w-6 h-6 mb-3 ${isDay ? "text-amethyst" : "text-lavenderGlow"}`}
             />
 
             {/* Pillar label */}
@@ -99,7 +107,9 @@ export function FourPillarsSection({
             </p>
 
             {/* Life area */}
-            <p className="font-thai text-sm text-ghostWhite mb-2">{pillar.lifeArea}</p>
+            <p className="font-thai text-sm text-ghostWhite mb-2">
+              {pillar.lifeArea}
+            </p>
 
             {/* Element indicator dot */}
             <div
@@ -117,9 +127,9 @@ export function FourPillarsSection({
           {isExpanded && interpretation && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
               className="mt-4"
             >
               <div className="bg-darkPurple/20 border border-darkPurple/50 rounded-lg p-6">
@@ -133,15 +143,17 @@ export function FourPillarsSection({
                   <p className="text-ghostWhite font-oracle">
                     <span className="text-lavenderGlow font-heading font-medium">
                       天干 Heavenly Stem:
-                    </span>{' '}
-                    {pillar.stemChinese} ({pillar.stemPinyin}) — ธาตุ{pillar.stemElement}{' '}
-                    {pillar.stemYinYang === 'yang' ? 'Yang' : 'Yin'}
+                    </span>{" "}
+                    {pillar.stemChinese} ({pillar.stemPinyin}) — ธาตุ
+                    {pillar.stemElement}{" "}
+                    {pillar.stemYinYang === "yang" ? "Yang" : "Yin"}
                   </p>
                   <p className="text-ghostWhite font-oracle">
                     <span className="text-lavenderGlow font-heading font-medium">
                       地支 Earthly Branch:
-                    </span>{' '}
-                    {pillar.branchChinese} ({pillar.branchPinyin}) — {pillar.branchAnimal}
+                    </span>{" "}
+                    {pillar.branchChinese} ({pillar.branchPinyin}) —{" "}
+                    {pillar.branchAnimal}
                   </p>
                 </div>
 
@@ -175,20 +187,20 @@ export function FourPillarsSection({
   };
 
   const pillarArray = [
-    { key: 'year' as const, pillar: pillars.year },
-    { key: 'month' as const, pillar: pillars.month },
-    { key: 'day' as const, pillar: pillars.day },
-    ...(pillars.hour ? [{ key: 'hour' as const, pillar: pillars.hour }] : []),
+    { key: "year" as const, pillar: pillars.year },
+    { key: "month" as const, pillar: pillars.month },
+    { key: "day" as const, pillar: pillars.day },
+    ...(pillars.hour ? [{ key: "hour" as const, pillar: pillars.hour }] : []),
   ];
 
   return (
     <div>
       <div className="text-center mb-6">
         <h2 className="font-heading text-2xl font-medium text-ghostWhite mb-2">
-          เสาชะตาทั้งสี่ของคุณ
+          เสาชะตาทั้งสี่ของเจ้า
         </h2>
         <p className="font-thai text-ashGray text-sm">
-          แต่ละเสาเผยถึงอิทธิพลที่หล่อหลอมชีวิตของคุณ
+          แต่ละเสาเผยถึงอิทธิพลที่หล่อหลอมชีวิตของเจ้า
         </p>
       </div>
 

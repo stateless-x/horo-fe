@@ -1,20 +1,22 @@
-import { AlertTriangle } from 'lucide-react';
-import type { ElementProfile } from '@/lib-packages/shared/types/astrology';
-import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
+import { AlertTriangle } from "lucide-react";
+import type { ElementProfile } from "@/lib-packages/shared/types/astrology";
+import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
 
 interface ElementProfileSectionProps {
   elementProfile: ElementProfile;
 }
 
-export function ElementProfileSection({ elementProfile }: ElementProfileSectionProps) {
+export function ElementProfileSection({
+  elementProfile,
+}: ElementProfileSectionProps) {
   const elementColor = ELEMENT_COLORS[elementProfile.primaryElement];
 
   const elementNames: Record<string, string> = {
-    earth: 'ธาตุดิน',
-    fire: 'ธาตุไฟ',
-    water: 'ธาตุน้ำ',
-    wood: 'ธาตุไม้',
-    metal: 'ธาตุทอง',
+    earth: "ธาตุดิน",
+    fire: "ธาตุไฟ",
+    water: "ธาตุน้ำ",
+    wood: "ธาตุไม้",
+    metal: "ธาตุทอง",
   };
 
   return (
@@ -43,7 +45,7 @@ export function ElementProfileSection({ elementProfile }: ElementProfileSectionP
       {/* Element name and description */}
       <div className="text-center mb-8">
         <p className="font-thai text-ghostWhite text-base mb-2">
-          ธาตุประจำตัวของคุณคือ
+          ธาตุประจำตัวของเจ้าคือ
         </p>
         <h2
           className="font-heading text-3xl font-bold mb-3"
@@ -106,8 +108,8 @@ export function ElementProfileSection({ elementProfile }: ElementProfileSectionP
         <AlertTriangle className="text-amber-400 w-5 h-5 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-ashGray font-thai text-sm">
-            <span className="text-amber-400 font-medium">ระวังธาตุ:</span>{' '}
-            {elementNames[elementProfile.conflictingElement]} (ข่มธาตุของคุณ)
+            <span className="text-amber-400 font-medium">ระวังธาตุ:</span>{" "}
+            {elementNames[elementProfile.conflictingElement]} (ข่มธาตุของเจ้า)
           </p>
         </div>
       </div>

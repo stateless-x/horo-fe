@@ -1,7 +1,8 @@
 'use client';
 
-import { motion } from "framer-motion";
-import { AlertTriangle, Sparkles, Shield, Heart } from "lucide-react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { AlertTriangle, Sparkles, Shield, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import type { ElementProfile } from "@/lib-packages/shared/types/astrology";
 import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
 
@@ -13,6 +14,7 @@ export function ElementProfileSection({
   elementProfile,
 }: ElementProfileSectionProps) {
   const elementColor = ELEMENT_COLORS[elementProfile.primaryElement];
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const elementNames: Record<string, string> = {
     earth: "ธาตุดิน",
@@ -20,6 +22,37 @@ export function ElementProfileSection({
     water: "ธาตุน้ำ",
     wood: "ธาตุไม้",
     metal: "ธาตุทอง",
+  };
+
+  // Carousel slides data
+  const slides = [
+    {
+      icon: Sparkles,
+      title: "จุดแข็ง",
+      items: elementProfile.strengths,
+    },
+    {
+      icon: Shield,
+      title: "จุดอ่อน",
+      items: elementProfile.weaknesses,
+    },
+    {
+      icon: Heart,
+      title: "ธาตุที่เข้ากัน",
+      items: elementProfile.compatibleElements.map((el) => elementNames[el]),
+    },
+  ];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
   };
 
   return (
@@ -118,120 +151,135 @@ export function ElementProfileSection({
           </p>
         </div>
 
-        {/* Three info columns with glassmorphism cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-          {/* Strengths */}
-          <div
-            className="group relative rounded-xl md:rounded-2xl p-5 md:p-6 transition-all duration-300 active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 cursor-default touch-manipulation"
-            style={{
-              background: "rgba(255, 255, 255, 0.03)",
-              backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255, 255, 255, 0.05)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
-            }}
-          >
-            <div className="flex items-center gap-2 mb-3 md:mb-4">
-              <Sparkles
-                className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 flex-shrink-0"
-                style={{ color: elementColor.primary }}
-              />
-              <h3
-                className="font-heading font-medium text-base md:text-lg transition-colors duration-300"
-                style={{ color: elementColor.primary }}
+        {/* Info Carousel */}
+        <div className="relative mb-6 md:mb-8">
+          {/* Carousel Container */}
+          <div className="relative overflow-hidden px-12 md:px-16">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(e, { offset, velocity }) => {
+                  const swipe = Math.abs(offset.x) * velocity.x;
+                  if (swipe > 500) {
+                    nextSlide();
+                  } else if (swipe < -500) {
+                    prevSlide();
+                  }
+                }}
+                className="cursor-grab active:cursor-grabbing touch-manipulation"
               >
-                จุดแข็ง
-              </h3>
-            </div>
-            <ul className="space-y-2 md:space-y-2.5">
-              {elementProfile.strengths.map((strength, index) => (
-                <li
-                  key={index}
-                  className="text-ghostWhite font-thai text-sm md:text-base flex items-start gap-2 transition-all duration-300 md:hover:translate-x-1 leading-relaxed"
+                <div
+                  className="relative rounded-xl md:rounded-2xl p-6 md:p-8 min-h-[280px] md:min-h-[320px]"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.03)",
+                    backdropFilter: "blur(10px)",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+                  }}
                 >
-                  <span
-                    className="inline-block w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                    style={{ backgroundColor: elementColor.primary }}
-                  />
-                  <span>{strength}</span>
-                </li>
-              ))}
-            </ul>
+                  {/* Icon and Title */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                    >
+                      {React.createElement(slides[currentSlide].icon, {
+                        className: "w-6 h-6 md:w-7 md:h-7 flex-shrink-0",
+                        style: { color: elementColor.primary },
+                      })}
+                    </motion.div>
+                    <h3
+                      className="font-heading font-medium text-xl md:text-2xl"
+                      style={{ color: elementColor.primary }}
+                    >
+                      {slides[currentSlide].title}
+                    </h3>
+                  </div>
+
+                  {/* Items List */}
+                  <ul className="space-y-3 md:space-y-4">
+                    {slides[currentSlide].items.map((item, index) => (
+                      <motion.li
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 + index * 0.05 }}
+                        className="text-ghostWhite font-thai text-base md:text-lg flex items-start gap-3 leading-relaxed"
+                      >
+                        <span
+                          className="inline-block w-2 h-2 rounded-full mt-2 flex-shrink-0"
+                          style={{ backgroundColor: elementColor.primary }}
+                        />
+                        <span>{item}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
-          {/* Weaknesses */}
-          <div
-            className="group relative rounded-xl md:rounded-2xl p-5 md:p-6 transition-all duration-300 active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 cursor-default touch-manipulation"
+          {/* Navigation Buttons */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 md:hover:scale-110 touch-manipulation z-10"
             style={{
-              background: "rgba(255, 255, 255, 0.03)",
+              background: "rgba(255, 255, 255, 0.05)",
               backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255, 255, 255, 0.05)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+              border: `1px solid ${elementColor.primary}30`,
+              boxShadow: `0 4px 20px ${elementColor.glow}`,
             }}
+            aria-label="Previous slide"
           >
-            <div className="flex items-center gap-2 mb-3 md:mb-4">
-              <Shield
-                className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 flex-shrink-0"
-                style={{ color: elementColor.primary }}
-              />
-              <h3
-                className="font-heading font-medium text-base md:text-lg transition-colors duration-300"
-                style={{ color: elementColor.primary }}
-              >
-                จุดอ่อน
-              </h3>
-            </div>
-            <ul className="space-y-2 md:space-y-2.5">
-              {elementProfile.weaknesses.map((weakness, index) => (
-                <li
-                  key={index}
-                  className="text-ghostWhite font-thai text-sm md:text-base flex items-start gap-2 transition-all duration-300 md:hover:translate-x-1 leading-relaxed"
-                >
-                  <span
-                    className="inline-block w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                    style={{ backgroundColor: elementColor.primary }}
-                  />
-                  <span>{weakness}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" style={{ color: elementColor.primary }} />
+          </button>
 
-          {/* Compatible elements */}
-          <div
-            className="group relative rounded-xl md:rounded-2xl p-5 md:p-6 transition-all duration-300 active:scale-95 md:hover:scale-105 md:hover:-translate-y-1 cursor-default touch-manipulation"
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 md:hover:scale-110 touch-manipulation z-10"
             style={{
-              background: "rgba(255, 255, 255, 0.03)",
+              background: "rgba(255, 255, 255, 0.05)",
               backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255, 255, 255, 0.05)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+              border: `1px solid ${elementColor.primary}30`,
+              boxShadow: `0 4px 20px ${elementColor.glow}`,
             }}
+            aria-label="Next slide"
           >
-            <div className="flex items-center gap-2 mb-3 md:mb-4">
-              <Heart
-                className="w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 flex-shrink-0"
-                style={{ color: elementColor.primary }}
-              />
-              <h3
-                className="font-heading font-medium text-base md:text-lg transition-colors duration-300"
-                style={{ color: elementColor.primary }}
+            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" style={{ color: elementColor.primary }} />
+          </button>
+
+          {/* Indicator Dots */}
+          <div className="flex justify-center gap-2 mt-6">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className="transition-all duration-300 touch-manipulation"
+                aria-label={`Go to slide ${index + 1}`}
               >
-                ธาตุที่เข้ากัน
-              </h3>
-            </div>
-            <ul className="space-y-2 md:space-y-2.5">
-              {elementProfile.compatibleElements.map((element, index) => (
-                <li
-                  key={index}
-                  className="text-ghostWhite font-thai text-sm md:text-base flex items-start gap-2 transition-all duration-300 md:hover:translate-x-1 leading-relaxed"
-                >
-                  <span
-                    className="inline-block w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                    style={{ backgroundColor: elementColor.primary }}
-                  />
-                  <span>{elementNames[element]}</span>
-                </li>
-              ))}
-            </ul>
+                <div
+                  className={`rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? "w-8 h-2"
+                      : "w-2 h-2 hover:w-3 active:w-3"
+                  }`}
+                  style={{
+                    backgroundColor:
+                      index === currentSlide
+                        ? elementColor.primary
+                        : `${elementColor.primary}40`,
+                  }}
+                />
+              </button>
+            ))}
           </div>
         </div>
 

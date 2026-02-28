@@ -15,7 +15,7 @@ import { THAI_MONTHS, BE_OFFSET, toGregorianYear } from '@/lib-packages/shared';
  * - Store as ISO internally, show Buddhist Era to users
  */
 export function StepBirthDate() {
-  const { updateProfile, nextStep } = useOnboardingStore();
+  const { updateProfile, nextStep, prevStep } = useOnboardingStore();
 
   const currentYear = new Date().getFullYear() + BE_OFFSET;
   const [day, setDay] = useState(1);
@@ -156,9 +156,19 @@ export function StepBirthDate() {
             </div>
           </div>
 
-          <Button onClick={handleSubmit} size="lg" className="w-full">
-            ถัดไป
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={prevStep}
+              className="w-full"
+            >
+              ย้อนกลับ
+            </Button>
+            <Button onClick={handleSubmit} size="lg" className="w-full">
+              ถัดไป
+            </Button>
+          </div>
         </div>
       </div>
     </motion.div>

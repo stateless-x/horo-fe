@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
-import { Card } from "@/lib-packages/ui";
+import { Card, Button } from "@/lib-packages/ui";
 import { useOnboardingStore } from "@/stores/onboarding";
 import type { Gender } from "@/lib-packages/shared";
 
@@ -15,7 +15,7 @@ import type { Gender } from "@/lib-packages/shared";
  * - Needed for Bazi 大運 calculation
  */
 export function StepGender() {
-  const { updateProfile, nextStep } = useOnboardingStore();
+  const { updateProfile, nextStep, prevStep } = useOnboardingStore();
 
   const handleSelect = (gender: Gender) => {
     updateProfile({ gender });
@@ -76,6 +76,15 @@ export function StepGender() {
             </Card>
           </motion.button>
         </div>
+
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={prevStep}
+          className="w-full mt-6"
+        >
+          ย้อนกลับ
+        </Button>
       </div>
     </motion.div>
   );

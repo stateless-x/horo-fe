@@ -17,7 +17,7 @@ import { api } from '@/lib/api';
  * - THIS MUST HAPPEN BEFORE AUTH!
  */
 export function StepTeaser() {
-  const { profile, setTeaserResult, nextStep } = useOnboardingStore();
+  const { profile, setTeaserResult, nextStep, prevStep } = useOnboardingStore();
   const [isLoading, setIsLoading] = useState(true);
   const [result, setResult] = useState<{
     elementType: string;
@@ -142,8 +142,11 @@ export function StepTeaser() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="text-center"
+          className="flex gap-3 justify-center"
         >
+          <Button variant="outline" size="lg" onClick={prevStep}>
+            ย้อนกลับ
+          </Button>
           <Button onClick={nextStep} size="lg" className="px-12">
             ดูดวงแบบเต็ม
           </Button>

@@ -17,7 +17,7 @@ import { useEffect } from 'react';
  * - If user is already authenticated, automatically skip this step
  */
 export function StepAuth() {
-  const { nextStep } = useOnboardingStore();
+  const { nextStep, prevStep } = useOnboardingStore();
   const { data: session, isPending } = useSession();
 
   // Auto-skip if user is already authenticated
@@ -148,6 +148,22 @@ export function StepAuth() {
         >
           เมื่อเชื่อมบัญชี เจ้าจะสามารถบันทึกและดูดวงชะตาของเจ้าได้ทุกเมื่อ
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="text-center"
+        >
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={prevStep}
+            className="text-ashGray hover:text-ghostWhite"
+          >
+            ย้อนกลับ
+          </Button>
+        </motion.div>
       </div>
     </motion.div>
   );

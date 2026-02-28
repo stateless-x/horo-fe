@@ -14,7 +14,7 @@ import { useOnboardingStore } from '@/stores/onboarding';
  * - Dark field with purple glow on focus
  */
 export function StepName() {
-  const { profile, updateProfile, nextStep } = useOnboardingStore();
+  const { profile, updateProfile, nextStep, prevStep } = useOnboardingStore();
   const [name, setName] = useState(profile.name || '');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -60,14 +60,25 @@ export function StepName() {
             required
           />
 
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            disabled={!name.trim()}
-          >
-            ถัดไป
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={prevStep}
+              className="w-full"
+            >
+              ย้อนกลับ
+            </Button>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={!name.trim()}
+            >
+              ถัดไป
+            </Button>
+          </div>
         </form>
       </div>
     </motion.div>

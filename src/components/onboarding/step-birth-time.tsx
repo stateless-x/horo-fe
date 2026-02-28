@@ -16,7 +16,7 @@ import { THAI_TIME_PERIODS } from "@/lib-packages/shared";
  * - Include "ไม่ทราบ" (don't know) option → skips Bazi, uses Thai astrology only
  */
 export function StepBirthTime() {
-  const { updateProfile, nextStep } = useOnboardingStore();
+  const { updateProfile, nextStep, prevStep } = useOnboardingStore();
   const [selectedPeriod, setSelectedPeriod] = useState<number | null>(null);
 
   const handleSelect = (index: number) => {
@@ -130,14 +130,24 @@ export function StepBirthTime() {
           </motion.div>
 
           {/* Submit Button */}
-          <Button
-            onClick={handleSubmit}
-            size="lg"
-            className="w-full"
-            disabled={selectedPeriod === null}
-          >
-            {selectedPeriod !== null ? "ถัดไป" : "กรุณาเลือกช่วงเวลา"}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={prevStep}
+              className="w-full"
+            >
+              ย้อนกลับ
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              size="lg"
+              className="w-full"
+              disabled={selectedPeriod === null}
+            >
+              {selectedPeriod !== null ? "ถัดไป" : "กรุณาเลือกช่วงเวลา"}
+            </Button>
+          </div>
         </div>
       </div>
     </motion.div>

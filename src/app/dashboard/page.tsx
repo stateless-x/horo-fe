@@ -48,7 +48,7 @@ export default function DashboardPage() {
     error,
   } = useQuery({
     queryKey: ["daily-reading"],
-    queryFn: () => api.get("/fortune/daily"),
+    queryFn: () => api.get("/api/fortune/daily"),
     staleTime: 1000 * 60 * 60, // 1 hour
     enabled: !!session, // Only fetch when authenticated
     retry: 3, // Max 3 retries

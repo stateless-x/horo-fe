@@ -11,7 +11,7 @@ import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrol
 export function useFortuneData(enabled: boolean = true) {
   return useQuery<StructuredChartResponse>({
     queryKey: ['fortune', 'chart'],
-    queryFn: () => api.get<StructuredChartResponse>('/fortune/chart'),
+    queryFn: () => api.get<StructuredChartResponse>('/api/fortune/chart'),
     enabled,
     staleTime: Infinity, // Fortune data doesn't change frequently
     gcTime: 30 * 60 * 1000, // Cache for 30 minutes

@@ -76,13 +76,13 @@ export function useFortuneGeneration() {
         if (hasStoreData) {
           setLoadingState('saving-profile');
           console.log('[FortuneGeneration] Saving profile to backend:', profileData);
-          await api.post('/fortune/profile', profileData);
+          await api.post('/api/fortune/profile', profileData);
         }
 
         // Step 2: Fetch chart data (this will return cached data if it exists, not regenerate)
         setLoadingState('generating-chart');
         console.log('[FortuneGeneration] Fetching fortune chart (cached or new)');
-        const reading = await api.get<StructuredChartResponse>('/fortune/chart');
+        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart');
 
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 

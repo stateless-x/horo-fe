@@ -77,7 +77,7 @@ export default function FortuneChartPage() {
       setIsRegenerating(true);
 
       // Call backend to clear cache and regenerate
-      await api.delete('/fortune/chart/regenerate');
+      await api.delete('/api/fortune/chart/regenerate');
 
       // Invalidate and refetch the chart data
       await queryClient.invalidateQueries({ queryKey: ['fortune', 'chart'] });

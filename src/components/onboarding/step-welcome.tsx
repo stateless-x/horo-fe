@@ -36,14 +36,14 @@ export function StepWelcome() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-voidBlack flex items-center justify-center"
+      className="fixed inset-0 bg-voidBlack"
     >
       <video
         ref={videoRef}
         autoPlay
         muted
         playsInline
-        className="w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
         src="/horo.webm"
       />
 

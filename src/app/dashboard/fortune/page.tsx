@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useQueryClient } from '@tanstack/react-query';
-import { Settings } from 'lucide-react';
+import { Settings, RefreshCw } from 'lucide-react';
 import { useFortuneGeneration } from '@/hooks/use-fortune-generation';
 import { useFortuneData } from '@/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
@@ -56,7 +56,7 @@ export default function FortuneChartPage() {
   const { session, sessionLoading } = useFortuneGeneration();
 
   // Fortune data fetching
-  const { data: chartData } = useFortuneData(loadingState === 'complete');
+  const { data: chartData, isRefetching } = useFortuneData(loadingState === 'complete');
 
   // Redirect unauthenticated users
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function FortuneChartPage() {
 
   // Handle new reading action - regenerate with same birth data
   const handleNewReading = async () => {
-    if (isRegenerating) return;
+    if (isRegenerating || isRefetching) return;
 
     try {
       setIsRegenerating(true);
@@ -81,7 +81,7 @@ export default function FortuneChartPage() {
       await api.delete('/api/fortune/chart/regenerate');
 
       // Invalidate and refetch the chart data
-      await queryClient.invalidateQueries({ queryKey: ['fortune', 'chart'] });
+      await queryClient.refetchQueries({ queryKey: ['fortune', 'chart'] });
 
       console.log('[FortuneChart] Successfully regenerated new reading');
     } catch (err) {
@@ -120,7 +120,18 @@ export default function FortuneChartPage() {
   ];
 
   return (
-    <div className="min-h-screen pb-24">
+    <div className="min-h-screen pb-24 relative">
+      {/* Regeneration Overlay */}
+      {isRefetching && (
+        <div className="fixed inset-0 bg-voidBlack/60 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-deepNight/90 border border-royalPurple/50 rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+            <RefreshCw className="w-8 h-8 text-amethyst animate-spin" />
+            <p className="text-ghostWhite font-heading text-lg">กำลังสร้างดวงใหม่...</p>
+            <p className="text-ashGray text-sm">โปรดรอสักครู่</p>
+          </div>
+        </div>
+      )}
+
       {/* Scroll Indicator - Bottom Center */}
       <ScrollIndicator />
 
@@ -212,7 +223,7 @@ export default function FortuneChartPage() {
       <StickyActionBar
         onShare={handleShare}
         onNewReading={handleNewReading}
-        isRegenerating={isRegenerating}
+        isRegenerating={isRegenerating || isRefetching}
       />
 
       {/* Share Sheet */}

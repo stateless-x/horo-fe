@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { useOnboardingStore } from '@/stores/onboarding';
+import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { useOnboardingStore } from "@/stores/onboarding";
 
 /**
  * Step 1: Welcome Animation
@@ -27,8 +27,8 @@ export function StepWelcome() {
       }, 500);
     };
 
-    video.addEventListener('ended', handleEnded);
-    return () => video.removeEventListener('ended', handleEnded);
+    video.addEventListener("ended", handleEnded);
+    return () => video.removeEventListener("ended", handleEnded);
   }, [nextStep]);
 
   return (
@@ -43,7 +43,7 @@ export function StepWelcome() {
         autoPlay
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover [object-position:calc(50%_-_24px)_50%] md:object-center"
+        className="absolute inset-0 w-full h-full object-cover [object-position:calc(50%_-_20px)_50%] md:object-center"
         src="/horo.webm"
       />
 

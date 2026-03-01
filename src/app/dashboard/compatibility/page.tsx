@@ -12,6 +12,7 @@ import {
   Loader2, ArrowLeft, ChevronRight, Share2,
   Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Moon, Stars,
 } from 'lucide-react';
+import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL, type CompatibilityShareData } from '@/lib/share-utils';
 
@@ -500,9 +501,7 @@ export default function CompatibilityPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-ghostWhite/90 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
-                  {result.analysis}
-                </div>
+                <MarkdownRenderer content={result.analysis} />
               </CardContent>
             </Card>
           </motion.div>

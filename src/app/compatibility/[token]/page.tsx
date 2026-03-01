@@ -8,6 +8,7 @@ import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib-packages/share
 import {
   Loader2, Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Sparkles,
 } from 'lucide-react';
+import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 
 // Relationship type icon mapping (reuse from dashboard page)
 const RELATIONSHIP_ICONS: Record<string, typeof Heart> = {
@@ -184,9 +185,7 @@ export default function CompatibilitySharePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-ghostWhite/90 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
-                {result.analysis}
-              </div>
+              <MarkdownRenderer content={result.analysis} />
             </CardContent>
           </Card>
         </motion.div>

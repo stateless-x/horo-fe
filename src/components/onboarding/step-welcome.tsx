@@ -43,7 +43,7 @@ export function StepWelcome() {
         autoPlay
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover [object-position:calc(50%_-_24px)_50%] md:object-center"
         src="/horo.webm"
       />
 

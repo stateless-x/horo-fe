@@ -12,28 +12,28 @@ export function CompatibilityCTA() {
         <div className="flex items-center justify-center gap-2 mb-3">
           <Heart className="text-pink-400 w-6 h-6 group-hover:scale-110 transition-transform" />
           <h3 className="font-heading text-xl font-medium text-ghostWhite">
-            เข้าใจดวงของทั้งสองคน
+            ส่องดวงความสัมพันธ์
           </h3>
         </div>
 
         {/* Description */}
         <p className="font-thai text-base text-ashGray text-center mb-4">
-          วิเคราะห์ความสัมพันธ์ผ่านพลังธาตุและดาวประจำวัน
+          ส่องดวงคนคุย คนรัก หัวหน้า เพื่อนร่วมงาน และอีกมากมาย
         </p>
 
         {/* Features */}
         <ul className="space-y-2 mb-4 text-sm text-ashGray">
           <li className="flex items-start gap-2">
-            <span className="text-pink-400 mt-0.5">✨</span>
-            <span>วิเคราะห์ธาตุของทั้งสองคน</span>
+            <span className="text-pink-400 mt-0.5">&#x2728;</span>
+            <span>วิเคราะห์ธาตุและดาวของทั้งสองคน</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-pink-400 mt-0.5">💡</span>
+            <span className="text-pink-400 mt-0.5">&#x1F4A1;</span>
             <span>เข้าใจจุดแข็งและสิ่งที่ควรระวัง</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-pink-400 mt-0.5">🎯</span>
-            <span>รับคำแนะนำเฉพาะตัว</span>
+            <span className="text-pink-400 mt-0.5">&#x1F3AF;</span>
+            <span>รับคำแนะนำเฉพาะตามประเภทความสัมพันธ์</span>
           </li>
         </ul>
 
@@ -42,7 +42,7 @@ export function CompatibilityCTA() {
           className="w-full bg-gradient-to-r from-pink-500 to-amethyst hover:from-pink-600 hover:to-purple-600"
           size="lg"
         >
-          ดูดวงคู่
+          ส่องดวงความสัมพันธ์
         </Button>
       </div>
     </Link>

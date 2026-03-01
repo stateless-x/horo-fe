@@ -19,7 +19,7 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareCta: 'ชอบดวงชะตาของเจ้าหรือเปล่า? แชร์ให้เพื่อนได้เลย!',
     shareEnabled: true,
     crossLinks: [
-      { label: 'ดูดวงคู่', href: '/dashboard/compatibility', icon: Heart },
+      { label: 'ส่องดวงความสัมพันธ์', href: '/dashboard/compatibility', icon: Heart },
       { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
     ],
   },
@@ -28,7 +28,7 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareEnabled: true,
     crossLinks: [
       { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },
-      { label: 'ดูดวงคู่', href: '/dashboard/compatibility', icon: Heart },
+      { label: 'ส่องดวงความสัมพันธ์', href: '/dashboard/compatibility', icon: Heart },
     ],
   },
   '/dashboard': {
@@ -36,11 +36,11 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareEnabled: true,
     crossLinks: [
       { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },
-      { label: 'ดูดวงคู่', href: '/dashboard/compatibility', icon: Heart },
+      { label: 'ส่องดวงความสัมพันธ์', href: '/dashboard/compatibility', icon: Heart },
     ],
   },
   '/dashboard/compatibility': {
-    shareCta: 'แชร์ผลดวงคู่ให้คนพิเศษ!',
+    shareCta: 'แชร์ผลดวงความสัมพันธ์ให้คนพิเศษ!',
     shareEnabled: true,
     crossLinks: [
       { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },

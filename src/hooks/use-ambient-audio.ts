@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 
 const STORAGE_KEY = 'horo-ambient-muted';
-const TARGET_VOLUME = 0.15;
+const TARGET_VOLUME = 0.06;
 const FADE_DURATION_MS = 2000;
 const AUDIO_SRC = '/ambient.mp3';
 
@@ -16,11 +16,11 @@ interface UseAmbientAudioReturn {
 /**
  * Ambient audio hook that plays a looping creepy soundscape.
  *
- * Uses a pre-generated MP3 file (/public/ambient.mp3) for consistent,
- * high-quality audio across all browsers.
- *
- * - Starts on first user interaction (respects autoplay policy)
- * - Loops seamlessly at 15% volume
+ * Uses a pre-generated MP3 file (/public/ambient.mp3) with streaming playback:
+ * - Preloads on mount so buffering starts immediately
+ * - Plays as soon as enough data is buffered (no waiting for full download)
+ * - Starts on first user interaction (respects browser autoplay policy)
+ * - Loops seamlessly at ~6% volume
  * - Fades in/out smoothly on mute toggle
  * - Mute preference persisted in localStorage
  * - Full cleanup on unmount
@@ -29,6 +29,7 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isInitializedRef = useRef(false);
+  const wantsPlayRef = useRef(false); // user has interacted, waiting for buffer
 
   const [isMuted, setIsMuted] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -46,7 +47,6 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
    */
   const fadeTo = useCallback(
     (audio: HTMLAudioElement, target: number, durationMs: number) => {
-      // Clear any existing fade
       if (fadeIntervalRef.current) {
         clearInterval(fadeIntervalRef.current);
         fadeIntervalRef.current = null;
@@ -59,7 +59,7 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
         return;
       }
 
-      const steps = 30; // ~30 steps for smooth fade
+      const steps = 30;
       const stepMs = durationMs / steps;
       const stepSize = diff / steps;
       let current = 0;
@@ -80,41 +80,73 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
     []
   );
 
-  const initAudio = useCallback(() => {
-    if (isInitializedRef.current) return;
+  /**
+   * Actually start playback — called when both conditions are met:
+   * 1. User has interacted (wantsPlayRef)
+   * 2. Audio has enough buffered data (canplay event or already ready)
+   */
+  const startPlayback = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || isInitializedRef.current) return;
+    if (!wantsPlayRef.current || isMutedRef.current) return;
 
-    try {
-      const audio = new Audio(AUDIO_SRC);
-      audio.loop = true;
-      audio.preload = 'auto';
-      audio.volume = 0; // Start silent, will fade in
-      audioRef.current = audio;
-      isInitializedRef.current = true;
-
-      if (!isMutedRef.current) {
-        audio
-          .play()
-          .then(() => {
-            setIsPlaying(true);
-            fadeTo(audio, TARGET_VOLUME, FADE_DURATION_MS);
-          })
-          .catch((err) => {
-            console.warn('[AmbientAudio] Playback failed:', err);
-          });
-      } else {
-        // Pre-load but don't play
-        audio.load();
-      }
-    } catch (err) {
-      console.warn('[AmbientAudio] Failed to initialize:', err);
-    }
+    isInitializedRef.current = true;
+    audio.volume = 0;
+    audio
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+        fadeTo(audio, TARGET_VOLUME, FADE_DURATION_MS);
+      })
+      .catch((err) => {
+        console.warn('[AmbientAudio] Playback failed:', err);
+        isInitializedRef.current = false;
+      });
   }, [fadeTo]);
 
-  // Register interaction listeners to start audio (autoplay policy)
+  // Preload audio on mount — starts downloading immediately
+  // Listen for 'canplay' so we can start as soon as enough is buffered
+  useEffect(() => {
+    try {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.loop = true;
+      audio.volume = 0;
+      audioRef.current = audio;
+
+      // When browser has buffered enough to start playing
+      const onCanPlay = () => {
+        if (wantsPlayRef.current && !isInitializedRef.current) {
+          startPlayback();
+        }
+      };
+      audio.addEventListener('canplay', onCanPlay);
+
+      // Start downloading
+      audio.src = AUDIO_SRC;
+
+      return () => {
+        audio.removeEventListener('canplay', onCanPlay);
+      };
+    } catch (err) {
+      console.warn('[AmbientAudio] Failed to create audio:', err);
+    }
+  }, [startPlayback]);
+
+  // On first user interaction, mark that we want to play
+  // If audio is already buffered, play immediately; otherwise wait for canplay
   useEffect(() => {
     const handleInteraction = () => {
-      initAudio();
+      wantsPlayRef.current = true;
       removeListeners();
+
+      // Try to play right away if already buffered
+      const audio = audioRef.current;
+      if (audio && audio.readyState >= 3) {
+        // HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA — ready to play
+        startPlayback();
+      }
+      // Otherwise, the canplay listener will trigger startPlayback
     };
 
     const removeListeners = () => {
@@ -128,9 +160,9 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
     document.addEventListener('keydown', handleInteraction, { once: true });
 
     return removeListeners;
-  }, [initAudio]);
+  }, [startPlayback]);
 
-  // Cleanup on unmount (leaving /fortune page)
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (fadeIntervalRef.current) {
@@ -140,9 +172,10 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
       if (audio) {
         audio.pause();
         audio.src = '';
-        audio.load(); // Release resources
+        audio.load();
       }
       isInitializedRef.current = false;
+      wantsPlayRef.current = false;
       audioRef.current = null;
     };
   }, []);
@@ -155,7 +188,6 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
       const audio = audioRef.current;
       if (audio) {
         if (newMuted) {
-          // Fade out then pause
           fadeTo(audio, 0, FADE_DURATION_MS);
           setTimeout(() => {
             if (isMutedRef.current && audio) {
@@ -164,7 +196,6 @@ export function useAmbientAudio(): UseAmbientAudioReturn {
             }
           }, FADE_DURATION_MS + 100);
         } else {
-          // Resume and fade in
           audio.volume = 0;
           audio
             .play()

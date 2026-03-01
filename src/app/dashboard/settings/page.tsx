@@ -283,7 +283,7 @@ export default function SettingsPage() {
     }
     if (selectedTimePeriod !== null) {
       const period = THAI_TIME_PERIODS[selectedTimePeriod];
-      return `${period.name} (${period.label})`;
+      return `${period.displayName} (${period.timeRange})`;
     }
     return '-';
   };
@@ -537,8 +537,8 @@ export default function SettingsPage() {
                               : 'border-darkPurple bg-deepNight text-ashGray hover:border-royalPurple/50'
                           }`}
                         >
-                          <p className="text-sm font-heading text-ghostWhite">{period.name}</p>
-                          <p className="text-xs text-ashGray">{period.label}</p>
+                          <p className="text-sm font-heading text-ghostWhite">{period.displayName}</p>
+                          <p className="text-xs text-ashGray">{period.timeRange}</p>
                         </button>
                       ))}
                     </div>

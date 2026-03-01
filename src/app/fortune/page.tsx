@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
 import { useSession } from '@/lib/auth-client';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -25,7 +26,7 @@ import { useOnboardingStore } from '@/stores/onboarding';
  * - Only non-logged-in users can access onboarding
  * - Auto-clears expired onboarding data
  */
-export default function FortunePage() {
+function FortunePageContent() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -69,4 +70,18 @@ export default function FortunePage() {
 
   // Only show onboarding flow for non-logged-in users
   return <OnboardingFlow />;
+}
+
+export default function FortunePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-voidBlack flex items-center justify-center">
+          <div className="text-ghostWhite text-lg font-oracle">กำลังโหลด...</div>
+        </div>
+      }
+    >
+      <FortunePageContent />
+    </Suspense>
+  );
 }

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSession } from '@/lib/auth-client';
 import { api } from '@/lib/api';
 import { useOnboardingStore } from '@/stores/onboarding';
@@ -21,6 +22,7 @@ import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrol
 export function useFortuneGeneration() {
   const { data: session, isPending: sessionLoading } = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { profile } = useOnboardingStore();
   const {
     loadingState,
@@ -86,11 +88,16 @@ export function useFortuneGeneration() {
 
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 
+        // Seed React Query cache so useFortuneData doesn't re-fetch
+        queryClient.setQueryData(['fortune', 'chart'], reading);
+
         // Step 3: Mark complete (no streaming simulation needed)
         setLoadingState('complete');
 
-        // Mark onboarding as complete
-        await api.post('/api/onboarding/complete', {});
+        // Mark onboarding as complete (fire-and-forget, non-blocking)
+        api.post('/api/onboarding/complete', {}).catch((err) => {
+          console.warn('[FortuneGeneration] Onboarding complete failed (non-critical):', err);
+        });
 
         // Success! Reset retry count
         resetRetryCount();

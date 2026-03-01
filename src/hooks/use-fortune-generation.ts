@@ -136,6 +136,17 @@ export function useFortuneGeneration() {
           return;
         }
 
+        // Handle 429 - Rate limit exceeded
+        if (err?.status === 429) {
+          const retryAfter = err?.body?.retryAfter;
+          const hours = retryAfter ? Math.ceil(retryAfter / 3600) : 24;
+          console.log(`[FortuneGeneration] Rate limited, retry after ${retryAfter}s`);
+          setError(`คำขอมากเกินไป กรุณาลองใหม่ในอีก ${hours} ชั่วโมง`);
+          setLoadingState('complete');
+          resetRetryCount(); // Don't count rate limits as retries
+          return;
+        }
+
         // Handle 422 - Validation error
         if (err?.status === 422) {
           console.error('[FortuneGeneration] Validation error (422):', err?.body);

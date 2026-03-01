@@ -31,9 +31,9 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
 };
 
 export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSectionProps) {
-  // Auto-expand life_overview by default
+  // Start with all categories collapsed
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(['life_overview'])
+    new Set()
   );
 
   const toggleCategory = (key: string) => {

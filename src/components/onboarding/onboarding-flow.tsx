@@ -8,9 +8,11 @@ import { StepGender } from './step-gender';
 import { StepBirthTime } from './step-birth-time';
 import { StepTeaser } from './step-teaser';
 import { StepAuth } from './step-auth';
+import { AmbientAudioToggle } from './ambient-audio-toggle';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useAmbientAudio } from '@/hooks/use-ambient-audio';
 
 /**
  * Main onboarding flow component
@@ -19,6 +21,7 @@ import { useEffect } from 'react';
 export function OnboardingFlow() {
   const { currentStep } = useOnboardingStore();
   const router = useRouter();
+  const { isMuted, toggleMute } = useAmbientAudio();
 
   // Handle navigation after onboarding completes
   useEffect(() => {
@@ -31,6 +34,9 @@ export function OnboardingFlow() {
 
   return (
     <div className="relative min-h-screen bg-voidBlack">
+      {/* Ambient audio mute/unmute toggle */}
+      <AmbientAudioToggle isMuted={isMuted} onToggle={toggleMute} />
+
       <AnimatePresence mode="wait">
         {currentStep === 'welcome' && <StepWelcome key="welcome" />}
         {currentStep === 'name' && <StepName key="name" />}

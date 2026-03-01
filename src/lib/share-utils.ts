@@ -79,10 +79,11 @@ export function generateCompatibilityShareText(
       return `ส่องดวง${relationshipLabel}กับ ${partnerName} — ธาตุ${userElement} × ธาตุ${partnerElement}`;
 
     case 'twitter':
-      return `ดวง${relationshipLabel}กับ ${partnerName}
+      return `เช็คดวง${relationshipLabel}กับ ${partnerName} มาแล้ว 🔮
 ธาตุ${userElement} × ธาตุ${partnerElement}
 
-ลองส่องดวงความสัมพันธ์ของเจ้า! ${url}`;
+ใครอยากรู้ว่าดวงเข้ากันไหม ลองมาเช็คกัน!
+${url}`;
 
     case 'copy':
       return url;

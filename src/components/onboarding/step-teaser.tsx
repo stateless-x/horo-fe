@@ -47,7 +47,7 @@ export function StepTeaser() {
         todaySnippet: string;
         luckyColor?: string;
         luckyNumber?: number;
-      }>('/fortune/teaser', profile);
+      }>('/api/fortune/teaser', profile);
 
       setResult(data);
       setTeaserResult(data);

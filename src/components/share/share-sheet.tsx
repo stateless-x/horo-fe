@@ -1,22 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Link as LinkIcon, Check } from 'lucide-react';
 import {
   generateShareText,
+  generateCompatibilityShareText,
   getShareUrl,
   getLineDeepLink,
   isMobile,
   trackShareEvent,
   type ShareData,
+  type CompatibilityShareData,
   type SharePlatform,
 } from '@/lib/share-utils';
 
 interface ShareSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  shareData: ShareData;
+  shareData?: ShareData;
+  compatibilityData?: CompatibilityShareData;
+  title?: string;
 }
 
 interface PlatformButtonProps {
@@ -51,17 +55,34 @@ function PlatformButton({
   );
 }
 
-export function ShareSheet({ isOpen, onClose, shareData }: ShareSheetProps) {
+export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title }: ShareSheetProps) {
   const [copied, setCopied] = useState(false);
 
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  const shareUrl = shareData?.url || compatibilityData?.url || '';
+  const shareType = compatibilityData ? 'compatibility' : 'fortune';
+
   const handleShare = (platform: SharePlatform) => {
-    const text = generateShareText(platform, shareData);
+    const text = compatibilityData
+      ? generateCompatibilityShareText(platform, compatibilityData)
+      : shareData
+        ? generateShareText(platform, shareData)
+        : '';
 
     if (platform === 'copy') {
       // Copy to clipboard
-      navigator.clipboard.writeText(shareData.url).then(() => {
+      navigator.clipboard.writeText(shareUrl).then(() => {
         setCopied(true);
-        trackShareEvent('copy', 'fortune');
+        trackShareEvent('copy', shareType);
         setTimeout(() => setCopied(false), 2000);
       });
       return;
@@ -71,15 +92,15 @@ export function ShareSheet({ isOpen, onClose, shareData }: ShareSheetProps) {
     if (platform === 'line' && isMobile()) {
       const deepLink = getLineDeepLink(text);
       window.location.href = deepLink;
-      trackShareEvent('line', 'fortune');
+      trackShareEvent('line', shareType);
       onClose();
       return;
     }
 
     // For other platforms or LINE on desktop, open share URL
-    const shareUrl = getShareUrl(platform, text, shareData.url);
-    window.open(shareUrl, '_blank', 'width=600,height=400');
-    trackShareEvent(platform, 'fortune');
+    const platformShareUrl = getShareUrl(platform, text, shareUrl);
+    window.open(platformShareUrl, '_blank', 'width=600,height=400');
+    trackShareEvent(platform, shareType);
     onClose();
   };
 
@@ -109,11 +130,12 @@ export function ShareSheet({ isOpen, onClose, shareData }: ShareSheetProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-heading text-lg font-medium text-ghostWhite">
-                  แชร์ดวงชะตาของเจ้า
+                  {title || (compatibilityData ? 'แชร์ผลดวงความสัมพันธ์' : 'แชร์ดวงชะตาของเจ้า')}
                 </h3>
                 <button
                   onClick={onClose}
                   className="text-ashGray hover:text-ghostWhite transition-colors"
+                  aria-label="ปิด"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -192,28 +214,6 @@ export function ShareSheet({ isOpen, onClose, shareData }: ShareSheetProps) {
                 )}
               </button>
 
-              {/* Save as image (future) */}
-              <button
-                disabled
-                className="w-full bg-charcoal/50 border border-darkPurple/30 rounded-xl py-3 px-4 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-              >
-                <svg
-                  className="w-5 h-5 text-ashGray"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="font-heading font-medium text-base text-ashGray">
-                  บันทึกเป็นรูป (เร็วๆ นี้)
-                </span>
-              </button>
             </div>
           </motion.div>
         </>

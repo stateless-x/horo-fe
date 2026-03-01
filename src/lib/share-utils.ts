@@ -4,6 +4,9 @@
 
 export type SharePlatform = 'line' | 'facebook' | 'twitter' | 'copy';
 
+/** Canonical site URL (Thai domain) */
+export const SITE_URL = 'https://สายมู.com';
+
 export interface ShareData {
   url: string;
   userName: string;
@@ -12,8 +15,16 @@ export interface ShareData {
   luckyNumber?: number;
 }
 
+export interface CompatibilityShareData {
+  url: string;
+  partnerName: string;
+  relationshipLabel: string;
+  userElement: string;
+  partnerElement: string;
+}
+
 /**
- * Generate platform-specific share text
+ * Generate platform-specific share text for fortune readings
  */
 export function generateShareText(
   platform: SharePlatform,
@@ -39,6 +50,39 @@ export function generateShareText(
 ${attributes.join(' | ')}
 
 มาดูดวงของเจ้ากันเถอะ! ${url}`;
+
+    case 'copy':
+      return url;
+
+    default:
+      return '';
+  }
+}
+
+/**
+ * Generate platform-specific share text for compatibility results
+ */
+export function generateCompatibilityShareText(
+  platform: SharePlatform,
+  data: CompatibilityShareData
+): string {
+  const { partnerName, relationshipLabel, userElement, partnerElement, url } = data;
+
+  switch (platform) {
+    case 'line':
+      return `ดวง${relationshipLabel}ของฉันกับ ${partnerName}
+ธาตุ${userElement} × ธาตุ${partnerElement}
+
+มาส่องดวงความสัมพันธ์กัน! ${url}`;
+
+    case 'facebook':
+      return `ส่องดวง${relationshipLabel}กับ ${partnerName} — ธาตุ${userElement} × ธาตุ${partnerElement}`;
+
+    case 'twitter':
+      return `ดวง${relationshipLabel}กับ ${partnerName}
+ธาตุ${userElement} × ธาตุ${partnerElement}
+
+ลองส่องดวงความสัมพันธ์ของเจ้า! ${url}`;
 
     case 'copy':
       return url;

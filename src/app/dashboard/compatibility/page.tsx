@@ -9,9 +9,11 @@ import { THAI_MONTHS, BE_OFFSET, createUTCDateFromBE, type RelationshipType, REL
 import { useInfiniteQuery, useQueryClient, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import {
-  Loader2, ArrowLeft, ChevronRight,
+  Loader2, ArrowLeft, ChevronRight, Share2,
   Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Moon, Stars,
 } from 'lucide-react';
+import { ShareSheet } from '@/components/share/share-sheet';
+import { SITE_URL, type CompatibilityShareData } from '@/lib/share-utils';
 
 // --- Constants ---
 
@@ -155,6 +157,9 @@ export default function CompatibilityPage() {
   // Result state
   const [result, setResult] = useState<CompatibilityResult | null>(null);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
+
+  // Share state
+  const [showShareSheet, setShowShareSheet] = useState(false);
 
   // Rate limit state
   const [rateLimitInfo, setRateLimitInfo] = useState<{
@@ -504,6 +509,14 @@ export default function CompatibilityPage() {
 
           {/* Actions */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="space-y-3">
+            <Button
+              size="lg"
+              className="w-full"
+              onClick={() => setShowShareSheet(true)}
+            >
+              <Share2 className="w-5 h-5 mr-2" />
+              แชร์ผลดวง
+            </Button>
             <Button size="lg" variant="outline" className="w-full" onClick={handleBackToForm}>
               ส่องดวงอีกครั้ง
             </Button>
@@ -511,6 +524,19 @@ export default function CompatibilityPage() {
               กลับสู่หน้าหลัก
             </Button>
           </motion.div>
+
+          {/* Share Sheet */}
+          <ShareSheet
+            isOpen={showShareSheet}
+            onClose={() => setShowShareSheet(false)}
+            compatibilityData={{
+              url: result.shareToken ? `${SITE_URL}/compatibility/${result.shareToken}` : `${SITE_URL}/dashboard/compatibility`,
+              partnerName: result.partnerName,
+              relationshipLabel: RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType,
+              userElement: result.userElement || '',
+              partnerElement: result.partnerElement || '',
+            }}
+          />
         </div>
       </div>
     );
@@ -632,12 +658,16 @@ export default function CompatibilityPage() {
                     </motion.div>
                     <p className="text-ghostWhite font-medium">พลังดวงดาวต้องการเวลาฟื้นฟู</p>
                     <p className="text-ashGray text-sm">
-                      เจ้าได้ส่องดวงครบ 5 ครั้งในชั่วโมงนี้แล้ว
+                      {rateLimitCountdown > 3600
+                        ? 'เจ้าส่องดวงครบ 5 ครั้งในวันนี้แล้ว'
+                        : 'เจ้าได้ส่องดวงครบ 5 ครั้งในชั่วโมงนี้แล้ว'}
                     </p>
                     <p className="text-amethyst text-sm">
-                      ดวงดาวจะพร้อมอีกครั้งใน {Math.ceil(rateLimitCountdown / 60)} นาที
+                      {rateLimitCountdown > 3600
+                        ? `กลับมาใหม่พรุ่งนี้นะ`
+                        : `ดวงดาวจะพร้อมอีกครั้งใน ${Math.ceil(rateLimitCountdown / 60)} นาที`}
                     </p>
-                    <div className="w-full bg-deepNight rounded-full h-1 overflow-hidden">
+                    <div className="w-full bg-deepNight rounded-full h-1 overflow-hidden" role="progressbar" aria-label="เวลาที่เหลือก่อนส่องดวงได้อีกครั้ง">
                       <motion.div
                         className="h-full bg-amethyst/60 rounded-full"
                         initial={{ width: '100%' }}
@@ -765,8 +795,8 @@ export default function CompatibilityPage() {
                 </AnimatePresence>
 
                 {/* Low remaining warning */}
-                {rateLimitInfo && rateLimitInfo.remaining === 1 && !isRateLimited && (
-                  <p className="text-amber-400 text-xs text-center">เหลือ 1 ครั้งในชั่วโมงนี้</p>
+                {rateLimitInfo && rateLimitInfo.remaining <= 2 && rateLimitInfo.remaining > 0 && !isRateLimited && (
+                  <p className="text-amber-400 text-xs text-center">ส่องดวงได้อีก {rateLimitInfo.remaining} ครั้งในวันนี้</p>
                 )}
               </div>
             </CardContent>

@@ -8,6 +8,7 @@ export type OnboardingStep =
   | 'birthDate'
   | 'gender'
   | 'birthTime'
+  | 'mbti'
   | 'teaser'
   | 'auth'
   | 'dashboard';
@@ -40,6 +41,7 @@ const steps: OnboardingStep[] = [
   'birthDate',
   'gender',
   'birthTime',
+  'mbti',
   'teaser',
   'auth',
   'dashboard',

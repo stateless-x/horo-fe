@@ -6,6 +6,7 @@ import { StepName } from './step-name';
 import { StepBirthDate } from './step-birth-date';
 import { StepGender } from './step-gender';
 import { StepBirthTime } from './step-birth-time';
+import { StepMbti } from './step-mbti';
 import { StepTeaser } from './step-teaser';
 import { StepAuth } from './step-auth';
 import { AmbientAudioToggle } from './ambient-audio-toggle';
@@ -43,6 +44,7 @@ export function OnboardingFlow() {
         {currentStep === 'birthDate' && <StepBirthDate key="birthDate" />}
         {currentStep === 'gender' && <StepGender key="gender" />}
         {currentStep === 'birthTime' && <StepBirthTime key="birthTime" />}
+        {currentStep === 'mbti' && <StepMbti key="mbti" />}
         {currentStep === 'teaser' && <StepTeaser key="teaser" />}
         {currentStep === 'auth' && <StepAuth key="auth" />}
       </AnimatePresence>
@@ -56,8 +58,8 @@ export function OnboardingFlow() {
         >
           <div className="bg-charcoal/80 backdrop-blur-md rounded-full px-6 py-3 border border-darkPurple/50">
             <div className="flex items-center gap-3">
-              {['name', 'birthDate', 'gender', 'birthTime', 'teaser', 'auth'].map((step, index) => {
-                const stepOrder = ['name', 'birthDate', 'gender', 'birthTime', 'teaser', 'auth'];
+              {['name', 'birthDate', 'gender', 'birthTime', 'mbti', 'teaser', 'auth'].map((step, index) => {
+                const stepOrder = ['name', 'birthDate', 'gender', 'birthTime', 'mbti', 'teaser', 'auth'];
                 const currentIndex = stepOrder.indexOf(currentStep);
                 const isActive = step === currentStep;
                 const isCompleted = index < currentIndex;

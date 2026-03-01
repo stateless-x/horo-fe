@@ -3,11 +3,11 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, User, Calendar, Clock, LogOut, Save, Edit2, X } from 'lucide-react';
+import { ArrowLeft, User, Calendar, Clock, LogOut, Save, Edit2, X, Brain } from 'lucide-react';
 import { useSession, signOut } from '@/lib/auth-client';
 import { api } from '@/lib/api';
 import { Button, Input, Card } from '@/lib-packages/ui';
-import { THAI_TIME_PERIODS, THAI_MONTHS, BE_OFFSET, toGregorianYear, toBuddhistYear } from '@/lib-packages/shared';
+import { THAI_TIME_PERIODS, THAI_MONTHS, BE_OFFSET, toGregorianYear, toBuddhistYear, MBTI_GROUPS, getMbtiInfo } from '@/lib-packages/shared';
 import type { Gender } from '@/lib-packages/shared';
 
 /**
@@ -36,6 +36,7 @@ export default function SettingsPage() {
   const [gender, setGender] = useState<Gender>('male');
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<number | null>(null);
   const [isTimeUnknown, setIsTimeUnknown] = useState(false);
+  const [mbtiType, setMbtiType] = useState<string | null>(null);
 
   // Saved values for cancel operation
   const [savedValues, setSavedValues] = useState({
@@ -46,6 +47,7 @@ export default function SettingsPage() {
     gender: 'male' as Gender,
     selectedTimePeriod: null as number | null,
     isTimeUnknown: false,
+    mbtiType: null as string | null,
   });
 
   // UI state
@@ -82,6 +84,7 @@ export default function SettingsPage() {
             birthHour: number | null;
             birthTimePeriod: string | null;
             isTimeUnknown: boolean;
+            mbtiType: string | null;
           } | null;
         }>('/api/fortune/user-profile');
 
@@ -98,6 +101,7 @@ export default function SettingsPage() {
           gender: 'male' as Gender,
           selectedTimePeriod: null as number | null,
           isTimeUnknown: false,
+          mbtiType: null as string | null,
         };
 
         if (response.profile) {
@@ -109,11 +113,14 @@ export default function SettingsPage() {
           const genderValue = profile.gender as Gender;
           const isTimeUnknownValue = profile.isTimeUnknown;
 
+          const mbtiValue = profile.mbtiType || null;
+
           setDay(dayValue);
           setMonth(monthValue);
           setYear(yearValue);
           setGender(genderValue);
           setIsTimeUnknown(isTimeUnknownValue);
+          setMbtiType(mbtiValue);
 
           // Find matching time period
           let timePeriodValue: number | null = null;
@@ -135,6 +142,7 @@ export default function SettingsPage() {
             gender: genderValue,
             selectedTimePeriod: timePeriodValue,
             isTimeUnknown: isTimeUnknownValue,
+            mbtiType: mbtiValue,
           };
         }
 
@@ -183,6 +191,7 @@ export default function SettingsPage() {
     setGender(savedValues.gender);
     setSelectedTimePeriod(savedValues.selectedTimePeriod);
     setIsTimeUnknown(savedValues.isTimeUnknown);
+    setMbtiType(savedValues.mbtiType);
     setIsEditMode(false);
     setSaveMessage(null);
   };
@@ -227,6 +236,7 @@ export default function SettingsPage() {
         birthDate: birthDate.toISOString(),
         gender,
         birthTime,
+        mbtiType: mbtiType || undefined,
       });
 
       // Save current values as new saved values
@@ -238,6 +248,7 @@ export default function SettingsPage() {
         gender,
         selectedTimePeriod,
         isTimeUnknown,
+        mbtiType,
       });
 
       setSaveMessage({ type: 'success', text: 'บันทึกข้อมูลเรียบร้อยแล้ว' });
@@ -546,6 +557,54 @@ export default function SettingsPage() {
                 </div>
               ) : (
                 <p className="text-base text-ghostWhite pl-6">{getTimePeriodText()}</p>
+              )}
+            </div>
+
+            {/* MBTI */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Brain className="text-royalPurple" size={18} />
+                <label className="text-sm font-medium text-ashGray">MBTI</label>
+              </div>
+              {isEditMode ? (
+                <div className="space-y-4">
+                  {/* Clear MBTI button */}
+                  {mbtiType && (
+                    <button
+                      onClick={() => setMbtiType(null)}
+                      className="text-sm text-ashGray hover:text-red-400 transition-colors pl-6"
+                    >
+                      ✕ ล้างค่า MBTI
+                    </button>
+                  )}
+
+                  {/* MBTI groups grid */}
+                  {MBTI_GROUPS.map((group) => (
+                    <div key={group.key} className="space-y-2">
+                      <p className="text-xs text-ashGray pl-6">{group.nameTh} ({group.nameEn})</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {group.types.map((type) => (
+                          <button
+                            key={type.code}
+                            onClick={() => setMbtiType(type.code)}
+                            className={`p-3 rounded-lg border transition-all ${
+                              mbtiType === type.code
+                                ? 'border-royalPurple bg-royalPurple/10 text-ghostWhite'
+                                : 'border-darkPurple bg-deepNight text-ashGray hover:border-royalPurple/50'
+                            }`}
+                          >
+                            <p className="text-sm font-heading text-ghostWhite">{type.code}</p>
+                            <p className="text-xs text-ashGray">{type.nameTh}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-base text-ghostWhite pl-6">
+                  {mbtiType ? `${mbtiType} (${getMbtiInfo(mbtiType)?.nameTh || ''})` : 'ไม่ได้ระบุ'}
+                </p>
               )}
             </div>
           </Card>

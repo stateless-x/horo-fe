@@ -15,7 +15,7 @@ export function StickyActionBar({ onShare, onNewReading, isRegenerating }: Stick
         {/* Share button - PRIMARY (60% width) */}
         <button
           onClick={onShare}
-          className="flex-[3] bg-amethyst hover:bg-royalPurple text-ghostWhite font-heading font-medium rounded-xl px-6 py-3 transition-colors duration-200 flex items-center justify-center gap-2"
+          className="flex-[3] bg-amethyst hover:bg-lavenderGlow text-voidBlack font-heading font-semibold rounded-xl px-6 py-3 transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-amethyst/30 hover:shadow-lg hover:shadow-lavenderGlow/30"
         >
           <Share2 className="w-[18px] h-[18px]" />
           <span>แชร์ดวงชะตา</span>
@@ -25,7 +25,7 @@ export function StickyActionBar({ onShare, onNewReading, isRegenerating }: Stick
         <button
           onClick={onNewReading}
           disabled={isRegenerating}
-          className="flex-[2] bg-transparent border border-amethyst/50 text-amethyst hover:bg-amethyst/10 font-heading font-medium rounded-xl px-6 py-3 transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-[2] bg-transparent border border-amethyst/60 text-amethyst hover:bg-amethyst/15 hover:border-amethyst font-heading font-medium rounded-xl px-6 py-3 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <RefreshCw className={`w-[18px] h-[18px] ${isRegenerating ? 'animate-spin' : ''}`} />
           <span className="hidden sm:inline">{isRegenerating ? 'กำลังสร้าง...' : 'สร้างดวงใหม่'}</span>

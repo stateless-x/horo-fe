@@ -21,7 +21,7 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
           <p className="text-ghostWhite font-oracle">{error}</p>
           <button
             onClick={() => router.push('/dashboard')}
-            className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-md transition-colors font-heading"
+            className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-md transition-all duration-200 font-heading shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30"
           >
             กลับสู่หน้าหลัก
           </button>

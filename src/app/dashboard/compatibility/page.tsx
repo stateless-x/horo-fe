@@ -727,7 +727,7 @@ export default function CompatibilityPage() {
                     <select
                       value={day}
                       onChange={(e) => setDay(e.target.value)}
-                      className="w-full h-12 bg-charcoal border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent transition-all cursor-pointer hover:border-royalPurple/50"
+                      className="w-full h-12 bg-charcoal border border-ashGray/30 rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-amethyst focus:border-transparent transition-all cursor-pointer hover:border-amethyst/50"
                     >
                       {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
                         <option key={d} value={d}>{d}</option>
@@ -739,7 +739,7 @@ export default function CompatibilityPage() {
                     <select
                       value={month}
                       onChange={(e) => setMonth(e.target.value)}
-                      className="w-full h-12 bg-charcoal border border-darkPurple rounded-lg text-center text-sm text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent transition-all cursor-pointer hover:border-royalPurple/50"
+                      className="w-full h-12 bg-charcoal border border-ashGray/30 rounded-lg text-center text-sm text-ghostWhite focus:ring-2 focus:ring-amethyst focus:border-transparent transition-all cursor-pointer hover:border-amethyst/50"
                     >
                       {THAI_MONTHS.map((m, i) => (
                         <option key={i} value={i + 1}>{m}</option>
@@ -751,7 +751,7 @@ export default function CompatibilityPage() {
                     <select
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      className="w-full h-12 bg-charcoal border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent transition-all cursor-pointer hover:border-royalPurple/50"
+                      className="w-full h-12 bg-charcoal border border-ashGray/30 rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-amethyst focus:border-transparent transition-all cursor-pointer hover:border-amethyst/50"
                     >
                       {Array.from({ length: 80 }, (_, i) => currentYear - i).map((y) => (
                         <option key={y} value={y}>{y}</option>

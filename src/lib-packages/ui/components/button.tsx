@@ -3,12 +3,12 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
   {
     variants: {
       variant: {
-        default: 'bg-royalPurple text-ghostWhite hover:bg-amethyst',
-        outline: 'border border-royalPurple text-royalPurple hover:bg-royalPurple hover:text-ghostWhite',
+        default: 'bg-royalPurple text-ghostWhite hover:bg-amethyst shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30',
+        outline: 'border border-amethyst/60 text-amethyst hover:bg-amethyst/15 hover:border-amethyst',
         ghost: 'hover:bg-deepNight text-ashGray hover:text-ghostWhite',
       },
       size: {

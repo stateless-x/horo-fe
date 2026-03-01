@@ -103,7 +103,7 @@ export default function LandingPage() {
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all shadow-lg shadow-royalPurple/50 touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg font-semibold rounded-lg transition-all shadow-lg shadow-royalPurple/40 hover:shadow-amethyst/40 touch-manipulation"
                 >
                   ดูดวงของเจ้า
                 </motion.button>
@@ -113,7 +113,7 @@ export default function LandingPage() {
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto px-10 py-4 border-2 border-darkPurple hover:border-amethyst text-ghostWhite font-heading text-lg rounded-lg transition-all touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 border-2 border-amethyst/60 hover:border-amethyst text-amethyst hover:text-ghostWhite hover:bg-amethyst/15 font-heading text-lg rounded-lg transition-all touch-manipulation"
                 >
                   เข้าสู่ระบบ
                 </motion.button>
@@ -329,7 +329,7 @@ export default function LandingPage() {
               <motion.button
                 whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative px-14 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl rounded-lg transition-all shadow-xl shadow-royalPurple/50 touch-manipulation"
+                className="relative px-14 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl font-semibold rounded-lg transition-all shadow-xl shadow-royalPurple/40 hover:shadow-amethyst/40 touch-manipulation"
               >
                 เริ่มดูดวงเลย
               </motion.button>

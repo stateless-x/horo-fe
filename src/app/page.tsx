@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { Eye, Sparkles, Moon } from 'lucide-react';
+import { Eye, Sparkles, Moon, Brain } from 'lucide-react';
 import { ClientDate } from '@/components/client-date';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { ElementShowcase } from '@/components/landing/element-showcase';
@@ -86,7 +86,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-lg md:text-2xl text-paleOrchid/80 mb-6 font-oracle font-light">
-              ดูดวงด้วยศาสตร์จีนโบราณ × โหราศาสตร์ไทย
+              ดูดวงด้วยศาสตร์จีนโบราณ × โหราศาสตร์ไทย × MBTI
             </p>
 
             {/* Decorative line */}
@@ -193,23 +193,32 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== SECTION 4: Two Ancient Systems ===== */}
+      {/* ===== SECTION 4: Three Systems ===== */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-heading text-ghostWhite text-center mb-16"
+            className="text-3xl md:text-4xl font-heading text-ghostWhite text-center mb-6"
           >
             ศาสตร์ที่เราใช้
           </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-ashGray font-oracle text-center mb-16 max-w-2xl mx-auto"
+          >
+            ผสาน 3 ศาสตร์เข้าด้วยกัน เพื่อคำทำนายที่แม่นยำและเข้าถึงตัวตนอย่างแท้จริง
+          </motion.p>
 
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8 relative">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 relative">
             {/* Bazi */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               className="relative group"
@@ -245,26 +254,12 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Connector — desktop only */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-            >
-              <span className="text-amethyst/40 text-2xl font-heading">×</span>
-            </motion.div>
-
-            {/* Divider — mobile only */}
-            <div className="md:hidden h-px bg-gradient-to-r from-transparent via-darkPurple/50 to-transparent" />
-
             {/* Thai Astrology */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
               className="relative group"
             >
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
@@ -294,6 +289,46 @@ export default function LandingPage() {
                 </p>
                 <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
                   จุดเด่น: วิเคราะห์ความสัมพันธ์ โชคลาภ และจังหวะเวลา
+                </p>
+              </div>
+            </motion.div>
+
+            {/* MBTI */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative group"
+            >
+              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-lavenderGlow/30 -z-10" />
+
+              <div
+                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1 h-full"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                }}
+              >
+                {/* Watermark */}
+                <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                  心
+                </span>
+
+                <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-lavenderGlow" />
+
+                <Brain className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
+                <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
+                  MBTI บุคลิกภาพ
+                </h3>
+                <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
+                  ศาสตร์จิตวิทยาบุคลิกภาพ 16 แบบ
+                  เสริมให้คำทำนายเข้าถึงตัวตนของเจ้าอย่างลึกซึ้ง
+                  เตือนจุดอ่อนที่บุคลิกภาพของเจ้ามักตอบสนองต่อสถานการณ์
+                </p>
+                <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
+                  จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวเจ้า
                 </p>
               </div>
             </motion.div>
@@ -337,7 +372,7 @@ export default function LandingPage() {
           </Link>
 
           <p className="text-ashGray/60 text-sm font-oracle mt-6">
-            ดูดวงด้วย Bazi × โหราศาสตร์ไทย
+            ดูดวงด้วย Bazi × โหราศาสตร์ไทย × MBTI
           </p>
         </motion.div>
       </section>

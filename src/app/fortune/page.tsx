@@ -10,21 +10,23 @@ import { useOnboardingStore } from '@/stores/onboarding';
 /**
  * Fortune Telling Onboarding Page
  *
- * Full 8-step onboarding flow:
+ * Full 9-step onboarding flow:
  * 1. Welcome animation
  * 2. Name input
  * 3. Birth date picker
  * 4. Gender selection
  * 5. Birth time input
- * 6. Teaser result (value shown BEFORE auth)
- * 7. Auth prompt (Google/X OAuth)
- * 8. Redirect to dashboard
+ * 6. MBTI selection (optional — skip if unknown)
+ * 7. Teaser result (value shown BEFORE auth)
+ * 8. Auth prompt (Google/X OAuth)
+ * 9. Redirect to dashboard
  *
  * Features:
  * - Persists onboarding data in localStorage for 15 minutes
  * - Redirects logged-in users with completed onboarding to dashboard
  * - Only non-logged-in users can access onboarding
  * - Auto-clears expired onboarding data
+ * - MBTI is optional and enhances fortune accuracy when provided
  */
 function FortunePageContent() {
   const { data: session, isPending } = useSession();

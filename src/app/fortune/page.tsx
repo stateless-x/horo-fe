@@ -2,7 +2,7 @@
 
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
 import { useSession } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useOnboardingStore } from '@/stores/onboarding';
 
@@ -28,7 +28,9 @@ import { useOnboardingStore } from '@/stores/onboarding';
 export default function FortunePage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const { isExpired, reset } = useOnboardingStore();
+  const searchParams = useSearchParams();
+  const isSetupMode = searchParams.get('setup') === 'true';
+  const { isExpired, reset, setStep, currentStep } = useOnboardingStore();
 
   // Check for expired data and clear it
   useEffect(() => {
@@ -38,13 +40,23 @@ export default function FortunePage() {
     }
   }, [isExpired, reset]);
 
-  // Redirect logged-in users to dashboard
+  // Setup mode: logged-in user needs to fill birth profile
+  // Skip welcome animation and start from name input
   useEffect(() => {
-    if (!isPending && session) {
+    if (isSetupMode && currentStep === 'welcome') {
+      console.log('[Fortune] Setup mode: skipping welcome, starting from name');
+      reset();
+      setStep('name');
+    }
+  }, [isSetupMode, currentStep, reset, setStep]);
+
+  // Redirect logged-in users to dashboard (unless in setup mode)
+  useEffect(() => {
+    if (!isPending && session && !isSetupMode) {
       console.log('[Fortune] User is logged in, redirecting to dashboard');
       router.push('/dashboard');
     }
-  }, [session, isPending, router]);
+  }, [session, isPending, router, isSetupMode]);
 
   // Show loading state while checking session
   if (isPending) {

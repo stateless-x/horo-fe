@@ -122,12 +122,10 @@ export function useFortuneGeneration() {
           return;
         }
 
-        // Handle 404 - Birth profile not found
+        // Handle 404 - Birth profile not found, redirect to onboarding
         if (err?.status === 404) {
-          console.error('[FortuneGeneration] Birth profile not found (404)');
-          setError('ไม่พบข้อมูลดวงชะตา กรุณากรอกข้อมูลใหม่อีกครั้ง');
-          setLoadingState('complete');
-          setTimeout(() => router.push('/fortune'), 3000);
+          console.log('[FortuneGeneration] Birth profile not found, redirecting to onboarding');
+          router.push('/fortune?setup=true');
           return;
         }
 

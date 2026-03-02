@@ -34,11 +34,12 @@ export function generateShareText(
 
   switch (platform) {
     case 'line':
+      // URL is passed separately in getShareUrl, so don't include it in text
       return `ดวงชะตาของ ${userName}
-ธาตุ${element}${luckyColor ? ` | สี${luckyColor}` : ''}${luckyNumber ? ` | เลข ${luckyNumber}` : ''}
-ดูดวงของเจ้าได้ที่ ${url}`;
+ธาตุ${element}${luckyColor ? ` | สี${luckyColor}` : ''}${luckyNumber ? ` | เลข ${luckyNumber}` : ''}`;
 
     case 'facebook':
+      // URL is passed separately, text is used as quote
       return `มาดูดวงของเจ้ากันเถอะ! ฉันเป็นธาตุ${element}`;
 
     case 'twitter':
@@ -46,10 +47,11 @@ export function generateShareText(
       if (luckyColor) attributes.push(`สีมงคล: ${luckyColor}`);
       if (luckyNumber) attributes.push(`เลขมงคล: ${luckyNumber}`);
 
-      return `ดวงชะตาของฉัน: ธาตุ${element}
-${attributes.join(' | ')}
+      // URL is passed separately in getShareUrl, so don't include it in text
+      return `ดวงชะตาของฉัน: ธาตุ${element}${attributes.length > 0 ? `
+${attributes.join(' | ')}` : ''}
 
-มาดูดวงของเจ้ากันเถอะ! ${url}`;
+มาดูดวงของเจ้ากันเถอะ!`;
 
     case 'copy':
       return url;
@@ -70,20 +72,22 @@ export function generateCompatibilityShareText(
 
   switch (platform) {
     case 'line':
+      // URL is passed separately in getShareUrl, so don't include it in text
       return `ดวง${relationshipLabel}ของฉันกับ ${partnerName}
 ธาตุ${userElement} × ธาตุ${partnerElement}
 
-มาส่องดวงความสัมพันธ์กัน! ${url}`;
+มาส่องดวงความสัมพันธ์กัน!`;
 
     case 'facebook':
+      // URL is passed separately, text is used as quote
       return `ส่องดวง${relationshipLabel}กับ ${partnerName} — ธาตุ${userElement} × ธาตุ${partnerElement}`;
 
     case 'twitter':
+      // URL is passed separately in getShareUrl, so don't include it in text
       return `เช็คดวง${relationshipLabel}กับ ${partnerName} มาแล้ว 🔮
 ธาตุ${userElement} × ธาตุ${partnerElement}
 
-ใครอยากรู้ว่าดวงเข้ากันไหม ลองมาเช็คกัน!
-${url}`;
+ใครอยากรู้ว่าดวงเข้ากันไหม ลองมาเช็คกัน!`;
 
     case 'copy':
       return url;

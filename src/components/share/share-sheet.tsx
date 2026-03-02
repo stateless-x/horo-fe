@@ -72,12 +72,6 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
   const shareType = compatibilityData ? 'compatibility' : 'fortune';
 
   const handleShare = (platform: SharePlatform) => {
-    const text = compatibilityData
-      ? generateCompatibilityShareText(platform, compatibilityData)
-      : shareData
-        ? generateShareText(platform, shareData)
-        : '';
-
     if (platform === 'copy') {
       // Copy to clipboard
       navigator.clipboard.writeText(shareUrl).then(() => {
@@ -88,16 +82,29 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
       return;
     }
 
-    // For LINE on mobile, try deep link first
+    // For LINE on mobile, use deep link with URL in text
     if (platform === 'line' && isMobile()) {
-      const deepLink = getLineDeepLink(text);
+      // Generate text with URL for mobile deep link
+      const textWithUrl = compatibilityData
+        ? `${generateCompatibilityShareText(platform, compatibilityData)}\n${shareUrl}`
+        : shareData
+          ? `${generateShareText(platform, shareData)}\n\nดูดวงของเจ้าได้ที่ ${shareUrl}`
+          : '';
+
+      const deepLink = getLineDeepLink(textWithUrl);
       window.location.href = deepLink;
       trackShareEvent('line', shareType);
       onClose();
       return;
     }
 
-    // For other platforms or LINE on desktop, open share URL
+    // For other platforms or LINE on desktop, use platform share URL
+    const text = compatibilityData
+      ? generateCompatibilityShareText(platform, compatibilityData)
+      : shareData
+        ? generateShareText(platform, shareData)
+        : '';
+
     const platformShareUrl = getShareUrl(platform, text, shareUrl);
     window.open(platformShareUrl, '_blank', 'width=600,height=400');
     trackShareEvent(platform, shareType);

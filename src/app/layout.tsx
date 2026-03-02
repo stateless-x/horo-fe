@@ -52,6 +52,12 @@ export const metadata: Metadata = {
     canonical: "/",
   },
 
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
+
   openGraph: {
     title: "สายมู.com - ดูดวงออนไลน์ฟรี ด้วย AI | โหราศาสตร์ไทย × Bazi × MBTI",
     description:

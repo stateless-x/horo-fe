@@ -225,16 +225,19 @@ export function Footer() {
         )}
 
         {/* Attribution */}
-        <div className="flex items-center justify-center text-sm text-ashGray">
-          <span>Made by</span>
-          <a
-            href="https://x.com/askpurin"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-1.5 font-medium text-amethyst hover:text-lavenderGlow transition-colors duration-200"
-          >
-            @Askpurin
-          </a>
+        <div className="flex flex-col items-center justify-center text-sm text-ashGray">
+          <div className="flex items-center">
+            <span>Made by</span>
+            <a
+              href="https://x.com/askpurin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-1.5 font-medium text-amethyst hover:text-lavenderGlow transition-colors duration-200"
+            >
+              @Askpurin
+            </a>
+          </div>
+          <span className="text-xs text-ashGray/60 mt-1">v 0.0.1</span>
         </div>
       </div>
     </footer>

@@ -15,6 +15,7 @@ import { CategoryScores } from '@/components/today/category-scores';
 import { LuckyBadges } from '@/components/today/lucky-badges';
 import { DailyGuidance } from '@/components/today/daily-guidance';
 import { ShareSheet } from '@/components/share/share-sheet';
+import { SITE_URL } from '@/lib/share-utils';
 import { Card } from '@/lib-packages/ui';
 
 /**
@@ -185,7 +186,7 @@ export default function TodayPage() {
           isOpen={showShareSheet}
           onClose={() => setShowShareSheet(false)}
           shareData={{
-            url: typeof window !== 'undefined' ? window.location.href : '',
+            url: `${SITE_URL}/dashboard/today`,
             userName: displayName,
             element: primaryElement || undefined,
             luckyColor: dailyReading?.luckyColor || undefined,

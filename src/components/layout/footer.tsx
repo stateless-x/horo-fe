@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { Heart, Calendar, Orbit } from 'lucide-react';
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { Heart, Calendar, Orbit } from "lucide-react";
 
 interface FooterContext {
   shareCta: string | null;
@@ -15,36 +15,48 @@ interface FooterContext {
 }
 
 const FOOTER_CONTEXT: Record<string, FooterContext> = {
-  '/dashboard/fortune': {
-    shareCta: 'ชอบดวงชะตาของเจ้าหรือเปล่า? แชร์ให้เพื่อนได้เลย!',
+  "/dashboard/fortune": {
+    shareCta: "ชอบดวงชะตาของเจ้าหรือเปล่า? แชร์ให้เพื่อนได้เลย!",
     shareEnabled: true,
     crossLinks: [
-      { label: 'ส่องดวงความสัมพันธ์', href: '/dashboard/compatibility', icon: Heart },
-      { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
+      {
+        label: "ส่องดวงความสัมพันธ์",
+        href: "/dashboard/compatibility",
+        icon: Heart,
+      },
+      // { label: "ดูดวงรายวัน", href: "/dashboard/today", icon: Calendar },
     ],
   },
-  '/dashboard/today': {
-    shareCta: 'แชร์ดวงวันนี้ให้เพื่อน!',
+  "/dashboard/today": {
+    shareCta: "แชร์ดวงวันนี้ให้เพื่อน!",
     shareEnabled: true,
     crossLinks: [
-      { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },
-      { label: 'ส่องดวงความสัมพันธ์', href: '/dashboard/compatibility', icon: Heart },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
+      {
+        label: "ส่องดวงความสัมพันธ์",
+        href: "/dashboard/compatibility",
+        icon: Heart,
+      },
     ],
   },
-  '/dashboard': {
-    shareCta: 'แชร์ดวงวันนี้ให้เพื่อน!',
+  "/dashboard": {
+    shareCta: "แชร์ดวงวันนี้ให้เพื่อน!",
     shareEnabled: true,
     crossLinks: [
-      { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },
-      { label: 'ส่องดวงความสัมพันธ์', href: '/dashboard/compatibility', icon: Heart },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
+      {
+        label: "ส่องดวงความสัมพันธ์",
+        href: "/dashboard/compatibility",
+        icon: Heart,
+      },
     ],
   },
-  '/dashboard/compatibility': {
-    shareCta: 'แชร์ผลดวงความสัมพันธ์ให้คนพิเศษ!',
+  "/dashboard/compatibility": {
+    shareCta: "แชร์ผลดวงความสัมพันธ์ให้คนพิเศษ!",
     shareEnabled: true,
     crossLinks: [
-      { label: 'ดูดวงแบบเต็ม', href: '/dashboard/fortune', icon: Orbit },
-      { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
+      // { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
     ],
   },
 };
@@ -55,11 +67,15 @@ const DEFAULT_CONTEXT: FooterContext = {
   crossLinks: [],
 };
 
-function PlatformIcon({ platform }: { platform: 'line' | 'facebook' | 'twitter' }) {
+function PlatformIcon({
+  platform,
+}: {
+  platform: "line" | "facebook" | "twitter";
+}) {
   const colors = {
-    line: '#00B900',
-    facebook: '#1877F2',
-    twitter: '#FFFFFF',
+    line: "#00B900",
+    facebook: "#1877F2",
+    twitter: "#FFFFFF",
   };
 
   const icons = {
@@ -87,13 +103,13 @@ export function Footer() {
   const pathname = usePathname();
   const context = FOOTER_CONTEXT[pathname] || DEFAULT_CONTEXT;
   const isFortuneOrCompatibilityPage =
-    pathname === '/dashboard/fortune' ||
-    pathname === '/dashboard/compatibility';
+    pathname === "/dashboard/fortune" ||
+    pathname === "/dashboard/compatibility";
 
   return (
     <footer
       className={`w-full border-t border-darkPurple/30 bg-deepNight/50 backdrop-blur-sm mt-16 ${
-        isFortuneOrCompatibilityPage ? 'pb-28' : ''
+        isFortuneOrCompatibilityPage ? "pb-28" : ""
       }`}
     >
       <div className="container mx-auto px-4 py-8">
@@ -109,12 +125,12 @@ export function Footer() {
               <button
                 onClick={() => {
                   const url = window.location.href;
-                  const text = encodeURIComponent('มาดูดวงชะตาของฉันกันเถอะ!');
+                  const text = encodeURIComponent("มาดูดวงชะตาของฉันกันเถอะ!");
                   const encodedUrl = encodeURIComponent(url);
                   window.open(
                     `https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${text}`,
-                    '_blank',
-                    'width=600,height=400'
+                    "_blank",
+                    "width=600,height=400",
                   );
                 }}
                 className="w-11 h-11 flex items-center justify-center bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
@@ -125,12 +141,12 @@ export function Footer() {
               <button
                 onClick={() => {
                   const url = window.location.href;
-                  const text = encodeURIComponent('มาดูดวงของเจ้ากันเถอะ!');
+                  const text = encodeURIComponent("มาดูดวงของเจ้ากันเถอะ!");
                   const encodedUrl = encodeURIComponent(url);
                   window.open(
                     `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${text}`,
-                    '_blank',
-                    'width=600,height=400'
+                    "_blank",
+                    "width=600,height=400",
                   );
                 }}
                 className="w-11 h-11 flex items-center justify-center bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
@@ -141,11 +157,13 @@ export function Footer() {
               <button
                 onClick={() => {
                   const url = window.location.href;
-                  const text = encodeURIComponent(`มาดูดวงของเจ้ากันเถอะ! ${url}`);
+                  const text = encodeURIComponent(
+                    `มาดูดวงของเจ้ากันเถอะ! ${url}`,
+                  );
                   window.open(
                     `https://twitter.com/intent/tweet?text=${text}`,
-                    '_blank',
-                    'width=600,height=400'
+                    "_blank",
+                    "width=600,height=400",
                   );
                 }}
                 className="w-11 h-11 flex items-center justify-center bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
@@ -159,10 +177,22 @@ export function Footer() {
                 }}
                 className="px-4 h-11 flex items-center justify-center gap-2 bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
               >
-                <svg className="w-4 h-4 text-ghostWhite" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                <svg
+                  className="w-4 h-4 text-ghostWhite"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                  />
                 </svg>
-                <span className="font-heading text-base text-ghostWhite">คัดลอกลิงก์</span>
+                <span className="font-heading text-base text-ghostWhite">
+                  คัดลอกลิงก์
+                </span>
               </button>
             </div>
           </div>

@@ -18,6 +18,7 @@ import { FortuneReadingsSection } from '@/components/chart/fortune-readings-sect
 import { RecommendationsSection } from '@/components/chart/recommendations-section';
 import { StickyActionBar } from '@/components/chart/sticky-action-bar';
 import { ShareSheet } from '@/components/share/share-sheet';
+import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
@@ -231,7 +232,7 @@ export default function FortuneChartPage() {
         isOpen={showShareSheet}
         onClose={() => setShowShareSheet(false)}
         shareData={{
-          url: typeof window !== 'undefined' ? window.location.href : '',
+          url: `${SITE_URL}/dashboard/fortune`,
           userName: (session.user as any).displayName || session.user.name,
           element: chartData.elementProfile.primaryElement,
           luckyColor: chartData.birthStar.luckyColor,

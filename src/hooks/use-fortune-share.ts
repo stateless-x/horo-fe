@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useFortuneStore } from "@/stores/fortune";
+import { SITE_URL } from "@/lib/share-utils";
 import type { StructuredChartResponse } from "@/lib-packages/shared/types/astrology";
 
 /**
@@ -22,7 +23,7 @@ export function useFortuneShare() {
 
 มาดูดวงของเจ้ากันเถอะ!`;
 
-      const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/fortune`;
+      const shareUrl = `${SITE_URL}/fortune`;
 
       try {
         // Try Web Share API (mobile)

@@ -199,7 +199,7 @@ export function Footer() {
         )}
 
         {/* Cross-promotion links */}
-        {context.crossLinks.length > 0 && (
+        {/* {context.crossLinks.length > 0 && (
           <div className="mb-6">
             <h4 className="font-heading text-base text-ghostWhite font-medium text-center mb-4">
               ลองฟีเจอร์อื่น
@@ -222,7 +222,7 @@ export function Footer() {
               })}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Attribution */}
         <div className="flex flex-col items-center justify-center gap-2 text-sm text-ashGray">

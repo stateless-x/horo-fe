@@ -69,8 +69,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og-image.png",
-        width: 1200,
-        height: 630,
+        width: 2848,
+        height: 1504,
         alt: "สายมู - ดูดวงออนไลน์ฟรี",
       },
     ],

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { Orbit, Heart } from 'lucide-react';
 
@@ -35,6 +34,7 @@ export default function TodayPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const router = useRouter();
   const [showShareSheet, setShowShareSheet] = useState(false);
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
 
   // Redirect logic
   useEffect(() => {
@@ -57,10 +57,20 @@ export default function TodayPage() {
 
   const { data: userProfile } = useUserProfile(isReady);
 
+  // Show escape hatch after 30 seconds of loading
+  useEffect(() => {
+    if (!dailyLoading) {
+      setLoadingTimedOut(false);
+      return;
+    }
+    const timer = setTimeout(() => setLoadingTimedOut(true), 30_000);
+    return () => clearTimeout(timer);
+  }, [dailyLoading]);
+
   // Loading state
   if (sessionLoading || dailyLoading || !session) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
+      <div className="min-h-screen bg-voidBlack flex flex-col items-center justify-center gap-4">
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -73,6 +83,31 @@ export default function TodayPage() {
           }}
           className="w-16 h-16 border-4 border-royalPurple border-t-transparent rounded-full animate-spin"
         />
+        {loadingTimedOut && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center space-y-3"
+          >
+            <p className="text-ashGray font-oracle">
+              ดูเหมือนจะใช้เวลานานกว่าปกติ...
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-2 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-lg transition-colors font-heading"
+              >
+                ลองใหม่
+              </button>
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="px-6 py-2 border border-royalPurple/50 text-ashGray hover:text-ghostWhite rounded-lg transition-colors font-heading"
+              >
+                กลับหน้าหลัก
+              </button>
+            </div>
+          </motion.div>
+        )}
       </div>
     );
   }

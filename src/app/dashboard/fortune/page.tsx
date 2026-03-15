@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useQueryClient } from '@tanstack/react-query';
-import { Settings, RefreshCw } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { useFortuneGeneration } from '@/hooks/use-fortune-generation';
 import { useFortuneData } from '@/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
@@ -22,8 +21,8 @@ import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
+import { PawjaiBanner } from '@/components/ads/pawjai-banner';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
-import { api } from '@/lib/api';
 
 /**
  * Fortune Chart Page (Redesigned Dashboard)
@@ -45,8 +44,6 @@ import { api } from '@/lib/api';
  */
 export default function FortuneChartPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const [isRegenerating, setIsRegenerating] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [activeTab, setActiveTab] = useState<FortuneTab>('fortune');
 
@@ -57,7 +54,7 @@ export default function FortuneChartPage() {
   const { session, sessionLoading } = useFortuneGeneration();
 
   // Fortune data fetching
-  const { data: chartData, isRefetching } = useFortuneData(loadingState === 'complete');
+  const { data: chartData } = useFortuneData(loadingState === 'complete');
 
   // Redirect unauthenticated users
   useEffect(() => {
@@ -69,29 +66,6 @@ export default function FortuneChartPage() {
   // Handle share action - open ShareSheet
   const handleShare = () => {
     setShowShareSheet(true);
-  };
-
-  // Handle new reading action - regenerate with same birth data
-  const handleNewReading = async () => {
-    if (isRegenerating || isRefetching) return;
-
-    try {
-      setIsRegenerating(true);
-
-      // Call backend to clear cache and regenerate
-      await api.delete('/api/fortune/chart/regenerate');
-
-      // Invalidate and refetch the chart data
-      await queryClient.refetchQueries({ queryKey: ['fortune', 'chart'] });
-
-      console.log('[FortuneChart] Successfully regenerated new reading');
-    } catch (err) {
-      console.error('[FortuneChart] Regenerate failed:', err);
-      // Fallback: redirect to onboarding if regenerate fails
-      router.push('/fortune');
-    } finally {
-      setIsRegenerating(false);
-    }
   };
 
   // Show loading skeleton while initializing or generating
@@ -122,17 +96,6 @@ export default function FortuneChartPage() {
 
   return (
     <div className="min-h-screen pb-24 relative">
-      {/* Regeneration Overlay */}
-      {isRefetching && (
-        <div className="fixed inset-0 bg-voidBlack/60 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-deepNight/90 border border-royalPurple/50 rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
-            <RefreshCw className="w-8 h-8 text-amethyst animate-spin" />
-            <p className="text-ghostWhite font-heading text-lg">กำลังสร้างดวงใหม่...</p>
-            <p className="text-ashGray text-sm">โปรดรอสักครู่</p>
-          </div>
-        </div>
-      )}
-
       {/* Scroll Indicator - Bottom Center */}
       <ScrollIndicator />
 
@@ -221,11 +184,10 @@ export default function FortuneChartPage() {
       </div>
 
       {/* Sticky Action Bar */}
-      <StickyActionBar
-        onShare={handleShare}
-        onNewReading={handleNewReading}
-        isRegenerating={isRegenerating || isRefetching}
-      />
+      <StickyActionBar onShare={handleShare} />
+
+      {/* Pawjai Advertisement */}
+      <PawjaiBanner />
 
       {/* Share Sheet */}
       <ShareSheet

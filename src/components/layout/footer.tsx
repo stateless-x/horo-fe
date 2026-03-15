@@ -225,19 +225,24 @@ export function Footer() {
         )}
 
         {/* Attribution */}
-        <div className="flex flex-col items-center justify-center text-sm text-ashGray">
-          <div className="flex items-center">
-            <span>Made by</span>
-            <a
-              href="https://x.com/askpurin"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-1.5 font-medium text-amethyst hover:text-lavenderGlow transition-colors duration-200"
-            >
-              @Askpurin
-            </a>
-          </div>
-          <span className="text-xs text-ashGray/60 mt-1">v 0.0.1</span>
+        <div className="flex flex-col items-center justify-center gap-2 text-sm text-ashGray">
+          <a
+            href="https://x.com/askpurin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col items-center gap-1 transition-colors duration-200"
+          >
+            <span className="flex items-center gap-1.5">
+              Made with <span className="text-amethyst">&#10024;</span> by
+              <span className="font-medium text-amethyst group-hover:text-lavenderGlow transition-colors duration-200">
+                @Askpurin
+              </span>
+            </span>
+            <span className="text-xs text-ashGray/50 group-hover:text-amethyst/80 transition-colors duration-200">
+              ชอบก็มาติดตามกันได้นะ &#128156;
+            </span>
+          </a>
+          <span className="text-xs text-ashGray/40">v 0.0.1</span>
         </div>
       </div>
     </footer>

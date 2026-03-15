@@ -1,35 +1,21 @@
 'use client';
 
-import { Share2, RefreshCw } from 'lucide-react';
+import { Share2 } from 'lucide-react';
 
 interface StickyActionBarProps {
   onShare: () => void;
-  onNewReading: () => void;
-  isRegenerating?: boolean;
 }
 
-export function StickyActionBar({ onShare, onNewReading, isRegenerating }: StickyActionBarProps) {
+export function StickyActionBar({ onShare }: StickyActionBarProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-voidBlack/80 backdrop-blur-lg border-t border-darkPurple/50 px-4 pt-3 pb-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-40">
-      <div className="max-w-4xl mx-auto flex gap-3">
-        {/* Share button - PRIMARY (60% width) */}
+    <div className="fixed bottom-0 left-0 right-0 bg-voidBlack/80 backdrop-blur-lg border-t border-darkPurple/50 px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-40">
+      <div className="max-w-4xl mx-auto">
         <button
           onClick={onShare}
-          className="flex-[3] bg-amethyst hover:bg-lavenderGlow text-voidBlack font-heading font-semibold rounded-xl px-6 py-3 transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-amethyst/30 hover:shadow-lg hover:shadow-lavenderGlow/30"
+          className="w-full bg-amethyst hover:bg-lavenderGlow text-voidBlack font-heading font-semibold rounded-xl px-6 py-3 transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-amethyst/30 hover:shadow-lg hover:shadow-lavenderGlow/30"
         >
           <Share2 className="w-[18px] h-[18px]" />
           <span>แชร์ดวงชะตา</span>
-        </button>
-
-        {/* New reading button - SECONDARY (40% width) */}
-        <button
-          onClick={onNewReading}
-          disabled={isRegenerating}
-          className="flex-[2] bg-transparent border border-amethyst/60 text-amethyst hover:bg-amethyst/15 hover:border-amethyst font-heading font-medium rounded-xl px-6 py-3 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <RefreshCw className={`w-[18px] h-[18px] ${isRegenerating ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline">{isRegenerating ? 'กำลังสร้าง...' : 'สร้างดวงใหม่'}</span>
-          <span className="sm:hidden">{isRegenerating ? '...' : 'ดวงใหม่'}</span>
         </button>
       </div>
     </div>

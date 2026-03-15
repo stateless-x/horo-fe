@@ -37,32 +37,48 @@ export function StepTeaser() {
   } | null>(null);
 
   const generateTeaser = async () => {
-    try {
-      setIsLoading(true);
-      setHasFailed(false);
+    const MAX_RETRIES = 2;
 
-      const data = await api.post<{
-        elementType: string;
-        personality: string;
-        todaySnippet: string;
-        luckyColor?: string;
-        luckyNumber?: number;
-      }>('/api/fortune/teaser', profile);
+    setIsLoading(true);
+    setHasFailed(false);
+    setIsRateLimited(false);
 
-      setResult(data);
-      setTeaserResult(data);
-    } catch (error: any) {
-      console.error('Failed to generate teaser:', error);
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const data = await api.post<{
+          elementType: string;
+          personality: string;
+          todaySnippet: string;
+          luckyColor?: string;
+          luckyNumber?: number;
+        }>('/api/fortune/teaser', profile);
 
-      if (error?.status === 429) {
-        setIsRateLimited(true);
-        setResult(null);
-      } else {
-        setHasFailed(true);
-        setResult(null);
+        setResult(data);
+        setTeaserResult(data);
+        setIsLoading(false);
+        return; // Success
+      } catch (error: any) {
+        console.error(`Teaser attempt ${attempt + 1}/${MAX_RETRIES + 1} failed:`, error);
+
+        // Rate limit — don't retry, show rate limit screen immediately
+        if (error?.status === 429) {
+          setIsRateLimited(true);
+          setResult(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Last attempt — show error screen
+        if (attempt === MAX_RETRIES) {
+          setHasFailed(true);
+          setResult(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Wait before retrying (2s, 4s)
+        await new Promise((resolve) => setTimeout(resolve, 2000 * (attempt + 1)));
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 

@@ -84,7 +84,8 @@ export function useFortuneGeneration() {
         // Step 2: Fetch chart data (this will return cached data if it exists, not regenerate)
         setLoadingState('generating-chart');
         console.log('[FortuneGeneration] Fetching fortune chart (cached or new)');
-        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart');
+        // Use longer timeout — this GET triggers LLM generation on first load (no cache)
+        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 45_000 });
 
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 

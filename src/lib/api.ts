@@ -47,8 +47,8 @@ async function parseErrorResponse(res: Response): Promise<never> {
  * All requests have timeouts to prevent infinite hangs
  */
 export const api = {
-  async get<T>(path: string): Promise<T> {
-    const { signal, clear } = createTimeoutSignal(TIMEOUTS.GET);
+  async get<T>(path: string, options?: { timeout?: number }): Promise<T> {
+    const { signal, clear } = createTimeoutSignal(options?.timeout ?? TIMEOUTS.GET);
     try {
       const res = await fetch(`${API_URL}${path}`, {
         credentials: 'include',

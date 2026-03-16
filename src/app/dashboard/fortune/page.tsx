@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Settings } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Settings, AlertCircle } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFortuneGeneration } from '@/hooks/use-fortune-generation';
 import { useFortuneData } from '@/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
@@ -45,11 +46,28 @@ import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
  */
 export default function FortuneChartPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [activeTab, setActiveTab] = useState<FortuneTab>('fortune');
+  const [showProfileUpdatedToast, setShowProfileUpdatedToast] = useState(false);
 
   // State management
-  const { loadingState, error, setShareStatus } = useFortuneStore();
+  const { loadingState, error, rateLimitResetAt, setShareStatus } = useFortuneStore();
+
+  // If user just updated their profile in settings, invalidate cached chart data
+  // so useFortuneGeneration re-fetches (and triggers LLM regeneration)
+  useEffect(() => {
+    const profileUpdated = sessionStorage.getItem('fortune-profile-updated');
+    if (profileUpdated) {
+      sessionStorage.removeItem('fortune-profile-updated');
+      // Clear cached chart data so it re-fetches with new profile
+      queryClient.removeQueries({ queryKey: ['fortune', 'chart'] });
+      // Reset fortune store so generation hook runs again
+      useFortuneStore.getState().reset();
+      setShowProfileUpdatedToast(true);
+      setTimeout(() => setShowProfileUpdatedToast(false), 5000);
+    }
+  }, [queryClient]);
 
   // Session validation and fortune generation
   const { session, sessionLoading } = useFortuneGeneration();
@@ -110,6 +128,49 @@ export default function FortuneChartPage() {
           <Settings className="w-5 h-5 text-ashGray group-hover:text-amethyst transition-colors" />
         </button>
       </div>
+
+      {/* Rate Limit Banner */}
+      <AnimatePresence>
+        {rateLimitResetAt && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="max-w-4xl mx-auto px-4 pt-6"
+          >
+            <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-900/20 border border-amber-500/30 text-amber-300 text-sm">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+              <p>
+                คุณแก้ไขข้อมูลบ่อยเกินไป ดวงจะอัปเดตใหม่ได้อีกครั้งใน{' '}
+                {(() => {
+                  const resetDate = new Date(rateLimitResetAt);
+                  const now = new Date();
+                  const diffMs = resetDate.getTime() - now.getTime();
+                  const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+                  if (diffHours <= 1) return 'ไม่นานนี้';
+                  return `${diffHours} ชั่วโมง`;
+                })()}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Profile Updated Toast */}
+      <AnimatePresence>
+        {showProfileUpdatedToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="max-w-4xl mx-auto px-4 pt-6"
+          >
+            <div className="p-4 rounded-lg bg-royalPurple/20 border border-royalPurple/30 text-amethyst text-sm">
+              กำลังอัปเดตดวงตามข้อมูลใหม่...
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Section 1: Hero - Always visible */}

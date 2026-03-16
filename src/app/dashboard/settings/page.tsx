@@ -231,13 +231,18 @@ export default function SettingsPage() {
       }
 
       // Call update endpoint
-      await api.post('/api/fortune/update-profile', {
+      const result = await api.post<{ success: boolean; profileId: string; fortuneRegenerated: boolean }>('/api/fortune/update-profile', {
         name: displayName.trim(),
         birthDate: birthDate.toISOString(),
         gender,
         birthTime,
         mbtiType: mbtiType || undefined,
       });
+
+      // Signal fortune page to show "regenerating" indicator if LLM data changed
+      if (result.fortuneRegenerated) {
+        sessionStorage.setItem('fortune-profile-updated', '1');
+      }
 
       // Save current values as new saved values
       setSavedValues({
@@ -251,7 +256,7 @@ export default function SettingsPage() {
         mbtiType,
       });
 
-      setSaveMessage({ type: 'success', text: 'บันทึกข้อมูลเรียบร้อยแล้ว' });
+      setSaveMessage({ type: 'success', text: result.fortuneRegenerated ? 'บันทึกข้อมูลเรียบร้อย ดวงจะอัปเดตใหม่เมื่อกลับไปหน้าดวงชะตา' : 'บันทึกข้อมูลเรียบร้อยแล้ว' });
       setIsEditMode(false);
 
       // Clear message after 3 seconds

@@ -30,6 +30,7 @@ export function useFortuneGeneration() {
     setLoadingState,
     setError,
     setHasAttemptedGeneration,
+    setRateLimitResetAt,
   } = useFortuneStore();
 
   const {
@@ -138,11 +139,12 @@ export function useFortuneGeneration() {
         }
 
         // Handle 429 - Rate limit exceeded
+        // Store reset time so the page can show a banner while still displaying cached data
         if (err?.status === 429) {
-          const retryAfter = err?.body?.retryAfter;
-          const hours = retryAfter ? Math.ceil(retryAfter / 3600) : 24;
-          console.log(`[FortuneGeneration] Rate limited, retry after ${retryAfter}s`);
-          setError(`คำขอมากเกินไป กรุณาลองใหม่ในอีก ${hours} ชั่วโมง`);
+          const resetAt = err?.body?.resetAt;
+          console.log(`[FortuneGeneration] Rate limited, resets at ${resetAt}`);
+          setRateLimitResetAt(resetAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString());
+          // Don't set error — let the page show cached data with a rate limit banner
           setLoadingState('complete');
           resetRetryCount(); // Don't count rate limits as retries
           return;

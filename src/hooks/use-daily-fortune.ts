@@ -18,6 +18,10 @@ export interface StructuredDailyContent {
   dos: string[];
   donts: string[];
   luckyMoment: string;
+  luckyNumbers?: number[];
+  luckyColor?: string;
+  warnings?: string[];
+  suggestions?: string[];
 }
 
 export interface DailyReadingResponse {

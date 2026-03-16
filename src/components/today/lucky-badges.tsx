@@ -8,6 +8,8 @@ interface LuckyBadgesProps {
   luckyColor: string | null;
   luckyDirection: string | null;
   luckyMoment: string | null;
+  luckyNumbers?: number[] | null;
+  luckyColorEnhanced?: string | null;
 }
 
 export function LuckyBadges({
@@ -15,17 +17,27 @@ export function LuckyBadges({
   luckyColor,
   luckyDirection,
   luckyMoment,
+  luckyNumbers,
+  luckyColorEnhanced,
 }: LuckyBadgesProps) {
+  // Prefer enhanced lucky numbers from LLM, fall back to deterministic single number
+  const displayNumbers = luckyNumbers && luckyNumbers.length > 0
+    ? luckyNumbers.join(', ')
+    : luckyNumber?.toString() || '-';
+
+  // Prefer LLM-personalized color, fall back to deterministic
+  const displayColor = luckyColorEnhanced || luckyColor || '-';
+
   const badges = [
     {
       label: 'เลขมงคล',
-      value: luckyNumber?.toString() || '-',
+      value: displayNumbers,
       icon: Hash,
-      large: true,
+      large: !luckyNumbers || luckyNumbers.length <= 1,
     },
     {
       label: 'สีมงคล',
-      value: luckyColor || '-',
+      value: displayColor,
       icon: Palette,
       large: false,
     },

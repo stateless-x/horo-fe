@@ -13,6 +13,8 @@ import { DailyReadingCard } from '@/components/today/daily-reading-card';
 import { CategoryScores } from '@/components/today/category-scores';
 import { LuckyBadges } from '@/components/today/lucky-badges';
 import { DailyGuidance } from '@/components/today/daily-guidance';
+import { DailyWarnings } from '@/components/today/daily-warnings';
+import { DailySuggestions } from '@/components/today/daily-suggestions';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { Card } from '@/lib-packages/ui';
@@ -24,8 +26,9 @@ import { Card } from '@/lib-packages/ui';
  * Uses real API data for structured daily reading with:
  * - User identity context (element, planet)
  * - AI-generated reading with category scores
- * - Lucky attributes from Thai + Chinese astrology
+ * - Lucky attributes from Thai + Chinese astrology + MBTI
  * - Daily dos/donts guidance
+ * - Warnings and personalized suggestions
  * - Share functionality
  *
  * Protected route - requires authentication + completed onboarding
@@ -36,18 +39,27 @@ export default function TodayPage() {
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
 
-  // Redirect logic
+  // Redirect unauthenticated users to login
   useEffect(() => {
-    if (!sessionLoading) {
-      if (!session) {
-        router.push('/login');
-      } else if (!(session.user as any)?.onboardingCompleted) {
-        router.push('/dashboard/fortune');
-      }
+    if (!sessionLoading && !session) {
+      router.replace('/login');
     }
   }, [session, sessionLoading, router]);
 
-  const isReady = !!session && !!(session.user as any)?.onboardingCompleted;
+  const isReady = !!session;
+
+  // Block render until session is resolved — prevents flash of content before redirect
+  if (sessionLoading || !session) {
+    return (
+      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-16 h-16 border-4 border-royalPurple border-t-transparent rounded-full animate-spin"
+        />
+      </div>
+    );
+  }
 
   const {
     data: dailyReading,
@@ -67,8 +79,8 @@ export default function TodayPage() {
     return () => clearTimeout(timer);
   }, [dailyLoading]);
 
-  // Loading state
-  if (sessionLoading || dailyLoading || !session) {
+  // Loading state for daily reading data
+  if (dailyLoading) {
     return (
       <div className="min-h-screen bg-voidBlack flex flex-col items-center justify-center gap-4">
         <motion.div
@@ -169,6 +181,8 @@ export default function TodayPage() {
           luckyColor={dailyReading?.luckyColor ?? null}
           luckyDirection={dailyReading?.luckyDirection ?? null}
           luckyMoment={structured?.luckyMoment ?? null}
+          luckyNumbers={structured?.luckyNumbers ?? null}
+          luckyColorEnhanced={structured?.luckyColor ?? null}
         />
 
         {/* Section E: Daily Guidance */}
@@ -176,11 +190,21 @@ export default function TodayPage() {
           <DailyGuidance dos={structured.dos} donts={structured.donts} />
         )}
 
-        {/* Section F: Share Button */}
+        {/* Section F: Warnings */}
+        {structured?.warnings && structured.warnings.length > 0 && (
+          <DailyWarnings warnings={structured.warnings} />
+        )}
+
+        {/* Section G: Suggestions */}
+        {structured?.suggestions && structured.suggestions.length > 0 && (
+          <DailySuggestions suggestions={structured.suggestions} />
+        )}
+
+        {/* Section H: Share Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
+          transition={{ delay: 0.8 }}
         >
           <button
             onClick={() => setShowShareSheet(true)}
@@ -190,11 +214,11 @@ export default function TodayPage() {
           </button>
         </motion.div>
 
-        {/* Section G: Cross Navigation */}
+        {/* Section I: Cross Navigation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.9 }}
           className="grid grid-cols-2 gap-3"
         >
           <Link href="/dashboard/fortune">
@@ -224,7 +248,7 @@ export default function TodayPage() {
             url: `${SITE_URL}/dashboard/today`,
             userName: displayName,
             element: primaryElement || undefined,
-            luckyColor: dailyReading?.luckyColor || undefined,
+            luckyColor: structured?.luckyColor || dailyReading?.luckyColor || undefined,
             luckyNumber: dailyReading?.luckyNumber || undefined,
           }}
         />

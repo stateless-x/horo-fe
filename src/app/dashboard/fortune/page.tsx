@@ -22,6 +22,7 @@ import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-b
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { PawjaiBanner } from '@/components/ads/pawjai-banner';
+import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -182,6 +183,9 @@ export default function FortuneChartPage() {
           </motion.div>
         )}
       </div>
+
+      {/* Pawjai Ads - Inline Permanent Banner */}
+      <PawjaiAdsBanner />
 
       {/* Sticky Action Bar */}
       <StickyActionBar onShare={handleShare} />

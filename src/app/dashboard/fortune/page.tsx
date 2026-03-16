@@ -139,6 +139,9 @@ export default function FortuneChartPage() {
 
       {/* Tab Navigation - Sticky when scrolled past */}
       <FortuneTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      {/* Pawjai Ads - Inline Permanent Banner */}
+      <PawjaiAdsBanner />
 
       {/* Tab Content */}
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
@@ -183,9 +186,6 @@ export default function FortuneChartPage() {
           </motion.div>
         )}
       </div>
-
-      {/* Pawjai Ads - Inline Permanent Banner */}
-      <PawjaiAdsBanner />
 
       {/* Sticky Action Bar */}
       <StickyActionBar onShare={handleShare} />

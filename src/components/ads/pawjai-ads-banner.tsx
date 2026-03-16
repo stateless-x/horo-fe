@@ -24,22 +24,27 @@ export function PawjaiAdsBanner() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, translateY: 12 }}
-      animate={{ opacity: 1, translateY: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut', delay: 0.2 }}
+      initial={{ opacity: 0, y: 20, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{
+        type: 'spring',
+        stiffness: 260,
+        damping: 20,
+        delay: 0.2,
+      }}
       className="max-w-4xl mx-auto px-4 mt-8 mb-4"
     >
       <p className="font-thai text-xs text-ashGray/60 text-center mb-2">
         โฆษณา
       </p>
 
-      <div className="bg-deepNight border border-darkPurple/50 rounded-2xl overflow-hidden">
+      <div className="bg-deepNight border border-darkPurple/50 rounded-2xl p-4 space-y-3">
         {/* Banner Image */}
         <a
           href={PAWJAI_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full hover:opacity-95 transition-opacity duration-200"
+          className="block w-full rounded-xl overflow-hidden hover:opacity-95 transition-opacity duration-200"
         >
           <img
             src={BANNER_IMAGE_CDN}
@@ -53,7 +58,7 @@ export function PawjaiAdsBanner() {
         </a>
 
         {/* Upsell section */}
-        <div className="p-4 space-y-3">
+        <div className="space-y-3">
           <p className="font-thai text-sm text-ashGray text-center">
             อัพเกรดเฉลี่ยเดือนละ 50 บาท
           </p>
@@ -81,15 +86,22 @@ export function PawjaiAdsBanner() {
 
           {/* CTA */}
           <div className="flex justify-center">
-            <a
+            <motion.a
               href={PAWJAI_URL}
               target="_blank"
               rel="noopener noreferrer"
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 3,
+                ease: 'easeInOut',
+              }}
               className="inline-flex items-center gap-2 font-heading text-sm font-medium bg-royalPurple text-ghostWhite px-6 py-2.5 rounded-xl hover:bg-amethyst shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30 transition-all duration-200"
             >
               <span>ดูรายละเอียด</span>
               <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            </motion.a>
           </div>
         </div>
       </div>

@@ -107,9 +107,9 @@ export default function SettingsPage() {
         if (response.profile) {
           const profile = response.profile;
           const birthDate = new Date(profile.birthDate);
-          const dayValue = birthDate.getDate();
-          const monthValue = birthDate.getMonth();
-          const yearValue = toBuddhistYear(birthDate.getFullYear());
+          const dayValue = birthDate.getUTCDate();
+          const monthValue = birthDate.getUTCMonth();
+          const yearValue = toBuddhistYear(birthDate.getUTCFullYear());
           const genderValue = profile.gender as Gender;
           const isTimeUnknownValue = profile.isTimeUnknown;
 
@@ -208,7 +208,7 @@ export default function SettingsPage() {
 
       // Convert Buddhist Era to Gregorian
       const gregorianYear = toGregorianYear(year);
-      const birthDate = new Date(gregorianYear, month, day);
+      const birthDate = new Date(Date.UTC(gregorianYear, month, day));
 
       // Prepare birth time data
       let birthTime;

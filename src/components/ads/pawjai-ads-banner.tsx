@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 import { Copy, Check, ExternalLink } from 'lucide-react';
 
 const PAWJAI_URL = 'https://pawjai.co';
-const BANNER_IMAGE_CDN = 'https://pawjai.b-cdn.net/ads/pawjai-ads/pawjai-ads-banner.webp';
-const BANNER_IMAGE_FALLBACK = '/pawjai-ads-banner.webp';
+const BANNER_IMAGE_CDN = 'https://pawjai.b-cdn.net/ads/pawjai-ads/pawjai-banner.webp';
+const BANNER_IMAGE_FALLBACK = '/pawjai-banner.webp';
 const PROMO_CODE = 'PAWJAI35';
 
 export function PawjaiAdsBanner() {

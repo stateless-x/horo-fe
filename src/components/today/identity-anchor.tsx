@@ -9,7 +9,7 @@ const ELEMENT_NAMES_THAI: Record<string, string> = {
   wood: 'ไม้',
   fire: 'ไฟ',
   earth: 'ดิน',
-  metal: 'โลหะ',
+  metal: 'ทอง',
   water: 'น้ำ',
 };
 

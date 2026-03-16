@@ -20,6 +20,19 @@ const RELATIONSHIP_ICONS: Record<string, typeof Heart> = {
   family: Home,
 };
 
+const ELEMENT_NAMES_THAI: Record<string, string> = {
+  wood: 'ไม้',
+  fire: 'ไฟ',
+  earth: 'ดิน',
+  metal: 'ทอง',
+  water: 'น้ำ',
+};
+
+function toThaiElement(element: string | null | undefined): string {
+  if (!element) return '';
+  return ELEMENT_NAMES_THAI[element.toLowerCase()] || element;
+}
+
 const RELATIONSHIP_ACCENTS: Record<string, { accent: string; accentBg: string; accentBorder: string }> = {
   romantic: { accent: 'text-red-400', accentBg: 'bg-red-500/15', accentBorder: 'border-red-400/50' },
   talking: { accent: 'text-pink-400', accentBg: 'bg-pink-500/15', accentBorder: 'border-pink-400/50' },
@@ -128,7 +141,7 @@ export default function CompatibilitySharePage() {
 
           {result.userElement && result.partnerElement && (
             <p className="text-ashGray text-sm">
-              ธาตุ{result.userElement} x ธาตุ{result.partnerElement}
+              ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
             </p>
           )}
         </motion.div>
@@ -147,7 +160,7 @@ export default function CompatibilitySharePage() {
                 <div className="flex items-center justify-center gap-4 py-6">
                   <div className="text-center">
                     <div className="w-20 h-20 rounded-full bg-royalPurple/20 border-2 border-royalPurple flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ghostWhite">{result.userElement}</span>
+                      <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.userElement)}</span>
                     </div>
                     <p className="text-sm text-ghostWhite">เพื่อนของเจ้า</p>
                     {result.userDayMaster && <p className="text-xs text-ashGray">{result.userDayMaster}</p>}
@@ -164,7 +177,7 @@ export default function CompatibilitySharePage() {
 
                   <div className="text-center">
                     <div className="w-20 h-20 rounded-full bg-amethyst/20 border-2 border-amethyst flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ghostWhite">{result.partnerElement}</span>
+                      <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.partnerElement)}</span>
                     </div>
                     <p className="text-sm text-ghostWhite">{result.partnerName}</p>
                     {result.partnerDayMaster && <p className="text-xs text-ashGray">{result.partnerDayMaster}</p>}

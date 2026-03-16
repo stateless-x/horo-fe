@@ -7,7 +7,7 @@ const elements = [
   { key: 'wood', name: 'ธาตุไม้', trait: 'เติบโต', colors: ELEMENT_COLORS.wood },
   { key: 'fire', name: 'ธาตุไฟ', trait: 'หลงใหล', colors: ELEMENT_COLORS.fire },
   { key: 'earth', name: 'ธาตุดิน', trait: 'มั่นคง', colors: ELEMENT_COLORS.earth },
-  { key: 'metal', name: 'ธาตุโลหะ', trait: 'ระเบียบ', colors: ELEMENT_COLORS.metal },
+  { key: 'metal', name: 'ธาตุทอง', trait: 'ระเบียบ', colors: ELEMENT_COLORS.metal },
   { key: 'water', name: 'ธาตุน้ำ', trait: 'ปัญญา', colors: ELEMENT_COLORS.water },
 ];
 

@@ -135,6 +135,21 @@ interface HistoryResponse {
   total: number;
 }
 
+// --- Element Translation ---
+
+const ELEMENT_NAMES_THAI: Record<string, string> = {
+  wood: 'ไม้',
+  fire: 'ไฟ',
+  earth: 'ดิน',
+  metal: 'ทอง',
+  water: 'น้ำ',
+};
+
+function toThaiElement(element: string | undefined): string {
+  if (!element) return '';
+  return ELEMENT_NAMES_THAI[element.toLowerCase()] || element;
+}
+
 // --- Page ---
 
 export default function CompatibilityPage() {
@@ -443,7 +458,7 @@ export default function CompatibilityPage() {
 
               {result.userElement && result.partnerElement && (
                 <p className="text-ashGray text-sm">
-                  ธาตุ{result.userElement} x ธาตุ{result.partnerElement}
+                  ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
                 </p>
               )}
             </div>
@@ -463,7 +478,7 @@ export default function CompatibilityPage() {
                   <div className="flex items-center justify-center gap-4 py-6">
                     <div className="text-center">
                       <div className="w-20 h-20 rounded-full bg-royalPurple/20 border-2 border-royalPurple flex items-center justify-center mb-2">
-                        <span className="text-2xl font-bold text-ghostWhite">{result.userElement}</span>
+                        <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.userElement)}</span>
                       </div>
                       <p className="text-sm text-ghostWhite">เจ้า</p>
                       {result.userDayMaster && <p className="text-xs text-ashGray">{result.userDayMaster}</p>}
@@ -480,7 +495,7 @@ export default function CompatibilityPage() {
 
                     <div className="text-center">
                       <div className="w-20 h-20 rounded-full bg-amethyst/20 border-2 border-amethyst flex items-center justify-center mb-2">
-                        <span className="text-2xl font-bold text-ghostWhite">{result.partnerElement}</span>
+                        <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.partnerElement)}</span>
                       </div>
                       <p className="text-sm text-ghostWhite">{result.partnerName}</p>
                       {result.partnerDayMaster && <p className="text-xs text-ashGray">{result.partnerDayMaster}</p>}
@@ -532,8 +547,8 @@ export default function CompatibilityPage() {
               url: result.shareToken ? `${SITE_URL}/compatibility/${result.shareToken}` : `${SITE_URL}/dashboard/compatibility`,
               partnerName: result.partnerName,
               relationshipLabel: RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType,
-              userElement: result.userElement || '',
-              partnerElement: result.partnerElement || '',
+              userElement: toThaiElement(result.userElement) || '',
+              partnerElement: toThaiElement(result.partnerElement) || '',
             }}
           />
         </div>
@@ -858,7 +873,7 @@ export default function CompatibilityPage() {
                           {item.userElement && item.partnerElement && (
                             <>
                               <span className="text-ashGray/40">&#x2022;</span>
-                              <span className="text-ashGray">{item.userElement} x {item.partnerElement}</span>
+                              <span className="text-ashGray">{toThaiElement(item.userElement)} x {toThaiElement(item.partnerElement)}</span>
                             </>
                           )}
                         </div>

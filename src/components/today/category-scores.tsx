@@ -65,7 +65,7 @@ export function CategoryScores({ categories }: CategoryScoresProps) {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Icon className="w-4 h-4" style={{ color: config.color }} />
-                <span className="font-heading text-sm font-medium text-ghostWhite">
+                <span className="font-heading text-sm md:text-base font-medium text-ghostWhite">
                   {config.label}
                 </span>
               </div>
@@ -78,7 +78,7 @@ export function CategoryScores({ categories }: CategoryScoresProps) {
 
             <StarRating score={data.score} color={config.color} />
 
-            <p className="text-xs text-ashGray mt-2 line-clamp-2 font-thai">
+            <p className="text-xs md:text-sm text-ashGray mt-2 line-clamp-2 font-thai">
               {data.tip}
             </p>
 
@@ -93,7 +93,7 @@ export function CategoryScores({ categories }: CategoryScoresProps) {
                   className="overflow-hidden"
                 >
                   <hr className="border-darkPurple/50 my-3" />
-                  <p className="text-base leading-relaxed text-ghostWhite/80 font-oracle font-light">
+                  <p className="text-base md:text-lg leading-relaxed text-ghostWhite/80 font-oracle font-light">
                     {data.reading}
                   </p>
                 </motion.div>

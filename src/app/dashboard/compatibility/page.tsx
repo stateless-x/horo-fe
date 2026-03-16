@@ -403,7 +403,7 @@ export default function CompatibilityPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="text-lg text-ashGray font-oracle min-h-[28px]"
+                className="text-lg md:text-xl text-ashGray font-oracle min-h-[28px]"
               >
                 {calculationStep}
               </motion.p>
@@ -458,7 +458,7 @@ export default function CompatibilityPage() {
               </h1>
 
               {result.userElement && result.partnerElement && (
-                <p className="text-ashGray text-sm">
+                <p className="text-ashGray text-sm md:text-base">
                   ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
                 </p>
               )}
@@ -481,8 +481,8 @@ export default function CompatibilityPage() {
                       <div className="w-20 h-20 rounded-full bg-royalPurple/20 border-2 border-royalPurple flex items-center justify-center mb-2">
                         <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.userElement)}</span>
                       </div>
-                      <p className="text-sm text-ghostWhite">เจ้า</p>
-                      {result.userDayMaster && <p className="text-xs text-ashGray">{result.userDayMaster}</p>}
+                      <p className="text-sm md:text-base text-ghostWhite">เจ้า</p>
+                      {result.userDayMaster && <p className="text-xs md:text-sm text-ashGray">{result.userDayMaster}</p>}
                     </div>
 
                     <motion.div
@@ -498,8 +498,8 @@ export default function CompatibilityPage() {
                       <div className="w-20 h-20 rounded-full bg-amethyst/20 border-2 border-amethyst flex items-center justify-center mb-2">
                         <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.partnerElement)}</span>
                       </div>
-                      <p className="text-sm text-ghostWhite">{result.partnerName}</p>
-                      {result.partnerDayMaster && <p className="text-xs text-ashGray">{result.partnerDayMaster}</p>}
+                      <p className="text-sm md:text-base text-ghostWhite">{result.partnerName}</p>
+                      {result.partnerDayMaster && <p className="text-xs md:text-sm text-ashGray">{result.partnerDayMaster}</p>}
                     </div>
                   </div>
                 </CardContent>
@@ -591,7 +591,7 @@ export default function CompatibilityPage() {
 
         {/* Relationship Type Selector */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
-          <label className="block text-sm text-ashGray mb-3">เลือกประเภทความสัมพันธ์</label>
+          <label className="block text-sm md:text-base text-ashGray mb-3">เลือกประเภทความสัมพันธ์</label>
           <div className="flex flex-wrap gap-2">
             {RELATIONSHIP_TYPES.map((type) => {
               const typeConfig = RELATIONSHIP_CONFIG[type];
@@ -602,7 +602,7 @@ export default function CompatibilityPage() {
                 <motion.button
                   key={type}
                   onClick={() => setRelationshipType(type)}
-                  className={`inline-flex items-center gap-1.5 px-4 h-11 rounded-full text-sm font-medium transition-all border ${
+                  className={`inline-flex items-center gap-1.5 px-4 h-11 rounded-full text-sm md:text-base font-medium transition-all border ${
                     isSelected
                       ? `${typeConfig.accentBg} ${typeConfig.accentBorder} ${typeConfig.accent}`
                       : 'bg-deepNight border-darkPurple/50 text-ashGray hover:border-royalPurple/50'
@@ -637,7 +637,7 @@ export default function CompatibilityPage() {
               exit={{ opacity: 0, y: -10 }}
               className="bg-red-500/10 border border-red-500/30 rounded-xl p-4"
             >
-              <p className="text-red-400 text-center text-sm md:text-base">{error}</p>
+              <p className="text-red-400 text-center text-base md:text-lg">{error}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -659,13 +659,13 @@ export default function CompatibilityPage() {
                     >
                       <Moon className="w-10 h-10 text-amethyst mx-auto" />
                     </motion.div>
-                    <p className="text-ghostWhite font-medium">พลังดวงดาวต้องการเวลาฟื้นฟู</p>
-                    <p className="text-ashGray text-sm">
+                    <p className="text-ghostWhite font-medium text-base md:text-lg">พลังดวงดาวต้องการเวลาฟื้นฟู</p>
+                    <p className="text-ashGray text-sm md:text-base">
                       {rateLimitCountdown > 3600
                         ? 'เจ้าส่องดวงครบ 5 ครั้งในวันนี้แล้ว'
                         : 'เจ้าได้ส่องดวงครบ 5 ครั้งในชั่วโมงนี้แล้ว'}
                     </p>
-                    <p className="text-amethyst text-sm">
+                    <p className="text-amethyst text-sm md:text-base">
                       {rateLimitCountdown > 3600
                         ? `กลับมาใหม่พรุ่งนี้นะ`
                         : `ดวงดาวจะพร้อมอีกครั้งใน ${Math.ceil(rateLimitCountdown / 60)} นาที`}
@@ -703,7 +703,7 @@ export default function CompatibilityPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <label className="block text-sm text-ashGray mb-2">ชื่อ</label>
+                <label className="block text-sm md:text-base text-ashGray mb-2">ชื่อ</label>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={relationshipType}
@@ -723,10 +723,10 @@ export default function CompatibilityPage() {
               </div>
 
               <div>
-                <label className="block text-sm text-ashGray mb-3">วันเกิด</label>
+                <label className="block text-sm md:text-base text-ashGray mb-3">วันเกิด</label>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs text-ashGray/70 mb-2 text-center">วัน</label>
+                    <label className="block text-xs md:text-sm text-ashGray/70 mb-2 text-center">วัน</label>
                     <select
                       value={day}
                       onChange={(e) => setDay(e.target.value)}
@@ -738,7 +738,7 @@ export default function CompatibilityPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-ashGray/70 mb-2 text-center">เดือน</label>
+                    <label className="block text-xs md:text-sm text-ashGray/70 mb-2 text-center">เดือน</label>
                     <select
                       value={month}
                       onChange={(e) => setMonth(e.target.value)}
@@ -750,7 +750,7 @@ export default function CompatibilityPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-ashGray/70 mb-2 text-center">พ.ศ.</label>
+                    <label className="block text-xs md:text-sm text-ashGray/70 mb-2 text-center">พ.ศ.</label>
                     <select
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
@@ -762,7 +762,7 @@ export default function CompatibilityPage() {
                     </select>
                   </div>
                 </div>
-                <p className="text-xs text-ashGray/60 mt-2 text-center">ตัวอย่าง: 15 มิถุนายน 2540</p>
+                <p className="text-xs md:text-sm text-ashGray/60 mt-2 text-center">ตัวอย่าง: 15 มิถุนายน 2540</p>
               </div>
 
               <div className="space-y-2">
@@ -799,7 +799,7 @@ export default function CompatibilityPage() {
 
                 {/* Low remaining warning */}
                 {rateLimitInfo && rateLimitInfo.remaining <= 2 && rateLimitInfo.remaining > 0 && !isRateLimited && (
-                  <p className="text-amber-400 text-xs text-center">ส่องดวงได้อีก {rateLimitInfo.remaining} ครั้งในวันนี้</p>
+                  <p className="text-amber-400 text-xs md:text-sm text-center">ส่องดวงได้อีก {rateLimitInfo.remaining} ครั้งในวันนี้</p>
                 )}
               </div>
             </CardContent>
@@ -810,11 +810,11 @@ export default function CompatibilityPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-heading text-ghostWhite flex items-center gap-2">
+              <h2 className="text-lg md:text-xl font-heading text-ghostWhite flex items-center gap-2">
                 <Stars className="w-5 h-5 text-amethyst" />
                 ดวงที่เจ้าเคยส่อง
                 {totalHistory > 0 && (
-                  <span className="text-xs text-ashGray bg-deepNight px-2 py-0.5 rounded-full">
+                  <span className="text-xs md:text-sm text-ashGray bg-deepNight px-2 py-0.5 rounded-full">
                     {totalHistory} ครั้ง
                   </span>
                 )}
@@ -832,8 +832,8 @@ export default function CompatibilityPage() {
                   <Stars className="w-8 h-8" />
                   <Users className="w-8 h-8" />
                 </div>
-                <p className="text-ashGray">ยังไม่มีประวัติการส่องดวง</p>
-                <p className="text-ashGray/60 text-sm">ลองส่องดวงความสัมพันธ์กับคนรอบข้างเจ้าดูสิ</p>
+                <p className="text-ashGray text-base md:text-lg">ยังไม่มีประวัติการส่องดวง</p>
+                <p className="text-ashGray/60 text-sm md:text-base">ลองส่องดวงความสัมพันธ์กับคนรอบข้างเจ้าดูสิ</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -856,8 +856,8 @@ export default function CompatibilityPage() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-ghostWhite font-medium truncate">{item.partnerName}</p>
-                        <div className="flex items-center gap-2 text-xs">
+                        <p className="text-ghostWhite font-medium truncate text-base md:text-lg">{item.partnerName}</p>
+                        <div className="flex items-center gap-2 text-xs md:text-sm">
                           <span className={itemConfig.accent}>{RELATIONSHIP_LABELS[item.relationshipType as RelationshipType]}</span>
                           {item.userElement && item.partnerElement && (
                             <>
@@ -869,7 +869,7 @@ export default function CompatibilityPage() {
                       </div>
 
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs text-ashGray">
+                        <span className="text-xs md:text-sm text-ashGray">
                           {formatRelativeDate(item.createdAt)}
                         </span>
                         <ChevronRight className="w-4 h-4 text-ashGray/50" />

@@ -65,7 +65,7 @@ export function LuckyBadges({
               className="bg-deepNight border border-darkPurple/50 rounded-xl p-3 text-center"
             >
               <Icon className="w-4 h-4 text-amethyst mx-auto mb-1.5" />
-              <p className="text-xs text-ashGray mb-1">{badge.label}</p>
+              <p className="text-xs md:text-sm text-ashGray mb-1">{badge.label}</p>
               <p
                 className={`font-heading text-ghostWhite ${
                   badge.large ? 'text-2xl' : 'text-base'
@@ -82,7 +82,7 @@ export function LuckyBadges({
       {luckyMoment && (
         <div className="flex items-center gap-2 px-4 py-2.5 bg-amethyst/5 border border-amethyst/15 rounded-lg">
           <Clock className="w-4 h-4 text-amethyst shrink-0" />
-          <p className="text-sm text-ghostWhite/80 font-thai">
+          <p className="text-sm md:text-base text-ghostWhite/80 font-thai">
             <span className="text-amethyst font-medium">เวลามงคล:</span>{' '}
             {luckyMoment}
           </p>

@@ -31,7 +31,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             </h4>
           ),
           p: ({ children }) => (
-            <p className="text-ghostWhite/90 font-oracle font-light text-sm md:text-base leading-[1.8]">
+            <p className="text-ghostWhite/90 font-oracle font-light text-base md:text-lg leading-[1.8]">
               {children}
             </p>
           ),
@@ -48,7 +48,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             <ol className="space-y-2 ml-1 list-decimal list-inside">{children}</ol>
           ),
           li: ({ children }) => (
-            <li className="text-ghostWhite/90 font-oracle font-light text-sm md:text-base leading-[1.8] pl-4 relative before:content-['·'] before:absolute before:left-0 before:text-amethyst">
+            <li className="text-ghostWhite/90 font-oracle font-light text-base md:text-lg leading-[1.8] pl-4 relative before:content-['·'] before:absolute before:left-0 before:text-amethyst">
               {children}
             </li>
           ),

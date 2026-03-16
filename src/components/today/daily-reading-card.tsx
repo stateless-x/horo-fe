@@ -45,7 +45,7 @@ export function DailyReadingCard({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.15 }}
-                className="text-lg leading-[1.8] text-ghostWhite/90 font-oracle font-light"
+                className="text-lg md:text-xl leading-[1.8] text-ghostWhite/90 font-oracle font-light"
               >
                 {paragraph}
               </motion.p>

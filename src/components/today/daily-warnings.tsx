@@ -17,7 +17,7 @@ export function DailyWarnings({ warnings }: DailyWarningsProps) {
       <div className="bg-deepNight border border-red-500/20 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <ShieldAlert className="w-4 h-4 text-red-400" />
-          <h3 className="font-heading text-sm font-medium text-red-400">
+          <h3 className="font-heading text-sm md:text-base font-medium text-red-400">
             คำเตือนวันนี้
           </h3>
         </div>
@@ -25,7 +25,7 @@ export function DailyWarnings({ warnings }: DailyWarningsProps) {
           {warnings.map((item, index) => (
             <li
               key={index}
-              className="text-sm leading-relaxed text-ghostWhite/80 font-thai pl-3 relative before:content-['·'] before:absolute before:left-0 before:text-red-400"
+              className="text-sm md:text-base leading-relaxed text-ghostWhite/80 font-thai pl-3 relative before:content-['·'] before:absolute before:left-0 before:text-red-400"
             >
               {item}
             </li>

@@ -58,7 +58,7 @@ export function IdentityAnchor({
       )}
 
       {/* Greeting */}
-      <p className="text-paleOrchid font-oracle text-base">
+      <p className="text-paleOrchid font-oracle text-base md:text-lg">
         สวัสดี, {displayName}
       </p>
 

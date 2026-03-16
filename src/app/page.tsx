@@ -82,12 +82,16 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-4xl md:text-7xl font-heading text-ghostWhite mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-7xl font-heading mb-6 tracking-tight bg-gradient-to-br from-ghostWhite via-paleOrchid to-lavenderGlow bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(192,132,252,0.3)]">
               เปิดประตูสู่ชะตา
             </h1>
 
-            <p className="text-lg md:text-2xl text-paleOrchid/80 mb-6 font-oracle font-light">
-              ดูดวงด้วยศาสตร์จีนโบราณ × โหราศาสตร์ไทย × MBTI
+            <p className="text-lg md:text-2xl text-paleOrchid/80 mb-6 font-oracle font-light leading-relaxed">
+              ผสานจิตวิทยาเชิงลึกของ MBTI เข้ากับบาซีโบราณและโหราศาสตร์ไทย
+              <br />
+              เพื่อถอดรหัสตัวตน{' '}
+              <span className="text-lavenderGlow/90">—</span>
+              {' '}ไม่ใช่แค่ดวง แต่คือ<span className="text-lavenderGlow/90 font-normal">แก่นแท้ของคุณ</span>
             </p>
 
             {/* Decorative line */}
@@ -129,70 +133,6 @@ export default function LandingPage() {
 
       {/* ===== SECTION 2: Five Elements ===== */}
       <ElementShowcase />
-
-      {/* ===== SECTION 3: Daily Oracle ===== */}
-      <section className="py-20 px-6 bg-deepNight/30">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <Eye className="w-8 h-8 text-lavenderGlow/60 mx-auto mb-4" />
-            <h2 className="text-3xl md:text-4xl font-heading text-ghostWhite mb-4">
-              คำทำนายประจำวัน
-            </h2>
-            <p className="text-ashGray font-oracle">
-              <ClientDate />
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative group"
-          >
-            {/* Ambient glow */}
-            <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
-
-            <div
-              className="relative rounded-2xl p-6 md:p-10 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.01]"
-              style={{
-                background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              {/* Decorative side lines */}
-              <div className="absolute left-0 top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-amethyst/20 to-transparent" />
-              <div className="absolute right-0 top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-amethyst/20 to-transparent" />
-
-              {/* Decorative orbs */}
-              <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amethyst" />
-              <div className="absolute -bottom-16 -left-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-royalPurple" />
-
-              <p className="text-ghostWhite font-oracle text-base md:text-lg leading-relaxed mb-6 relative z-10">
-                วันนี้ธาตุไฟเด่น คนเกิดวันอังคารและวันเสาร์มีโอกาสดี
-                เหมาะกับการเริ่มต้นสิ่งใหม่และการตัดสินใจสำคัญ
-                ระวังเรื่องการสื่อสารที่อาจเกิดความเข้าใจผิด
-              </p>
-              <p className="text-ashGray text-sm font-oracle relative z-10">
-                ต้องการดูดวงเฉพาะของเจ้า?{' '}
-                <Link
-                  href="/fortune"
-                  className="text-amethyst hover:text-lavenderGlow underline transition-colors"
-                >
-                  ดูดวงตอนนี้
-                </Link>
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
       {/* ===== SECTION 4: Three Systems ===== */}
       <section className="py-20 px-6">

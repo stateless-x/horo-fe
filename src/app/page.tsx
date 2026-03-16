@@ -11,6 +11,7 @@ import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { ElementShowcase } from '@/components/landing/element-showcase';
 import { ReadingCategories } from '@/components/landing/reading-categories';
 import { SEOSections } from '@/components/seo/seo-sections';
+import { CookieConsent } from '@/components/cookie-consent';
 
 /**
  * Landing Page
@@ -379,6 +380,9 @@ export default function LandingPage() {
 
       {/* ===== SEO Content — collapsed, crawlable ===== */}
       <SEOSections />
+
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
     </div>
   );
 }

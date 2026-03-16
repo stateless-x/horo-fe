@@ -237,7 +237,17 @@ export function Footer() {
               @Askpurin
             </a>
           </div>
-          <span className="text-xs text-ashGray/40">v 0.0.1</span>
+          <div className="flex items-center gap-3 text-xs text-ashGray/40">
+            <span>v 0.0.1</span>
+            <span>·</span>
+            <Link
+              href="/privacy"
+              target="_blank"
+              className="hover:text-ashGray transition-colors duration-200"
+            >
+              นโยบายความเป็นส่วนตัว
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

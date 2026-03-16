@@ -97,6 +97,45 @@ export default function FortuneChartPage() {
     return <ErrorDisplay error={error} />;
   }
 
+  // Show rate limit screen when no cached data available
+  if (rateLimitResetAt && !chartData) {
+    const resetDate = new Date(rateLimitResetAt);
+    const now = new Date();
+    const diffMs = resetDate.getTime() - now.getTime();
+    const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+    const timeText = diffHours <= 1 ? 'ไม่นานนี้' : `ในอีก ${diffHours} ชั่วโมง`;
+
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="max-w-md w-full text-center space-y-6">
+          <div className="w-16 h-16 mx-auto rounded-full bg-amber-900/20 border border-amber-500/30 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-amber-400" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-lg font-heading text-ghostWhite">แก้ไขข้อมูลบ่อยเกินไป</h2>
+            <p className="text-sm text-ashGray">
+              ดวงของคุณจะอัปเดตใหม่ได้{timeText}
+            </p>
+          </div>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => router.push('/dashboard/today')}
+              className="px-6 py-2.5 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-lg transition-colors font-heading text-sm"
+            >
+              กลับหน้าหลัก
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2.5 border border-royalPurple/50 text-ashGray hover:text-ghostWhite rounded-lg transition-colors font-heading text-sm"
+            >
+              ลองใหม่
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Show main content
   if (!chartData) {
     return <LoadingSkeleton loadingState={loadingState} />;

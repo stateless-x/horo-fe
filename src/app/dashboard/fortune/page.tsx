@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFortuneGeneration } from '@/hooks/use-fortune-generation';
 import { useFortuneData } from '@/hooks/use-fortune-data';
@@ -153,20 +153,9 @@ export default function FortuneChartPage() {
   ];
 
   return (
-    <div className="min-h-screen pb-24 relative">
+    <div className="min-h-screen pb-4 relative">
       {/* Scroll Indicator - Bottom Center */}
       <ScrollIndicator />
-
-      {/* Settings Icon - Top Right */}
-      <div className="fixed top-4 right-4 z-50">
-        <button
-          onClick={() => router.push('/dashboard/settings')}
-          className="w-12 h-12 rounded-full bg-deepNight/80 backdrop-blur-sm border border-royalPurple/30 flex items-center justify-center hover:bg-royalPurple/20 hover:border-amethyst/50 transition-all duration-300 group"
-          aria-label="Settings"
-        >
-          <Settings className="w-5 h-5 text-ashGray group-hover:text-amethyst transition-colors" />
-        </button>
-      </div>
 
       {/* Rate Limit Banner */}
       <AnimatePresence>

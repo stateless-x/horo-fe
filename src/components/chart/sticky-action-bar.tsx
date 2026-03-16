@@ -8,7 +8,7 @@ interface StickyActionBarProps {
 
 export function StickyActionBar({ onShare }: StickyActionBarProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-voidBlack/80 backdrop-blur-lg border-t border-darkPurple/50 px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-40">
+    <div className="fixed bottom-20 left-0 right-0 bg-voidBlack/80 backdrop-blur-lg border-t border-darkPurple/50 px-4 py-3 z-40">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={onShare}

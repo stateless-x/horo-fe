@@ -6,7 +6,10 @@ import { useRouter } from 'next/navigation';
 import type { LoadingState } from '@/stores/fortune';
 
 interface LoadingSkeletonProps {
-  loadingState: LoadingState;
+  /** Loading state from the fortune store (chart flow) */
+  loadingState?: LoadingState;
+  /** Simple loading flag — use when not using the fortune store (e.g. daily page) */
+  isLoading?: boolean;
 }
 
 const TIMEOUT_MS = 30_000; // 30 seconds before showing escape hatch
@@ -21,41 +24,66 @@ const MYSTICAL_MESSAGES = [
   'พลังจักรวาลกำลังส่องนำทาง...',
 ];
 
+const DAILY_MESSAGES = [
+  'กำลังเปิดดวงวันนี้ของเจ้า...',
+  'ดาวกำลังเรียงตัว...',
+  'พลังจักรวาลกำลังส่องนำทาง...',
+  'กำลังอ่านพลังธาตุของเจ้า...',
+];
+
 const MESSAGE_INTERVAL_MS = 4_000; // Rotate every 4 seconds
 
-export function LoadingSkeleton({ loadingState }: LoadingSkeletonProps) {
+export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProps) {
   const router = useRouter();
   const [isTimedOut, setIsTimedOut] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
 
+  // Determine mode: daily (simple) vs chart (store-driven)
+  const isDailyMode = isLoading !== undefined;
+  const isActive = isDailyMode ? isLoading : loadingState !== 'complete';
+  const messages = isDailyMode ? DAILY_MESSAGES : MYSTICAL_MESSAGES;
+
   useEffect(() => {
+    if (!isActive) return;
     const timer = setTimeout(() => setIsTimedOut(true), TIMEOUT_MS);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isActive]);
+
+  // Reset timeout when loading finishes
+  useEffect(() => {
+    if (!isActive) setIsTimedOut(false);
+  }, [isActive]);
 
   // Rotate mystical messages
   useEffect(() => {
-    if (loadingState !== 'generating-chart' && loadingState !== 'generating-narrative') return;
+    if (!isActive) return;
+    // For chart mode, only rotate during generation states
+    if (!isDailyMode && loadingState !== 'generating-chart' && loadingState !== 'generating-narrative') return;
     const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % MYSTICAL_MESSAGES.length);
+      setMessageIndex((prev) => (prev + 1) % messages.length);
     }, MESSAGE_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [loadingState]);
+  }, [isActive, isDailyMode, loadingState, messages.length]);
 
   const getLoadingMessage = useCallback(() => {
+    if (isDailyMode) {
+      return messages[messageIndex];
+    }
     switch (loadingState) {
       case 'saving-profile':
         return 'กำลังบันทึกข้อมูลของเจ้า...';
       case 'generating-chart':
       case 'generating-narrative':
-        return MYSTICAL_MESSAGES[messageIndex];
+        return messages[messageIndex];
       case 'initializing':
       default:
         return 'กำลังเตรียมการ...';
     }
-  }, [loadingState, messageIndex]);
+  }, [isDailyMode, loadingState, messageIndex, messages]);
 
-  const isGenerating = loadingState === 'generating-chart' || loadingState === 'generating-narrative';
+  const isGenerating = isDailyMode
+    ? isLoading
+    : loadingState === 'generating-chart' || loadingState === 'generating-narrative';
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6">

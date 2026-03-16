@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, User, Calendar, Clock, LogOut, Save, Edit2, X, Brain } from 'lucide-react';
+import { User, Calendar, Clock, LogOut, Save, Edit2, X, Brain } from 'lucide-react';
 import { useSession, signOut } from '@/lib/auth-client';
 import { api } from '@/lib/api';
 import { Button, Input, Card } from '@/lib-packages/ui';
@@ -305,18 +305,11 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-voidBlack pb-24">
+    <div className="min-h-screen bg-voidBlack pb-4">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-voidBlack/80 backdrop-blur-sm border-b border-darkPurple">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push('/dashboard/fortune')}
-              className="text-ashGray hover:text-ghostWhite transition-colors"
-              aria-label="Back to fortune"
-            >
-              <ArrowLeft size={24} />
-            </button>
             <h1 className="text-xl font-heading text-ghostWhite">ตั้งค่า</h1>
           </div>
 

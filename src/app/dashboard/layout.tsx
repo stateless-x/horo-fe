@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { DashboardNavBar } from '@/components/layout/dashboard-nav-bar';
 
 export const metadata: Metadata = {
   title: 'ดวงชะตาของเจ้า | สายมู.com',
@@ -35,5 +36,12 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      <div className="pb-20">
+        {children}
+      </div>
+      <DashboardNavBar />
+    </>
+  );
 }

@@ -102,14 +102,12 @@ function PlatformIcon({
 export function Footer() {
   const pathname = usePathname();
   const context = FOOTER_CONTEXT[pathname] || DEFAULT_CONTEXT;
-  const isFortuneOrCompatibilityPage =
-    pathname === "/dashboard/fortune" ||
-    pathname === "/dashboard/compatibility";
+  const isDashboardPage = pathname.startsWith("/dashboard");
 
   return (
     <footer
       className={`w-full border-t border-darkPurple/30 bg-deepNight/50 backdrop-blur-sm mt-16 ${
-        isFortuneOrCompatibilityPage ? "pb-28" : ""
+        isDashboardPage ? "pb-28" : ""
       }`}
     >
       <div className="container mx-auto px-4 py-8">

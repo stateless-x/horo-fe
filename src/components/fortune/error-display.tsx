@@ -3,6 +3,8 @@ import { Card, CardContent } from '@/lib-packages/ui';
 
 interface ErrorDisplayProps {
   error: string;
+  /** Show a retry button that reloads the page */
+  showRetry?: boolean;
 }
 
 /**
@@ -10,7 +12,7 @@ interface ErrorDisplayProps {
  *
  * Shows error messages with a return to dashboard button.
  */
-export function ErrorDisplay({ error }: ErrorDisplayProps) {
+export function ErrorDisplay({ error, showRetry }: ErrorDisplayProps) {
   const router = useRouter();
 
   return (
@@ -19,12 +21,22 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
         <CardContent className="pt-6 text-center space-y-4">
           <div className="text-4xl">⚠️</div>
           <p className="text-ghostWhite font-oracle">{error}</p>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-md transition-all duration-200 font-heading shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30"
-          >
-            กลับสู่หน้าหลัก
-          </button>
+          <div className="flex gap-3">
+            {showRetry && (
+              <button
+                onClick={() => window.location.reload()}
+                className="flex-1 py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-md transition-all duration-200 font-heading shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30"
+              >
+                ลองอีกครั้ง
+              </button>
+            )}
+            <button
+              onClick={() => router.push('/dashboard')}
+              className={`${showRetry ? 'flex-1' : 'w-full'} py-3 ${showRetry ? 'border border-royalPurple/50 text-ashGray hover:text-ghostWhite' : 'bg-royalPurple hover:bg-amethyst text-ghostWhite shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30'} rounded-md transition-all duration-200 font-heading`}
+            >
+              กลับสู่หน้าหลัก
+            </button>
+          </div>
         </CardContent>
       </Card>
     </div>

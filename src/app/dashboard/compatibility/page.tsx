@@ -535,9 +535,6 @@ export default function CompatibilityPage() {
             <Button size="lg" variant="outline" className="w-full" onClick={handleBackToForm}>
               ส่องดวงอีกครั้ง
             </Button>
-            <Button size="lg" variant="ghost" className="w-full text-ashGray" onClick={() => router.push('/dashboard')}>
-              กลับสู่หน้าหลัก
-            </Button>
           </motion.div>
 
           {/* Share Sheet */}
@@ -567,15 +564,6 @@ export default function CompatibilityPage() {
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          <Button
-            variant="ghost"
-            onClick={() => router.push('/dashboard')}
-            className="text-ashGray hover:text-ghostWhite -ml-2"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            กลับ
-          </Button>
-
           <div className="text-center space-y-3">
             <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite">ส่องดวงความสัมพันธ์</h1>
 

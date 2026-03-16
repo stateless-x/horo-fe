@@ -17,6 +17,7 @@ import { DailyWarnings } from '@/components/today/daily-warnings';
 import { DailySuggestions } from '@/components/today/daily-suggestions';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
+import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 
 /**
  * Daily Fortune Page - /dashboard/today
@@ -46,11 +47,7 @@ export default function TodayPage() {
 
   const isReady = !!session;
 
-  // Block render until session is resolved — prevents flash of content before redirect
-  if (sessionLoading || !session) {
-    return <LoadingSkeleton isLoading />;
-  }
-
+  // Hooks must be called unconditionally — use `enabled` to gate fetching
   const {
     data: dailyReading,
     isLoading: dailyLoading,
@@ -58,6 +55,11 @@ export default function TodayPage() {
   } = useDailyFortune(isReady);
 
   const { data: userProfile } = useUserProfile(isReady);
+
+  // Block render until session is resolved — prevents flash of content before redirect
+  if (sessionLoading || !session) {
+    return <LoadingSkeleton isLoading />;
+  }
 
   // Loading state for daily reading data
   if (dailyLoading) {
@@ -100,6 +102,8 @@ export default function TodayPage() {
         {structured?.categories && (
           <CategoryScores categories={structured.categories} />
         )}
+
+        <PawjaiAdsBanner />
 
         {/* Section D: Lucky Attributes */}
         <LuckyBadges

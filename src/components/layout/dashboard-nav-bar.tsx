@@ -13,8 +13,8 @@ interface NavTab {
 }
 
 const NAV_TABS: NavTab[] = [
-  { key: 'today', label: 'ดวงวันนี้', href: '/dashboard/today', icon: Sun },
   { key: 'fortune', label: 'ดวงชะตา', href: '/dashboard/fortune', icon: Orbit },
+  { key: 'today', label: 'ดวงวันนี้', href: '/dashboard/today', icon: Sun },
   { key: 'compatibility', label: 'ดวงคู่', href: '/dashboard/compatibility', icon: Heart },
   { key: 'settings', label: 'ตั้งค่า', href: '/dashboard/settings', icon: Settings },
 ];

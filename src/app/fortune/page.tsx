@@ -57,12 +57,12 @@ function FortunePageContent() {
   useEffect(() => {
     if (!isPending && session && !isSetupMode) {
       console.log('[Fortune] User is logged in, redirecting to dashboard');
-      router.push('/dashboard');
+      router.replace('/dashboard/today');
     }
   }, [session, isPending, router, isSetupMode]);
 
-  // Show loading state while checking session
-  if (isPending) {
+  // Block render until session is resolved — prevents onboarding flash for logged-in users
+  if (isPending || (session && !isSetupMode)) {
     return (
       <div className="min-h-screen bg-voidBlack flex items-center justify-center">
         <div className="text-ghostWhite text-lg font-oracle">กำลังโหลด...</div>
@@ -70,7 +70,7 @@ function FortunePageContent() {
     );
   }
 
-  // Only show onboarding flow for non-logged-in users
+  // Only show onboarding flow for non-logged-in users (or setup mode)
   return <OnboardingFlow />;
 }
 

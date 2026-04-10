@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PublicNav } from '@/components/layout/public-nav';
+import { AdUnit } from '@/components/ads/ad-unit';
 
 // ─── Thai day-of-week data (mirrors backend DAY_DATA) ───────────────────────
 
@@ -378,6 +379,9 @@ export default function CalendarPage() {
           </div>
         </section>
 
+        {/* ── Ad unit: after calendar grid, before holiday/วันพระ info ── */}
+        <AdUnit slot="REPLACE_WITH_SLOT_1" format="auto" />
+
         {/* ── Two-column: วันหยุด + วันพระ ── */}
         <div className="grid md:grid-cols-2 gap-6">
 
@@ -496,6 +500,9 @@ export default function CalendarPage() {
             <p className="text-ashGray/50 font-oracle text-xs">ฟรี ไม่ต้องสมัครสมาชิกก่อน</p>
           </div>
         </section>
+
+        {/* ── Ad unit: after CTA, before SEO article ── */}
+        <AdUnit slot="REPLACE_WITH_SLOT_2" format="auto" />
 
         {/* ── SEO content ── */}
         <article className="border-t border-white/5 pt-8 space-y-6">

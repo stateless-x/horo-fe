@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
 import { Footer } from "@/components/layout/footer";
+import { AdSenseScript } from "@/components/ads/adsense-script";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -101,6 +102,9 @@ export const metadata: Metadata = {
   verification: {
     // Add Google Search Console verification when available
     // google: 'your-verification-code',
+    other: {
+      'google-adsense-account': 'ca-pub-7565287726351560',
+    },
   },
 
   category: "lifestyle",
@@ -114,6 +118,7 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body>
+        <AdSenseScript />
         <Analytics />
         <Providers>
           {children}

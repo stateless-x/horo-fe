@@ -18,6 +18,7 @@ import { DailySuggestions } from '@/components/today/daily-suggestions';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
+import { AdUnit } from '@/components/ads/ad-unit';
 
 /**
  * Daily Fortune Page - /dashboard/today
@@ -129,6 +130,9 @@ export default function TodayPage() {
         {structured?.suggestions && structured.suggestions.length > 0 && (
           <DailySuggestions suggestions={structured.suggestions} />
         )}
+
+        {/* Ad unit: after all content sections, before share button */}
+        <AdUnit slot="REPLACE_WITH_SLOT_3" format="auto" />
 
         {/* Section H: Share Button */}
         <motion.div

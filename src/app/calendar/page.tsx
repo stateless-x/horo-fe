@@ -183,17 +183,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const beYear = now.getFullYear() + 543;
 
   return {
-    title: `ปฏิทินไทย ${monthName} ${beYear} | สีประจำวัน วันพระ วันหยุด | สายมู`,
-    description: `ปฏิทินไทยพุทธศักราช ${beYear} เดือน${monthName} พร้อมสีประจำวัน ดาวประจำวัน เลขมงคล วันพระ และวันหยุดราชการ ตามหลักโหราศาสตร์ไทย`,
+    title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ สีประจำวัน ฤกษ์ดี | สายมู`,
+    description: `ปฏิทินไทยพุทธศักราช ${beYear} เดือน${monthName} — วันพระ ทำบุญ ฤกษ์ดี สีประจำวัน ดาวประจำวัน เลขมงคล และวันหยุดราชการ ตามหลักโหราศาสตร์ไทย สำหรับสายมูและคนรักการดูดวง`,
     keywords: [
       'ปฏิทินไทย', `ปฏิทิน ${beYear}`, 'วันพระ', 'สีประจำวัน',
       'วันหยุดราชการ', 'โหราศาสตร์ไทย', 'ดาวประจำวัน', 'เลขมงคล',
       'ปฏิทินพุทธศักราช', `เดือน${monthName}`, 'ทิศมงคล', 'ดูดวง',
+      'บุญ', 'ทำบุญ', 'สายมู', 'ฤกษ์ดี', 'วันมงคล', 'ปฏิทินมงคล',
     ],
     alternates: { canonical: '/calendar' },
     openGraph: {
-      title: `ปฏิทินไทย ${monthName} ${beYear} | สายมู`,
-      description: `สีประจำวัน ดาวประจำวัน วันพระ และวันหยุดราชการ เดือน${monthName} ${beYear}`,
+      title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ ฤกษ์ดี สายมู`,
+      description: `วันพระ ทำบุญ ฤกษ์ดี สีประจำวัน ดาวประจำวัน และวันหยุดราชการ เดือน${monthName} ${beYear} — โหราศาสตร์ไทยสำหรับสายมู`,
       type: 'website',
     },
   };
@@ -228,10 +229,13 @@ export default function CalendarPage() {
 
         {/* ── Hero ── */}
         <section className="text-center space-y-2">
-          <p className="text-ashGray font-oracle text-sm">โหราศาสตร์ไทย</p>
+          <p className="text-ashGray font-oracle text-sm">โหราศาสตร์ไทย · สายมู</p>
           <h1 className="text-3xl md:text-5xl font-heading bg-gradient-to-br from-ghostWhite via-paleOrchid to-lavenderGlow bg-clip-text text-transparent">
             ปฏิทินไทย {monthName} {beYear}
           </h1>
+          <p className="text-paleOrchid/80 font-oracle text-sm">
+            วันพระ · สีประจำวัน · ฤกษ์ดี · วันหยุดราชการ
+          </p>
           <p className="text-ashGray font-oracle text-sm">
             {monthName} {year} &middot; พ.ศ. {beYear}
           </p>
@@ -494,8 +498,8 @@ export default function CalendarPage() {
         </section>
 
         {/* ── SEO content ── */}
-        <section className="border-t border-white/5 pt-8 space-y-6">
-          <h2 className="font-heading text-ghostWhite text-xl">เกี่ยวกับปฏิทินไทยพุทธศักราช</h2>
+        <article className="border-t border-white/5 pt-8 space-y-6">
+          <h2 className="font-heading text-ghostWhite text-xl">เกี่ยวกับปฏิทินไทยพุทธศักราช วันพระ และโหราศาสตร์ไทย</h2>
           <div className="grid md:grid-cols-2 gap-6 text-ashGray font-oracle text-sm leading-relaxed">
             <div className="space-y-3">
               <h3 className="text-ghostWhite font-heading text-base">วันพระคืออะไร?</h3>
@@ -535,8 +539,26 @@ export default function CalendarPage() {
                 วันจันทร์มีเลขมงคล ๒ เป็นต้น
               </p>
             </div>
+            <div className="space-y-3">
+              <h3 className="text-ghostWhite font-heading text-base">ฤกษ์ดีและการเลือกวันมงคล</h3>
+              <p>
+                ฤกษ์ดีในโหราศาสตร์ไทยคือการเลือกเวลาที่เป็นมงคลสำหรับกิจการสำคัญ
+                เช่น แต่งงาน ขึ้นบ้านใหม่ เปิดกิจการ หรือเดินทาง
+                สายมูนิยมตรวจสอบวันพระ สีประจำวัน และดาวประจำวัน
+                เพื่อประกอบการดูดวงและเลือกฤกษ์ดีที่เหมาะสม
+              </p>
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-ghostWhite font-heading text-base">ดูดวงด้วยปฏิทินไทย</h3>
+              <p>
+                ปฏิทินไทยพุทธศักราชเป็นเครื่องมือสำคัญสำหรับสายมูและผู้สนใจโหราศาสตร์ไทย
+                การรู้จักวันพระ ทำบุญ ฤกษ์ดี และสีมงคลประจำวัน
+                ช่วยให้วางแผนชีวิตสอดคล้องกับพลังงานจักรวาลตามหลักโบราณ
+                ปฏิทินนี้รวบรวมข้อมูลดูดวงเบื้องต้นไว้ครบในที่เดียว
+              </p>
+            </div>
           </div>
-        </section>
+        </article>
 
       </main>
 

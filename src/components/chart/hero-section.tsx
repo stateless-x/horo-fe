@@ -6,7 +6,7 @@ import { Sparkles } from 'lucide-react';
 interface HeroSectionProps {
   personalityTraits: string[];
   birthDateFormatted: string;
-  currentAge: number;
+  currentAge: string;
   userName: string;
   elementAccent?: string;
   loadingState?: 'loading' | 'complete';
@@ -97,7 +97,7 @@ export function HeroSection({
         <p className="font-thai text-ashGray text-sm md:text-base flex items-center gap-2">
           <span>{birthDateFormatted}</span>
           <span className="text-lavenderGlow/50">·</span>
-          <span>อายุ {currentAge} ปี</span>
+          <span>อายุ {currentAge}</span>
         </p>
         <div className="w-8 h-[1px] bg-gradient-to-l from-transparent to-lavenderGlow/30" />
       </div>

@@ -12,6 +12,7 @@ import { ElementShowcase } from '@/components/landing/element-showcase';
 import { ReadingCategories } from '@/components/landing/reading-categories';
 import { SEOSections } from '@/components/seo/seo-sections';
 import { CookieConsent } from '@/components/cookie-consent';
+import { PublicNav } from '@/components/layout/public-nav';
 
 /**
  * Landing Page
@@ -45,6 +46,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden">
+      <PublicNav />
       {/* ===== SECTION 1: Hero — "The Threshold" ===== */}
       <section className="relative min-h-[100dvh] flex items-center justify-center">
         {/* Ambient Video Background */}

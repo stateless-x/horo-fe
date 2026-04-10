@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { PublicNav } from '@/components/layout/public-nav';
 
 // ─── Thai day-of-week data (mirrors backend DAY_DATA) ───────────────────────
 
@@ -221,18 +222,7 @@ export default function CalendarPage() {
   return (
     <div className="min-h-screen bg-voidBlack text-ghostWhite">
 
-      {/* ── Nav ── */}
-      <header className="border-b border-white/5 sticky top-0 z-20 backdrop-blur bg-voidBlack/80">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="font-heading text-amethyst text-lg">สายมู</Link>
-          <Link
-            href="/fortune"
-            className="px-4 py-2 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-sm rounded-lg transition-colors"
-          >
-            ดูดวงของเจ้า →
-          </Link>
-        </div>
-      </header>
+      <PublicNav />
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-10">
 
@@ -549,18 +539,6 @@ export default function CalendarPage() {
         </section>
 
       </main>
-
-      {/* ── Footer ── */}
-      <footer className="border-t border-white/5 mt-12 py-8">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-ashGray font-oracle text-xs">
-          <p>© {year} สายมู — ปฏิทินไทยพุทธศักราช {beYear}</p>
-          <div className="flex gap-4">
-            <Link href="/" className="hover:text-ghostWhite transition-colors">หน้าแรก</Link>
-            <Link href="/fortune" className="hover:text-ghostWhite transition-colors">ดูดวง</Link>
-            <Link href="/privacy" className="hover:text-ghostWhite transition-colors">นโยบายความเป็นส่วนตัว</Link>
-          </div>
-        </div>
-      </footer>
 
     </div>
   );

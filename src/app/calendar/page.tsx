@@ -302,51 +302,45 @@ export default async function CalendarPage(
 
         {/* ── Today highlight strip ── */}
         <section
-          className="rounded-2xl p-5 md:p-6 border border-white/10 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8"
+          className="rounded-2xl p-5 md:p-6 border border-white/10"
           style={{ background: 'linear-gradient(135deg, rgba(107,33,168,0.15), rgba(15,10,26,0.8))' }}
         >
-          <div>
-            <p className="text-ashGray font-oracle text-xs mb-1">วันนี้</p>
-            <p className="font-heading text-ghostWhite text-xl md:text-2xl">
-              {WEEKDAY_NAMES[now.getDay()].replace('.','')}{' '}
-              {now.getDate()} {THAI_MONTHS_SHORT[month]} {beYear}
-            </p>
-          </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-ashGray font-oracle text-xs mb-1 uppercase tracking-wider">วันนี้</p>
+                <p className="font-heading text-ghostWhite text-2xl md:text-3xl">
+                  {WEEKDAY_NAMES[now.getDay()].replace('.','')}{' '}
+                  {now.getDate()} {THAI_MONTHS_SHORT[now.getMonth()]} {now.getFullYear() + 543}
+                </p>
+              </div>
+              <div className="flex flex-col gap-1.5 items-end shrink-0">
+                {WAN_PHRA_DATES.has(todayIso) && (
+                  <span className="px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-oracle text-xs text-center font-medium">
+                    วันพระ — ทำบุญ ตักบาตร
+                  </span>
+                )}
+                {WAN_KHON_DATES.has(todayIso) && (
+                  <span className="px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 font-oracle text-xs text-center font-medium">
+                    วันโกน — ตัดผมมงคล
+                  </span>
+                )}
+              </div>
+            </div>
 
-          <div className="flex flex-wrap gap-3">
-            {/* Color */}
-            <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2">
-              <span
-                className="w-4 h-4 rounded-full flex-shrink-0 border border-white/20"
-                style={{ background: todayProfile.colorHex }}
-              />
-              <span className="font-oracle text-sm text-ghostWhite">สีประจำวัน: <strong>{todayProfile.color}</strong></span>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-2.5 bg-white/5 rounded-xl px-3 py-2.5">
+                <span className="w-5 h-5 rounded-full flex-shrink-0 border border-white/20" style={{ background: todayProfile.colorHex }} />
+                <div>
+                  <p className="font-oracle text-[10px] text-ashGray/70 leading-none mb-0.5">สีมงคลวันนี้</p>
+                  <p className="font-heading text-ghostWhite text-sm leading-none">{todayProfile.color}</p>
+                </div>
+              </div>
+              <div className="bg-white/5 rounded-xl px-3 py-2.5">
+                <p className="font-oracle text-[10px] text-ashGray/70 leading-none mb-0.5">ดาวประจำวัน</p>
+                <p className="font-heading text-ghostWhite text-sm leading-none">{todayProfile.planet}</p>
+              </div>
             </div>
-            {/* Planet */}
-            <div className="bg-white/5 rounded-xl px-3 py-2 font-oracle text-sm text-ghostWhite">
-              ดาว: <strong>{todayProfile.planet}</strong>
-            </div>
-            {/* Lucky number */}
-            <div className="bg-white/5 rounded-xl px-3 py-2 font-oracle text-sm text-ghostWhite">
-              เลขมงคล: <strong className="text-amethyst">{todayProfile.luckyNumber}</strong>
-            </div>
-            {/* Direction */}
-            <div className="bg-white/5 rounded-xl px-3 py-2 font-oracle text-sm text-ghostWhite">
-              ทิศมงคล: <strong>{todayProfile.luckyDirection}</strong>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1 ml-auto shrink-0">
-            {WAN_PHRA_DATES.has(todayIso) && (
-              <span className="px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-oracle text-xs text-center">
-                🙏 วันพระ — ทำบุญ ตักบาตร
-              </span>
-            )}
-            {WAN_KHON_DATES.has(todayIso) && (
-              <span className="px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 font-oracle text-xs text-center">
-                ✂️ วันโกน — ตัดผมมงคล
-              </span>
-            )}
           </div>
         </section>
 
@@ -360,7 +354,7 @@ export default async function CalendarPage(
               {['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'].map((d, i) => (
                 <div
                   key={d}
-                  className={`py-3 text-center font-oracle text-xs font-medium
+                  className={`py-3 text-center font-oracle text-xs font-semibold tracking-wide
                     ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-ashGray'}`}
                 >
                   {d}
@@ -375,24 +369,23 @@ export default async function CalendarPage(
                   <div
                     key={day.iso}
                     className={`
-                      relative min-h-[72px] md:min-h-[90px] p-1.5 md:p-2 border-r border-white/5 last:border-0
-                      flex flex-col gap-0.5
-                      ${!day.isCurrentMonth ? 'opacity-20' : ''}
-                      ${day.isToday ? 'bg-royalPurple/20 ring-1 ring-inset ring-amethyst/50' : ''}
-                      ${day.isWanPhra && day.isCurrentMonth && !day.isToday ? 'bg-amber-500/5' : ''}
-                      ${day.isWanKhon && day.isCurrentMonth && !day.isToday && !day.isWanPhra ? 'bg-emerald-500/5' : ''}
+                      relative min-h-[80px] md:min-h-[100px] p-1.5 md:p-2.5 border-r border-white/5 last:border-0
+                      flex flex-col gap-1
+                      ${!day.isCurrentMonth ? 'opacity-15' : ''}
+                      ${day.isToday ? 'bg-royalPurple/25 ring-1 ring-inset ring-amethyst/60' : ''}
+                      ${day.isWanPhra && day.isCurrentMonth && !day.isToday ? 'bg-amber-500/8' : ''}
+                      ${day.isWanKhon && day.isCurrentMonth && !day.isToday && !day.isWanPhra ? 'bg-emerald-500/8' : ''}
                       ${day.isHoliday && day.isCurrentMonth && !day.isToday ? 'bg-red-500/5' : ''}
                     `}
                   >
-                    {/* Date number */}
+                    {/* Date number + color dot */}
                     <div className="flex items-start justify-between">
                       <span
-                        className={`font-heading text-sm md:text-base leading-none
+                        className={`font-heading text-base md:text-lg leading-none
                           ${day.isToday ? 'text-amethyst font-bold' : day.isHoliday && day.isCurrentMonth ? 'text-red-400 font-bold' : day.isWanPhra && day.isCurrentMonth ? 'text-amber-300 font-bold' : 'text-ghostWhite'}`}
                       >
                         {day.dayNum}
                       </span>
-                      {/* Color dot */}
                       {day.isCurrentMonth && (
                         <span
                           className="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-0.5 border border-white/10"
@@ -402,29 +395,27 @@ export default async function CalendarPage(
                       )}
                     </div>
 
-                    {/* วันพระ badge — prominent */}
+                    {/* วันพระ label */}
                     {day.isWanPhra && day.isCurrentMonth && (
-                      <span className="text-[10px] font-oracle text-amber-300 leading-none font-medium">🙏 วันพระ</span>
+                      <span className="text-[11px] md:text-xs font-oracle text-amber-300 leading-none font-semibold">
+                        วันพระ
+                      </span>
                     )}
 
-                    {/* วันโกน badge */}
+                    {/* วันโกน label */}
                     {day.isWanKhon && day.isCurrentMonth && !day.isWanPhra && (
-                      <span className="text-[10px] font-oracle text-emerald-400 leading-none">✂️ วันโกน</span>
+                      <span className="text-[11px] md:text-xs font-oracle text-emerald-400 leading-none font-semibold">
+                        วันโกน
+                      </span>
                     )}
 
                     {/* Holiday name */}
                     {day.isHoliday && day.isCurrentMonth && (
-                      <span className="text-[9px] md:text-[10px] font-oracle text-red-300 leading-tight line-clamp-2">
+                      <span className="text-[10px] md:text-[11px] font-oracle text-red-300 leading-tight line-clamp-2">
                         {day.holidayName}
                       </span>
                     )}
 
-                    {/* Lucky number - small */}
-                    {day.isCurrentMonth && (
-                      <span className="mt-auto text-[9px] font-oracle text-ashGray/50 leading-none">
-                        เลข {day.profile.luckyNumber}
-                      </span>
-                    )}
                   </div>
                 ))}
               </div>
@@ -432,26 +423,26 @@ export default async function CalendarPage(
           </div>
 
           {/* Legend */}
-          <div className="mt-3 flex flex-wrap gap-4 text-xs font-oracle text-ashGray">
-            <span className="flex items-center gap-1.5">
+          <div className="mt-4 flex flex-wrap gap-4 text-xs font-oracle text-ashGray">
+            <span className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-royalPurple/50 border border-amethyst/50 inline-block" />
               วันนี้
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-sm bg-amber-500/10 border border-amber-500/40 inline-block" />
-              วันพระ — ทำบุญ ตักบาตร
+              วันพระ
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-sm bg-emerald-500/10 border border-emerald-500/30 inline-block" />
-              วันโกน — ตัดผม ตัดเล็บมงคล
+              วันโกน
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
+            <span className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-sm bg-red-500/10 border border-red-400/40 inline-block" />
               วันหยุดราชการ
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full inline-block border border-white/20" style={{ background: '#a855f7' }} />
-              จุดสีมงคลประจำวัน
+            <span className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full inline-block border border-white/20" style={{ background: '#a855f7' }} />
+              สีมงคลประจำวัน
             </span>
           </div>
         </section>
@@ -465,8 +456,8 @@ export default async function CalendarPage(
           {/* วันหยุดราชการ */}
           <section className="rounded-2xl border border-white/10 p-5"
             style={{ background: 'linear-gradient(135deg, rgba(26,10,46,0.5), rgba(10,10,15,0.6))' }}>
-            <h2 className="font-heading text-ghostWhite text-lg mb-4 flex items-center gap-2">
-              <span className="text-red-400">⚑</span> วันหยุดราชการ {monthName}
+            <h2 className="font-heading text-ghostWhite text-lg mb-4">
+              วันหยุดราชการ {monthName}
             </h2>
             {monthHolidays.length === 0 ? (
               <p className="text-ashGray font-oracle text-sm">ไม่มีวันหยุดราชการในเดือนนี้</p>
@@ -493,9 +484,7 @@ export default async function CalendarPage(
 
             {/* วันพระ */}
             <div>
-              <h2 className="font-heading text-ghostWhite text-lg mb-1 flex items-center gap-2">
-                <span className="text-amber-300">🙏</span> วันพระ {monthName}
-              </h2>
+              <h2 className="font-heading text-amber-300 text-lg mb-1">วันพระ {monthName}</h2>
               <p className="text-ashGray/70 font-oracle text-xs mb-3">ทำบุญ · ตักบาตร · ถือศีล · สวดมนต์</p>
               <div className="flex flex-wrap gap-2">
                 {monthWanPhra.map(d => (
@@ -515,10 +504,8 @@ export default async function CalendarPage(
 
             {/* วันโกน */}
             <div className="border-t border-white/5 pt-4">
-              <h2 className="font-heading text-ghostWhite text-lg mb-1 flex items-center gap-2">
-                <span className="text-emerald-400">✂️</span> วันโกน {monthName}
-              </h2>
-              <p className="text-ashGray/70 font-oracle text-xs mb-3">ตัดผมมงคล · ตัดเล็บ · โกนหัว · เสริมดวง</p>
+              <h2 className="font-heading text-emerald-400 text-lg mb-1">วันโกน {monthName}</h2>
+              <p className="text-ashGray/70 font-oracle text-xs mb-3">ตัดผม · ตัดเล็บ · โกนหัว</p>
               <div className="flex flex-wrap gap-2">
                 {monthWanKhon.map(d => (
                   <div
@@ -540,37 +527,6 @@ export default async function CalendarPage(
 
           </section>
         </div>
-
-        {/* ── Day color reference table ── */}
-        <section>
-          <h2 className="font-heading text-ghostWhite text-xl mb-1">สีประจำวันตามโหราศาสตร์ไทย</h2>
-          <p className="text-ashGray font-oracle text-sm mb-5">
-            โหราศาสตร์ไทยกำหนดสีมงคล ดาวประจำ และทิศมงคลให้แก่แต่ละวันในสัปดาห์
-            การสวมใส่สีประจำวันเกิดหรือวันนั้นๆ ช่วยเสริมดวงชะตาตามหลักโบราณ
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-            {(Object.entries(DAY_PROFILES) as [ThaiDay, DayProfile][])
-              .filter(([k]) => k !== 'wednesday_night')
-              .map(([key, p]) => (
-              <div
-                key={key}
-                className="rounded-xl border border-white/10 p-3 flex flex-col items-center gap-2 text-center"
-                style={{ background: `${p.colorHex}10` }}
-              >
-                <span
-                  className="w-8 h-8 rounded-full border-2 border-white/20 flex-shrink-0"
-                  style={{ background: p.colorHex }}
-                />
-                <p className="font-heading text-ghostWhite text-sm">วัน{p.thaiName}</p>
-                <p className="font-oracle text-xs text-ashGray">{p.color}</p>
-                <p className="font-oracle text-xs text-ashGray/70">{p.planet}</p>
-                <p className="font-heading text-amethyst text-sm">เลข {p.luckyNumber}</p>
-                <p className="font-oracle text-[10px] text-ashGray/60">{p.luckyDirection}</p>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* ── CTA ── */}
         <section className="rounded-2xl border border-amethyst/25 p-8 text-center relative overflow-hidden"
@@ -609,92 +565,112 @@ export default async function CalendarPage(
         {/* ── Ad unit: after CTA, before SEO article ── */}
         <AdUnit slot="REPLACE_WITH_SLOT_2" format="auto" />
 
-        {/* ── SEO content — Thai beliefs, keywords for สายมู สายบุญ ── */}
-        <article className="border-t border-white/5 pt-8 space-y-6">
-          <h2 className="font-heading text-ghostWhite text-xl">ปฏิทินไทย วันพระ วันโกน และความเชื่อไทยโบราณ</h2>
-          <div className="grid md:grid-cols-2 gap-6 text-ashGray font-oracle text-sm leading-relaxed">
+        {/* ── SEO article ── */}
+        <article className="border-t border-white/5 pt-10 space-y-8">
+          <h2 className="font-heading text-ghostWhite text-2xl">
+            วันพระ วันโกน และความเชื่อไทยที่สืบทอดมาพันปี
+          </h2>
 
+          <div className="grid md:grid-cols-2 gap-8">
+
+            {/* วันพระ */}
             <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">วันพระ — วันแห่งบุญและสิริมงคล</h3>
-              <p>
-                วันพระ (วันอุโบสถ) ตรงกับวันขึ้นและแรม ๘ ค่ำ และ ๑๕ ค่ำ ตามปฏิทินจันทรคติ
-                ถือเป็นวันศักดิ์สิทธิ์ที่<strong className="text-ghostWhite/80"> บรรพบุรุษ</strong>สืบทอดมาตั้งแต่โบราณกาล
-                ชาวพุทธนิยมไปวัด ทำบุญตักบาตร ฟังธรรม สมาทานศีล และถวายสังฆทานในวันนี้
-                เชื่อกันว่าการทำบุญในวันพระช่วย<strong className="text-ghostWhite/80">เสริมดวงชะตา</strong>
-                ต่ออายุ และอุทิศส่วนกุศลแก่<strong className="text-ghostWhite/80">ดวงวิญญาณบรรพบุรุษ</strong>ได้อย่างทรงพลัง
+              <h3 className="font-heading text-amber-300 text-lg">วันพระ — วันที่บุญหนักที่สุด</h3>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                วันพระ ตรงกับวันขึ้นและแรม ๘ ค่ำ และ ๑๕ ค่ำ ของทุกเดือนตามจันทรคติ
+                ความเชื่อไทยโบราณระบุชัดว่า <strong className="text-ghostWhite/90">บุญที่ทำในวันพระ มีน้ำหนักกว่าวันธรรมดาหลายเท่า</strong>
+                เพราะพลังงานศักดิ์สิทธิ์ของจักรวาลเปิดรับเต็มที่
+              </p>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                ชาวพุทธสายบุญไม่พลาดวันนี้ — ตักบาตร ไปวัด ถวายสังฆทาน สมาทานศีล
+                เชื่อว่าบุญที่สะสมในวันพระจะ<strong className="text-ghostWhite/90">เสริมดวงชะตา ต่ออายุ และส่งผลดีถึงชาติหน้า</strong>
+                รวมถึงช่วยอุทิศส่วนกุศลไปยัง<strong className="text-ghostWhite/90">ดวงวิญญาณบรรพบุรุษ</strong>
+                ที่คอยดูแลลูกหลานอยู่อีกด้านหนึ่ง
+              </p>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                คนดวงตก เคราะห์หนัก หรือต้องการ<strong className="text-ghostWhite/90">แก้เคราะห์กรรม</strong>
+                โหรและอาจารย์มักแนะนำให้ถือศีลและทำบุญวันพระติดต่อกันหลายครั้ง
+                เพื่อสะสางกรรมเก่าและเปิดทางให้โชคลาภเข้ามา
               </p>
             </div>
 
+            {/* วันโกน */}
             <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">วันโกน — มงคลแห่งการตัดและต่ออายุ</h3>
-              <p>
-                วันโกน คือวันก่อนวันพระ ๑ วัน ตามความเชื่อไทยโบราณ
-                การ<strong className="text-ghostWhite/80">ตัดผม ตัดเล็บ</strong>ในวันโกนช่วยตัดเคราะห์ตัดทุกข์
-                ชำระสิ่งไม่ดีออกจากชะตา และเปิดทางให้พลังงานดีๆ ไหลเข้ามาแทน
-                หากตัดผมวันพระจะเป็นการ "ตัดบุญ" ตัดโชคลาภ
-                ดังนั้น<strong className="text-ghostWhite/80">สายมูและสายบุญ</strong>จึงนิยมตัดผมในวันโกนโดยเฉพาะ
+              <h3 className="font-heading text-emerald-400 text-lg">วันโกน — คืนที่วิญญาณพลัดหลง</h3>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                วันโกน คือวันก่อนวันพระ ๑ วัน ชื่อนี้มาจาก "โกน" แปลว่าตัด
+                ในคืนก่อนวันพระ ความเชื่อไทยโบราณกล่าวว่า
+                <strong className="text-ghostWhite/90"> วิญญาณและสิ่งที่ล่องลอยในอากาศยังไม่ได้รับบุญ</strong>
+                พลังงานยังขุ่นมัว ไม่นิ่ง — ไม่เหมาะทำกิจมงคล แต่เหมาะกับการ "ตัด"
+              </p>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                <strong className="text-ghostWhite/90">ตัดผม ตัดเล็บ หรือโกนหัวในวันโกน</strong>
+                คือการตัดเคราะห์ ตัดทุกข์ ตัดสิ่งไม่ดีที่สะสมออกจากร่างกายและดวงชะตา
+                พลังงานวันโกนเหมาะกับการชำระล้าง ทิ้งสิ่งเก่า เปิดรับสิ่งใหม่
+              </p>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                ตรงกันข้าม — <strong className="text-ghostWhite/90">ห้ามตัดผมในวันพระ</strong>
+                เชื่อว่าจะตัดบุญตัดโชค ตัดสายสัมพันธ์กับสิ่งดีที่กำลังจะเข้ามา
+                นี่คือเหตุผลที่สายมูทุกคนดูปฏิทินก่อนนัดตัดผมทุกครั้ง
               </p>
             </div>
 
+            {/* ฤกษ์ดี */}
             <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">สีประจำวัน — พลังนพเคราะห์แห่งดวงชะตา</h3>
-              <p>
-                สีประจำวันในโหราศาสตร์ไทยมาจากระบบ<strong className="text-ghostWhite/80">นพเคราะห์</strong> (ดาวทั้งเก้า)
-                ที่ปกครองแต่ละวันในสัปดาห์ ดาวแต่ละดวงมีพลังงาน สี และอิทธิพลต่อ<strong className="text-ghostWhite/80">ดวงชะตา</strong>ผู้เกิดในวันนั้น
-                การสวมใส่สีมงคลประจำวันเกิดเสริมบารมี ป้องกันภัยอันตราย
-                และดึงดูดโชคลาภตามคติความเชื่อที่สืบต่อมาจาก<strong className="text-ghostWhite/80">บรรพบุรุษ</strong>ไทย
+              <h3 className="font-heading text-ghostWhite text-lg">ฤกษ์ดี — เลือกวันให้ชีวิตเดินหน้า</h3>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                ฤกษ์ดีคือการเลือกวันเวลาที่พลังงานของจักรวาลเปิดรับ
+                สอดคล้องกับ<strong className="text-ghostWhite/90">ดวงชะตาของเจ้าของงาน</strong>
+                สำหรับกิจการสำคัญ เช่น <strong className="text-ghostWhite/90">แต่งงาน ขึ้นบ้านใหม่ เปิดกิจการ ออกเดินทาง</strong>
+              </p>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                ความเชื่อไทยโบราณบอกว่า วันที่เลือกถูก สิ่งที่ทำจะราบรื่น
+                แม้จะเจอุปสรรค ก็ผ่านได้ง่าย
+                วันที่เลือกผิด แม้ความพร้อมจะครบ ก็มักพบสะดุดโดยไม่รู้สาเหตุ
               </p>
             </div>
 
+            {/* บรรพบุรุษ */}
             <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">ฤกษ์ดี — เวลาแห่งพลังงานจักรวาล</h3>
-              <p>
-                ฤกษ์ดีคือการเลือกวันและเวลาที่<strong className="text-ghostWhite/80">พลังงานจักรวาล</strong>เป็นมงคล
-                สำหรับกิจการสำคัญ เช่น <strong className="text-ghostWhite/80">แต่งงาน ขึ้นบ้านใหม่ เปิดกิจการ</strong> ออกเดินทาง หรือเซ็นสัญญา
-                ตามความเชื่อไทย วันที่มีพลังงานสอดคล้องกับ<strong className="text-ghostWhite/80">ดวงชะตาของเจ้าของ</strong>
-                จะทำให้กิจการสำเร็จลุล่วง ราบรื่น และนำความเจริญรุ่งเรืองมาสู่
+              <h3 className="font-heading text-ghostWhite text-lg">บรรพบุรุษ วิญญาณ และบุญที่ส่งถึงกัน</h3>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                คนไทยเชื่อมั่นว่า<strong className="text-ghostWhite/90">วิญญาณบรรพบุรุษยังอยู่ใกล้ลูกหลาน</strong>
+                คอยดูแล คอยปกป้อง และคอยรับบุญที่ลูกหลานอุทิศให้
+                การทำบุญในวันพระ สวดมนต์ และกรวดน้ำอุทิศส่วนกุศล
+                ไม่ใช่แค่เรื่องศาสนา — แต่คือการ<strong className="text-ghostWhite/90">ส่งพลังงานกลับไปให้ผู้ที่จากไป</strong>
+              </p>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                ผีบรรพบุรุษที่ได้รับบุญ จะเสริมดวงลูกหลาน ป้องกันภัยพิบัติ
+                และเปิดทางให้โชคลาภไหลเข้ามา
+                นี่คือรากฐานความเชื่อที่ทำให้<strong className="text-ghostWhite/90">สายบุญไม่เคยขาดวันพระ</strong>
               </p>
             </div>
 
+            {/* สีประจำวัน */}
             <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">บรรพบุรุษ วิญญาณ และการทำบุญ</h3>
-              <p>
-                ความเชื่อไทยโบราณเชื่อว่า<strong className="text-ghostWhite/80">ดวงวิญญาณบรรพบุรุษ</strong>ยังคงดูแลปกป้องลูกหลาน
-                การทำบุญในวันพระ ตักบาตร ถวายสังฆทาน หรือสวดมนต์อุทิศส่วนกุศล
-                จะช่วยให้<strong className="text-ghostWhite/80">ผีบรรพบุรุษ</strong>ได้รับบุญและคอยเสริมดวงให้ลูกหลานมีโชคดี
-                คนที่ดวงตกหรือมีเคราะห์ มักได้รับคำแนะนำให้ทำบุญในวันพระ
-                เพื่อเสริมบารมีและแก้เคราะห์กรรม
+              <h3 className="font-heading text-ghostWhite text-lg">สีประจำวัน — พลังนพเคราะห์ที่สวมใส่ได้</h3>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                ระบบ<strong className="text-ghostWhite/90">นพเคราะห์</strong>ในโหราศาสตร์ไทยผูกดาวแต่ละดวงไว้กับแต่ละวัน
+                ดาวแต่ละดวงมีสี พลังงาน และอิทธิพลต่อดวงชะตาต่างกัน
+                การสวมสีมงคลของวันเกิด หรือสีของวันนั้นๆ
+                ช่วย<strong className="text-ghostWhite/90">ดึงพลังงานดาวมาเสริมบารมี</strong> ป้องกันเคราะห์กรรม
+                และทำให้การงานในวันนั้นราบรื่นขึ้น
               </p>
             </div>
 
+            {/* วันพระดูยังไง */}
             <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">ปฏิทินไทย — เครื่องมือดูดวงสายมู</h3>
-              <p>
-                ปฏิทินไทยพุทธศักราชเป็นเครื่องมือสำคัญของ<strong className="text-ghostWhite/80">สายมูและสายบุญ</strong>
-                รู้จักวันพระ วันโกน สีมงคล เลขมงคล ดาวประจำวัน และทิศมงคล
-                ช่วยให้วางแผนชีวิตสอดคล้องกับ<strong className="text-ghostWhite/80">พลังงานจักรวาลและชะตาดวง</strong>
-                ตามหลักโหราศาสตร์ไทยที่สืบทอดมาจากบรรพบุรุษหลายร้อยปี
-                รวมถึงช่วยเลือก<strong className="text-ghostWhite/80">ฤกษ์ดีดูดวง</strong>เพื่อชีวิตที่ดีขึ้น
+              <h3 className="font-heading text-ghostWhite text-lg">วันพระดูยังไง — อ่านปฏิทินให้เป็น</h3>
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                วันพระในปฏิทินไทยจะระบุ "๘ ค่ำ" หรือ "๑๕ ค่ำ" ใต้วันที่
+                ปฏิทินสากลทั่วไปไม่มีข้อมูลนี้ ต้องใช้<strong className="text-ghostWhite/90">ปฏิทินจันทรคติ</strong>โดยเฉพาะ
+                ในปฏิทินนี้ วันพระจะแสดงสีเหลืองอำพัน วันโกนสีเขียว
+                ให้เห็นชัดทุกเดือน ไม่ต้องนับเองให้ปวดหัว
               </p>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">เลขมงคล — ตัวเลขแห่งดวงชะตา</h3>
-              <p>
-                เลขมงคลประจำวันสอดคล้องกับพลังงานของดาวนพเคราะห์ที่ปกครองวันนั้น
-                ใช้สำหรับเลือก<strong className="text-ghostWhite/80">วันมงคล</strong> ตั้งชื่อลูก กำหนดฤกษ์ หรือเสริมโชคในกิจการ
-                เช่น วันอาทิตย์ — เลข ๙ วันจันทร์ — เลข ๒ วันอังคาร — เลข ๘
-                เลขเหล่านี้มีพลังดึงดูดพลังงานบวกตามคติ<strong className="text-ghostWhite/80">โหราศาสตร์ไทยโบราณ</strong>
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="text-ghostWhite font-heading text-base">พุทธศักราช — เวลาแห่งธรรมะ</h3>
-              <p>
-                พุทธศักราช (พ.ศ.) นับจากปีที่พระพุทธเจ้าเสด็จดับขันธปรินิพพาน
-                บวกเพิ่มจากคริสต์ศักราช ๕๔๓ ปี เช่น ค.ศ. {year} = พ.ศ. {beYear}
-                ประเทศไทยใช้พุทธศักราชเป็นปฏิทินทางราชการ สะท้อนความเชื่อและ<strong className="text-ghostWhite/80">จิตวิญญาณของชาติ</strong>
-                ที่ผูกพันกับพระพุทธศาสนามาตั้งแต่โบราณกาล
+              <p className="text-ashGray font-oracle text-sm leading-relaxed">
+                <strong className="text-ghostWhite/90">หลักง่ายๆ</strong> — ก่อนนัดตัดผม ดูวันโกน
+                ก่อนทำบุญใหญ่ ดูวันพระ
+                ก่อนเริ่มกิจการ ดูฤกษ์ดีและสีมงคลของวันนั้น
               </p>
             </div>
 

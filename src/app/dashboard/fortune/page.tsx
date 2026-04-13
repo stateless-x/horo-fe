@@ -22,8 +22,8 @@ import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
-import { PawjaiBanner } from '@/components/ads/pawjai-banner';
-import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
+import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
+import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -226,8 +226,8 @@ export default function FortuneChartPage() {
         </motion.div>
       </div>
 
-      {/* Pawjai Ads - Inline Permanent Banner */}
-      <PawjaiAdsBanner />
+      {/* Ko-fi donation inline banner */}
+      <KofiDonationBanner />
 
       {/* Tab Navigation - Sticky when scrolled past */}
       <FortuneTabBar activeTab={activeTab} onTabChange={setActiveTab} />
@@ -279,8 +279,8 @@ export default function FortuneChartPage() {
       {/* Sticky Action Bar */}
       <StickyActionBar onShare={handleShare} />
 
-      {/* Pawjai Advertisement */}
-      <PawjaiBanner />
+      {/* Ko-fi donation modal */}
+      <KofiDonationModal />
 
       {/* Share Sheet */}
       <ShareSheet

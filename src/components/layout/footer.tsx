@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Heart, Calendar, Orbit } from "lucide-react";
+import { KofiWidget } from "@/components/ads/kofi-widget";
 
 interface FooterContext {
   shareCta: string | null;
@@ -221,6 +222,16 @@ export function Footer() {
             </div>
           </div>
         )} */}
+
+        {/* Ko-fi donation */}
+        <div className="flex flex-col items-center gap-3 mb-6">
+          <p className="font-thai text-sm text-ashGray flex items-center gap-1">
+            ☕ ชอบใจ? ซื้อกาแฟให้พี่ภูสักแก้ว <Heart className="inline w-3 h-3 text-pink-400" />
+          </p>
+          <KofiWidget variant="subtle">
+            สนับสนุน
+          </KofiWidget>
+        </div>
 
         {/* Attribution */}
         <div className="flex flex-col items-center justify-center gap-1.5 text-sm text-ashGray">

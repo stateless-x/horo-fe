@@ -23,7 +23,7 @@ import { ClientDate } from '@/components/client-date';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
-import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
+import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
 
 const ELEMENT_NAMES_THAI: Record<string, string> = {
   wood: 'ไม้',
@@ -246,7 +246,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        <PawjaiAdsBanner />
+        <KofiDonationBanner />
 
         {/* ===== DOS & DONTS - Side by side ===== */}
         {structured?.dos && structured?.donts && (

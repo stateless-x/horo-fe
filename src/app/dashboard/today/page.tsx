@@ -232,7 +232,7 @@ export default function TodayPage() {
             <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
               <p className="text-sm text-ashGray mb-1">ทิศมงคล</p>
               <p className="text-xl font-heading text-amethyst">
-                {dailyReading?.luckyDirection || '-'}
+                {structured?.luckyDirection || dailyReading?.luckyDirection || '-'}
               </p>
             </div>
 

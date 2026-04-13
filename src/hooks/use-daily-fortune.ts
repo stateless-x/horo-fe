@@ -22,6 +22,7 @@ export interface StructuredDailyContent {
   luckyMoment: string;
   luckyNumbers?: number[];
   luckyColor?: string;
+  luckyDirection?: string;
   warnings?: string[];
   suggestions?: string[];
 }

@@ -15,7 +15,7 @@ import {
 import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL, type CompatibilityShareData } from '@/lib/share-utils';
-import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
+import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
 
 // --- Constants ---
@@ -806,7 +806,7 @@ export default function CompatibilityPage() {
             </CardContent>
           </Card>
         </motion.div>
-        <KofiDonationBanner />
+        <PawjaiAdsBanner />
         {/* History Section */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <div className="space-y-4">

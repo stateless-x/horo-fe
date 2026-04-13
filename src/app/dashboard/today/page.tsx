@@ -23,7 +23,7 @@ import { ClientDate } from '@/components/client-date';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
-import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
+import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 
@@ -252,7 +252,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        <KofiDonationBanner />
+        <PawjaiAdsBanner />
 
         {/* ===== DOS & DONTS - Side by side ===== */}
         {structured?.dos && structured?.donts && (

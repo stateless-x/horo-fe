@@ -4,6 +4,7 @@ import type { BirthProfile } from '@/lib-packages/shared';
 
 export type OnboardingStep =
   | 'welcome'
+  | 'returning'
   | 'name'
   | 'birthDate'
   | 'gender'
@@ -37,6 +38,7 @@ interface OnboardingState {
 
 const steps: OnboardingStep[] = [
   'welcome',
+  'returning',
   'name',
   'birthDate',
   'gender',

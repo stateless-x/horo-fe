@@ -2,6 +2,7 @@
 
 import { useOnboardingStore } from '@/stores/onboarding';
 import { StepWelcome } from './step-welcome';
+import { StepReturning } from './step-returning';
 import { StepName } from './step-name';
 import { StepBirthDate } from './step-birth-date';
 import { StepGender } from './step-gender';
@@ -40,6 +41,7 @@ export function OnboardingFlow() {
 
       <AnimatePresence mode="wait">
         {currentStep === 'welcome' && <StepWelcome key="welcome" />}
+        {currentStep === 'returning' && <StepReturning key="returning" />}
         {currentStep === 'name' && <StepName key="name" />}
         {currentStep === 'birthDate' && <StepBirthDate key="birthDate" />}
         {currentStep === 'gender' && <StepGender key="gender" />}
@@ -50,7 +52,7 @@ export function OnboardingFlow() {
       </AnimatePresence>
 
       {/* Enhanced Progress indicator */}
-      {currentStep !== 'welcome' && currentStep !== 'dashboard' && (
+      {currentStep !== 'welcome' && currentStep !== 'returning' && currentStep !== 'dashboard' && (
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

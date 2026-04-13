@@ -16,6 +16,7 @@ import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL, type CompatibilityShareData } from '@/lib/share-utils';
 import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
+import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
 
 // --- Constants ---
 
@@ -896,6 +897,8 @@ export default function CompatibilityPage() {
             )}
           </div>
         </motion.div>
+
+        <KofiDonationModal />
       </div>
     </div>
   );

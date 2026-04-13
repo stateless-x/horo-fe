@@ -24,6 +24,7 @@ import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
+import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
 
 const ELEMENT_NAMES_THAI: Record<string, string> = {
   wood: 'ไม้',
@@ -318,6 +319,8 @@ export default function TodayPage() {
             luckyNumber: dailyReading?.luckyNumber || undefined,
           }}
         />
+
+        <KofiDonationModal />
       </div>
     </div>
   );

@@ -80,7 +80,7 @@ export function generateCompatibilityShareText(
 
     case 'facebook':
       // URL is passed separately, text is used as quote
-      return `ส่องดวง${relationshipLabel}กับ ${partnerName} — ธาตุ${userElement} × ธาตุ${partnerElement}`;
+      return `ส่องดวง${relationshipLabel}กับ ${partnerName} ธาตุ${userElement} × ธาตุ${partnerElement}`;
 
     case 'twitter':
       // URL is passed separately in getShareUrl, so don't include it in text

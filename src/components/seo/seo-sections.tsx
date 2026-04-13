@@ -111,7 +111,7 @@ export function SEOSections() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* Collapsed SEO Content — crawlable but hidden from users */}
+      {/* Collapsed SEO Contentcrawlable but hidden from users */}
       <section className="border-t border-darkPurple/20 mt-16">
         <details className="max-w-3xl mx-auto px-6 py-8">
           <summary className="cursor-pointer text-ashGray/50 text-sm font-oracle hover:text-ashGray/70 transition-colors list-none flex items-center gap-2">
@@ -123,14 +123,14 @@ export function SEOSections() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            เกี่ยวกับสายมู — ดูดวงออนไลน์ด้วย AI ผสาน Bazi × MBTI
+            เกี่ยวกับสายมูดูดวงออนไลน์ด้วย AI ผสาน Bazi × MBTI
           </summary>
 
           <div className="mt-6 space-y-8 text-ashGray/40 text-xs leading-relaxed font-oracle">
             {/* About */}
             <div>
               <h2 className="text-sm text-ashGray/50 font-heading mb-2">
-                ดูดวงออนไลน์ฟรี ด้วย AI — ผสานโหราศาสตร์ไทย × Bazi (ซื่อจู๋) × MBTI
+                ดูดวงออนไลน์ฟรี ด้วย AIผสานโหราศาสตร์ไทย × Bazi (ซื่อจู๋) × MBTI
               </h2>
               <p>
                 สายมู คือแพลตฟอร์มดูดวงออนไลน์ที่ใช้ปัญญาประดิษฐ์ (AI)
@@ -151,10 +151,10 @@ export function SEOSections() {
             <div>
               <h2 className="text-sm text-ashGray/50 font-heading mb-2">วิธีการทำงาน</h2>
               <ol className="list-decimal list-inside space-y-1">
-                <li>กรอกข้อมูลเกิด — ระบุวันเดือนปีเกิดและเวลาเกิด ระบบจะแปลงเป็นข้อมูล Bazi และคำนวณดวงชะตาไทยโดยอัตโนมัติ</li>
-                <li>เลือก MBTI (ไม่บังคับ) — ถ้ารู้ MBTI ของคุณ เช่น INTP, ENFJ ระบบจะนำบุคลิกภาพไปผสานกับดวงชะตา ให้คำทำนายเข้าถึงตัวตนมากขึ้น ถ้าไม่รู้สามารถข้ามได้</li>
-                <li>AI วิเคราะห์ชะตา — ผสานเสาสี่เกิด ธาตุทั้งห้า นพเคราะห์ วงจรชีวิต 10 ปี (大運) และ MBTI เข้าด้วยกันอย่างกลมกลืน</li>
-                <li>รับคำทำนายเฉพาะบุคคล — ครอบคลุมทุกด้าน: บุคลิกภาพ ความรัก การเงิน อาชีพ สุขภาพ พร้อมคำเตือนตามจุดอ่อนของบุคลิกภาพ</li>
+                <li>กรอกข้อมูลเกิดระบุวันเดือนปีเกิดและเวลาเกิด ระบบจะแปลงเป็นข้อมูล Bazi และคำนวณดวงชะตาไทยโดยอัตโนมัติ</li>
+                <li>เลือก MBTI (ไม่บังคับ)ถ้ารู้ MBTI ของคุณ เช่น INTP, ENFJ ระบบจะนำบุคลิกภาพไปผสานกับดวงชะตา ให้คำทำนายเข้าถึงตัวตนมากขึ้น ถ้าไม่รู้สามารถข้ามได้</li>
+                <li>AI วิเคราะห์ชะตาผสานเสาสี่เกิด ธาตุทั้งห้า นพเคราะห์ วงจรชีวิต 10 ปี (大運) และ MBTI เข้าด้วยกันอย่างกลมกลืน</li>
+                <li>รับคำทำนายเฉพาะบุคคลครอบคลุมทุกด้าน: บุคลิกภาพ ความรัก การเงิน อาชีพ สุขภาพ พร้อมคำเตือนตามจุดอ่อนของบุคลิกภาพ</li>
               </ol>
             </div>
 
@@ -162,12 +162,12 @@ export function SEOSections() {
             <div>
               <h2 className="text-sm text-ashGray/50 font-heading mb-2">บริการดูดวงครบวงจร</h2>
               <ul className="space-y-1">
-                <li>ดูดวงความรัก — วิเคราะห์ชะตารัก ความเข้ากันได้กับคู่ครอง จังหวะเวลาความรัก ผสาน MBTI เพื่อเข้าใจว่าบุคลิกภาพของคุณตอบสนองต่อความรักอย่างไร</li>
-                <li>ดูดวงการงาน — อาชีพที่เหมาะสม จุดแข็ง-จุดอ่อน โอกาสในการทำงาน พร้อมคำเตือนตามจุดอ่อนของ MBTI เช่น INTP ระวังเรื่องการตัดสินใจช้า</li>
-                <li>ดูดวงการเงิน — โชคลาภ ช่วงเวลาลงทุน คำเตือนเรื่องการเงินตามนิสัยของบุคลิกภาพ</li>
-                <li>ดูดวงคู่ — วิเคราะห์ความเข้ากันของ MBTI ร่วมกับธาตุทั้งห้า เช่น INTP กับ ENFJ มีพลังเสริมกันอย่างไร</li>
-                <li>ดูดวงประจำปี — คำทำนายรายปี จังหวะเวลาดี-ร้าย สีและเลขมงคล</li>
-                <li>ดูดวงธาตุ — สมดุลห้าธาตุ คำแนะนำเสริมดวงด้วยสี อัญมณี ทิศทาง</li>
+                <li>ดูดวงความรักวิเคราะห์ชะตารัก ความเข้ากันได้กับคู่ครอง จังหวะเวลาความรัก ผสาน MBTI เพื่อเข้าใจว่าบุคลิกภาพของคุณตอบสนองต่อความรักอย่างไร</li>
+                <li>ดูดวงการงานอาชีพที่เหมาะสม จุดแข็ง-จุดอ่อน โอกาสในการทำงาน พร้อมคำเตือนตามจุดอ่อนของ MBTI เช่น INTP ระวังเรื่องการตัดสินใจช้า</li>
+                <li>ดูดวงการเงินโชคลาภ ช่วงเวลาลงทุน คำเตือนเรื่องการเงินตามนิสัยของบุคลิกภาพ</li>
+                <li>ดูดวงคู่วิเคราะห์ความเข้ากันของ MBTI ร่วมกับธาตุทั้งห้า เช่น INTP กับ ENFJ มีพลังเสริมกันอย่างไร</li>
+                <li>ดูดวงประจำปีคำทำนายรายปี จังหวะเวลาดี-ร้าย สีและเลขมงคล</li>
+                <li>ดูดวงธาตุสมดุลห้าธาตุ คำแนะนำเสริมดวงด้วยสี อัญมณี ทิศทาง</li>
               </ul>
             </div>
 
@@ -175,11 +175,11 @@ export function SEOSections() {
             <div>
               <h2 className="text-sm text-ashGray/50 font-heading mb-2">ห้าธาตุใน Bazi</h2>
               <ul className="space-y-1">
-                <li>ธาตุไม้ (Wood) — การเติบโต ความคิดสร้างสรรค์ ความยืดหยุ่น</li>
-                <li>ธาตุไฟ (Fire) — พลังงาน ความกระตือรือร้น ความหลงใหล</li>
-                <li>ธาตุดิน (Earth) — ความมั่นคง ความน่าเชื่อถือ การบำรุงเลี้ยง</li>
-                <li>ธาตุโลหะ (Metal) — ความมีระเบียบ ความยุติธรรม ความแข็งแกร่ง</li>
-                <li>ธาตุน้ำ (Water) — ปัญญา ความลึกลับ การปรับตัว</li>
+                <li>ธาตุไม้ (Wood)การเติบโต ความคิดสร้างสรรค์ ความยืดหยุ่น</li>
+                <li>ธาตุไฟ (Fire)พลังงาน ความกระตือรือร้น ความหลงใหล</li>
+                <li>ธาตุดิน (Earth)ความมั่นคง ความน่าเชื่อถือ การบำรุงเลี้ยง</li>
+                <li>ธาตุโลหะ (Metal)ความมีระเบียบ ความยุติธรรม ความแข็งแกร่ง</li>
+                <li>ธาตุน้ำ (Water)ปัญญา ความลึกลับ การปรับตัว</li>
               </ul>
             </div>
 
@@ -225,13 +225,13 @@ export function SEOSections() {
               <h2 className="text-sm text-ashGray/50 font-heading mb-2">อภิธานศัพท์โหราศาสตร์</h2>
               <dl className="space-y-1">
                 <div><dt className="text-ashGray/50 inline">Bazi (ซื่อจู๋):</dt> <dd className="inline">ศาสตร์โหราจีนวิเคราะห์จากเสาสี่เกิด</dd></div>
-                <div><dt className="text-ashGray/50 inline">เสาสี่เกิด:</dt> <dd className="inline">สี่เสาหลักในดวงชะตา Bazi — เสาปี เสาเดือน เสาวัน เสาชั่วโมง</dd></div>
-                <div><dt className="text-ashGray/50 inline">ห้าธาตุ:</dt> <dd className="inline">ไม้ ไฟ ดิน โลหะ น้ำ — องค์ประกอบพื้นฐานใน Bazi</dd></div>
+                <div><dt className="text-ashGray/50 inline">เสาสี่เกิด:</dt> <dd className="inline">สี่เสาหลักในดวงชะตา Baziเสาปี เสาเดือน เสาวัน เสาชั่วโมง</dd></div>
+                <div><dt className="text-ashGray/50 inline">ห้าธาตุ:</dt> <dd className="inline">ไม้ ไฟ ดิน โลหะ น้ำองค์ประกอบพื้นฐานใน Bazi</dd></div>
                 <div><dt className="text-ashGray/50 inline">นพเคราะห์:</dt> <dd className="inline">เทพเจ้าทั้งเก้าในโหราศาสตร์ไทย</dd></div>
                 <div><dt className="text-ashGray/50 inline">จักรนพคุณ:</dt> <dd className="inline">วงจรโชคชะตาหมุนเวียนทุก 9 ปี</dd></div>
                 <div><dt className="text-ashGray/50 inline">วงจร 10 ปี (大運):</dt> <dd className="inline">วงจรชะตาชีวิตใน Bazi เปลี่ยนทุก 10 ปี</dd></div>
-                <div><dt className="text-ashGray/50 inline">MBTI:</dt> <dd className="inline">Myers-Briggs Type Indicator — ระบบจำแนกบุคลิกภาพ 16 แบบ ใช้เสริมความแม่นยำของคำทำนาย</dd></div>
-                <div><dt className="text-ashGray/50 inline">บุคลิกภาพ 16 แบบ:</dt> <dd className="inline">แบ่งเป็น 4 กลุ่ม — นักวิเคราะห์ (NT) นักการทูต (NF) ผู้พิทักษ์ (SJ) นักสำรวจ (SP)</dd></div>
+                <div><dt className="text-ashGray/50 inline">MBTI:</dt> <dd className="inline">Myers-Briggs Type Indicatorระบบจำแนกบุคลิกภาพ 16 แบบ ใช้เสริมความแม่นยำของคำทำนาย</dd></div>
+                <div><dt className="text-ashGray/50 inline">บุคลิกภาพ 16 แบบ:</dt> <dd className="inline">แบ่งเป็น 4 กลุ่มนักวิเคราะห์ (NT) นักการทูต (NF) ผู้พิทักษ์ (SJ) นักสำรวจ (SP)</dd></div>
                 <div><dt className="text-ashGray/50 inline">Cognitive Functions:</dt> <dd className="inline">ฟังก์ชันทางจิตใน MBTI เช่น Ti (ตรรกะภายใน) Ne (สัญชาตญาณสร้างสรรค์) ใช้วิเคราะห์จุดแข็ง-จุดอ่อน</dd></div>
                 <div><dt className="text-ashGray/50 inline">ดูดวงคู่:</dt> <dd className="inline">วิเคราะห์ความเข้ากันได้ระหว่างสองคนด้วยธาตุทั้งห้าและ MBTI</dd></div>
               </dl>

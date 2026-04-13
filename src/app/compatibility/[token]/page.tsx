@@ -226,7 +226,7 @@ export default function CompatibilitySharePage() {
         {/* Footer */}
         <div className="text-center py-4">
           <p className="text-ashGray/60 text-xs">
-            <a href="/" className="hover:text-ashGray transition-colors">สายมู.com</a> — ดูดวงออนไลน์ฟรี ด้วย AI
+            <a href="/" className="hover:text-ashGray transition-colors">สายมู.com</a> ดูดวงออนไลน์ฟรี ด้วย AI
           </p>
         </div>
       </div>

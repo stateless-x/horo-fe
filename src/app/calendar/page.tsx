@@ -83,13 +83,13 @@ const THAI_HOLIDAYS: Record<string, string> = {
 };
 
 // ─── วันพระ & วันโกน ─────────────────────────────────────────────────────────
-// วันพระ = Buddhist holy days (ขึ้น/แรม ๘ ค่ำ และ ๑๕ ค่ำ — or ๑๔ ค่ำ in เดือนขาด)
+// วันพระ = Buddhist holy days (ขึ้น/แรม ๘ ค่ำ และ ๑๕ ค่ำor ๑๔ ค่ำ in เดือนขาด)
 // Dates verified against myhora.com and kapook.com for each year.
 // วันโกน = the day before every วันพระ (derived dynamically below)
 //
 // Years 2570–2575 (CE 2027–2032) are included but only shown when year matches.
 const WAN_PHRA_DATES = new Set([
-  // ── พ.ศ. 2568 / CE 2025 — source: kapook.com / myhora.com ──
+  // ── พ.ศ. 2568 / CE 2025source: kapook.com / myhora.com ──
   '2025-01-06','2025-01-13','2025-01-21','2025-01-28',
   '2025-02-05','2025-02-12','2025-02-20','2025-02-26',
   '2025-03-06','2025-03-13','2025-03-21','2025-03-28',
@@ -102,7 +102,7 @@ const WAN_PHRA_DATES = new Set([
   '2025-10-07','2025-10-15','2025-10-21','2025-10-29',
   '2025-11-05','2025-11-13','2025-11-20','2025-11-28',
   '2025-12-05','2025-12-13','2025-12-19','2025-12-27',
-  // ── พ.ศ. 2569 / CE 2026 — source: myhora.com ──
+  // ── พ.ศ. 2569 / CE 2026source: myhora.com ──
   '2026-01-03','2026-01-11','2026-01-18','2026-01-26',
   '2026-02-02','2026-02-10','2026-02-16','2026-02-24',
   '2026-03-03','2026-03-11','2026-03-18','2026-03-26',
@@ -115,7 +115,7 @@ const WAN_PHRA_DATES = new Set([
   '2026-10-04','2026-10-11','2026-10-19','2026-10-26',
   '2026-11-03','2026-11-09','2026-11-17','2026-11-24',
   '2026-12-02','2026-12-09','2026-12-17','2026-12-24',
-  // ── พ.ศ. 2570 / CE 2027 — source: myhora.com ──
+  // ── พ.ศ. 2570 / CE 2027source: myhora.com ──
   '2027-01-01','2027-01-07','2027-01-15','2027-01-22','2027-01-30',
   '2027-02-06','2027-02-14','2027-02-21',
   '2027-03-01','2027-03-07','2027-03-15','2027-03-22','2027-03-30',
@@ -128,7 +128,7 @@ const WAN_PHRA_DATES = new Set([
   '2027-10-08','2027-10-15','2027-10-23','2027-10-29',
   '2027-11-06','2027-11-13','2027-11-21','2027-11-28',
   '2027-12-06','2027-12-13','2027-12-21','2027-12-27',
-  // ── พ.ศ. 2571 / CE 2028 — source: myhora.com ──
+  // ── พ.ศ. 2571 / CE 2028source: myhora.com ──
   '2028-01-04','2028-01-11','2028-01-18','2028-01-25',
   '2028-02-03','2028-02-10','2028-02-17','2028-02-24',
   '2028-03-02','2028-03-09','2028-03-17','2028-03-24',
@@ -141,7 +141,7 @@ const WAN_PHRA_DATES = new Set([
   '2028-10-02','2028-10-10','2028-10-18','2028-10-25',
   '2028-11-01','2028-11-09','2028-11-16','2028-11-24',
   '2028-12-08','2028-12-15','2028-12-23','2028-12-30',
-  // ── พ.ศ. 2572 / CE 2029 — source: myhora.com ──
+  // ── พ.ศ. 2572 / CE 2029source: myhora.com ──
   '2029-01-07','2029-01-14','2029-01-21','2029-01-28',
   '2029-02-05','2029-02-12','2029-02-19','2029-02-26',
   '2029-03-06','2029-03-13','2029-03-21','2029-03-28',
@@ -154,7 +154,7 @@ const WAN_PHRA_DATES = new Set([
   '2029-10-06','2029-10-14','2029-10-21','2029-10-29',
   '2029-11-04','2029-11-12','2029-11-19','2029-11-27',
   '2029-12-04','2029-12-12','2029-12-20','2029-12-27',
-  // ── พ.ศ. 2573 / CE 2030 — source: myhora.com ──
+  // ── พ.ศ. 2573 / CE 2030source: myhora.com ──
   '2030-01-10','2030-01-17','2030-01-25',
   '2030-02-01','2030-02-09','2030-02-17','2030-02-24',
   '2030-03-02','2030-03-10','2030-03-17','2030-03-25',
@@ -167,7 +167,7 @@ const WAN_PHRA_DATES = new Set([
   '2030-10-03','2030-10-10','2030-10-18','2030-10-25',
   '2030-11-01','2030-11-08','2030-11-16','2030-11-23',
   '2030-12-01','2030-12-08','2030-12-16','2030-12-23','2030-12-31',
-  // ── พ.ศ. 2574 / CE 2031 — source: myhora.com ──
+  // ── พ.ศ. 2574 / CE 2031source: myhora.com ──
   '2031-01-07','2031-01-15','2031-01-22','2031-01-29',
   '2031-02-06','2031-02-13','2031-02-20','2031-02-27',
   '2031-03-07','2031-03-15','2031-03-22','2031-03-29',
@@ -180,7 +180,7 @@ const WAN_PHRA_DATES = new Set([
   '2031-10-08','2031-10-15','2031-10-23','2031-10-30',
   '2031-11-07','2031-11-14','2031-11-21','2031-11-28',
   '2031-12-06','2031-12-13','2031-12-21','2031-12-28',
-  // ── พ.ศ. 2575 / CE 2032 — source: myhora.com ──
+  // ── พ.ศ. 2575 / CE 2032source: myhora.com ──
   '2032-01-05','2032-01-10','2032-01-18','2032-01-25',
   '2032-02-02','2032-02-09','2032-02-17','2032-02-24',
   '2032-03-03','2032-03-10','2032-03-17','2032-03-24',
@@ -195,7 +195,7 @@ const WAN_PHRA_DATES = new Set([
   '2032-12-09','2032-12-16','2032-12-24','2032-12-30',
 ]);
 
-// วันโกน = day before each วันพระ (derived — no need for a separate static set)
+// วันโกน = day before each วันพระ (derivedno need for a separate static set)
 function buildWanKhonSet(): Set<string> {
   const result = new Set<string>();
   for (const iso of WAN_PHRA_DATES) {
@@ -298,7 +298,7 @@ export async function generateMetadata(
 
   return {
     title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ วันโกน สีประจำวัน ฤกษ์ดี | สายมู`,
-    description: `ปฏิทินไทยพุทธศักราช ${beYear} เดือน${monthName} — วันพระ วันโกน ทำบุญ ตัดผม ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน เปิดกิจการ สีประจำวัน เลขมงคล ดาวประจำวัน และวันหยุดราชการ ตามหลักโหราศาสตร์ไทยสำหรับสายมูและสายบุญ`,
+    description: `ปฏิทินไทยพุทธศักราช ${beYear} เดือน${monthName}วันพระ วันโกน ทำบุญ ตัดผม ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน เปิดกิจการ สีประจำวัน เลขมงคล ดาวประจำวัน และวันหยุดราชการ ตามหลักโหราศาสตร์ไทยสำหรับสายมูและสายบุญ`,
     keywords: [
       'ปฏิทินไทย', `ปฏิทิน ${beYear}`, `ปฏิทิน ${monthName} ${beYear}`,
       'วันพระ', `วันพระ ${monthName} ${beYear}`, `วันพระ ${beYear}`,
@@ -318,13 +318,13 @@ export async function generateMetadata(
     alternates: { canonical: '/calendar' },
     openGraph: {
       title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ วันโกน ฤกษ์ดี สายมู`,
-      description: `วันพระ วันโกน ตัดผมมงคล ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน สีประจำวัน เลขมงคล และวันหยุดราชการ เดือน${monthName} ${beYear} — ปฏิทินไทยสำหรับสายมูและสายบุญ`,
+      description: `วันพระ วันโกน ตัดผมมงคล ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน สีประจำวัน เลขมงคล และวันหยุดราชการ เดือน${monthName} ${beYear}ปฏิทินไทยสำหรับสายมูและสายบุญ`,
       type: 'website',
     },
   };
 }
 
-// ─── Page (Server Component — fully static, no auth required) ────────────────
+// ─── Page (Server Componentfully static, no auth required) ────────────────
 
 export default async function CalendarPage(
   { searchParams }: { searchParams: Promise<{ m?: string }> }
@@ -398,12 +398,12 @@ export default async function CalendarPage(
               <div className="flex flex-col gap-1.5 items-end shrink-0">
                 {WAN_PHRA_DATES.has(todayIso) && (
                   <span className="px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-oracle text-xs text-center font-medium">
-                    วันพระ — ทำบุญ ตักบาตร
+                    วันพระทำบุญ ตักบาตร
                   </span>
                 )}
                 {WAN_KHON_DATES.has(todayIso) && (
                   <span className="px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 font-oracle text-xs text-center font-medium">
-                    วันโกน — ตัดผมมงคล
+                    วันโกนตัดผมมงคล
                   </span>
                 )}
               </div>
@@ -602,7 +602,7 @@ export default async function CalendarPage(
                 )}
               </div>
               <p className="mt-3 text-ashGray/60 font-oracle text-xs">
-                วันโกน คือวันก่อนวันพระ ๑ วัน — นิยมตัดผม ตัดเล็บ และโกนหัวเพื่อเสริมสิริมงคล
+                วันโกน คือวันก่อนวันพระ ๑ วันนิยมตัดผม ตัดเล็บ และโกนหัวเพื่อเสริมสิริมงคล
               </p>
             </div>
 
@@ -656,14 +656,14 @@ export default async function CalendarPage(
 
             {/* วันพระ */}
             <div className="space-y-3">
-              <h3 className="font-heading text-amber-300 text-lg">วันพระ — วันที่บุญหนักที่สุด</h3>
+              <h3 className="font-heading text-amber-300 text-lg">วันพระวันที่บุญหนักที่สุด</h3>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
                 วันพระ ตรงกับวันขึ้นและแรม ๘ ค่ำ และ ๑๕ ค่ำ ของทุกเดือนตามจันทรคติ
                 ความเชื่อไทยโบราณระบุชัดว่า <strong className="text-ghostWhite/90">บุญที่ทำในวันพระ มีน้ำหนักกว่าวันธรรมดาหลายเท่า</strong>
                 เพราะพลังงานศักดิ์สิทธิ์ของจักรวาลเปิดรับเต็มที่
               </p>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
-                ชาวพุทธสายบุญไม่พลาดวันนี้ — ตักบาตร ไปวัด ถวายสังฆทาน สมาทานศีล
+                ชาวพุทธสายบุญไม่พลาดวันนี้ตักบาตร ไปวัด ถวายสังฆทาน สมาทานศีล
                 เชื่อว่าบุญที่สะสมในวันพระจะ<strong className="text-ghostWhite/90">เสริมดวงชะตา ต่ออายุ และส่งผลดีถึงชาติหน้า</strong>
                 รวมถึงช่วยอุทิศส่วนกุศลไปยัง<strong className="text-ghostWhite/90">ดวงวิญญาณบรรพบุรุษ</strong>
                 ที่คอยดูแลลูกหลานอยู่อีกด้านหนึ่ง
@@ -677,12 +677,12 @@ export default async function CalendarPage(
 
             {/* วันโกน */}
             <div className="space-y-3">
-              <h3 className="font-heading text-emerald-400 text-lg">วันโกน — คืนที่วิญญาณพลัดหลง</h3>
+              <h3 className="font-heading text-emerald-400 text-lg">วันโกนคืนที่วิญญาณพลัดหลง</h3>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
                 วันโกน คือวันก่อนวันพระ ๑ วัน ชื่อมาจากธรรมเนียมที่<strong className="text-ghostWhite/90">พระภิกษุสงฆ์โกนผม โกนคิ้ว</strong>เตรียมตัวก่อนวันพระ
                 ในคืนนั้น ความเชื่อไทยโบราณกล่าวว่า
                 <strong className="text-ghostWhite/90"> วิญญาณและสิ่งที่ล่องลอยในอากาศยังไม่ได้รับบุญ</strong>
-                พลังงานยังขุ่นมัว ไม่นิ่ง — ไม่เหมาะทำกิจมงคล แต่เหมาะกับการ "ตัด"
+                พลังงานยังขุ่นมัว ไม่นิ่งไม่เหมาะทำกิจมงคล แต่เหมาะกับการ "ตัด"
               </p>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
                 <strong className="text-ghostWhite/90">ตัดผม ตัดเล็บ หรือโกนหัวในวันโกน</strong>
@@ -690,7 +690,7 @@ export default async function CalendarPage(
                 พลังงานวันโกนเหมาะกับการชำระล้าง ทิ้งสิ่งเก่า เปิดรับสิ่งใหม่
               </p>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
-                ตรงกันข้าม — <strong className="text-ghostWhite/90">ห้ามตัดผมในวันพระ</strong>
+                ตรงกันข้าม<strong className="text-ghostWhite/90">ห้ามตัดผมในวันพระ</strong>
                 เชื่อว่าจะตัดบุญตัดโชค ตัดสายสัมพันธ์กับสิ่งดีที่กำลังจะเข้ามา
                 นี่คือเหตุผลที่สายมูทุกคนดูปฏิทินก่อนนัดตัดผมทุกครั้ง
               </p>
@@ -698,7 +698,7 @@ export default async function CalendarPage(
 
             {/* ฤกษ์ดี */}
             <div className="space-y-3">
-              <h3 className="font-heading text-ghostWhite text-lg">ฤกษ์ดี — เลือกวันให้ชีวิตเดินหน้า</h3>
+              <h3 className="font-heading text-ghostWhite text-lg">ฤกษ์ดีเลือกวันให้ชีวิตเดินหน้า</h3>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
                 ฤกษ์ดีคือการเลือกวันเวลาที่พลังงานของจักรวาลเปิดรับ
                 สอดคล้องกับ<strong className="text-ghostWhite/90">ดวงชะตาของเจ้าของงาน</strong>
@@ -718,7 +718,7 @@ export default async function CalendarPage(
                 คนไทยเชื่อมั่นว่า<strong className="text-ghostWhite/90">วิญญาณบรรพบุรุษยังอยู่ใกล้ลูกหลาน</strong>
                 คอยดูแล คอยปกป้อง และคอยรับบุญที่ลูกหลานอุทิศให้
                 การทำบุญในวันพระ สวดมนต์ และกรวดน้ำอุทิศส่วนกุศล
-                ไม่ใช่แค่เรื่องศาสนา — แต่คือการ<strong className="text-ghostWhite/90">ส่งพลังงานกลับไปให้ผู้ที่จากไป</strong>
+                ไม่ใช่แค่เรื่องศาสนาแต่คือการ<strong className="text-ghostWhite/90">ส่งพลังงานกลับไปให้ผู้ที่จากไป</strong>
               </p>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
                 ผีบรรพบุรุษที่ได้รับบุญ จะเสริมดวงลูกหลาน ป้องกันภัยพิบัติ
@@ -729,7 +729,7 @@ export default async function CalendarPage(
 
             {/* สีประจำวัน */}
             <div className="space-y-3">
-              <h3 className="font-heading text-ghostWhite text-lg">สีประจำวัน — พลังนพเคราะห์ที่สวมใส่ได้</h3>
+              <h3 className="font-heading text-ghostWhite text-lg">สีประจำวันพลังนพเคราะห์ที่สวมใส่ได้</h3>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
                 ระบบ<strong className="text-ghostWhite/90">นพเคราะห์</strong>ในโหราศาสตร์ไทยผูกดาวแต่ละดวงไว้กับแต่ละวัน
                 ดาวแต่ละดวงมีสี พลังงาน และอิทธิพลต่อดวงชะตาต่างกัน
@@ -741,7 +741,7 @@ export default async function CalendarPage(
 
             {/* วันพระดูยังไง */}
             <div className="space-y-3">
-              <h3 className="font-heading text-ghostWhite text-lg">วันพระดูยังไง — อ่านปฏิทินให้เป็น</h3>
+              <h3 className="font-heading text-ghostWhite text-lg">วันพระดูยังไงอ่านปฏิทินให้เป็น</h3>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
                 วันพระในปฏิทินไทยจะระบุ "๘ ค่ำ" หรือ "๑๕ ค่ำ" ใต้วันที่
                 ปฏิทินสากลทั่วไปไม่มีข้อมูลนี้ ต้องใช้<strong className="text-ghostWhite/90">ปฏิทินจันทรคติ</strong>โดยเฉพาะ
@@ -749,7 +749,7 @@ export default async function CalendarPage(
                 ให้เห็นชัดทุกเดือน ไม่ต้องนับเองให้ปวดหัว
               </p>
               <p className="text-ashGray font-oracle text-sm leading-relaxed">
-                <strong className="text-ghostWhite/90">หลักง่ายๆ</strong> — ก่อนนัดตัดผม ดูวันโกน
+                <strong className="text-ghostWhite/90">หลักง่ายๆ</strong>ก่อนนัดตัดผม ดูวันโกน
                 ก่อนทำบุญใหญ่ ดูวันพระ
                 ก่อนเริ่มกิจการ ดูฤกษ์ดีและสีมงคลของวันนั้น
               </p>

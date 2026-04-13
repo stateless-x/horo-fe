@@ -91,9 +91,7 @@ export default function LandingPage() {
             <p className="text-lg md:text-2xl text-paleOrchid/80 mb-6 font-oracle font-light leading-relaxed">
               ผสานจิตวิทยาเชิงลึกของ MBTI เข้ากับบาซีโบราณและโหราศาสตร์ไทย
               <br />
-              เพื่อถอดรหัสตัวตน{' '}
-              <span className="text-lavenderGlow/90">—</span>
-              {' '}ไม่ใช่แค่ดวง แต่คือ<span className="text-lavenderGlow/90 font-normal">แก่นแท้ของคุณ</span>
+              เพื่อถอดรหัสตัวตน ไม่ใช่แค่ดวง แต่คือ<span className="text-lavenderGlow/90 font-normal">แก่นแท้ของคุณ</span>
             </p>
 
             {/* Decorative line */}

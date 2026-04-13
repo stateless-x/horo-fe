@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Download, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Heart, Download, Share, ChevronDown, ChevronUp } from 'lucide-react';
 
 const STORAGE_KEY = 'horo-kofi-donation-dismissed';
 const QR_IMAGE_PATH = '/mae_manee_qr.PNG';
@@ -44,6 +44,19 @@ export function KofiDonationModal() {
     try {
       const response = await fetch(QR_IMAGE_PATH);
       const blob = await response.blob();
+      const file = new File([blob], 'horo-promptpay-qr.png', { type: 'image/png' });
+
+      // Try Web Share API first (works best on mobile)
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'PromptPay QR',
+          text: 'สแกนจ่ายค่ากาแฟพี่ภู',
+        });
+        return;
+      }
+
+      // Fallback for desktop: download via link
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -53,7 +66,7 @@ export function KofiDonationModal() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (error) {
-      // Fallback: open image in new tab
+      // Final fallback: open image in new tab (user can long-press to save)
       window.open(QR_IMAGE_PATH, '_blank');
     }
   }, []);
@@ -134,17 +147,19 @@ export function KofiDonationModal() {
                             className="w-full max-w-[280px] rounded-xl shadow-lg"
                           />
 
-                          {/* Save image button */}
+                          {/* Save/Share image button */}
                           <button
                             onClick={handleSaveImage}
                             className="flex items-center justify-center gap-2 w-full max-w-[280px] font-thai text-sm bg-charcoal hover:bg-darkPurple/30 text-ghostWhite border border-darkPurple/50 hover:border-amethyst/30 rounded-xl py-2.5 px-4 transition-all duration-200"
                           >
-                            <Download className="w-4 h-4" />
-                            <span>บันทึก QR ลงเครื่อง</span>
+                            <Share className="w-4 h-4 sm:hidden" />
+                            <Download className="w-4 h-4 hidden sm:block" />
+                            <span className="sm:hidden">แชร์/บันทึก QR</span>
+                            <span className="hidden sm:inline">บันทึก QR ลงเครื่อง</span>
                           </button>
 
                           <p className="font-thai text-xs text-ashGray text-center">
-                            สแกนหรือบันทึกไปเปิดในแอปธนาคาร
+                            กดปุ่มด้านบนเพื่อบันทึกไปเปิดในแอปธนาคาร
                           </p>
                         </div>
                       </motion.div>

@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   creator: "สายมู",
   publisher: "สายมู",
 
-  metadataBase: new URL("https://xn--72caa6conb6gsa6b.com"),
+  metadataBase: new URL("https://xn--y3cbx6azb.com"),
   alternates: {
     canonical: "/",
   },
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "สายมู.com - ดูดวงออนไลน์ฟรี ด้วย AI | โหราศาสตร์ไทย × Bazi × MBTI",
     description:
       "ดูดวงออนไลน์ฟรีด้วย AI ผสานโหราศาสตร์ไทย Bazi และ MBTI วิเคราะห์ดวงชะตาตามบุคลิกภาพ ดวงความรัก การเงิน อาชีพ พร้อมคำเตือนเฉพาะบุคลิกภาพ",
-    url: "https://xn--72caa6conb6gsa6b.com",
+    url: "https://xn--y3cbx6azb.com",
     type: "website",
     locale: "th_TH",
     siteName: "สายมู.com",

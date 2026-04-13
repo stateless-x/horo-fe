@@ -320,6 +320,19 @@ export async function generateMetadata(
       title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ วันโกน ฤกษ์ดี สายมู`,
       description: `วันพระ วันโกน ตัดผมมงคล ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน สีประจำวัน เลขมงคล และวันหยุดราชการ เดือน${monthName} ${beYear}ปฏิทินไทยสำหรับสายมูและสายบุญ`,
       type: 'website',
+      images: [
+        {
+          url: '/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'สายมู - ปฏิทินไทย ดูดวงออนไลน์ฟรี',
+          type: 'image/jpeg',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: ['/og-image.jpg'],
     },
   };
 }

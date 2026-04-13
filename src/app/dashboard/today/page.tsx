@@ -79,11 +79,11 @@ export default function TodayPage() {
     (session.user as any)?.displayName ||
     session.user.name ||
     'เจ้า';
-  // Use birth element from profile only - don't fallback to daily elementEnergy (different concept)
-  const primaryElement = userProfile?.astrology?.primaryElement || null;
-  const elementKey = primaryElement ? (primaryElement.toLowerCase() as keyof typeof ELEMENT_COLORS) : null;
-  const colors = elementKey ? ELEMENT_COLORS[elementKey] : ELEMENT_COLORS.earth;
-  const elementNameThai = elementKey ? ELEMENT_NAMES_THAI[elementKey] : null;
+  // Daily element energy (changes each day)
+  const dailyElement = dailyReading?.elementEnergy || null;
+  const dailyElementKey = dailyElement ? (dailyElement.toLowerCase() as keyof typeof ELEMENT_COLORS) : null;
+  const colors = dailyElementKey ? ELEMENT_COLORS[dailyElementKey] : ELEMENT_COLORS.earth;
+  const dailyElementNameThai = dailyElementKey ? ELEMENT_NAMES_THAI[dailyElementKey] : null;
   const structured = dailyReading?.structuredContent;
   const overallScore = structured?.overallScore || 3;
 
@@ -127,13 +127,15 @@ export default function TodayPage() {
             </h1>
           )}
 
-          {/* User identity pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
-            <Sparkles className="w-4 h-4" style={{ color: colors.primary }} />
-            <span className="text-base text-ghostWhite/80">
-              {displayName}{elementNameThai && ` · ธาตุ${elementNameThai}`}
-            </span>
-          </div>
+          {/* Daily element pill */}
+          {dailyElementNameThai && (
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
+              <Sparkles className="w-4 h-4" style={{ color: colors.primary }} />
+              <span className="text-base text-ghostWhite/80">
+                {displayName} · ธาตุ{dailyElementNameThai}
+              </span>
+            </div>
+          )}
         </section>
 
         {/* ===== READING SECTION ===== */}
@@ -315,7 +317,7 @@ export default function TodayPage() {
           shareData={{
             url: `${SITE_URL}/dashboard/today`,
             userName: displayName,
-            element: primaryElement || undefined,
+            element: dailyElement || undefined,
             luckyColor: structured?.luckyColor || dailyReading?.luckyColor || undefined,
             luckyNumber: dailyReading?.luckyNumber || undefined,
           }}

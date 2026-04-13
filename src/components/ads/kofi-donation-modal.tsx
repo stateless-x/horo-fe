@@ -141,16 +141,10 @@ export function KofiDonationModal() {
                         className="overflow-hidden"
                       >
                         <div className="flex flex-col items-center rounded-xl overflow-hidden space-y-3">
-                          <img
-                            src={QR_IMAGE_PATH}
-                            alt="QR Code PromptPay"
-                            className="w-full max-w-[280px] rounded-xl shadow-lg"
-                          />
-
                           {/* Save/Share image button */}
                           <button
                             onClick={handleSaveImage}
-                            className="flex items-center justify-center gap-2 w-full max-w-[280px] font-thai text-sm bg-charcoal hover:bg-darkPurple/30 text-ghostWhite border border-darkPurple/50 hover:border-amethyst/30 rounded-xl py-2.5 px-4 transition-all duration-200"
+                            className="flex items-center justify-center gap-2 w-full max-w-[280px] font-thai text-sm bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-xl py-2.5 px-4 transition-all duration-200 shadow-md shadow-royalPurple/30"
                           >
                             <Share className="w-4 h-4 sm:hidden" />
                             <Download className="w-4 h-4 hidden sm:block" />
@@ -158,8 +152,14 @@ export function KofiDonationModal() {
                             <span className="hidden sm:inline">บันทึก QR ลงเครื่อง</span>
                           </button>
 
+                          <img
+                            src={QR_IMAGE_PATH}
+                            alt="QR Code PromptPay"
+                            className="w-full max-w-[280px] rounded-xl shadow-lg"
+                          />
+
                           <p className="font-thai text-xs text-ashGray text-center">
-                            กดปุ่มด้านบนเพื่อบันทึกไปเปิดในแอปธนาคาร
+                            บันทึกไปเปิดในแอปธนาคาร
                           </p>
                         </div>
                       </motion.div>

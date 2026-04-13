@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart } from 'lucide-react';
-import { KofiWidget } from './kofi-widget';
+import { X, Heart, Download, ChevronDown, ChevronUp } from 'lucide-react';
 
 const STORAGE_KEY = 'horo-kofi-donation-dismissed';
+const QR_IMAGE_PATH = '/mae_manee_qr.PNG';
 
 export function KofiDonationModal() {
   const [isVisible, setIsVisible] = useState(false);
@@ -38,6 +38,24 @@ export function KofiDonationModal() {
   const handleDismissForever = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, 'true');
     setIsVisible(false);
+  }, []);
+
+  const handleSaveImage = useCallback(async () => {
+    try {
+      const response = await fetch(QR_IMAGE_PATH);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'horo-promptpay-qr.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      // Fallback: open image in new tab
+      window.open(QR_IMAGE_PATH, '_blank');
+    }
   }, []);
 
   return (
@@ -90,19 +108,13 @@ export function KofiDonationModal() {
 
                 {/* Body */}
                 <div className="px-6 pb-6 pt-4 space-y-4">
-                  {/* Ko-fi widget button */}
-                  <div className="flex justify-center w-full">
-                    <KofiWidget>
-                      ☕ สนับสนุนผ่าน Ko-fi
-                    </KofiWidget>
-                  </div>
-
-                  {/* PromptPay toggle */}
+                  {/* PromptPay toggle button */}
                   <button
                     onClick={() => setShowQr((v) => !v)}
-                    className="w-full font-thai text-sm text-ashGray hover:text-ghostWhite border border-darkPurple/50 hover:border-amethyst/30 rounded-xl py-2.5 transition-all duration-200"
+                    className="w-full flex items-center justify-center gap-2 font-thai text-sm bg-gradient-to-r from-royalPurple to-amethyst text-ghostWhite rounded-xl py-3 px-4 transition-all duration-200 shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30"
                   >
-                    {showQr ? 'ซ่อน QR' : '🇹🇭 โอนผ่าน PromptPay'}
+                    <span>🇹🇭 สนับสนุนผ่าน PromptPay</span>
+                    {showQr ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
 
                   {/* PromptPay QR */}
@@ -115,14 +127,24 @@ export function KofiDonationModal() {
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden"
                       >
-                        <div className="flex flex-col items-center rounded-xl overflow-hidden">
+                        <div className="flex flex-col items-center rounded-xl overflow-hidden space-y-3">
                           <img
-                            src="/mae_manee_qr.PNG"
+                            src={QR_IMAGE_PATH}
                             alt="QR Code PromptPay"
                             className="w-full max-w-[280px] rounded-xl shadow-lg"
                           />
-                          <p className="font-thai text-xs text-ashGray mt-2 text-center">
-                            สแกนจ่ายตามใจ ผ่านแอปธนาคาร
+
+                          {/* Save image button */}
+                          <button
+                            onClick={handleSaveImage}
+                            className="flex items-center justify-center gap-2 w-full max-w-[280px] font-thai text-sm bg-charcoal hover:bg-darkPurple/30 text-ghostWhite border border-darkPurple/50 hover:border-amethyst/30 rounded-xl py-2.5 px-4 transition-all duration-200"
+                          >
+                            <Download className="w-4 h-4" />
+                            <span>บันทึก QR ลงเครื่อง</span>
+                          </button>
+
+                          <p className="font-thai text-xs text-ashGray text-center">
+                            สแกนหรือบันทึกไปเปิดในแอปธนาคาร
                           </p>
                         </div>
                       </motion.div>

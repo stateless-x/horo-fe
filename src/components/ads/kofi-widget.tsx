@@ -1,13 +1,8 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import type { ComponentProps } from 'react';
+import { useState, useEffect } from 'react';
 
-// Dynamically import react-kofi-overlay with SSR disabled
-const Donate = dynamic(
-  () => import('react-kofi-overlay').then((mod) => mod.Donate),
-  { ssr: false }
-);
+const KOFI_URL = 'https://ko-fi.com/askpurin';
 
 interface KofiWidgetProps {
   children: React.ReactNode;
@@ -15,6 +10,14 @@ interface KofiWidgetProps {
 }
 
 export function KofiWidget({ children, variant = 'default' }: KofiWidgetProps) {
+  const [Donate, setDonate] = useState<React.ComponentType<any> | null>(null);
+
+  useEffect(() => {
+    import('react-kofi-overlay').then((mod) => {
+      setDonate(() => mod.Donate);
+    });
+  }, []);
+
   const styles = variant === 'subtle'
     ? {
         donateBtn: {
@@ -51,6 +54,20 @@ export function KofiWidget({ children, variant = 'default' }: KofiWidgetProps) {
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
         },
       };
+
+  // Fallback to simple link while loading
+  if (!Donate) {
+    return (
+      <a
+        href={KOFI_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={styles.donateBtn as React.CSSProperties}
+      >
+        {children}
+      </a>
+    );
+  }
 
   return (
     <Donate username="askpurin" styles={styles}>

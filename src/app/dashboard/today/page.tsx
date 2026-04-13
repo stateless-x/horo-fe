@@ -4,33 +4,30 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
+import { Sparkles, Gem, Compass, Share2 } from 'lucide-react';
 
 import { useDailyFortune, useUserProfile } from '@/hooks/use-daily-fortune';
 import { LoadingSkeleton } from '@/components/fortune/loading-skeleton';
 import { ErrorDisplay } from '@/components/fortune/error-display';
-import { IdentityAnchor } from '@/components/today/identity-anchor';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/lib-packages/ui';
+import { TodayHero } from '@/components/today/today-hero';
 import { DailyReadingCard } from '@/components/today/daily-reading-card';
-import { CategoryScores } from '@/components/today/category-scores';
-import { LuckyBadges } from '@/components/today/lucky-badges';
-import { DailyGuidance } from '@/components/today/daily-guidance';
-import { DailyWarnings } from '@/components/today/daily-warnings';
-import { DailySuggestions } from '@/components/today/daily-suggestions';
+import { CategoryCarousel } from '@/components/today/category-carousel';
+import { LuckyPanel } from '@/components/today/lucky-panel';
+import { GuidancePanel } from '@/components/today/guidance-panel';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
-import { AdUnit } from '@/components/ads/ad-unit';
 
 /**
  * Daily Fortune Page - /dashboard/today
  *
- * A focused, personalized daily fortune experience.
- * Uses real API data for structured daily reading with:
- * - User identity context (element, planet)
- * - AI-generated reading with category scores
- * - Lucky attributes from Thai + Chinese astrology + MBTI
- * - Daily dos/donts guidance
- * - Warnings and personalized suggestions
- * - Share functionality
+ * A focused, personalized daily fortune experience with tab-based navigation.
+ *
+ * Layout:
+ * - Hero: Condensed identity + daily score + theme
+ * - Tabs: Overview | Lucky | Guidance
+ * - Share button
  *
  * Protected route - requires authentication + completed onboarding
  */
@@ -82,69 +79,90 @@ export default function TodayPage() {
   const structured = dailyReading?.structuredContent;
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Section A: Identity Anchor */}
-        <IdentityAnchor
+    <div className="min-h-screen p-4 md:p-6">
+      <div className="max-w-lg mx-auto space-y-4">
+        {/* Hero Section - always visible */}
+        <TodayHero
           displayName={displayName}
           primaryElement={primaryElement}
           planet={planet}
+          dailyTheme={structured?.dailyTheme}
+          overallScore={structured?.overallScore}
         />
 
-        {/* Section B: Today's Reading */}
-        {structured?.overallReading && (
-          <DailyReadingCard
-            overallReading={structured.overallReading}
-            primaryElement={primaryElement}
-          />
-        )}
+        {/* Tab Navigation */}
+        <Tabs defaultValue="overview">
+          <TabsList>
+            <TabsTrigger value="overview" icon={<Sparkles className="w-4 h-4" />}>
+              ภาพรวม
+            </TabsTrigger>
+            <TabsTrigger value="lucky" icon={<Gem className="w-4 h-4" />}>
+              โชคลาภ
+            </TabsTrigger>
+            <TabsTrigger value="guidance" icon={<Compass className="w-4 h-4" />}>
+              คำแนะนำ
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Section C: Category Scores */}
-        {structured?.categories && (
-          <CategoryScores categories={structured.categories} />
-        )}
+          {/* Overview Tab */}
+          <TabsContent value="overview">
+            <div className="space-y-4">
+              {/* Daily Reading */}
+              {structured?.overallReading && (
+                <DailyReadingCard
+                  overallReading={structured.overallReading}
+                  primaryElement={primaryElement}
+                />
+              )}
 
-        <PawjaiAdsBanner />
+              {/* Category Scores - horizontal carousel */}
+              {structured?.categories && (
+                <CategoryCarousel categories={structured.categories} />
+              )}
 
-        {/* Section D: Lucky Attributes */}
-        <LuckyBadges
-          luckyNumber={dailyReading?.luckyNumber ?? null}
-          luckyColor={dailyReading?.luckyColor ?? null}
-          luckyDirection={dailyReading?.luckyDirection ?? null}
-          luckyMoment={structured?.luckyMoment ?? null}
-          luckyNumbers={structured?.luckyNumbers ?? null}
-          luckyColorEnhanced={structured?.luckyColor ?? null}
-        />
+              {/* Ad placement in overview tab */}
+              <PawjaiAdsBanner />
+            </div>
+          </TabsContent>
 
-        {/* Section E: Daily Guidance */}
-        {structured?.dos && structured?.donts && (
-          <DailyGuidance dos={structured.dos} donts={structured.donts} />
-        )}
+          {/* Lucky Tab */}
+          <TabsContent value="lucky">
+            <LuckyPanel
+              luckyNumber={dailyReading?.luckyNumber ?? null}
+              luckyColor={dailyReading?.luckyColor ?? null}
+              luckyDirection={dailyReading?.luckyDirection ?? null}
+              luckyMoment={structured?.luckyMoment ?? null}
+              luckyNumbers={structured?.luckyNumbers ?? null}
+              luckyColorEnhanced={structured?.luckyColor ?? null}
+            />
+          </TabsContent>
 
-        {/* Section F: Warnings */}
-        {structured?.warnings && structured.warnings.length > 0 && (
-          <DailyWarnings warnings={structured.warnings} />
-        )}
+          {/* Guidance Tab */}
+          <TabsContent value="guidance">
+            {structured?.dos && structured?.donts && (
+              <GuidancePanel
+                dos={structured.dos}
+                donts={structured.donts}
+                warnings={structured.warnings}
+                suggestions={structured.suggestions}
+              />
+            )}
+          </TabsContent>
+        </Tabs>
 
-        {/* Section G: Suggestions */}
-        {structured?.suggestions && structured.suggestions.length > 0 && (
-          <DailySuggestions suggestions={structured.suggestions} />
-        )}
-
-        {/* Ad unit: after all content sections, before share button */}
-        <AdUnit slot="REPLACE_WITH_SLOT_3" format="auto" />
-
-        {/* Section H: Share Button */}
+        {/* Share Button - fixed at bottom on mobile */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.3 }}
+          className="pt-2"
         >
           <button
             onClick={() => setShowShareSheet(true)}
-            className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-lg transition-colors font-heading"
+            className="w-full py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-xl transition-colors font-heading flex items-center justify-center gap-2"
           >
-            แชร์ดวงวันนี้ของเจ้า
+            <Share2 className="w-4 h-4" />
+            แชร์ดวงวันนี้
           </button>
         </motion.div>
 

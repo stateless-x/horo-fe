@@ -8,6 +8,8 @@ import { getMsUntilThaiMidnight } from '@/lib/date-utils';
  * Structured daily reading from the API
  */
 export interface StructuredDailyContent {
+  dailyTheme?: string;
+  overallScore?: number;
   overallReading: string;
   categories: {
     career: { reading: string; score: number; tip: string };

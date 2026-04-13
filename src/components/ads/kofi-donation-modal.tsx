@@ -108,12 +108,12 @@ export function KofiDonationModal() {
 
                 {/* Body */}
                 <div className="px-6 pb-6 pt-4 space-y-4">
-                  {/* PromptPay toggle button */}
+                  {/* PromptPay toggle button - Ko-fi style */}
                   <button
                     onClick={() => setShowQr((v) => !v)}
-                    className="w-full flex items-center justify-center gap-2 font-thai text-sm bg-gradient-to-r from-royalPurple to-amethyst text-ghostWhite rounded-xl py-3 px-4 transition-all duration-200 shadow-md shadow-royalPurple/30 hover:shadow-lg hover:shadow-amethyst/30"
+                    className="w-full flex items-center justify-center gap-2 font-heading text-sm font-medium bg-[#FF5E5B] hover:bg-[#ff4744] text-white rounded-xl py-3 px-4 transition-all duration-200 shadow-md shadow-[#FF5E5B]/30 hover:shadow-lg hover:shadow-[#FF5E5B]/40"
                   >
-                    <span>🇹🇭 สนับสนุนผ่าน PromptPay</span>
+                    <span>☕ สนับสนุนผ่าน PromptPay</span>
                     {showQr ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
 

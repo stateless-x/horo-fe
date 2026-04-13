@@ -86,7 +86,8 @@ export function useFortuneGeneration() {
         setLoadingState('generating-chart');
         console.log('[FortuneGeneration] Fetching fortune chart (cached or new)');
         // Use longer timeout — this GET triggers LLM generation on first load (no cache)
-        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 45_000 });
+        // 90s to accommodate cold starts + LLM generation time
+        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 90_000 });
 
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 
@@ -156,6 +157,23 @@ export function useFortuneGeneration() {
           setError('ข้อมูลไม่ถูกต้อง กรุณากรอกข้อมูลใหม่อีกครั้ง');
           setLoadingState('complete');
           setTimeout(() => router.push('/fortune'), 3000);
+          return;
+        }
+
+        // Handle 408 - Timeout (retry silently)
+        if (err?.status === 408 || err?.code === 'TIMEOUT') {
+          if (newRetryCount < maxRetries) {
+            console.log(`[FortuneGeneration] Timeout, retry ${newRetryCount}/${maxRetries}`);
+            const delay = getBackoffDelay(newRetryCount);
+            setTimeout(() => {
+              setHasAttemptedGeneration(false); // Allow retry
+            }, delay);
+            return;
+          }
+          // Max retries - show timeout-specific error
+          setError('การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง');
+          setLoadingState('complete');
+          resetRetryCount();
           return;
         }
 

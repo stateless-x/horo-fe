@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import {
@@ -11,10 +10,6 @@ import {
   Heart,
   Coins,
   Activity,
-  Hash,
-  Palette,
-  Compass,
-  Clock,
   ChevronDown,
   Share2,
   CheckCircle2,
@@ -103,37 +98,27 @@ export default function TodayPage() {
       <div className="max-w-2xl mx-auto px-4 py-6 md:py-10">
 
         {/* ===== HERO SECTION ===== */}
-        <motion.section
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-6"
-        >
+        <section className="text-center mb-8">
           {/* Date */}
-          <ClientDate className="text-ashGray text-sm mb-2" />
+          <ClientDate className="text-ashGray text-base mb-3" />
 
           {/* Main Score - Big visual hook */}
-          <div className="flex items-center justify-center gap-1 mb-3">
+          <div className="flex items-center justify-center gap-1.5 mb-4">
             {[1, 2, 3, 4, 5].map((star) => (
-              <motion.div
+              <Star
                 key={star}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.05 * star, type: 'spring', stiffness: 400 }}
-              >
-                <Star
-                  className="w-8 h-8 md:w-10 md:h-10"
-                  fill={star <= overallScore ? colors.primary : 'transparent'}
-                  stroke={star <= overallScore ? colors.primary : 'rgba(161,161,170,0.3)'}
-                  strokeWidth={1.5}
-                />
-              </motion.div>
+                className="w-9 h-9 md:w-11 md:h-11"
+                fill={star <= overallScore ? colors.primary : 'transparent'}
+                stroke={star <= overallScore ? colors.primary : 'rgba(161,161,170,0.3)'}
+                strokeWidth={1.5}
+              />
             ))}
           </div>
 
           {/* Daily Theme */}
           {structured?.dailyTheme && (
             <h1
-              className="text-xl md:text-2xl font-heading font-semibold mb-2"
+              className="text-2xl md:text-3xl font-heading font-semibold mb-3"
               style={{ color: colors.primary }}
             >
               {structured.dailyTheme}
@@ -141,33 +126,28 @@ export default function TodayPage() {
           )}
 
           {/* User identity pill */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-deepNight/50 border border-darkPurple/30">
-            <Sparkles className="w-3.5 h-3.5" style={{ color: colors.primary }} />
-            <span className="text-sm text-ghostWhite/80">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
+            <Sparkles className="w-4 h-4" style={{ color: colors.primary }} />
+            <span className="text-base text-ghostWhite/80">
               {displayName} · ธาตุ{elementNameThai}
             </span>
           </div>
-        </motion.section>
+        </section>
 
         {/* ===== READING SECTION ===== */}
         {structured?.overallReading && (
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="mb-6"
-          >
+          <section className="mb-8">
             <div
-              className="p-4 md:p-6 rounded-2xl bg-deepNight/50 border-l-4"
+              className="p-5 md:p-6 rounded-2xl bg-deepNight/50 border-l-4"
               style={{ borderLeftColor: colors.primary }}
             >
-              <p className="text-base md:text-lg leading-relaxed text-ghostWhite/90 font-oracle">
+              <p className="text-lg md:text-xl leading-relaxed text-ghostWhite/90 font-oracle">
                 {showFullReading ? structured.overallReading : readingPreview}
               </p>
               {structured.overallReading.length > 150 && (
                 <button
                   onClick={() => setShowFullReading(!showFullReading)}
-                  className="mt-3 text-sm font-heading flex items-center gap-1 transition-colors hover:opacity-80"
+                  className="mt-4 text-base font-heading flex items-center gap-1 transition-colors hover:opacity-80"
                   style={{ color: colors.primary }}
                 >
                   {showFullReading ? 'ย่อ' : 'อ่านเพิ่มเติม'}
@@ -175,17 +155,12 @@ export default function TodayPage() {
                 </button>
               )}
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* ===== CATEGORY SCORES - Simple 2x2 Grid ===== */}
         {structured?.categories && (
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.15 }}
-            className="mb-6"
-          >
+          <section className="mb-8">
             <div className="grid grid-cols-2 gap-3">
               {(Object.keys(CATEGORY_CONFIG) as CategoryKey[]).map((key) => {
                 const config = CATEGORY_CONFIG[key];
@@ -194,25 +169,24 @@ export default function TodayPage() {
                 const isExpanded = expandedCategory === key;
 
                 return (
-                  <motion.button
+                  <button
                     key={key}
                     onClick={() => setExpandedCategory(isExpanded ? null : key)}
-                    className={`text-left p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 transition-all ${
-                      isExpanded ? 'col-span-2 border-opacity-60' : ''
+                    className={`text-left p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 transition-colors ${
+                      isExpanded ? 'col-span-2' : ''
                     }`}
                     style={{ borderColor: isExpanded ? config.color : undefined }}
-                    layout
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Icon className="w-4 h-4" style={{ color: config.color }} />
-                        <span className="font-heading text-sm text-ghostWhite">{config.label}</span>
+                        <Icon className="w-5 h-5" style={{ color: config.color }} />
+                        <span className="font-heading text-base text-ghostWhite">{config.label}</span>
                       </div>
                       <div className="flex gap-0.5">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
-                            className="w-3 h-3"
+                            className="w-4 h-4"
                             fill={star <= data.score ? config.color : 'transparent'}
                             stroke={star <= data.score ? config.color : 'rgba(161,161,170,0.3)'}
                             strokeWidth={1.5}
@@ -220,86 +194,73 @@ export default function TodayPage() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-xs text-ashGray line-clamp-2">{data.tip}</p>
+                    <p className="text-sm text-ashGray line-clamp-2">{data.tip}</p>
 
                     {isExpanded && (
-                      <motion.p
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-3 pt-3 border-t border-darkPurple/30 text-sm text-ghostWhite/80 font-oracle leading-relaxed"
-                      >
+                      <p className="mt-3 pt-3 border-t border-darkPurple/30 text-base text-ghostWhite/80 font-oracle leading-relaxed">
                         {data.reading}
-                      </motion.p>
+                      </p>
                     )}
-                  </motion.button>
+                  </button>
                 );
               })}
             </div>
-          </motion.section>
+          </section>
         )}
 
-        {/* ===== LUCKY ATTRIBUTES - Horizontal pills ===== */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6"
-        >
-          <div className="flex flex-wrap gap-2 justify-center">
+        {/* ===== LUCKY ATTRIBUTES - Grid with labels ===== */}
+        <section className="mb-8">
+          <h2 className="text-lg font-heading text-ghostWhite mb-4 text-center">สิ่งมงคลวันนี้</h2>
+          <div className="grid grid-cols-2 gap-3">
             {/* Lucky Numbers */}
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
-              <Hash className="w-4 h-4 text-amethyst" />
-              <span className="text-sm text-ghostWhite">
+            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
+              <p className="text-sm text-ashGray mb-1">เลขมงคล</p>
+              <p className="text-xl font-heading text-amethyst">
                 {structured?.luckyNumbers?.join(', ') || dailyReading?.luckyNumber || '-'}
-              </span>
+              </p>
             </div>
 
             {/* Lucky Color */}
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
-              <Palette className="w-4 h-4 text-amethyst" />
-              <span className="text-sm text-ghostWhite">
+            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
+              <p className="text-sm text-ashGray mb-1">สีมงคล</p>
+              <p className="text-xl font-heading text-amethyst">
                 {structured?.luckyColor || dailyReading?.luckyColor || '-'}
-              </span>
+              </p>
             </div>
 
             {/* Lucky Direction */}
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
-              <Compass className="w-4 h-4 text-amethyst" />
-              <span className="text-sm text-ghostWhite">
+            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
+              <p className="text-sm text-ashGray mb-1">ทิศมงคล</p>
+              <p className="text-xl font-heading text-amethyst">
                 {dailyReading?.luckyDirection || '-'}
-              </span>
+              </p>
             </div>
 
             {/* Lucky Moment */}
-            {structured?.luckyMoment && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
-                <Clock className="w-4 h-4 text-amethyst" />
-                <span className="text-sm text-ghostWhite">{structured.luckyMoment}</span>
-              </div>
-            )}
+            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
+              <p className="text-sm text-ashGray mb-1">เวลามงคล</p>
+              <p className="text-lg font-heading text-amethyst">
+                {structured?.luckyMoment || '-'}
+              </p>
+            </div>
           </div>
-        </motion.section>
+        </section>
 
         <PawjaiAdsBanner />
 
         {/* ===== DOS & DONTS - Side by side ===== */}
         {structured?.dos && structured?.donts && (
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-            className="mb-6 mt-6"
-          >
+          <section className="mb-8">
             <div className="grid grid-cols-2 gap-3">
               {/* Dos */}
               <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
                 <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span className="font-heading text-sm text-emerald-400">ควรทำ</span>
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                  <span className="font-heading text-base text-emerald-400">ควรทำ</span>
                 </div>
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   {structured.dos.map((item, i) => (
-                    <li key={i} className="text-xs text-ghostWhite/80 leading-relaxed">
+                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed">
                       · {item}
                     </li>
                   ))}
@@ -309,50 +270,42 @@ export default function TodayPage() {
               {/* Donts */}
               <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
                 <div className="flex items-center gap-2 mb-3">
-                  <XCircle className="w-4 h-4 text-amber-400" />
-                  <span className="font-heading text-sm text-amber-400">ควรเลี่ยง</span>
+                  <XCircle className="w-5 h-5 text-amber-400" />
+                  <span className="font-heading text-base text-amber-400">ควรเลี่ยง</span>
                 </div>
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   {structured.donts.map((item, i) => (
-                    <li key={i} className="text-xs text-ghostWhite/80 leading-relaxed">
+                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed">
                       · {item}
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* ===== WARNINGS (if any) ===== */}
         {structured?.warnings && structured.warnings.length > 0 && (
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mb-6 p-4 rounded-xl bg-red-500/5 border border-red-500/20"
-          >
-            <h3 className="font-heading text-sm text-red-400 mb-2">คำเตือน</h3>
-            <ul className="space-y-1">
+          <section className="mb-8 p-4 rounded-xl bg-red-500/5 border border-red-500/20">
+            <h3 className="font-heading text-base text-red-400 mb-3">คำเตือน</h3>
+            <ul className="space-y-2">
               {structured.warnings.map((item, i) => (
-                <li key={i} className="text-xs text-ghostWhite/80">· {item}</li>
+                <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed">· {item}</li>
               ))}
             </ul>
-          </motion.section>
+          </section>
         )}
 
         {/* ===== SHARE BUTTON ===== */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 }}
+        <button
           onClick={() => setShowShareSheet(true)}
-          className="w-full py-3.5 rounded-xl font-heading text-ghostWhite flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          className="w-full py-4 rounded-xl font-heading text-lg text-ghostWhite flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           style={{ backgroundColor: colors.primary }}
         >
-          <Share2 className="w-4 h-4" />
+          <Share2 className="w-5 h-5" />
           แชร์ดวงวันนี้
-        </motion.button>
+        </button>
 
         <ShareSheet
           isOpen={showShareSheet}

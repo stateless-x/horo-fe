@@ -254,14 +254,14 @@ export default function TodayPage() {
             <div className="grid grid-cols-2 gap-3">
               {/* Dos */}
               <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-4">
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                   <span className="font-heading text-base text-emerald-400">ควรทำ</span>
                 </div>
-                <ul className="space-y-2.5">
+                <ul className="space-y-4">
                   {structured.dos.map((item, i) => (
-                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed">
-                      · {item}
+                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed pl-4 border-l-2 border-emerald-500/30">
+                      {item}
                     </li>
                   ))}
                 </ul>
@@ -269,14 +269,14 @@ export default function TodayPage() {
 
               {/* Donts */}
               <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-4">
                   <XCircle className="w-5 h-5 text-amber-400" />
                   <span className="font-heading text-base text-amber-400">ควรเลี่ยง</span>
                 </div>
-                <ul className="space-y-2.5">
+                <ul className="space-y-4">
                   {structured.donts.map((item, i) => (
-                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed">
-                      · {item}
+                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed pl-4 border-l-2 border-amber-500/30">
+                      {item}
                     </li>
                   ))}
                 </ul>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Moon, Compass, Palette, Hash, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { BirthStarDetail } from "@/lib-packages/shared/types/astrology";
+import { InfoTooltip } from "@/components/ui/info-tooltip";
 
 interface BirthStarSectionProps {
   birthStar: BirthStarDetail;
@@ -79,6 +80,7 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
         <Moon className="text-lavenderGlow w-6 h-6" />
         <h2 className="font-heading text-xl font-medium text-ghostWhite">
           ดาวประจำวันเกิดของเจ้า
+          <InfoTooltip text="ดาวประจำวันเกิด (Day Master) คือดาวที่ครองวันเกิดของเจ้า บอกถึงพลังงานหลักที่กำกับชีวิตและบุคลิกภาพ" />
         </h2>
       </div>
 

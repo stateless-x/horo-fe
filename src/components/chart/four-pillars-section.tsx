@@ -9,6 +9,7 @@ import type {
 } from "@/lib-packages/shared/types/astrology";
 import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
 import { PillarDetailModal } from "./pillar-detail-modal";
+import { InfoTooltip } from "@/components/ui/info-tooltip";
 
 interface FourPillarsSectionProps {
   pillars: {
@@ -123,6 +124,7 @@ export function FourPillarsSection({
       <div className="text-center mb-6">
         <h2 className="font-heading text-2xl font-medium text-ghostWhite mb-2">
           เสาชะตาทั้งสี่ของเจ้า
+          <InfoTooltip text="เสาสี่ต้น (四柱) คือหัวใจของ Bazi คำนวณจากปี เดือน วัน และเวลาเกิด แต่ละเสาบอกถึงด้านต่างๆ ของชีวิต" />
         </h2>
         <p className="font-thai text-ashGray text-sm">
           แต่ละเสาเผยถึงอิทธิพลที่หล่อหลอมชีวิตของเจ้า

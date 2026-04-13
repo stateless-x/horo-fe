@@ -1,6 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 import type { ElementProfile } from "@/lib-packages/shared/types/astrology";
 import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
+import { InfoTooltip } from "@/components/ui/info-tooltip";
 
 interface ElementProfileSectionProps {
   elementProfile: ElementProfile;
@@ -46,6 +47,7 @@ export function ElementProfileSection({
       <div className="text-center mb-8">
         <p className="font-thai text-ghostWhite text-base mb-2">
           ธาตุประจำตัวของเจ้าคือ
+          <InfoTooltip text="ธาตุหลักที่กำหนดบุคลิกและชะตาของเจ้า คำนวณจากวันเดือนปีเกิดตามหลัก Bazi (ซื่อจู๋)" />
         </p>
         <h2
           className="font-heading text-3xl font-bold mb-3"

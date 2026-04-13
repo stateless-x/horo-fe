@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Sparkles, Check, X } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Recommendations } from "@/lib-packages/shared/types/astrology";
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 interface RecommendationsSectionProps {
   recommendations: Recommendations;
@@ -66,6 +67,7 @@ export function RecommendationsSection({
         <Sparkles className="text-lavenderGlow w-6 h-6" />
         <h2 className="font-heading text-xl font-medium text-ghostWhite">
           คำแนะนำ & ฤกษ์มงคล
+          <InfoTooltip text="ฤกษ์มงคล คือช่วงเวลาที่ดวงดาวเรียงตัวเป็นมงคล เหมาะสำหรับเริ่มต้นสิ่งใหม่ เช่น ลงทุน แต่งงาน หรือขึ้นบ้านใหม่" />
         </h2>
       </div>
 

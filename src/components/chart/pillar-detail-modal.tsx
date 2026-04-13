@@ -3,6 +3,7 @@
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { X } from 'lucide-react';
 import type { EnrichedPillar, PillarInterpretation } from '@/lib-packages/shared/types/astrology';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 interface PillarDetailModalProps {
   isOpen: boolean;
@@ -99,6 +100,7 @@ export function PillarDetailModal({
                 <div>
                   <h4 className="text-lavenderGlow font-heading font-medium text-sm mb-2">
                     天干 Heavenly Stem
+                    <InfoTooltip text="เทียนกาน (天干) หรือ Heavenly Stem มี 10 ตัว แทนพลังงานจากสวรรค์ บอกถึงลักษณะภายนอก บุคลิก และการแสดงออก" />
                   </h4>
                   <p className="text-ghostWhite font-oracle text-base">
                     {pillar.stemChinese} ({pillar.stemPinyin}) — ธาตุ
@@ -111,6 +113,7 @@ export function PillarDetailModal({
                 <div>
                   <h4 className="text-lavenderGlow font-heading font-medium text-sm mb-2">
                     地支 Earthly Branch
+                    <InfoTooltip text="ตี้จือ (地支) หรือ Earthly Branch มี 12 ตัว (นักษัตร) แทนพลังงานจากโลก บอกถึงลักษณะภายใน อารมณ์ และพฤติกรรมที่ซ่อนอยู่" />
                   </h4>
                   <p className="text-ghostWhite font-oracle text-base">
                     {pillar.branchChinese} ({pillar.branchPinyin}) —{' '}

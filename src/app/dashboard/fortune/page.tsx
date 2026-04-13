@@ -23,7 +23,7 @@ import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-b
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
-import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
+import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -94,7 +94,7 @@ export default function FortuneChartPage() {
 
   // Show error state
   if (error) {
-    return <ErrorDisplay error={error} />;
+    return <ErrorDisplay error={error} showRetry />;
   }
 
   // Show rate limit screen when no cached data available
@@ -226,8 +226,8 @@ export default function FortuneChartPage() {
         </motion.div>
       </div>
 
-      {/* Ko-fi donation inline banner */}
-      <KofiDonationBanner />
+      {/* Pawjai Ads - Inline Permanent Banner */}
+      <PawjaiAdsBanner />
 
       {/* Tab Navigation - Sticky when scrolled past */}
       <FortuneTabBar activeTab={activeTab} onTabChange={setActiveTab} />

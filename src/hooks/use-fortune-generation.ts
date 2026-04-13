@@ -159,9 +159,22 @@ export function useFortuneGeneration() {
           return;
         }
 
-        // Generic error
+        // Handle 500 or generic errors with retry
+        // These can be transient (deployment, network hiccup, LLM failure)
+        if (newRetryCount < maxRetries) {
+          console.log(`[FortuneGeneration] Transient error, retry ${newRetryCount}/${maxRetries}:`, err?.status || err?.message);
+          const delay = getBackoffDelay(newRetryCount);
+          setTimeout(() => {
+            setHasAttemptedGeneration(false); // Allow retry
+          }, delay);
+          return;
+        }
+
+        // Max retries reached - show error
+        console.error('[FortuneGeneration] Max retries reached, showing error');
         setError('ไม่สามารถสร้างดวงชะตาได้ กรุณาลองใหม่อีกครั้ง');
         setLoadingState('complete');
+        resetRetryCount();
       }
     }
 

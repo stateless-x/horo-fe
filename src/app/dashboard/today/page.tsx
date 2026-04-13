@@ -132,7 +132,7 @@ export default function TodayPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
               <Sparkles className="w-4 h-4" style={{ color: colors.primary }} />
               <span className="text-base text-ghostWhite/80">
-                {displayName} · ธาตุ{dailyElementNameThai}
+                {displayName} · ธาตุวันนี้: {dailyElementNameThai}
               </span>
             </div>
           )}

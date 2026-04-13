@@ -79,10 +79,11 @@ export default function TodayPage() {
     (session.user as any)?.displayName ||
     session.user.name ||
     'เจ้า';
-  const primaryElement = userProfile?.astrology?.primaryElement || dailyReading?.elementEnergy || null;
-  const elementKey = (primaryElement?.toLowerCase() || 'earth') as keyof typeof ELEMENT_COLORS;
-  const colors = ELEMENT_COLORS[elementKey] || ELEMENT_COLORS.earth;
-  const elementNameThai = ELEMENT_NAMES_THAI[elementKey] || 'ดิน';
+  // Use birth element from profile only - don't fallback to daily elementEnergy (different concept)
+  const primaryElement = userProfile?.astrology?.primaryElement || null;
+  const elementKey = primaryElement ? (primaryElement.toLowerCase() as keyof typeof ELEMENT_COLORS) : null;
+  const colors = elementKey ? ELEMENT_COLORS[elementKey] : ELEMENT_COLORS.earth;
+  const elementNameThai = elementKey ? ELEMENT_NAMES_THAI[elementKey] : null;
   const structured = dailyReading?.structuredContent;
   const overallScore = structured?.overallScore || 3;
 
@@ -130,7 +131,7 @@ export default function TodayPage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
             <Sparkles className="w-4 h-4" style={{ color: colors.primary }} />
             <span className="text-base text-ghostWhite/80">
-              {displayName} · ธาตุ{elementNameThai}
+              {displayName}{elementNameThai && ` · ธาตุ${elementNameThai}`}
             </span>
           </div>
         </section>

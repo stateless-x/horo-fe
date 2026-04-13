@@ -25,6 +25,7 @@ import { SITE_URL } from '@/lib/share-utils';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { KofiDonationBanner } from '@/components/ads/kofi-donation-banner';
 import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 const ELEMENT_NAMES_THAI: Record<string, string> = {
   wood: 'ไม้',
@@ -132,7 +133,8 @@ export default function TodayPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
               <Sparkles className="w-4 h-4" style={{ color: colors.primary }} />
               <span className="text-base text-ghostWhite/80">
-                {displayName} · ธาตุวันนี้: {dailyElementNameThai}
+                {displayName} · ธาตุประจำวัน: {dailyElementNameThai}
+                <InfoTooltip text="ธาตุที่มีอิทธิพลต่อพลังงานของวันนี้ ถ้าเข้ากับธาตุประจำตัวของเจ้าจะเป็นวันที่ดี" />
               </span>
             </div>
           )}

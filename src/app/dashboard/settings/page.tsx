@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Calendar, Clock, LogOut, Save, Edit2, X, Brain } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSession, signOut } from '@/lib/auth-client';
 import { api } from '@/lib/api';
 import { Button, Input, Card } from '@/lib-packages/ui';
@@ -23,6 +24,7 @@ import type { Gender } from '@/lib-packages/shared';
  */
 export default function SettingsPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session, isPending: sessionLoading } = useSession();
 
   // Edit mode state
@@ -271,6 +273,8 @@ export default function SettingsPage() {
 
   const handleLogout = async () => {
     try {
+      // Clear all React Query cache to prevent cross-account data leakage
+      queryClient.clear();
       await signOut();
       router.push('/login');
     } catch (error) {

@@ -23,7 +23,6 @@ import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-b
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
-import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -60,8 +59,9 @@ export default function FortuneChartPage() {
     const profileUpdated = sessionStorage.getItem('fortune-profile-updated');
     if (profileUpdated) {
       sessionStorage.removeItem('fortune-profile-updated');
-      // Clear cached chart data so it re-fetches with new profile
-      queryClient.removeQueries({ queryKey: ['fortune', 'chart'] });
+      // Clear all fortune-related cached data so it re-fetches with new profile
+      // Uses prefix match to clear ['fortune', 'chart', userId] regardless of userId
+      queryClient.removeQueries({ queryKey: ['fortune'] });
       // Reset fortune store so generation hook runs again
       useFortuneStore.getState().reset();
       setShowProfileUpdatedToast(true);
@@ -226,8 +226,6 @@ export default function FortuneChartPage() {
         </motion.div>
       </div>
 
-      {/* Pawjai Ads - Inline Permanent Banner */}
-      <PawjaiAdsBanner />
 
       {/* Tab Navigation - Sticky when scrolled past */}
       <FortuneTabBar activeTab={activeTab} onTabChange={setActiveTab} />

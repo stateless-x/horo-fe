@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { useSession } from '@/lib/auth-client';
 import { getMsUntilThaiMidnight } from '@/lib/date-utils';
 
 /**
@@ -59,12 +60,18 @@ export interface UserProfileResponse {
 /**
  * Hook for fetching today's daily fortune reading.
  * Uses staleTime based on Thai midnight to avoid unnecessary refetches.
+ *
+ * IMPORTANT: Cache key includes userId to prevent cross-account data leakage
+ * when switching between accounts.
  */
 export function useDailyFortune(enabled: boolean = true) {
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
   return useQuery<DailyReadingResponse>({
-    queryKey: ['fortune', 'daily'],
+    queryKey: ['fortune', 'daily', userId],
     queryFn: () => api.get<DailyReadingResponse>('/api/fortune/daily'),
-    enabled,
+    enabled: enabled && !!userId,
     staleTime: getMsUntilThaiMidnight(),
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
     retry: 3,
@@ -76,12 +83,18 @@ export function useDailyFortune(enabled: boolean = true) {
 /**
  * Hook for fetching user profile with astrology identity data.
  * This data rarely changes so we use a long staleTime.
+ *
+ * IMPORTANT: Cache key includes userId to prevent cross-account data leakage
+ * when switching between accounts.
  */
 export function useUserProfile(enabled: boolean = true) {
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
   return useQuery<UserProfileResponse>({
-    queryKey: ['fortune', 'user-profile'],
+    queryKey: ['fortune', 'user-profile', userId],
     queryFn: () => api.get<UserProfileResponse>('/api/fortune/user-profile'),
-    enabled,
+    enabled: enabled && !!userId,
     staleTime: Infinity,
     gcTime: 24 * 60 * 60 * 1000,
   });

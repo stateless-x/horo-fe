@@ -109,6 +109,7 @@ export function Footer() {
   const [showDonationModal, setShowDonationModal] = useState(false);
 
   return (
+    <>
     <footer
       className={`w-full border-t border-darkPurple/30 bg-deepNight/50 backdrop-blur-sm mt-16 ${
         isDashboardPage ? "pb-28" : ""
@@ -236,13 +237,6 @@ export function Footer() {
           </DonationButton>
         </div>
 
-        {/* Donation modal */}
-        <DonationModal
-          isOpen={showDonationModal}
-          onClose={() => setShowDonationModal(false)}
-          showDismissForever={false}
-        />
-
         {/* Attribution */}
         <div className="flex flex-col items-center justify-center gap-1.5 text-sm text-ashGray">
           <div className="flex items-center gap-1.5">
@@ -270,5 +264,13 @@ export function Footer() {
         </div>
       </div>
     </footer>
+
+    {/* Donation modal - outside footer for proper centering */}
+    <DonationModal
+      isOpen={showDonationModal}
+      onClose={() => setShowDonationModal(false)}
+      showDismissForever={false}
+    />
+    </>
   );
 }

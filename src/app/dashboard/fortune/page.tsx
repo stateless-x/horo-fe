@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Heart } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFortuneGeneration } from '@/hooks/use-fortune-generation';
 import { useFortuneData } from '@/hooks/use-fortune-data';
@@ -22,6 +22,7 @@ import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-b
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { AutoDonationModal, DonationModal } from '@/components/ads/donation-modal';
+import { DonationButton } from '@/components/ads/donation-button';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -280,13 +281,10 @@ export default function FortuneChartPage() {
           transition={{ delay: 0.5 }}
           className="text-center pt-4"
         >
-          <button
-            onClick={() => setShowDonationModal(true)}
-            className="inline-flex items-center gap-2 text-sm text-ashGray hover:text-lavenderGlow transition-colors"
-          >
-            <Heart className="w-4 h-4" />
-            <span>ชอบดวงของเจ้าไหม? สนับสนุนพี่ภูได้ที่นี่</span>
-          </button>
+          <p className="text-sm text-ashGray mb-3">ชอบดวงของเจ้าไหม?</p>
+          <DonationButton onClick={() => setShowDonationModal(true)}>
+            ☕ สนับสนุนพี่ภู
+          </DonationButton>
         </motion.div>
       </div>
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Heart } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFortuneGeneration } from '@/hooks/use-fortune-generation';
 import { useFortuneData } from '@/hooks/use-fortune-data';
@@ -21,7 +21,7 @@ import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
-import { AutoDonationModal } from '@/components/ads/donation-modal';
+import { AutoDonationModal, DonationModal } from '@/components/ads/donation-modal';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -48,6 +48,7 @@ export default function FortuneChartPage() {
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [activeTab, setActiveTab] = useState<FortuneTab>('fortune');
   const [showProfileUpdatedToast, setShowProfileUpdatedToast] = useState(false);
+  const [showDonationModal, setShowDonationModal] = useState(false);
 
   // State management
   const { loadingState, error, rateLimitResetAt, setShareStatus } = useFortuneStore();
@@ -271,10 +272,33 @@ export default function FortuneChartPage() {
             <RecommendationsSection recommendations={chartData.recommendations} />
           </motion.div>
         )}
+
+        {/* Donation reminder */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center pt-4"
+        >
+          <button
+            onClick={() => setShowDonationModal(true)}
+            className="inline-flex items-center gap-2 text-sm text-ashGray hover:text-lavenderGlow transition-colors"
+          >
+            <Heart className="w-4 h-4" />
+            <span>ชอบดวงของเจ้าไหม? สนับสนุนพี่ภูได้ที่นี่</span>
+          </button>
+        </motion.div>
       </div>
 
       {/* Auto-open donation modal */}
       <AutoDonationModal />
+
+      {/* User-triggered donation modal */}
+      <DonationModal
+        isOpen={showDonationModal}
+        onClose={() => setShowDonationModal(false)}
+        showDismissForever={false}
+      />
 
       {/* Share Sheet */}
       <ShareSheet

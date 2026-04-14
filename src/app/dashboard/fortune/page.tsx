@@ -21,7 +21,7 @@ import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
-import { AutoDonationModal, DonationModal } from '@/components/ads/donation-modal';
+import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -48,7 +48,6 @@ export default function FortuneChartPage() {
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [activeTab, setActiveTab] = useState<FortuneTab>('fortune');
   const [showProfileUpdatedToast, setShowProfileUpdatedToast] = useState(false);
-  const [showDonationModal, setShowDonationModal] = useState(false);
 
   // State management
   const { loadingState, error, rateLimitResetAt, setShareStatus } = useFortuneStore();
@@ -225,26 +224,7 @@ export default function FortuneChartPage() {
           <ElementProfileSection elementProfile={chartData.elementProfile} />
         </motion.div>
 
-        {/* Donation CTA - subtle inline */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <button
-            onClick={() => setShowDonationModal(true)}
-            className="w-full p-4 rounded-xl bg-gradient-to-r from-royalPurple/10 to-amethyst/5 border border-royalPurple/20 hover:border-amethyst/40 transition-all duration-200 group"
-          >
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-lg">☕</span>
-              <span className="text-sm text-ashGray group-hover:text-lavenderGlow transition-colors">
-                ชอบดวงของเจ้าไหม? สนับสนุนค่ากาแฟพี่ภูได้ที่นี่
-              </span>
-            </div>
-          </button>
-        </motion.div>
       </div>
-
 
       {/* Tab Navigation - Sticky when scrolled past */}
       <FortuneTabBar activeTab={activeTab} onTabChange={setActiveTab} />
@@ -296,13 +276,6 @@ export default function FortuneChartPage() {
 
       {/* Auto-open donation modal */}
       <AutoDonationModal />
-
-      {/* User-triggered donation modal */}
-      <DonationModal
-        isOpen={showDonationModal}
-        onClose={() => setShowDonationModal(false)}
-        showDismissForever={false}
-      />
 
       {/* Share Sheet */}
       <ShareSheet

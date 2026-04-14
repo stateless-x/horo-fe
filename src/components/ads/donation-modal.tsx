@@ -4,41 +4,63 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Download, Share, ChevronDown, ChevronUp } from 'lucide-react';
 
-const STORAGE_KEY = 'horo-kofi-donation-dismissed';
+const STORAGE_KEY = 'horo-donation-dismissed';
 const QR_IMAGE_PATH = '/mae_manee_qr.PNG';
 
-export function KofiDonationModal() {
+interface DonationModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function DonationModal({ isOpen, onClose }: DonationModalProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showQr, setShowQr] = useState(false);
 
-  // Show modal after delay if not permanently dismissed
+  // Controlled mode: sync with isOpen prop
+  const isControlled = isOpen !== undefined;
+  const visible = isControlled ? isOpen : isVisible;
+
+  // Show modal after delay if not permanently dismissed (only in uncontrolled mode)
   useEffect(() => {
+    if (isControlled) return;
     if (typeof window === 'undefined') return;
     const dismissed = localStorage.getItem(STORAGE_KEY) === 'true';
     if (dismissed) return;
 
     const timer = setTimeout(() => setIsVisible(true), 1500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isControlled]);
+
+  // Reset showQr when modal closes
+  useEffect(() => {
+    if (!visible) {
+      setShowQr(false);
+    }
+  }, [visible]);
 
   // Escape key to close
   useEffect(() => {
-    if (!isVisible) return;
+    if (!visible) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsVisible(false);
+      if (e.key === 'Escape') {
+        if (onClose) onClose();
+        else setIsVisible(false);
+      }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible]);
+  }, [visible, onClose]);
 
   const handleClose = useCallback(() => {
-    setIsVisible(false);
-  }, []);
+    if (onClose) onClose();
+    else setIsVisible(false);
+  }, [onClose]);
 
   const handleDismissForever = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, 'true');
-    setIsVisible(false);
-  }, []);
+    if (onClose) onClose();
+    else setIsVisible(false);
+  }, [onClose]);
 
   const handleSaveImage = useCallback(async () => {
     try {
@@ -73,7 +95,7 @@ export function KofiDonationModal() {
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {visible && (
         <>
           {/* Backdrop */}
           <motion.div

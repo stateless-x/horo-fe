@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Heart, Calendar, Orbit } from "lucide-react";
-import { KofiWidget } from "@/components/ads/kofi-widget";
+import { DonationButton } from "@/components/ads/donation-button";
+import { DonationModal } from "@/components/ads/donation-modal";
 
 interface FooterContext {
   shareCta: string | null;
@@ -104,6 +106,7 @@ export function Footer() {
   const pathname = usePathname();
   const context = FOOTER_CONTEXT[pathname] || DEFAULT_CONTEXT;
   const isDashboardPage = pathname.startsWith("/dashboard");
+  const [showDonationModal, setShowDonationModal] = useState(false);
 
   return (
     <footer
@@ -223,15 +226,21 @@ export function Footer() {
           </div>
         )} */}
 
-        {/* Ko-fi donation */}
+        {/* Donation */}
         <div className="flex flex-col items-center gap-3 mb-6">
           <p className="font-thai text-sm text-ashGray flex items-center gap-1">
             ☕ ชอบใจ? ซื้อกาแฟให้พี่ภูสักแก้ว <Heart className="inline w-3 h-3 text-pink-400" />
           </p>
-          <KofiWidget variant="subtle">
+          <DonationButton variant="subtle" onClick={() => setShowDonationModal(true)}>
             สนับสนุน
-          </KofiWidget>
+          </DonationButton>
         </div>
+
+        {/* Donation modal */}
+        <DonationModal
+          isOpen={showDonationModal}
+          onClose={() => setShowDonationModal(false)}
+        />
 
         {/* Attribution */}
         <div className="flex flex-col items-center justify-center gap-1.5 text-sm text-ashGray">

@@ -22,7 +22,6 @@ import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
-import { KofiDonationModal } from '@/components/ads/kofi-donation-modal';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -276,9 +275,6 @@ export default function FortuneChartPage() {
 
       {/* Sticky Action Bar */}
       <StickyActionBar onShare={handleShare} />
-
-      {/* Ko-fi donation modal */}
-      <KofiDonationModal />
 
       {/* Share Sheet */}
       <ShareSheet

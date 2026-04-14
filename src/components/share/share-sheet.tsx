@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Link as LinkIcon, Check } from 'lucide-react';
+import { X, Link as LinkIcon, Check, RefreshCw } from 'lucide-react';
 import {
   generateShareText,
   generateCompatibilityShareText,
@@ -10,6 +10,8 @@ import {
   getLineDeepLink,
   isMobile,
   trackShareEvent,
+  SHARE_PHRASES,
+  COMPATIBILITY_SHARE_PHRASES,
   type ShareData,
   type CompatibilityShareData,
   type SharePlatform,
@@ -57,6 +59,42 @@ function PlatformButton({
 
 export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title }: ShareSheetProps) {
   const [copied, setCopied] = useState(false);
+  const [selectedPhraseIndex, setSelectedPhraseIndex] = useState(0);
+
+  // Get available phrases based on share type
+  const phrases = useMemo(() => {
+    if (compatibilityData) {
+      return COMPATIBILITY_SHARE_PHRASES.map(phrase =>
+        phrase
+          .replace('{partnerName}', compatibilityData.partnerName)
+          .replace('{userElement}', compatibilityData.userElement)
+          .replace('{partnerElement}', compatibilityData.partnerElement)
+      );
+    }
+    if (shareData) {
+      return SHARE_PHRASES.map(phrase =>
+        phrase
+          .replace('{element}', shareData.element || 'ลึกลับ')
+          .replace('{luckyColor}', shareData.luckyColor || 'ลับ')
+          .replace('{luckyNumber}', String(shareData.luckyNumber || '??'))
+      );
+    }
+    return [];
+  }, [shareData, compatibilityData]);
+
+  const selectedPhrase = phrases[selectedPhraseIndex] || '';
+
+  // Randomize phrase when sheet opens
+  useEffect(() => {
+    if (isOpen && phrases.length > 0) {
+      setSelectedPhraseIndex(Math.floor(Math.random() * phrases.length));
+    }
+  }, [isOpen, phrases.length]);
+
+  const shufflePhrase = () => {
+    const newIndex = (selectedPhraseIndex + 1) % phrases.length;
+    setSelectedPhraseIndex(newIndex);
+  };
 
   // Close on Escape key
   useEffect(() => {
@@ -86,9 +124,9 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
     if (platform === 'line' && isMobile()) {
       // Generate text with URL for mobile deep link
       const textWithUrl = compatibilityData
-        ? `${generateCompatibilityShareText(platform, compatibilityData)}\n${shareUrl}`
+        ? `${generateCompatibilityShareText(platform, compatibilityData, selectedPhrase)}\n${shareUrl}`
         : shareData
-          ? `${generateShareText(platform, shareData)}\n\nดูดวงของเจ้าได้ที่ ${shareUrl}`
+          ? `${generateShareText(platform, shareData, selectedPhrase)}\n\nดูดวงของเจ้าได้ที่ ${shareUrl}`
           : '';
 
       const deepLink = getLineDeepLink(textWithUrl);
@@ -100,9 +138,9 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
 
     // For other platforms or LINE on desktop, use platform share URL
     const text = compatibilityData
-      ? generateCompatibilityShareText(platform, compatibilityData)
+      ? generateCompatibilityShareText(platform, compatibilityData, selectedPhrase)
       : shareData
-        ? generateShareText(platform, shareData)
+        ? generateShareText(platform, shareData, selectedPhrase)
         : '';
 
     const platformShareUrl = getShareUrl(platform, text, shareUrl);
@@ -135,7 +173,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
           >
             <div className="bg-deepNight border-t border-darkPurple/50 md:border md:rounded-2xl rounded-t-3xl md:rounded-b-2xl p-6">
               {/* Header */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <h3 className="font-heading text-lg font-medium text-ghostWhite">
                   {title || (compatibilityData ? 'แชร์ผลดวงความสัมพันธ์' : 'แชร์ดวงชะตาของเจ้า')}
                 </h3>
@@ -147,6 +185,24 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
+              {/* Phrase preview - tap to shuffle */}
+              {phrases.length > 0 && (
+                <button
+                  onClick={shufflePhrase}
+                  className="w-full mb-4 p-4 rounded-xl bg-gradient-to-r from-royalPurple/20 to-amethyst/10 border border-royalPurple/30 hover:border-amethyst/50 transition-all text-left group"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm text-ghostWhite leading-relaxed flex-1">
+                      "{selectedPhrase}"
+                    </p>
+                    <div className="flex-shrink-0 text-ashGray group-hover:text-amethyst transition-colors">
+                      <RefreshCw className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-ashGray mt-2">แตะเพื่อเปลี่ยนข้อความ</p>
+                </button>
+              )}
 
               {/* Platform buttons */}
               <div className="grid grid-cols-3 gap-3 mb-4">

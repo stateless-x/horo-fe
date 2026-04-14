@@ -15,6 +15,67 @@ export interface ShareData {
   luckyNumber?: number;
 }
 
+/**
+ * Gen Z-friendly share phrases - fun, relatable, shareable
+ */
+export const SHARE_PHRASES = [
+  // Self-discovery vibes
+  'ในที่สุดก็เข้าใจว่าทำไมชีวิตเป็นแบบนี้ 🫠',
+  'โดนทายแม่นจนขนลุก 👁️👄👁️',
+  'อ่านแล้วรู้สึก called out มาก 💀',
+  'ดวงบอกว่าฉันเป็นคนดี แต่ดวงโกหกได้ไหมนะ 🤔',
+  'พอดีว่างก็เลยมาดูดวง แล้วก็ไม่ผิดหวัง ✨',
+
+  // Chaotic/funny
+  'ดวงบอกให้พัก แต่เงินในบัญชีไม่ยอม 💸',
+  'เช็คดวงก่อนตัดสินใจอะไรทุกอย่างในชีวิต 🔮',
+  'ดวงดีขนาดนี้ ทำไมยังโสดอยู่ 🥲',
+  'แม่นจนน่ากลัว ใครทำเว็บนี้มาจับมือหน่อย 🤝',
+
+  // Flex/brag
+  'ธาตุฉันคือ {element} ยอมรับซะ 💅',
+  'สีมงคลวันนี้คือ {luckyColor} ใครใส่สีนี้มาหาได้เลย 👀',
+  'เลขมงคล {luckyNumber} ใครจะซื้อหวยตามก็เชิญ 🎰',
+
+  // Invite friends
+  'มาดูดวงด้วยกันไหม ฟรีด้วยนะ 🌙',
+  'ส่งต่อให้เพื่อนที่ชอบดูดวง tag เลย ✨',
+] as const;
+
+/**
+ * Compatibility share phrases
+ */
+export const COMPATIBILITY_SHARE_PHRASES = [
+  'เช็คดวงคู่แล้ว... ไม่กล้าบอกผล 😳',
+  'ดวงคู่ออกมาแล้ว ใครอยากรู้ว่าเข้ากันไหม 👀',
+  'AI วิเคราะห์ความสัมพันธ์ให้แล้ว แม่นมาก 🔮',
+  'เช็คดวงกับ {partnerName} แล้ว ผลคือ... 💕',
+  'ธาตุ{userElement} × ธาตุ{partnerElement} จะเป็นยังไงนะ 🤔',
+  'ใครมีคนคุยอยู่ ลองมาเช็คดวงกัน 💘',
+] as const;
+
+/**
+ * Get a random share phrase, with variable substitution
+ */
+export function getRandomSharePhrase(data: ShareData): string {
+  const phrase = SHARE_PHRASES[Math.floor(Math.random() * SHARE_PHRASES.length)];
+  return phrase
+    .replace('{element}', data.element || 'ลึกลับ')
+    .replace('{luckyColor}', data.luckyColor || 'ลับ')
+    .replace('{luckyNumber}', String(data.luckyNumber || '??'));
+}
+
+/**
+ * Get a random compatibility share phrase
+ */
+export function getRandomCompatibilityPhrase(data: CompatibilityShareData): string {
+  const phrase = COMPATIBILITY_SHARE_PHRASES[Math.floor(Math.random() * COMPATIBILITY_SHARE_PHRASES.length)];
+  return phrase
+    .replace('{partnerName}', data.partnerName)
+    .replace('{userElement}', data.userElement)
+    .replace('{partnerElement}', data.partnerElement);
+}
+
 export interface CompatibilityShareData {
   url: string;
   partnerName: string;
@@ -25,33 +86,31 @@ export interface CompatibilityShareData {
 
 /**
  * Generate platform-specific share text for fortune readings
+ * Now uses fun Gen Z-friendly phrases!
  */
 export function generateShareText(
   platform: SharePlatform,
-  data: ShareData
+  data: ShareData,
+  customPhrase?: string
 ): string {
-  const { userName, element, luckyColor, luckyNumber, url } = data;
+  const { element, url } = data;
+
+  // Use custom phrase if provided, otherwise generate a fun one
+  const phrase = customPhrase || getRandomSharePhrase(data);
 
   switch (platform) {
     case 'line':
-      // URL is passed separately in getShareUrl, so don't include it in text
-      return `ดวงชะตาของ ${userName}
-ธาตุ${element}${luckyColor ? ` | สี${luckyColor}` : ''}${luckyNumber ? ` | เลข ${luckyNumber}` : ''}`;
+      return `${phrase}
+
+🔮 ธาตุ${element || 'ลึกลับ'} | สายมู.com`;
 
     case 'facebook':
-      // URL is passed separately, text is used as quote
-      return `มาดูดวงของเจ้ากันเถอะ! ฉันเป็นธาตุ${element}`;
+      return phrase;
 
     case 'twitter':
-      const attributes = [];
-      if (luckyColor) attributes.push(`สีมงคล: ${luckyColor}`);
-      if (luckyNumber) attributes.push(`เลขมงคล: ${luckyNumber}`);
+      return `${phrase}
 
-      // URL is passed separately in getShareUrl, so don't include it in text
-      return `ดวงชะตาของฉัน: ธาตุ${element}${attributes.length > 0 ? `
-${attributes.join(' | ')}` : ''}
-
-มาดูดวงของเจ้ากันเถอะ!`;
+🔮 ธาตุ${element || 'ลึกลับ'} | #สายมู #ดูดวง`;
 
     case 'copy':
       return url;
@@ -63,31 +122,31 @@ ${attributes.join(' | ')}` : ''}
 
 /**
  * Generate platform-specific share text for compatibility results
+ * Now uses fun Gen Z-friendly phrases!
  */
 export function generateCompatibilityShareText(
   platform: SharePlatform,
-  data: CompatibilityShareData
+  data: CompatibilityShareData,
+  customPhrase?: string
 ): string {
-  const { partnerName, relationshipLabel, userElement, partnerElement, url } = data;
+  const { userElement, partnerElement, url } = data;
+
+  // Use custom phrase if provided, otherwise generate a fun one
+  const phrase = customPhrase || getRandomCompatibilityPhrase(data);
 
   switch (platform) {
     case 'line':
-      // URL is passed separately in getShareUrl, so don't include it in text
-      return `ดวง${relationshipLabel}ของฉันกับ ${partnerName}
-ธาตุ${userElement} × ธาตุ${partnerElement}
+      return `${phrase}
 
-มาส่องดวงความสัมพันธ์กัน!`;
+💕 ธาตุ${userElement} × ธาตุ${partnerElement} | สายมู.com`;
 
     case 'facebook':
-      // URL is passed separately, text is used as quote
-      return `ส่องดวง${relationshipLabel}กับ ${partnerName} ธาตุ${userElement} × ธาตุ${partnerElement}`;
+      return phrase;
 
     case 'twitter':
-      // URL is passed separately in getShareUrl, so don't include it in text
-      return `เช็คดวง${relationshipLabel}กับ ${partnerName} มาแล้ว 🔮
-ธาตุ${userElement} × ธาตุ${partnerElement}
+      return `${phrase}
 
-ใครอยากรู้ว่าดวงเข้ากันไหม ลองมาเช็คกัน!`;
+💕 ธาตุ${userElement} × ธาตุ${partnerElement} | #สายมู #ดวงคู่`;
 
     case 'copy':
       return url;

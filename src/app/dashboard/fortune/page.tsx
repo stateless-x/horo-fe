@@ -22,7 +22,6 @@ import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-b
 import { CompatibilityCTA } from '@/components/chart/compatibility-cta';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { AutoDonationModal, DonationModal } from '@/components/ads/donation-modal';
-import { DonationButton } from '@/components/ads/donation-button';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 
 /**
@@ -225,6 +224,25 @@ export default function FortuneChartPage() {
         >
           <ElementProfileSection elementProfile={chartData.elementProfile} />
         </motion.div>
+
+        {/* Donation CTA - subtle inline */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <button
+            onClick={() => setShowDonationModal(true)}
+            className="w-full p-4 rounded-xl bg-gradient-to-r from-royalPurple/10 to-amethyst/5 border border-royalPurple/20 hover:border-amethyst/40 transition-all duration-200 group"
+          >
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-lg">☕</span>
+              <span className="text-sm text-ashGray group-hover:text-lavenderGlow transition-colors">
+                ชอบดวงของเจ้าไหม? สนับสนุนค่ากาแฟพี่ภูได้ที่นี่
+              </span>
+            </div>
+          </button>
+        </motion.div>
       </div>
 
 
@@ -274,18 +292,6 @@ export default function FortuneChartPage() {
           </motion.div>
         )}
 
-        {/* Donation reminder */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center pt-4"
-        >
-          <p className="text-sm text-ashGray mb-3">ชอบดวงของเจ้าไหม?</p>
-          <DonationButton onClick={() => setShowDonationModal(true)}>
-            ☕ สนับสนุนพี่ภู
-          </DonationButton>
-        </motion.div>
       </div>
 
       {/* Auto-open donation modal */}

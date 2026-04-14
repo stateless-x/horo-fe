@@ -16,7 +16,6 @@ import { FourPillarsSection } from '@/components/chart/four-pillars-section';
 import { BirthStarSection } from '@/components/chart/birth-star-section';
 import { FortuneReadingsSection } from '@/components/chart/fortune-readings-section';
 import { RecommendationsSection } from '@/components/chart/recommendations-section';
-import { StickyActionBar } from '@/components/chart/sticky-action-bar';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/components/chart/fortune-tab-bar';
@@ -273,9 +272,6 @@ export default function FortuneChartPage() {
           </motion.div>
         )}
       </div>
-
-      {/* Sticky Action Bar */}
-      <StickyActionBar onShare={handleShare} />
 
       {/* Auto-open donation modal */}
       <AutoDonationModal />

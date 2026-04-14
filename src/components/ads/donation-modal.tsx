@@ -190,15 +190,13 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
 
 /**
  * Auto-opening donation modal for dashboard pages
- * Shows after 1.5s delay, respects "dismiss forever" preference
+ * Shows after 1.5s delay, always shows (no dismiss forever)
  */
 export function AutoDonationModal() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const dismissed = localStorage.getItem(STORAGE_KEY) === 'true';
-    if (dismissed) return;
 
     const timer = setTimeout(() => setIsOpen(true), 1500);
     return () => clearTimeout(timer);
@@ -208,7 +206,7 @@ export function AutoDonationModal() {
     <DonationModal
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      showDismissForever={true}
+      showDismissForever={false}
     />
   );
 }

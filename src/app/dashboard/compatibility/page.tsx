@@ -320,7 +320,7 @@ export default function CompatibilityPage() {
   // --- Loading screen ---
   if (sessionLoading || !session) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
+      <div className="min-h-screen bg-voidBlack flex items-center justify-center pb-24">
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
@@ -333,7 +333,7 @@ export default function CompatibilityPage() {
   // --- Calculating screen ---
   if (calculating) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center p-6 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           {[...Array(20)].map((_, i) => (
             <motion.div
@@ -432,7 +432,7 @@ export default function CompatibilityPage() {
     const ResultIcon = resultConfig.icon;
 
     return (
-      <div className="min-h-screen p-4 md:p-6">
+      <div className="min-h-screen p-4 md:p-6 pb-24">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -561,7 +561,7 @@ export default function CompatibilityPage() {
   const isRateLimited = rateLimitCountdown > 0;
 
   return (
-    <div className="min-h-screen p-4 md:p-6">
+    <div className="min-h-screen p-4 md:p-6 pb-24">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">

@@ -16,6 +16,7 @@ import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL, type CompatibilityShareData } from '@/lib/share-utils';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
+import { AutoDonationModal } from '@/components/ads/donation-modal';
 
 // --- Constants ---
 
@@ -896,6 +897,8 @@ export default function CompatibilityPage() {
             )}
           </div>
         </motion.div>
+
+        <AutoDonationModal />
       </div>
     </div>
   );

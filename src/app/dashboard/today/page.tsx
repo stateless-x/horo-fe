@@ -24,6 +24,7 @@ import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
+import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 const ELEMENT_NAMES_THAI: Record<string, string> = {
@@ -323,6 +324,8 @@ export default function TodayPage() {
             luckyNumber: dailyReading?.luckyNumber || undefined,
           }}
         />
+
+        <AutoDonationModal />
       </div>
     </div>
   );

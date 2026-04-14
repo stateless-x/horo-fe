@@ -240,6 +240,7 @@ export function Footer() {
         <DonationModal
           isOpen={showDonationModal}
           onClose={() => setShowDonationModal(false)}
+          showDismissForever={false}
         />
 
         {/* Attribution */}

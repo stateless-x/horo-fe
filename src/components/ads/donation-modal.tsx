@@ -8,58 +8,37 @@ const STORAGE_KEY = 'horo-donation-dismissed';
 const QR_IMAGE_PATH = '/mae_manee_qr.PNG';
 
 interface DonationModalProps {
-  isOpen?: boolean;
-  onClose?: () => void;
+  isOpen: boolean;
+  onClose: () => void;
+  showDismissForever?: boolean;
 }
 
-export function DonationModal({ isOpen, onClose }: DonationModalProps) {
-  const [isVisible, setIsVisible] = useState(false);
+/**
+ * Controlled donation modal - requires isOpen and onClose props
+ */
+export function DonationModal({ isOpen, onClose, showDismissForever = true }: DonationModalProps) {
   const [showQr, setShowQr] = useState(false);
-
-  // Controlled mode: sync with isOpen prop
-  const isControlled = isOpen !== undefined;
-  const visible = isControlled ? isOpen : isVisible;
-
-  // Show modal after delay if not permanently dismissed (only in uncontrolled mode)
-  useEffect(() => {
-    if (isControlled) return;
-    if (typeof window === 'undefined') return;
-    const dismissed = localStorage.getItem(STORAGE_KEY) === 'true';
-    if (dismissed) return;
-
-    const timer = setTimeout(() => setIsVisible(true), 1500);
-    return () => clearTimeout(timer);
-  }, [isControlled]);
 
   // Reset showQr when modal closes
   useEffect(() => {
-    if (!visible) {
+    if (!isOpen) {
       setShowQr(false);
     }
-  }, [visible]);
+  }, [isOpen]);
 
   // Escape key to close
   useEffect(() => {
-    if (!visible) return;
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (onClose) onClose();
-        else setIsVisible(false);
-      }
+      if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [visible, onClose]);
-
-  const handleClose = useCallback(() => {
-    if (onClose) onClose();
-    else setIsVisible(false);
-  }, [onClose]);
+  }, [isOpen, onClose]);
 
   const handleDismissForever = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, 'true');
-    if (onClose) onClose();
-    else setIsVisible(false);
+    onClose();
   }, [onClose]);
 
   const handleSaveImage = useCallback(async () => {
@@ -95,7 +74,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
 
   return (
     <AnimatePresence>
-      {visible && (
+      {isOpen && (
         <>
           {/* Backdrop */}
           <motion.div
@@ -104,7 +83,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 bg-voidBlack/60 backdrop-blur-sm z-50"
-            onClick={handleClose}
+            onClick={onClose}
           />
 
           {/* Modal */}
@@ -118,7 +97,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
             <div className="relative w-full max-w-sm pointer-events-auto">
               {/* Close button */}
               <button
-                onClick={handleClose}
+                onClick={onClose}
                 className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-deepNight border border-darkPurple/50 flex items-center justify-center text-ashGray hover:text-ghostWhite hover:border-amethyst/50 transition-all duration-200"
                 aria-label="ปิด"
               >
@@ -191,18 +170,45 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
               </div>
 
               {/* Dismiss forever */}
-              <div className="mt-3 text-center">
-                <button
-                  onClick={handleDismissForever}
-                  className="font-thai text-xs text-ashGray hover:text-ghostWhite transition-colors underline underline-offset-2"
-                >
-                  ไม่แสดงอีก
-                </button>
-              </div>
+              {showDismissForever && (
+                <div className="mt-3 text-center">
+                  <button
+                    onClick={handleDismissForever}
+                    className="font-thai text-xs text-ashGray hover:text-ghostWhite transition-colors underline underline-offset-2"
+                  >
+                    ไม่แสดงอีก
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
         </>
       )}
     </AnimatePresence>
+  );
+}
+
+/**
+ * Auto-opening donation modal for dashboard pages
+ * Shows after 1.5s delay, respects "dismiss forever" preference
+ */
+export function AutoDonationModal() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const dismissed = localStorage.getItem(STORAGE_KEY) === 'true';
+    if (dismissed) return;
+
+    const timer = setTimeout(() => setIsOpen(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <DonationModal
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+      showDismissForever={true}
+    />
   );
 }

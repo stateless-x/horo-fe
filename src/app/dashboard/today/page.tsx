@@ -254,10 +254,10 @@ export default function TodayPage() {
 
         <PawjaiAdsBanner />
 
-        {/* ===== DOS & DONTS - Side by side ===== */}
+        {/* ===== DOS & DONTS - Stack on mobile, side by side on desktop ===== */}
         {structured?.dos && structured?.donts && (
           <section className="mb-8">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {/* Dos */}
               <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
                 <div className="flex items-center gap-2 mb-4">

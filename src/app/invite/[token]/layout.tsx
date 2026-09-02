@@ -28,6 +28,12 @@ export const metadata: Metadata = {
     images: ['/og-image.jpg'],
     site: '@สายมู',
   },
+
+  // Private, per-invite share links — not meant to be indexed.
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function InviteTokenLayout({

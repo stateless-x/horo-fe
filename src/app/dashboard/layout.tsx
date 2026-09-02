@@ -29,6 +29,12 @@ export const metadata: Metadata = {
     site: '@สายมู',
     creator: '@สายมู',
   },
+
+  // Private, authenticated app area — not meant to be indexed.
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function DashboardLayout({

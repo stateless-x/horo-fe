@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { PublicNav } from '@/components/layout/public-nav';
 import { AdUnit } from '@/components/ads/ad-unit';
 import { MonthTabs } from '@/components/calendar/month-tabs';
+import { isValidMonthParam } from '@/lib/calendar-range';
 
 // ─── Thai day-of-week data (mirrors backend DAY_DATA) ───────────────────────
 
@@ -276,11 +277,9 @@ function buildCalendar(year: number, month: number, todayIso: string): CalendarD
 // ─── Helpers: parse ?m=YYYY-MM param ─────────────────────────────────────────
 
 function parseMonthParam(m: string | undefined): { year: number; month: number } {
-  if (m && /^\d{4}-\d{2}$/.test(m)) {
+  if (isValidMonthParam(m)) {
     const [y, mo] = m.split('-').map(Number);
-    if (y >= 2024 && y <= 2032 && mo >= 1 && mo <= 12) {
-      return { year: y, month: mo - 1 };
-    }
+    return { year: y, month: mo - 1 };
   }
   const now = getBangkokNow();
   return { year: now.getFullYear(), month: now.getMonth() };
@@ -315,7 +314,12 @@ export async function generateMetadata(
       'สายบุญ', 'สายมู', 'ดูดวง', 'ดูดวงฟรี', 'ดวงชะตา',
       'บุญ', 'กรรม', 'ชะตา', 'ปฏิทินมงคล', 'ปฏิทินสายมู',
     ],
-    alternates: { canonical: '/calendar' },
+    // Canonicalize to the exact month URL when `m` is a valid in-range
+    // month so /calendar?m=YYYY-MM pages (linked from the sitemap) don't
+    // all collapse onto the current-month /calendar page.
+    alternates: {
+      canonical: isValidMonthParam(m) ? `/calendar?m=${m}` : '/calendar',
+    },
     openGraph: {
       title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ วันโกน ฤกษ์ดี สายมู`,
       description: `วันพระ วันโกน ตัดผมมงคล ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน สีประจำวัน เลขมงคล และวันหยุดราชการ เดือน${monthName} ${beYear}ปฏิทินไทยสำหรับสายมูและสายบุญ`,

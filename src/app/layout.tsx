@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Providers } from "./providers";
 import { Footer } from "@/components/layout/footer";
 import { AdSenseScript } from "@/components/ads/adsense-script";
@@ -49,9 +49,6 @@ export const metadata: Metadata = {
   publisher: "สายมู",
 
   metadataBase: new URL("https://xn--y3cbx6azb.com"),
-  alternates: {
-    canonical: "/",
-  },
 
   icons: {
     icon: "/favicon.ico",
@@ -109,6 +106,10 @@ export const metadata: Metadata = {
   },
 
   category: "lifestyle",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0A0A0F",
 };
 
 export default function RootLayout({

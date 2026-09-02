@@ -34,19 +34,27 @@ declare global {
 export function AdUnit({ slot, format = 'auto', label = 'โฆษณา', className = '' }: AdUnitProps) {
   const ref = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
+  const isDev = process.env.NODE_ENV !== 'production';
 
   useEffect(() => {
+    // Skip in development — AdUnit renders no <ins> below, so pushing here
+    // would call adsbygoogle.push() with no unfilled slot to fill.
+    if (isDev) return;
     if (pushed.current) return;
+    // Guard against AdSense having already filled this exact <ins> (e.g.
+    // Auto ads claiming it before our manual push runs) — pushing again
+    // on an already-filled element is what throws "already have ads in them".
+    if (ref.current?.dataset.adsbygoogleStatus) return;
     pushed.current = true;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
       // AdSense not loaded (e.g. blocked by ad blocker) — fail silently
     }
-  }, []);
+  }, [isDev]);
 
   // Skip in development — AdSense rejects zero-size slots in dev
-  if (process.env.NODE_ENV !== 'production') {
+  if (isDev) {
     return (
       <div className={`my-4 ${className}`}>
         <p className="text-xs text-ashGray/40 text-center font-oracle">

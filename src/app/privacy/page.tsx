@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'นโยบายความเป็นส่วนตัว',
   description:
     'นโยบายความเป็นส่วนตัวและการคุ้มครองข้อมูลส่วนบุคคล (PDPA) ของสายมู.com',
+  alternates: {
+    canonical: '/privacy',
+  },
 };
 
 const LAST_UPDATED = '16 มีนาคม 2569';

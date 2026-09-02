@@ -85,13 +85,13 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl md:text-7xl font-heading mb-6 tracking-tight bg-gradient-to-br from-ghostWhite via-paleOrchid to-lavenderGlow bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(192,132,252,0.3)]">
-              เปิดประตูสู่ชะตา
+              ดูดวงที่เข้าใจตัวตนของคุณ
             </h1>
 
             <p className="text-lg md:text-2xl text-paleOrchid/80 mb-6 font-oracle font-light leading-relaxed">
-              ผสานจิตวิทยาเชิงลึกของ MBTI เข้ากับบาซีโบราณและโหราศาสตร์ไทย
+              ผสานโหราศาสตร์ไทย ดวงจีนปาจื้อ (Bazi) และจิตวิทยา MBTI
               <br />
-              เพื่อถอดรหัสตัวตน ไม่ใช่แค่ดวง แต่คือ<span className="text-lavenderGlow/90 font-normal">แก่นแท้ของคุณ</span>
+              ถอดรหัสทั้งดวงชะตาและนิสัยจริง ไม่ใช่แค่ดวง แต่คือ<span className="text-lavenderGlow/90 font-normal">แก่นแท้ของคุณ</span>
             </p>
 
             {/* Decorative line */}
@@ -110,7 +110,7 @@ export default function LandingPage() {
                   whileTap={{ scale: 0.95 }}
                   className="w-full sm:w-auto px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg font-semibold rounded-lg transition-all shadow-lg shadow-royalPurple/40 hover:shadow-amethyst/40 touch-manipulation"
                 >
-                  ดูดวงของเจ้า
+                  เริ่มดูดวงฟรี
                 </motion.button>
               </Link>
 
@@ -124,6 +124,10 @@ export default function LandingPage() {
                 </motion.button>
               </Link>
             </div>
+
+            <p className="text-ashGray/70 text-sm font-oracle mt-6">
+              ฟรี · ใช้เวลาไม่ถึง 2 นาที · เห็นผลก่อนสมัครสมาชิก
+            </p>
           </motion.div>
         </div>
 
@@ -183,11 +187,11 @@ export default function LandingPage() {
 
                 <Sparkles className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
                 <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
-                  Bazi (四柱命理)
+                  ดวงจีนปาจื้อ (Bazi)
                 </h3>
                 <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
-                  ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากเสาสี่ที่ (ปี เดือน วัน
-                  ชั่วโมง) และธาตุทั้งห้า
+                  ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากสี่เสาชะตา (ปี เดือน วัน
+                  ชั่วโมงเกิด) และธาตุทั้งห้า
                 </p>
                 <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
                   จุดเด่น: วิเคราะห์วงจรชีวิต 10 ปี และพลังธาตุในชาติ
@@ -261,15 +265,15 @@ export default function LandingPage() {
 
                 <Brain className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
                 <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
-                  MBTI บุคลิกภาพ
+                  จิตวิทยา MBTI
                 </h3>
                 <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
-                  ศาสตร์จิตวิทยาบุคลิกภาพ 16 แบบ
-                  เสริมให้คำทำนายเข้าถึงตัวตนของเจ้าอย่างลึกซึ้ง
-                  เตือนจุดอ่อนที่บุคลิกภาพของเจ้ามักตอบสนองต่อสถานการณ์
+                  จิตวิทยาบุคลิกภาพ 16 แบบ
+                  เสริมให้คำทำนายเข้าถึงตัวตนของคุณอย่างลึกซึ้ง
+                  พร้อมเตือนจุดอ่อนที่บุคลิกภาพแบบคุณมักเจอ
                 </p>
                 <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
-                  จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวเจ้า
+                  จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวคุณ
                 </p>
               </div>
             </motion.div>
@@ -292,10 +296,10 @@ export default function LandingPage() {
           className="max-w-3xl mx-auto"
         >
           <h2 className="text-3xl md:text-5xl font-heading text-ghostWhite mb-4">
-            พร้อมที่จะรู้จักชะตาของเจ้าหรือยัง
+            พร้อมรู้จักตัวเองลึกกว่าเดิมหรือยัง
           </h2>
           <p className="text-ashGray font-oracle mb-10">
-            ไม่เสียค่าใช้จ่าย ใช้เวลาไม่ถึง 2 นาที
+            ฟรี ไม่เสียค่าใช้จ่าย · ใช้เวลาไม่ถึง 2 นาที · เห็นผลก่อนสมัครสมาชิก
           </p>
 
           <Link href="/fortune">
@@ -307,13 +311,13 @@ export default function LandingPage() {
                 whileTap={{ scale: 0.95 }}
                 className="relative px-14 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl font-semibold rounded-lg transition-all shadow-xl shadow-royalPurple/40 hover:shadow-amethyst/40 touch-manipulation"
               >
-                เริ่มดูดวงเลย
+                เริ่มดูดวงฟรี
               </motion.button>
             </div>
           </Link>
 
           <p className="text-ashGray/60 text-sm font-oracle mt-6">
-            ดูดวงด้วย Bazi × โหราศาสตร์ไทย × MBTI
+            ดูดวงด้วย โหราศาสตร์ไทย × ดวงจีนปาจื้อ (Bazi) × จิตวิทยา MBTI
           </p>
         </motion.div>
       </section>

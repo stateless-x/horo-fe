@@ -54,7 +54,7 @@ export function PublicNav() {
               href="/fortune"
               className="shrink-0 px-4 py-2 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-sm rounded-lg transition-colors"
             >
-              ดูดวงของเจ้า →
+              เริ่มดูดวงฟรี →
             </Link>
           )}
         </div>

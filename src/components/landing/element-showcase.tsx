@@ -28,7 +28,7 @@ export function ElementShowcase() {
             ธาตุทั้งห้าเผยชะตา
           </h2>
           <p className="text-ashGray font-oracle">
-            กรอกวันเกิดของเจ้า เพื่อค้นหาธาตุประจำตัว
+            แค่วันเกิดของคุณ ก็บอกธาตุประจำตัวได้
           </p>
         </motion.div>
 

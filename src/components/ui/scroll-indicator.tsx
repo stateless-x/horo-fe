@@ -62,7 +62,7 @@ export function ScrollIndicator({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
-          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 pointer-events-none"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-none hidden sm:block"
         >
           <motion.div
             animate={{
@@ -75,14 +75,9 @@ export function ScrollIndicator({
             }}
             className="flex flex-col items-center gap-2"
           >
-            {/* Hint text */}
-            <p className="text-lavenderGlow text-sm font-thai">
-              เลื่อนดูรายละเอียด
-            </p>
-
             {/* Animated arrow */}
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-royalPurple to-amethyst flex items-center justify-center shadow-[0_0_20px_rgba(161,106,203,0.5)]">
-              <ChevronDown className="w-6 h-6 text-ghostWhite" />
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-royalPurple to-amethyst flex items-center justify-center shadow-[0_0_20px_rgba(161,106,203,0.5)]">
+              <ChevronDown className="w-5 h-5 text-ghostWhite" />
             </div>
           </motion.div>
         </motion.div>

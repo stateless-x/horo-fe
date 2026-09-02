@@ -67,7 +67,7 @@ export const api = {
     }
   },
 
-  async post<T>(path: string, body?: unknown): Promise<T> {
+  async post<T>(path: string, body?: unknown, options?: { onHeaders?: (headers: Headers) => void }): Promise<T> {
     const { signal, clear } = createTimeoutSignal(TIMEOUTS.POST);
     try {
       const res = await fetch(`${API_URL}${path}`, {
@@ -79,6 +79,8 @@ export const api = {
         body: body ? JSON.stringify(body) : undefined,
         signal,
       });
+
+      options?.onHeaders?.(res.headers);
 
       if (!res.ok) {
         await parseErrorResponse(res);

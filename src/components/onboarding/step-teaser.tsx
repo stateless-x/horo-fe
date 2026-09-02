@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Briefcase, Wallet, Activity, Lock, Sparkles } from 'lucide-react';
 import { Button, OracleText } from '@/lib-packages/ui';
@@ -24,7 +24,7 @@ const LOCKED_CATEGORIES = [
  * - THIS MUST HAPPEN BEFORE AUTH!
  */
 export function StepTeaser() {
-  const { profile, setTeaserResult, nextStep, prevStep } = useOnboardingStore();
+  const { profile, setTeaserResult, nextStep, prevStep, setStep } = useOnboardingStore();
   const [isLoading, setIsLoading] = useState(true);
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
@@ -68,6 +68,16 @@ export function StepTeaser() {
           return;
         }
 
+        // Other 4xx client errors (e.g. 422 validation) are not transient — retrying can't
+        // succeed, so fail immediately instead of burning retries. 408 is a timeout, not a
+        // client error, so it still falls through to the retry/backoff below.
+        if (error?.status >= 400 && error?.status < 500 && error?.status !== 408) {
+          setHasFailed(true);
+          setResult(null);
+          setIsLoading(false);
+          return;
+        }
+
         // Last attempt — show error screen
         if (attempt === MAX_RETRIES) {
           setHasFailed(true);
@@ -82,9 +92,31 @@ export function StepTeaser() {
     }
   };
 
+  const hasStartedRef = useRef(false);
+
   useEffect(() => {
+    // Run once per mount — re-renders (e.g. from profile identity changes) must not refire the LLM call
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+
+    // Guard against submitting an incomplete profile (would 422 and can never succeed via retry).
+    // Send the user back to the earliest missing required step instead of calling the API.
+    if (!profile.name) {
+      setStep('name');
+      return;
+    }
+    if (!profile.birthDate) {
+      setStep('birthDate');
+      return;
+    }
+    if (!profile.gender) {
+      setStep('gender');
+      return;
+    }
+
     generateTeaser();
-  }, [profile, setTeaserResult]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading) {
     return (

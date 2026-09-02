@@ -26,6 +26,16 @@ export function StepBirthDate() {
   const monthRef = useRef<HTMLSelectElement>(null);
   const yearRef = useRef<HTMLSelectElement>(null);
 
+  // Number of days in the selected month/year (BE -> Gregorian for leap-year math)
+  const daysInMonth = new Date(Date.UTC(toGregorianYear(year), month + 1, 0)).getUTCDate();
+
+  // Clamp day if it exceeds the selected month's max (e.g. 31 Feb rolling over)
+  useEffect(() => {
+    if (day > daysInMonth) {
+      setDay(daysInMonth);
+    }
+  }, [daysInMonth, day]);
+
   // Center the selected option in the viewport
   const centerSelectedOption = (selectElement: HTMLSelectElement | null) => {
     if (!selectElement) return;
@@ -98,7 +108,7 @@ export function StepBirthDate() {
                   className="w-full h-48 bg-deepNight border border-darkPurple rounded-lg text-center text-lg text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
                   size={7}
                 >
-                  {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                  {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((d) => (
                     <option key={d} value={d} className="py-2">
                       {d}
                     </option>

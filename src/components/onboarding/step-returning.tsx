@@ -39,7 +39,7 @@ export function StepReturning() {
         className="text-center mb-12"
       >
         <h1 className="font-heading text-2xl md:text-3xl text-ghostWhite mb-2">
-          เจ้าเคยมาที่นี่แล้วหรือยังหล่ะ?
+          เจ้าเคยมาที่นี่แล้วหรือยังล่ะ?
         </h1>
       </motion.div>
 

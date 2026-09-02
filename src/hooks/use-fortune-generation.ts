@@ -92,7 +92,11 @@ export function useFortuneGeneration() {
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 
         // Seed React Query cache so useFortuneData doesn't re-fetch
-        queryClient.setQueryData(['fortune', 'chart'], reading);
+        // Key must match useFortuneData's key shape (includes userId) or the seed never lands
+        const userId = session?.user?.id;
+        if (userId) {
+          queryClient.setQueryData(['fortune', 'chart', userId], reading);
+        }
 
         // Step 3: Mark complete (no streaming simulation needed)
         setLoadingState('complete');

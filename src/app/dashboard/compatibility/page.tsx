@@ -255,6 +255,8 @@ export default function CompatibilityPage() {
     setResult(null);
     setViewingHistoryId(null);
 
+    let resetAt = '';
+
     try {
       const steps = config.loadingSteps;
       for (let i = 0; i < steps.length - 1; i++) {
@@ -265,43 +267,35 @@ export default function CompatibilityPage() {
 
       const birthDate = createUTCDateFromBE(dayNum, monthNum, yearNum);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortune/compatibility`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const data = await api.post<CompatibilityResult>(
+        '/api/fortune/compatibility',
+        {
           partnerName: partnerName.trim(),
           partnerBirthDate: birthDate.toISOString(),
           relationshipType,
-        }),
-      });
+        },
+        {
+          onHeaders: (headers) => {
+            const remaining = parseInt(headers.get('X-RateLimit-Remaining') || '5');
+            resetAt = headers.get('X-RateLimit-Reset') || '';
+            setRateLimitInfo({ remaining, resetAt, retryAfter: 0 });
+          },
+        }
+      );
 
-      // Read rate limit headers
-      const remaining = parseInt(response.headers.get('X-RateLimit-Remaining') || '5');
-      const resetAt = response.headers.get('X-RateLimit-Reset') || '';
-      setRateLimitInfo({ remaining, resetAt, retryAfter: 0 });
-
-      if (response.status === 429) {
-        const data = await response.json();
-        const retryAfter = data.retryAfter || 3600;
-        setRateLimitInfo({ remaining: 0, resetAt, retryAfter });
-        setRateLimitCountdown(retryAfter);
-        setError(data.error || 'พลังดวงดาวต้องการเวลาฟื้นฟู');
-        return;
-      }
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to calculate compatibility');
-      }
-
-      const data: CompatibilityResult = await response.json();
       setResult(data);
 
       // Invalidate history so new item appears
       queryClient.invalidateQueries({ queryKey: ['compatibility', 'history'] });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+    } catch (err: any) {
+      if (err?.status === 429) {
+        const retryAfter = err.body?.retryAfter || 3600;
+        setRateLimitInfo({ remaining: 0, resetAt, retryAfter });
+        setRateLimitCountdown(retryAfter);
+        setError(err.body?.error || 'พลังดวงดาวต้องการเวลาฟื้นฟู');
+        return;
+      }
+      setError(err?.body?.error || (err instanceof Error ? err.message : 'เกิดข้อผิดพลาด กรุณาลองใหม่'));
     } finally {
       setCalculating(false);
       setCalculationStep('');

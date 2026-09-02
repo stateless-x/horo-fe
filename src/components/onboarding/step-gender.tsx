@@ -36,7 +36,7 @@ export function StepGender() {
           transition={{ delay: 0.2 }}
           className="text-2xl md:text-3xl text-center text-ghostWhite font-heading"
         >
-          แล้วเพศกำเนิดของเจ้าเป็นผู้ชาย หรือ ผู้หญิงหล่ะ
+          แล้วเพศกำเนิดของเจ้าเป็นผู้ชาย หรือ ผู้หญิงล่ะ
         </motion.h1>
 
         <div className="grid grid-cols-2 gap-4">

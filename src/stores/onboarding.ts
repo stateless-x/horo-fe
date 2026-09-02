@@ -25,6 +25,7 @@ interface OnboardingState {
     luckyNumber?: number;
   };
   expiresAt: number | null; // Timestamp when data expires
+  lastStepChangeAt: number; // Timestamp of the last nextStep/prevStep call, for the transition guard
 
   // Actions
   setStep: (step: OnboardingStep) => void;
@@ -52,6 +53,12 @@ const steps: OnboardingStep[] = [
 // Onboarding data expires after 15 minutes (900000ms)
 const EXPIRATION_TIME = 15 * 60 * 1000;
 
+// Minimum time between step transitions, to ignore a double-click on the
+// nextStep/prevStep button while the exit animation is still playing
+// (AnimatePresence mode="wait" keeps the exiting step mounted and clickable).
+// Longest exit animation among steps is 0.5s (step-returning.tsx), so 500ms covers all.
+const TRANSITION_GUARD_MS = 500;
+
 export const useOnboardingStore = create<OnboardingState>()(
   persist(
     (set, get) => ({
@@ -59,6 +66,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       profile: {},
       teaserResult: {},
       expiresAt: null,
+      lastStepChangeAt: 0,
 
       setStep: (step) => {
         // Set expiration time on first step beyond welcome
@@ -70,7 +78,10 @@ export const useOnboardingStore = create<OnboardingState>()(
       },
 
       nextStep: () => {
-        const { currentStep } = get();
+        const { currentStep, lastStepChangeAt } = get();
+        // Ignore double-clicks while the previous step's exit animation is still playing
+        if (Date.now() - lastStepChangeAt < TRANSITION_GUARD_MS) return;
+
         const currentIndex = steps.indexOf(currentStep);
         if (currentIndex < steps.length - 1) {
           const nextStep = steps[currentIndex + 1];
@@ -78,16 +89,20 @@ export const useOnboardingStore = create<OnboardingState>()(
           const shouldSetExpiry = nextStep !== 'welcome' && !get().expiresAt;
           set({
             currentStep: nextStep,
+            lastStepChangeAt: Date.now(),
             ...(shouldSetExpiry && { expiresAt: Date.now() + EXPIRATION_TIME })
           });
         }
       },
 
       prevStep: () => {
-        const { currentStep } = get();
+        const { currentStep, lastStepChangeAt } = get();
+        // Ignore double-clicks while the previous step's exit animation is still playing
+        if (Date.now() - lastStepChangeAt < TRANSITION_GUARD_MS) return;
+
         const currentIndex = steps.indexOf(currentStep);
         if (currentIndex > 0) {
-          set({ currentStep: steps[currentIndex - 1] });
+          set({ currentStep: steps[currentIndex - 1], lastStepChangeAt: Date.now() });
         }
       },
 

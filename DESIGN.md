@@ -107,7 +107,7 @@ pulse — never busy.
 - Film grain (3% opacity) over every page — the room's atmosphere
 - Glassmorphic cards floating on darkness, edged with `white/10`
 - Two voices: contemporary Thai (คุณ) for marketing, the oracle's เจ้า/ข้า in Sarabun Light inside readings
-- Two moods, one room: white + purple daylight mode is the default; the Midnight Room (dark) is one toggle away and always hosts the hero and the onboarding wizard via a `data-theme="dark"` wrapper
+- Two moods, one room: white + purple daylight mode is the default; the Midnight Room (dark) is one toggle away. Only the landing hero band stays pinned dark (dark video art) via a `data-theme="dark"` wrapper
 
 ## Colors
 
@@ -226,9 +226,14 @@ bodies — no sharp diagonal cuts.
 
 ### Buttons
 - **Shape:** gently rounded (8px), generous padding (16px 40px), Anuphan semibold.
-- **Primary:** Royal Purple bg, Ghost White text, `shadow-lg shadow-royalPurple/40`.
-- **Hover / Focus:** bg brightens to Amethyst, glow follows (`shadow-amethyst/40`); scale 1.05 on hover, 0.95 on tap (skipped under reduced motion).
-- **Outline:** 2px Amethyst/60 border, Amethyst text; hover fills `amethyst/15` and text goes Ghost White.
+- **Primary:** `bg-accent text-accentInk` — text on an accent fill is `accentInk` (light in BOTH modes, never `ink`). Hover brightens to `accentBright`. Lift: `shadow-accent/40` in dark, halved to `shadow-accent/20` in light (`dark:` modifier) so white pages don't glow.
+- **Outline:** 2px `border-accentBright/60`, `text-accentBright`; hover fills `accentBright/10` (light) / `accentBright/15` (dark), text goes `ink`.
+- **Secondary/soft:** `bg-surface2 text-ink border border-edge`; hover `bg-edge`. Never a borderless pale fill on light — a control must read as pressable at a glance in both themes.
+- **Focus:** `ring-2 ring-accentBright` visible on both grounds; scale 1.05 hover / 0.95 tap, skipped under reduced motion.
+
+**The One Button Kit Rule.** Every pressable control uses the shared `Button`
+variants (default / outline / ghost) or the classes above verbatim — no
+hand-rolled one-off button styling in page components.
 
 ### Cards / Containers
 - **Corner Style:** 16px.
@@ -242,8 +247,13 @@ bodies — no sharp diagonal cuts.
 - **Focus:** 2px Royal Purple ring, border fades transparent.
 
 ### Navigation
-- **Marketing nav:** slim translucent bar over voidBlack, สายมู wordmark in Amethyst (Anuphan), section links in Ash Gray → Ghost White on hover, one primary CTA button right-aligned. Driven by a single section config; new sections append there.
-- **App nav:** bottom tab bar (mobile) with icon+label, active tab in Amethyst.
+- **Marketing nav — one row at every breakpoint** (~56px, sticky, `bg-ground/80` blur, `border-b border-edge`), driven by the `SITE_SECTIONS` config; new sections append there.
+  - **Desktop ≥1024px:** brand (Anuphan, `text-accentBright`) · inline section links · spacer · ThemeToggle · primary CTA.
+  - **Tablet 768–1023px:** same as desktop with tighter gaps while links fit; overflow collapses into the hamburger.
+  - **Mobile <768px:** brand · spacer · ThemeToggle · CTA · hamburger (lucide `Menu`/`X`, ≥44px target). No second link row.
+  - **Hamburger drawer:** slide-down panel attached under the bar (`bg-ground/95` blur, `border-b border-edge`), section links + เข้าสู่ระบบ as full-width 44px rows; framer-motion height/opacity reveal honoring reduced motion; `aria-expanded`/`aria-controls`, closes on Escape, outside tap, and route change.
+  - **Link states:** rest `text-inkMuted`, hover `text-ink bg-edgeSoft`, active route `bg-accent/15 text-accentBright`.
+- **App nav:** bottom tab bar (mobile) with icon+label, active tab in `accentBright`.
 
 ### Signature: the Oracle reveal
 Long-form readings appear letter-by-letter (30ms/glyph) in Sarabun Light, as if

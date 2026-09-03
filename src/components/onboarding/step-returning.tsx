@@ -53,7 +53,7 @@ export function StepReturning() {
         {/* Returning user */}
         <button
           onClick={handleReturningUser}
-          className="w-full py-4 px-6 rounded-xl font-heading text-lg bg-accent hover:bg-accentBright text-accentInk transition-all duration-200 shadow-lg shadow-accent/20"
+          className="w-full py-4 px-6 rounded-xl font-heading text-lg bg-accent hover:bg-accentBright text-accentInk transition-all duration-200 shadow-md shadow-accent/20 dark:shadow-accent/30 hover:shadow-lg hover:shadow-accentBright/20 dark:hover:shadow-accentBright/30"
         >
           เคยแล้ว
         </button>
@@ -61,7 +61,7 @@ export function StepReturning() {
         {/* New user */}
         <button
           onClick={handleNewUser}
-          className="w-full py-4 px-6 rounded-xl font-heading text-lg bg-overlay hover:bg-surface2/50 text-ink border border-surface2/50 hover:border-accentBright/30 transition-all duration-200"
+          className="w-full py-4 px-6 rounded-xl font-heading text-lg bg-surface2 text-ink border border-edge hover:bg-edge transition-all duration-200"
         >
           ข้ายังไม่เคยมา
         </button>

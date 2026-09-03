@@ -109,8 +109,8 @@ export function StepMbti() {
                     <Card
                       className={`p-2.5 flex flex-col items-center justify-center gap-0.5 transition-all ${
                         selectedType === type.code
-                          ? "border-accent bg-accent/10 shadow-[0_0_15px_rgba(107,33,168,0.3)]"
-                          : "border-accent/20 hover:border-accent/50 hover:shadow-[0_0_12px_rgba(107,33,168,0.15)]"
+                          ? "border-accent bg-accent/10 shadow-lg shadow-accent/30 dark:shadow-accent/40"
+                          : "border-accent/20 hover:border-accent/50 hover:shadow-md hover:shadow-accent/15 dark:hover:shadow-accent/20"
                       }`}
                     >
                       <p className="text-sm font-heading font-bold text-ink">

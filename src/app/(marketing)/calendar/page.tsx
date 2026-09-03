@@ -642,13 +642,13 @@ export default async function CalendarPage(
               <Link href="/fortune">
                 <div className="relative inline-block w-full sm:w-auto">
                   <div className="absolute inset-0 bg-accent rounded-lg blur-lg opacity-50" />
-                  <button className="relative w-full sm:w-auto px-8 py-3.5 bg-accent hover:bg-accentBright text-accentInk font-heading rounded-lg transition-colors shadow-lg shadow-accent/30">
+                  <button className="relative w-full sm:w-auto px-8 py-3.5 bg-accent hover:bg-accentBright text-accentInk font-heading rounded-lg transition-colors shadow-md shadow-accent/20 dark:shadow-accent/30 hover:shadow-lg hover:shadow-accentBright/20 dark:hover:shadow-accentBright/30">
                     ดูดวงฟรีเลย
                   </button>
                 </div>
               </Link>
               <Link href="/login">
-                <button className="w-full sm:w-auto px-8 py-3.5 border border-accentBright/40 hover:border-accentBright text-accentBright hover:text-accentInk hover:bg-accentBright/10 font-heading rounded-lg transition-colors">
+                <button className="w-full sm:w-auto px-8 py-3.5 border-2 border-accentBright/60 hover:border-accentBright text-accentBright hover:text-ink hover:bg-accentBright/10 dark:hover:bg-accentBright/15 font-heading rounded-lg transition-colors">
                   เข้าสู่ระบบ
                 </button>
               </Link>

@@ -108,7 +108,7 @@ export default function LandingPage() {
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto px-10 py-4 bg-accent hover:bg-accentBright text-accentInk font-heading text-lg font-semibold rounded-lg transition-all shadow-lg shadow-accent/40 hover:shadow-accentBright/40 touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 bg-accent hover:bg-accentBright text-accentInk font-heading text-lg font-semibold rounded-lg transition-all shadow-md shadow-accent/20 dark:shadow-accent/30 hover:shadow-lg hover:shadow-accentBright/20 dark:hover:shadow-accentBright/30 touch-manipulation"
                 >
                   เริ่มดูดวงฟรี
                 </motion.button>
@@ -118,7 +118,7 @@ export default function LandingPage() {
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto px-10 py-4 border-2 border-accentBright/60 hover:border-accentBright text-accentBright hover:text-accentInk hover:bg-accentBright/15 font-heading text-lg rounded-lg transition-all touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 border-2 border-accentBright/60 hover:border-accentBright text-accentBright hover:text-ink hover:bg-accentBright/10 dark:hover:bg-accentBright/15 font-heading text-lg rounded-lg transition-all touch-manipulation"
                 >
                   เข้าสู่ระบบ
                 </motion.button>
@@ -369,7 +369,7 @@ export default function LandingPage() {
               <motion.button
                 whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative px-14 py-5 bg-accent hover:bg-accentBright text-accentInk font-heading text-xl font-semibold rounded-lg transition-all shadow-xl shadow-accent/40 hover:shadow-accentBright/40 touch-manipulation"
+                className="relative px-14 py-5 bg-accent hover:bg-accentBright text-accentInk font-heading text-xl font-semibold rounded-lg transition-all shadow-md shadow-accent/20 dark:shadow-accent/30 hover:shadow-lg hover:shadow-accentBright/20 dark:hover:shadow-accentBright/30 touch-manipulation"
               >
                 เริ่มดูดวงฟรี
               </motion.button>

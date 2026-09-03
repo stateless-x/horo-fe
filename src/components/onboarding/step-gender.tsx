@@ -46,7 +46,7 @@ export function StepGender() {
             onClick={() => handleSelect("male")}
             className="group"
           >
-            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-[0_0_20px_rgba(107,33,168,0.3)]">
+            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/30 dark:hover:shadow-accent/40">
               <div className="relative">
                 <User
                   size={64}
@@ -64,7 +64,7 @@ export function StepGender() {
             onClick={() => handleSelect("female")}
             className="group"
           >
-            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-[0_0_20px_rgba(107,33,168,0.3)]">
+            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/30 dark:hover:shadow-accent/40">
               <div className="relative">
                 <User
                   size={64}

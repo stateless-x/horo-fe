@@ -22,7 +22,7 @@ export function ThemeToggle() {
       type="button"
       aria-label="สลับโหมดสี"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="w-9 h-9 flex items-center justify-center rounded-lg text-inkMuted hover:text-ink hover:bg-edgeSoft transition-colors touch-manipulation"
+      className="w-11 h-11 flex items-center justify-center rounded-lg text-inkMuted hover:text-ink hover:bg-edgeSoft transition-colors touch-manipulation"
     >
       {mounted ? (
         isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />

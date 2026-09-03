@@ -136,7 +136,7 @@ export function Footer() {
                     "width=600,height=400",
                   );
                 }}
-                className="w-11 h-11 flex items-center justify-center bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
+                className="w-11 h-11 flex items-center justify-center bg-surface2 text-ink border border-edge rounded-lg transition-all duration-200 hover:bg-edge"
               >
                 <PlatformIcon platform="line" />
               </button>
@@ -152,7 +152,7 @@ export function Footer() {
                     "width=600,height=400",
                   );
                 }}
-                className="w-11 h-11 flex items-center justify-center bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
+                className="w-11 h-11 flex items-center justify-center bg-surface2 text-ink border border-edge rounded-lg transition-all duration-200 hover:bg-edge"
               >
                 <PlatformIcon platform="facebook" />
               </button>
@@ -169,7 +169,7 @@ export function Footer() {
                     "width=600,height=400",
                   );
                 }}
-                className="w-11 h-11 flex items-center justify-center bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
+                className="w-11 h-11 flex items-center justify-center bg-surface2 text-ink border border-edge rounded-lg transition-all duration-200 hover:bg-edge"
               >
                 <PlatformIcon platform="twitter" />
               </button>
@@ -178,7 +178,7 @@ export function Footer() {
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
                 }}
-                className="px-4 h-11 flex items-center justify-center gap-2 bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
+                className="px-4 h-11 flex items-center justify-center gap-2 bg-surface2 text-ink border border-edge rounded-lg transition-all duration-200 hover:bg-edge"
               >
                 <svg
                   className="w-4 h-4 text-ink"

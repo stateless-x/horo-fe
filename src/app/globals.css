@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@200;300;400&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Anuphan:wght@400;500;600;700&family=Sarabun:wght@200;300;400&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 /* Tailwind v4 CSS-based theme configuration */
@@ -17,7 +17,7 @@
 
   /* Custom Font Families */
   --font-family-thai: 'Noto Sans Thai', sans-serif;
-  --font-family-heading: 'Prompt', sans-serif;
+  --font-family-heading: 'Anuphan', sans-serif;
   --font-family-english: 'Space Grotesk', sans-serif;
   --font-family-oracle: 'Sarabun', sans-serif;
   --font-family-mono: 'JetBrains Mono', monospace;

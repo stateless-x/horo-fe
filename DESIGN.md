@@ -19,17 +19,17 @@ colors:
   element-metal: "#C0C0C0"
 typography:
   display:
-    fontFamily: "Prompt, sans-serif"
+    fontFamily: "Anuphan, sans-serif"
     fontSize: "clamp(2.25rem, 5vw, 4.5rem)"
     fontWeight: 700
     lineHeight: 1.15
   headline:
-    fontFamily: "Prompt, sans-serif"
+    fontFamily: "Anuphan, sans-serif"
     fontSize: "clamp(1.875rem, 3vw, 2.5rem)"
     fontWeight: 600
     lineHeight: 1.25
   title:
-    fontFamily: "Prompt, sans-serif"
+    fontFamily: "Anuphan, sans-serif"
     fontSize: "1.25rem"
     fontWeight: 600
     lineHeight: 1.4
@@ -43,6 +43,11 @@ typography:
     fontSize: "1.125rem"
     fontWeight: 300
     lineHeight: 1.8
+  english:
+    fontFamily: "Space Grotesk, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 500
+    lineHeight: 1.5
   label:
     fontFamily: "JetBrains Mono, monospace"
     fontSize: "0.75rem"
@@ -137,13 +142,13 @@ second grain layer.
 
 ## Typography
 
-**Display/Heading Font:** Prompt (with sans-serif fallback)
+**Display/Heading Font:** Anuphan (with sans-serif fallback)
 **Body Font:** Noto Sans Thai (with sans-serif fallback)
 **Oracle Font:** Sarabun Light 200–300 (with sans-serif fallback)
 **Latin Accent Font:** Space Grotesk — English words inside Thai UI (MBTI, Bazi)
 **Mono Font:** JetBrains Mono — version tags, data labels
 
-**Character:** Prompt's geometric loops give headings a modern-Thai confidence;
+**Character:** Anuphan's clean, softly rounded forms give headings a distinctly current Thai voice — modern without shouting, friendly enough to sit beside clay-render imagery;
 Noto Sans Thai keeps long readings effortless; Sarabun at weight 200–300 is the
 oracle whispering — airy, thin, otherworldly.
 
@@ -156,7 +161,7 @@ oracle whispering — airy, thin, otherworldly.
 - **Label** (500, 0.75rem, tracking 0.05em): mono, for metadata only — never as a "technical costume".
 
 **The Two Voices Rule.** Marketing surfaces speak contemporary Thai and address the
-visitor as คุณ, set in Prompt/Noto Sans Thai. Inside the reading experience the
+visitor as คุณ, set in Anuphan/Noto Sans Thai. Inside the reading experience the
 oracle speaks as ข้า to เจ้า, set in Sarabun Light. Never mix registers in one
 sentence; never let the oracle voice write a button label on a marketing page.
 
@@ -195,7 +200,7 @@ bodies — no sharp diagonal cuts.
 ## Components
 
 ### Buttons
-- **Shape:** gently rounded (8px), generous padding (16px 40px), Prompt semibold.
+- **Shape:** gently rounded (8px), generous padding (16px 40px), Anuphan semibold.
 - **Primary:** Royal Purple bg, Ghost White text, `shadow-lg shadow-royalPurple/40`.
 - **Hover / Focus:** bg brightens to Amethyst, glow follows (`shadow-amethyst/40`); scale 1.05 on hover, 0.95 on tap (skipped under reduced motion).
 - **Outline:** 2px Amethyst/60 border, Amethyst text; hover fills `amethyst/15` and text goes Ghost White.
@@ -212,7 +217,7 @@ bodies — no sharp diagonal cuts.
 - **Focus:** 2px Royal Purple ring, border fades transparent.
 
 ### Navigation
-- **Marketing nav:** slim translucent bar over voidBlack, สายมู wordmark in Amethyst (Prompt), section links in Ash Gray → Ghost White on hover, one primary CTA button right-aligned. Driven by a single section config; new sections append there.
+- **Marketing nav:** slim translucent bar over voidBlack, สายมู wordmark in Amethyst (Anuphan), section links in Ash Gray → Ghost White on hover, one primary CTA button right-aligned. Driven by a single section config; new sections append there.
 - **App nav:** bottom tab bar (mobile) with icon+label, active tab in Amethyst.
 
 ### Signature: the Oracle reveal
@@ -221,9 +226,17 @@ being spoken. Reserve it for oracle text; UI copy appears instantly.
 
 ### Signature: media placeholders
 Until real art lands, image slots use the `MediaPlaceholder` component: a 16px-radius
-frame in deepNight with a faint amethyst orb, labeled with the exact asset spec
-(e.g. `1600×900 · WebP`). Placeholders are honest scaffolding — they occupy the
-final layout box (fixed aspect-ratio) so the composition is real before the art is.
+frame in deepNight with a faint amethyst orb (element-tinted via `glowColor` when the
+asset belongs to a ธาตุ), labeled with the exact asset spec (e.g. `1600×900 · WebP`;
+`compact` variant for small in-card slots). Placeholders are honest scaffolding — they
+occupy the final layout box (fixed aspect-ratio) so the composition is real before
+the art is.
+
+**The Clay Cast Rule.** All illustrative imagery is soft 3D clay-style renders —
+matte, rounded, single soft light, on transparent ground (PNG/WebP alpha), sitting
+on the purple ladder unless the subject is a user's ธาตุ. No photography, no flat
+vector illustration, no stock 3D gloss. One cast, one material, every prop in the
+diviner's room.
 
 ## Do's and Don'ts
 

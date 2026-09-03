@@ -12,7 +12,7 @@ export const COLORS = {
 
 export const FONTS = {
   thaiBody: 'Noto Sans Thai, sans-serif',
-  thaiHeading: 'Prompt, sans-serif',
+  thaiHeading: 'Anuphan, sans-serif',
   english: 'Space Grotesk, sans-serif',
   oracle: 'Sarabun, sans-serif', // Weight 200 for oracle voice
   mono: 'JetBrains Mono, monospace',

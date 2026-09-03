@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { Eye, Sparkles, Moon, Brain } from 'lucide-react';
 import { ClientDate } from '@/components/client-date';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { ElementShowcase } from '@/components/landing/element-showcase';
@@ -184,7 +183,13 @@ export default function LandingPage() {
 
                 <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amethyst" />
 
-                <Sparkles className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
+                <MediaPlaceholder
+                  aspect="4/3"
+                  spec="800×600 · PNG"
+                  label="โมเดล 3D clay เสาจีนโบราณสี่ต้น — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
+                  compact
+                  className="w-32 mb-4 relative z-10"
+                />
                 <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
                   ดวงจีนปาจื้อ (Bazi)
                 </h3>
@@ -223,7 +228,13 @@ export default function LandingPage() {
 
                 <div className="absolute -top-16 -left-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-royalPurple" />
 
-                <Moon className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
+                <MediaPlaceholder
+                  aspect="4/3"
+                  spec="800×600 · PNG"
+                  label="โมเดล 3D clay ดาวนพเคราะห์ไทยลอยรอบดวงจันทร์ — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
+                  compact
+                  className="w-32 mb-4 relative z-10"
+                />
                 <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
                   โหราศาสตร์ไทย
                 </h3>
@@ -262,7 +273,13 @@ export default function LandingPage() {
 
                 <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-lavenderGlow" />
 
-                <Brain className="w-6 h-6 text-amethyst/70 mb-4 relative z-10" />
+                <MediaPlaceholder
+                  aspect="4/3"
+                  spec="800×600 · PNG"
+                  label="โมเดล 3D clay สมองสองซีกสองสี — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
+                  compact
+                  className="w-32 mb-4 relative z-10"
+                />
                 <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
                   จิตวิทยา MBTI
                 </h3>

@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
+import { MediaPlaceholder } from '@/components/ui/media-placeholder';
 
 const elements = [
   { key: 'wood', name: 'ธาตุไม้', trait: 'เติบโต', colors: ELEMENT_COLORS.wood },
@@ -117,13 +118,14 @@ function ElementOrb({
           backdropFilter: 'blur(8px)',
         }}
       >
-        {/* Glowing orb */}
-        <div
-          className="w-12 h-12 rounded-full mx-auto mb-3 transition-shadow duration-300"
-          style={{
-            backgroundColor: element.colors.primary,
-            boxShadow: `0 0 20px ${element.colors.primary}40, 0 0 40px ${element.colors.glow}`,
-          }}
+        {/* 3D clay element model slot */}
+        <MediaPlaceholder
+          aspect="1/1"
+          spec="480×480 · PNG"
+          label={`โมเดล 3D clay ${element.name} — สไตล์ดินปั้นนุ่ม แสงเดียว พื้นหลังโปร่งใส`}
+          glowColor={element.colors.primary}
+          compact
+          className="mb-3"
         />
 
         <p

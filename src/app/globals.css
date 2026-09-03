@@ -75,6 +75,40 @@
   }
 }
 
+@layer components {
+  /*
+   * Shared glass card surface — DESIGN.md "Cards / Containers": 135deg deepNight
+   * gradient + blur(10px) + white/10 border + 16px radius. No box-shadow here
+   * (Glow-Not-Shadow Rule) — lift comes from a card's own colored glow blob,
+   * per-element cards add their own glowColor shadow inline.
+   */
+  .glass-card {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(15, 10, 26, 0.8));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem; /* rounded-2xl */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /*
+   * Hover lift — split out from .glass-card because framer-motion's
+   * whileHover/animate props write inline `transform` on some cards
+   * (element orbs) and would silently clobber a CSS hover transform.
+   * Apply only to cards without a competing motion transform.
+   */
+  .glass-card-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .glass-card-lift:active {
+    transform: scale(0.98);
+  }
+  @media (min-width: 768px) {
+    .glass-card-lift:hover {
+      transform: translateY(-0.25rem) scale(1.02);
+    }
+  }
+}
+
 /* Hide scrollbar utility */
 .scrollbar-hide {
   -ms-overflow-style: none;

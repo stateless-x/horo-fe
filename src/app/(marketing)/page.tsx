@@ -164,42 +164,36 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="relative group"
+              className="relative group h-full"
             >
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-amethyst/30 -z-10" />
 
-              <div
-                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1 h-full"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-                }}
-              >
-                {/* Watermark */}
-                <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
-                  命
-                </span>
-
-                <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-amethyst" />
-
+              <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
-                  aspect="4/3"
-                  spec="800×600 · PNG"
+                  aspect="16/9"
+                  spec="1200×675 · PNG"
                   label="โมเดล 3D clay เสาจีนโบราณสี่ต้น — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
-                  compact
-                  className="w-32 mb-4 relative z-10"
+                  flush
+                  className="w-full rounded-t-2xl"
                 />
-                <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
-                  ดวงจีนปาจื้อ (Bazi)
-                </h3>
-                <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
-                  ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากสี่เสาชะตา (ปี เดือน วัน
-                  ชั่วโมงเกิด) และธาตุทั้งห้า
-                </p>
-                <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
-                  จุดเด่น: วิเคราะห์วงจรชีวิต 10 ปี และพลังธาตุในชาติ
-                </p>
+
+                <div className="relative flex flex-col flex-1 p-6 md:p-8">
+                  {/* Watermark */}
+                  <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                    命
+                  </span>
+
+                  <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4">
+                    ดวงจีนปาจื้อ (Bazi)
+                  </h3>
+                  <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4">
+                    ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากสี่เสาชะตา (ปี เดือน วัน
+                    ชั่วโมงเกิด) และธาตุทั้งห้า
+                  </p>
+                  <p className="text-ashGray text-xs md:text-sm font-oracle mt-auto">
+                    จุดเด่น: วิเคราะห์วงจรชีวิต 10 ปี และพลังธาตุในชาติ
+                  </p>
+                </div>
               </div>
             </motion.div>
 
@@ -209,42 +203,36 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="relative group"
+              className="relative group h-full"
             >
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
 
-              <div
-                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1 h-full"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-                }}
-              >
-                {/* Watermark */}
-                <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
-                  ๙
-                </span>
-
-                <div className="absolute -top-16 -left-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-royalPurple" />
-
+              <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
-                  aspect="4/3"
-                  spec="800×600 · PNG"
+                  aspect="16/9"
+                  spec="1200×675 · PNG"
                   label="โมเดล 3D clay ดาวนพเคราะห์ไทยลอยรอบดวงจันทร์ — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
-                  compact
-                  className="w-32 mb-4 relative z-10"
+                  flush
+                  className="w-full rounded-t-2xl"
                 />
-                <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
-                  โหราศาสตร์ไทย
-                </h3>
-                <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
-                  ภูมิปัญญาไทยที่ดูดวงจากวันเกิด นพเคราะห์ และจักรนพคุณ
-                  เพื่อดูความสัมพันธ์และโชคลาภ
-                </p>
-                <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
-                  จุดเด่น: วิเคราะห์ความสัมพันธ์ โชคลาภ และจังหวะเวลา
-                </p>
+
+                <div className="relative flex flex-col flex-1 p-6 md:p-8">
+                  {/* Watermark */}
+                  <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                    ๙
+                  </span>
+
+                  <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4">
+                    โหราศาสตร์ไทย
+                  </h3>
+                  <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4">
+                    ภูมิปัญญาไทยที่ดูดวงจากวันเกิด นพเคราะห์ และจักรนพคุณ
+                    เพื่อดูความสัมพันธ์และโชคลาภ
+                  </p>
+                  <p className="text-ashGray text-xs md:text-sm font-oracle mt-auto">
+                    จุดเด่น: วิเคราะห์ความสัมพันธ์ โชคลาภ และจังหวะเวลา
+                  </p>
+                </div>
               </div>
             </motion.div>
 
@@ -254,43 +242,37 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative group"
+              className="relative group h-full"
             >
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-lavenderGlow/30 -z-10" />
 
-              <div
-                className="relative rounded-2xl p-6 md:p-8 overflow-hidden border border-white/10 transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] md:hover:-translate-y-1 h-full"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-                }}
-              >
-                {/* Watermark */}
-                <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
-                  心
-                </span>
-
-                <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-2xl opacity-10 bg-lavenderGlow" />
-
+              <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
-                  aspect="4/3"
-                  spec="800×600 · PNG"
+                  aspect="16/9"
+                  spec="1200×675 · PNG"
                   label="โมเดล 3D clay สมองสองซีกสองสี — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
-                  compact
-                  className="w-32 mb-4 relative z-10"
+                  flush
+                  className="w-full rounded-t-2xl"
                 />
-                <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4 relative z-10">
-                  จิตวิทยา MBTI
-                </h3>
-                <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4 relative z-10">
-                  จิตวิทยาบุคลิกภาพ 16 แบบ
-                  เสริมให้คำทำนายเข้าถึงตัวตนของคุณอย่างลึกซึ้ง
-                  พร้อมเตือนจุดอ่อนที่บุคลิกภาพแบบคุณมักเจอ
-                </p>
-                <p className="text-ashGray text-xs md:text-sm font-oracle relative z-10">
-                  จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวคุณ
-                </p>
+
+                <div className="relative flex flex-col flex-1 p-6 md:p-8">
+                  {/* Watermark */}
+                  <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                    心
+                  </span>
+
+                  <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4">
+                    จิตวิทยา MBTI
+                  </h3>
+                  <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4">
+                    จิตวิทยาบุคลิกภาพ 16 แบบ
+                    เสริมให้คำทำนายเข้าถึงตัวตนของคุณอย่างลึกซึ้ง
+                    พร้อมเตือนจุดอ่อนที่บุคลิกภาพแบบคุณมักเจอ
+                  </p>
+                  <p className="text-ashGray text-xs md:text-sm font-oracle mt-auto">
+                    จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวคุณ
+                  </p>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -342,13 +324,7 @@ export default function LandingPage() {
               transition={{ delay: 0.1 }}
               className="space-y-6"
             >
-              <div
-                className="rounded-2xl p-6 md:p-8 border border-white/10"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
-                  backdropFilter: 'blur(10px)',
-                }}
-              >
+              <div className="glass-card p-6 md:p-8">
                 <p className="font-mono text-xs tracking-wider text-ashGray/60 mb-3">ตัวอย่างคำทำนาย · ธาตุไม้ · INFP</p>
                 <p className="font-oracle text-paleOrchid/90 leading-relaxed">
                   &ldquo;เจ้าเป็นไม้ที่โตท่ามกลางลมแรง — ใจอ่อนโยนแต่รากลึก

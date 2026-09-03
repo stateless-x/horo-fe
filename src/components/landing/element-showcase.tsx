@@ -94,11 +94,7 @@ function ElementOrb({
         visible: { opacity: 1, y: 0 },
       }}
       transition={{ duration: 0.5 }}
-      className={
-        mobile
-          ? 'snap-center flex-shrink-0 w-28'
-          : ''
-      }
+      className={mobile ? 'snap-center flex-shrink-0 w-28' : 'h-full'}
     >
       <motion.div
         animate={
@@ -112,31 +108,30 @@ function ElementOrb({
           ease: 'easeInOut',
         }}
         whileHover={shouldReduceMotion ? {} : { scale: 1.08 }}
-        className="rounded-xl p-5 text-center border border-white/10 transition-shadow duration-300 cursor-default"
-        style={{
-          background: 'linear-gradient(135deg, rgba(15, 10, 26, 0.8), rgba(10, 10, 15, 0.9))',
-          backdropFilter: 'blur(8px)',
-        }}
+        className="glass-card relative overflow-hidden text-center cursor-default flex flex-col h-full"
+        style={{ boxShadow: `0 8px 24px ${element.colors.glow}` }}
       >
-        {/* 3D clay element model slot */}
+        {/* 3D clay element model — full-bleed top media area */}
         <MediaPlaceholder
           aspect="1/1"
           spec="480×480 · PNG"
           label={`โมเดล 3D clay ${element.name} — สไตล์ดินปั้นนุ่ม แสงเดียว พื้นหลังโปร่งใส`}
           glowColor={element.colors.primary}
-          compact
-          className="mb-3"
+          flush
+          className="w-full rounded-t-2xl"
         />
 
-        <p
-          className="font-heading text-sm mb-1"
-          style={{ color: element.colors.primary }}
-        >
-          {element.name}
-        </p>
-        <p className="text-ashGray text-xs font-oracle">
-          {element.trait}
-        </p>
+        <div className="flex flex-col items-center px-4 py-4">
+          <p
+            className="font-heading text-sm mb-1"
+            style={{ color: element.colors.primary }}
+          >
+            {element.name}
+          </p>
+          <p className="text-ashGray text-xs font-oracle">
+            {element.trait}
+          </p>
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -242,7 +242,7 @@ export function Footer() {
           <div className="flex items-center gap-1.5">
             <span>Made by</span>
             <a
-              href="https://x.com/askpurin"
+              href="https://pooh.fyi"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-amethyst hover:text-lavenderGlow transition-colors duration-200"

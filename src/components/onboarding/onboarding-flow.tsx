@@ -35,9 +35,7 @@ export function OnboardingFlow() {
   }, [currentStep, router]);
 
   return (
-    /* data-theme="dark": the wizard is always the Midnight Room — the cinematic
-       เข้าห้องหมอดู moment does not theme-switch. */
-    <div data-theme="dark" className="relative min-h-screen bg-ground text-ink">
+    <div className="relative min-h-screen bg-ground text-ink">
       {/* Ambient audio mute/unmute toggle */}
       <AmbientAudioToggle isMuted={isMuted} onToggle={toggleMute} />
 

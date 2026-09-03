@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PublicNav } from '@/components/layout/public-nav';
 import { AdUnit } from '@/components/ads/ad-unit';
 import { MonthTabs } from '@/components/calendar/month-tabs';
 import { isValidMonthParam } from '@/lib/calendar-range';
@@ -366,8 +365,6 @@ export default async function CalendarPage(
 
   return (
     <div className="min-h-screen bg-voidBlack text-ghostWhite">
-
-      <PublicNav />
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-10">
 

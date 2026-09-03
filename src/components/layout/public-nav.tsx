@@ -2,12 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Calendar } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
+import { SITE_SECTIONS } from '@/lib/site-sections';
 
-const NAV_LINKS = [
-  { href: '/calendar', label: 'ปฏิทินไทย', icon: Calendar },
-];
+const NAV_LINKS = SITE_SECTIONS;
 
 export function PublicNav() {
   const pathname = usePathname();

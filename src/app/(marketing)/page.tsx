@@ -10,9 +10,9 @@ import { ClientDate } from '@/components/client-date';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { ElementShowcase } from '@/components/landing/element-showcase';
 import { ReadingCategories } from '@/components/landing/reading-categories';
+import { MediaPlaceholder } from '@/components/ui/media-placeholder';
 import { SEOSections } from '@/components/seo/seo-sections';
 import { CookieConsent } from '@/components/cookie-consent';
-import { PublicNav } from '@/components/layout/public-nav';
 
 /**
  * Landing Page
@@ -46,7 +46,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden">
-      <PublicNav />
       {/* ===== SECTION 1: Hero — "The Threshold" ===== */}
       <section className="relative min-h-[100dvh] flex items-center justify-center">
         {/* Ambient Video Background */}
@@ -147,7 +146,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-heading text-ghostWhite text-center mb-6"
           >
-            ศาสตร์ที่เราใช้
+            ทำไมสายมูถึงทายได้ตรง
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -156,7 +155,7 @@ export default function LandingPage() {
             transition={{ delay: 0.1 }}
             className="text-ashGray font-oracle text-center mb-16 max-w-2xl mx-auto"
           >
-            ผสาน 3 ศาสตร์เข้าด้วยกัน เพื่อคำทำนายที่แม่นยำและเข้าถึงตัวตนอย่างแท้จริง
+            เพราะเราไม่ได้ดูแค่ดวง — เราอ่านทั้งชะตาและนิสัยของคุณ ผสาน 3 ศาสตร์ไว้ในคำทำนายเดียว
           </motion.p>
 
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 relative">
@@ -283,6 +282,72 @@ export default function LandingPage() {
 
       {/* ===== SECTION 5: Six Readings ===== */}
       <ReadingCategories />
+
+      {/* ===== SECTION 5.5: Proof — a real reading, shown ===== */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-heading text-ghostWhite text-center mb-6"
+          >
+            คำทำนายหน้าตาเป็นแบบนี้
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-ashGray font-oracle text-center mb-12 max-w-2xl mx-auto"
+          >
+            ไม่ใช่คำทำนายกว้าง ๆ ที่ใครอ่านก็ตรง —
+            ทุกบรรทัดคำนวณจากวันเกิด เวลาเกิด และบุคลิกภาพของคุณคนเดียว
+          </motion.p>
+
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <MediaPlaceholder
+                aspect="4/5"
+                spec="1080×1350 · WebP"
+                label="ภาพหน้าจอจริงของหน้าดวงชะตา — สี่เสาชะตา ธาตุประจำตัว และคะแนน 6 ด้าน"
+                className="max-w-md mx-auto w-full"
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="space-y-6"
+            >
+              <div
+                className="rounded-2xl p-6 md:p-8 border border-white/10"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(161,106,203,0.05), rgba(15, 10, 26, 0.8))',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                <p className="font-mono text-xs tracking-wider text-ashGray/60 mb-3">ตัวอย่างคำทำนาย · ธาตุไม้ · INFP</p>
+                <p className="font-oracle text-paleOrchid/90 leading-relaxed">
+                  &ldquo;เจ้าเป็นไม้ที่โตท่ามกลางลมแรง — ใจอ่อนโยนแต่รากลึก
+                  ช่วงนี้การงานของเจ้ากำลังเข้าเดือนที่ธาตุทองกดทับ
+                  คนบุคลิกแบบเจ้ามักยอมรับงานเกินตัวเพราะไม่กล้าปฏิเสธ
+                  จงระวังสัปดาห์ที่สามของเดือน&rdquo;
+                </p>
+              </div>
+              <p className="text-ashGray text-sm leading-relaxed">
+                สังเกตบรรทัดสุดท้าย — คำเตือนอิงจากจุดอ่อนของบุคลิกภาพแบบคุณโดยตรง
+                นี่คือสิ่งที่โหราศาสตร์อย่างเดียวให้ไม่ได้ และแบบทดสอบบุคลิกภาพอย่างเดียวก็ให้ไม่ได้
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* ===== SECTION 6: Final CTA — "The Invitation" ===== */}
       <section className="py-24 px-6 text-center relative">

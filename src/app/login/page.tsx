@@ -6,6 +6,7 @@ import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { MediaPlaceholder } from '@/components/ui/media-placeholder';
 
 /**
  * Login Page
@@ -71,10 +72,18 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-voidBlack flex items-center justify-center p-6">
+      <div className="w-full max-w-4xl grid lg:grid-cols-2 gap-12 items-center">
+      {/* Side illustration — desktop only */}
+      <MediaPlaceholder
+        aspect="4/5"
+        spec="960×1200 · WebP"
+        label="ภาพบรรยากาศห้องดูดวง — ดวงตา ประตู หรือแผนภูมิดาว โทนม่วงอเมทิสต์"
+        className="hidden lg:block"
+      />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md space-y-8"
+        className="w-full max-w-md mx-auto space-y-8"
       >
         {/* Header */}
         <motion.div
@@ -155,7 +164,7 @@ export default function LoginPage() {
               href="/fortune"
               className="text-amethyst hover:text-lavenderGlow underline"
             >
-              ดูดวงของเจ้า
+              เริ่มดูดวงฟรีก่อนได้เลย
             </Link>
           </p>
           <Link
@@ -178,6 +187,7 @@ export default function LoginPage() {
           เงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัวของเรา
         </motion.p>
       </motion.div>
+      </div>
     </div>
   );
 }

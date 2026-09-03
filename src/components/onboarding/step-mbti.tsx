@@ -46,7 +46,7 @@ export function StepMbti() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-2xl md:text-3xl text-center text-ghostWhite font-heading"
+          className="text-2xl md:text-3xl text-center text-ink font-heading"
         >
           เจ้ารู้จัก MBTI ของตัวเองไหม?
         </motion.h1>
@@ -60,7 +60,7 @@ export function StepMbti() {
         >
           <button
             onClick={handleSkip}
-            className="inline-flex items-center gap-1.5 text-sm text-ashGray hover:text-amethyst transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-inkMuted hover:text-accentBright transition-colors"
           >
             <HelpCircle className="w-3.5 h-3.5" />
             ไม่รู้ MBTI ของตัวเอง?{" "}
@@ -68,13 +68,13 @@ export function StepMbti() {
               ข้ามขั้นตอนนี้
             </span>
           </button>
-          <p className="text-xs text-ashGray/70">
+          <p className="text-xs text-inkMuted/70">
             MBTI คือรูปแบบบุคลิกภาพ 16 แบบที่ช่วยให้เข้าใจตัวเองมากขึ้น{" "}
             <a
               href="https://www.16personalities.com/th"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-amethyst hover:text-royalPurple transition-colors underline underline-offset-2"
+              className="inline-flex items-center gap-1 text-accentBright hover:text-accent transition-colors underline underline-offset-2"
             >
               ทำแบบทดสอบที่นี่
               <ExternalLink className="w-3 h-3" />
@@ -92,9 +92,9 @@ export function StepMbti() {
               transition={{ delay: 0.3 + groupIndex * 0.05 }}
             >
               {/* Group header */}
-              <p className="text-xs text-ashGray mb-2 pl-1">
+              <p className="text-xs text-inkMuted mb-2 pl-1">
                 {group.nameTh}{" "}
-                <span className="text-ashGray/50">({group.nameEn})</span>
+                <span className="text-inkMuted/50">({group.nameEn})</span>
               </p>
 
               {/* 4 types in a row */}
@@ -109,14 +109,14 @@ export function StepMbti() {
                     <Card
                       className={`p-2.5 flex flex-col items-center justify-center gap-0.5 transition-all ${
                         selectedType === type.code
-                          ? "border-royalPurple bg-royalPurple/10 shadow-[0_0_15px_rgba(107,33,168,0.3)]"
-                          : "border-royalPurple/20 hover:border-royalPurple/50 hover:shadow-[0_0_12px_rgba(107,33,168,0.15)]"
+                          ? "border-accent bg-accent/10 shadow-[0_0_15px_rgba(107,33,168,0.3)]"
+                          : "border-accent/20 hover:border-accent/50 hover:shadow-[0_0_12px_rgba(107,33,168,0.15)]"
                       }`}
                     >
-                      <p className="text-sm font-heading font-bold text-ghostWhite">
+                      <p className="text-sm font-heading font-bold text-ink">
                         {type.code}
                       </p>
-                      <p className="text-[10px] text-ashGray leading-tight">
+                      <p className="text-[10px] text-inkMuted leading-tight">
                         {type.nameTh}
                       </p>
                     </Card>

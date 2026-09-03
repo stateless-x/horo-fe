@@ -58,19 +58,19 @@ export function CategoryScores({ categories }: CategoryScoresProps) {
           <button
             key={key}
             onClick={() => setExpanded(isExpanded ? null : key)}
-            className={`bg-deepNight border border-darkPurple/50 rounded-xl p-4 text-left transition-all duration-200 hover:border-royalPurple/30 ${
-              isExpanded ? 'col-span-2 border-royalPurple/30' : 'col-span-1'
+            className={`bg-surface border border-surface2/50 rounded-xl p-4 text-left transition-all duration-200 hover:border-accent/30 ${
+              isExpanded ? 'col-span-2 border-accent/30' : 'col-span-1'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Icon className="w-4 h-4" style={{ color: config.color }} />
-                <span className="font-heading text-sm md:text-base font-medium text-ghostWhite">
+                <span className="font-heading text-sm md:text-base font-medium text-ink">
                   {config.label}
                 </span>
               </div>
               <ChevronDown
-                className={`w-3.5 h-3.5 text-ashGray transition-transform duration-200 ${
+                className={`w-3.5 h-3.5 text-inkMuted transition-transform duration-200 ${
                   isExpanded ? 'rotate-180' : ''
                 }`}
               />
@@ -78,7 +78,7 @@ export function CategoryScores({ categories }: CategoryScoresProps) {
 
             <StarRating score={data.score} color={config.color} />
 
-            <p className="text-xs md:text-sm text-ashGray mt-2 line-clamp-2 font-thai">
+            <p className="text-xs md:text-sm text-inkMuted mt-2 line-clamp-2 font-thai">
               {data.tip}
             </p>
 
@@ -92,8 +92,8 @@ export function CategoryScores({ categories }: CategoryScoresProps) {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <hr className="border-darkPurple/50 my-3" />
-                  <p className="text-base md:text-lg leading-relaxed text-ghostWhite/80 font-oracle font-light">
+                  <hr className="border-surface2/50 my-3" />
+                  <p className="text-base md:text-lg leading-relaxed text-ink/80 font-oracle font-light">
                     {data.reading}
                   </p>
                 </motion.div>

@@ -35,7 +35,9 @@ export function OnboardingFlow() {
   }, [currentStep, router]);
 
   return (
-    <div className="relative min-h-screen bg-voidBlack">
+    /* data-theme="dark": the wizard is always the Midnight Room — the cinematic
+       เข้าห้องหมอดู moment does not theme-switch. */
+    <div data-theme="dark" className="relative min-h-screen bg-ground text-ink">
       {/* Ambient audio mute/unmute toggle */}
       <AmbientAudioToggle isMuted={isMuted} onToggle={toggleMute} />
 
@@ -58,7 +60,7 @@ export function OnboardingFlow() {
           animate={{ y: 0, opacity: 1 }}
           className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50"
         >
-          <div className="bg-charcoal/80 backdrop-blur-md rounded-full px-6 py-3 border border-darkPurple/50">
+          <div className="bg-overlay/80 backdrop-blur-md rounded-full px-6 py-3 border border-surface2/50">
             <div className="flex items-center gap-3">
               {['name', 'birthDate', 'gender', 'birthTime', 'mbti', 'teaser', 'auth'].map((step, index) => {
                 const stepOrder = ['name', 'birthDate', 'gender', 'birthTime', 'mbti', 'teaser', 'auth'];
@@ -71,10 +73,10 @@ export function OnboardingFlow() {
                     <motion.div
                       className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                         isActive
-                          ? 'bg-royalPurple ring-4 ring-royalPurple/30'
+                          ? 'bg-accent ring-4 ring-accent/30'
                           : isCompleted
-                          ? 'bg-amethyst'
-                          : 'bg-darkPurple/50'
+                          ? 'bg-accentBright'
+                          : 'bg-surface2/50'
                       }`}
                       animate={isActive ? {
                         scale: [1, 1.3, 1],
@@ -87,7 +89,7 @@ export function OnboardingFlow() {
                     />
                     {isActive && (
                       <motion.div
-                        className="absolute inset-0 bg-royalPurple rounded-full blur-sm"
+                        className="absolute inset-0 bg-accent rounded-full blur-sm"
                         animate={{
                           opacity: [0.3, 0.6, 0.3],
                           scale: [1, 1.5, 1],

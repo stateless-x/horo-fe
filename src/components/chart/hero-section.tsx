@@ -59,7 +59,7 @@ export function HeroSection({
             style={{ backgroundColor: elementAccent || '#a16acb' }}
           />
           <div
-            className="relative bg-white/5 backdrop-blur-md border border-white/10 text-lavenderGlow rounded-full px-5 py-2 text-sm md:text-base font-heading font-medium flex items-center gap-2 transition-all duration-300 group-hover:scale-105"
+            className="relative bg-edgeSoft backdrop-blur-md border border-edge text-accentSoft rounded-full px-5 py-2 text-sm md:text-base font-heading font-medium flex items-center gap-2 transition-all duration-300 group-hover:scale-105"
             style={{
               boxShadow: `0 0 30px ${elementAccent ? `${elementAccent}30` : 'rgba(161,106,203,0.2)'}`,
             }}
@@ -82,7 +82,7 @@ export function HeroSection({
       {/* User name with glow effect */}
       <div className="mb-3 md:mb-4">
         <h1
-          className="font-heading text-ghostWhite font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl inline-block transition-all duration-300 hover:scale-105 cursor-default"
+          className="font-heading text-ink font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl inline-block transition-all duration-300 hover:scale-105 cursor-default"
           style={{
             textShadow: `0 0 40px ${elementAccent ? `${elementAccent}40` : 'rgba(161,106,203,0.25)'}`,
           }}
@@ -93,13 +93,13 @@ export function HeroSection({
 
       {/* Birth date and age with decorative separators */}
       <div className="flex items-center justify-center gap-2 md:gap-3 mb-8 md:mb-10">
-        <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-lavenderGlow/30" />
-        <p className="font-thai text-ashGray text-sm md:text-base flex items-center gap-2">
+        <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-accentSoft/30" />
+        <p className="font-thai text-inkMuted text-sm md:text-base flex items-center gap-2">
           <span>{birthDateFormatted}</span>
-          <span className="text-lavenderGlow/50">·</span>
+          <span className="text-accentSoft/50">·</span>
           <span>อายุ {currentAge}</span>
         </p>
-        <div className="w-8 h-[1px] bg-gradient-to-l from-transparent to-lavenderGlow/30" />
+        <div className="w-8 h-[1px] bg-gradient-to-l from-transparent to-accentSoft/30" />
       </div>
 
       {/* Personality traits as floating bubbles */}

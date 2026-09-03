@@ -33,7 +33,7 @@ function GuidanceSection({ title, items, icon, accentColor, bgColor }: GuidanceS
         {items.map((item, index) => (
           <li
             key={index}
-            className="text-sm leading-relaxed text-ghostWhite/80 font-thai pl-4 relative"
+            className="text-sm leading-relaxed text-ink/80 font-thai pl-4 relative"
           >
             <span className={`absolute left-0 ${accentColor}`}>·</span>
             {item}
@@ -89,9 +89,9 @@ export function GuidancePanel({ dos, donts, warnings, suggestions }: GuidancePan
         <GuidanceSection
           title="คำแนะนำสำหรับเจ้า"
           items={suggestions}
-          icon={<Lightbulb className="w-4 h-4 text-amethyst" />}
-          accentColor="text-amethyst"
-          bgColor="bg-amethyst/5 border border-amethyst/15"
+          icon={<Lightbulb className="w-4 h-4 text-accentBright" />}
+          accentColor="text-accentBright"
+          bgColor="bg-accentBright/5 border border-accentBright/15"
         />
       )}
     </motion.div>

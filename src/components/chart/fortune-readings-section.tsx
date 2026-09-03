@@ -67,8 +67,8 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
               <Star
                 className={`w-4 h-4 ${
                   isFilled
-                    ? 'text-amethyst fill-amethyst'
-                    : 'text-darkPurple/50'
+                    ? 'text-accentBright fill-accentBright'
+                    : 'text-surface2/50'
                 }`}
               />
               {/* Sparkle effect for high scores (4-5 stars) */}
@@ -83,13 +83,13 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                     ease: 'easeOut',
                   }}
                 >
-                  <div className="w-full h-full bg-amethyst rounded-full blur-sm" />
+                  <div className="w-full h-full bg-accentBright rounded-full blur-sm" />
                 </motion.div>
               )}
             </motion.div>
           );
         })}
-        <span className="font-mono text-amethyst text-base ml-1">
+        <span className="font-mono text-accentBright text-base ml-1">
           {score}/5
         </span>
       </div>
@@ -105,10 +105,10 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
   return (
     <div>
       <div className="text-center mb-6">
-        <h2 className="font-heading text-2xl font-medium text-ghostWhite mb-2">
+        <h2 className="font-heading text-2xl font-medium text-ink mb-2">
           คำทำนายโดยละเอียด
         </h2>
-        <p className="font-thai text-ashGray text-base">
+        <p className="font-thai text-inkMuted text-base">
           แตะที่แต่ละหมวดเพื่ออ่านคำทำนายฉบับเต็ม
         </p>
       </div>
@@ -125,14 +125,14 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
               whileHover={!isExpanded ? { x: 2 } : {}}
               whileTap={{ scale: 0.98 }}
               className={`
-                bg-deepNight rounded-xl transition-all duration-200
+                bg-surface rounded-xl transition-all duration-200
                 ${
                   isExpanded
-                    ? 'border-amethyst/30 bg-darkPurple/10 shadow-[0_0_20px_rgba(161,106,203,0.15)]'
-                    : 'border-darkPurple/50 hover:border-royalPurple/50 hover:shadow-[0_0_15px_rgba(99,72,183,0.1)]'
+                    ? 'border-accentBright/30 bg-surface2/10 shadow-[0_0_20px_rgba(161,106,203,0.15)]'
+                    : 'border-surface2/50 hover:border-accent/50 hover:shadow-[0_0_15px_rgba(99,72,183,0.1)]'
                 }
                 border
-                ${isExpanded ? 'border-l-4 border-l-amethyst' : 'border-l-4 border-l-transparent hover:border-l-royalPurple/30'}
+                ${isExpanded ? 'border-l-4 border-l-accentBright' : 'border-l-4 border-l-transparent hover:border-l-accent/30'}
               `}
             >
               {/* Collapsed header */}
@@ -140,10 +140,10 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                 onClick={() => toggleCategory(category.key)}
                 className="w-full p-5 flex items-start gap-4 cursor-pointer text-left"
               >
-                <Icon className="text-amethyst w-6 h-6 flex-shrink-0 mt-1" />
+                <Icon className="text-accentBright w-6 h-6 flex-shrink-0 mt-1" />
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-heading font-medium text-lg md:text-xl text-ghostWhite mb-2">
+                  <h3 className="font-heading font-medium text-lg md:text-xl text-ink mb-2">
                     {label}
                   </h3>
 
@@ -152,7 +152,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
 
                   {/* Preview (only when collapsed) */}
                   {!isExpanded && (
-                    <p className="text-ashGray font-oracle text-base line-clamp-1">
+                    <p className="text-inkMuted font-oracle text-base line-clamp-1">
                       {getPreview(category.reading)}
                     </p>
                   )}
@@ -160,7 +160,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
 
                 {/* Chevron */}
                 <ChevronDown
-                  className={`text-ashGray w-5 h-5 flex-shrink-0 transition-transform duration-300 ${
+                  className={`text-inkMuted w-5 h-5 flex-shrink-0 transition-transform duration-300 ${
                     isExpanded ? 'rotate-180' : ''
                   }`}
                 />
@@ -177,8 +177,8 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                     className="px-5 pb-5"
                   >
                     {/* Full reading */}
-                    <div className="mb-4 pt-2 border-t border-darkPurple/50">
-                      <p className="text-ghostWhite font-oracle font-light text-lg md:text-xl leading-[1.75]">
+                    <div className="mb-4 pt-2 border-t border-surface2/50">
+                      <p className="text-ink font-oracle font-light text-lg md:text-xl leading-[1.75]">
                         {category.reading}
                       </p>
                     </div>
@@ -196,7 +196,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                           {category.tips.map((tip, index) => (
                             <li
                               key={index}
-                              className="text-ghostWhite font-thai text-base pl-6 relative before:content-['•'] before:absolute before:left-2 before:text-emerald-400"
+                              className="text-ink font-thai text-base pl-6 relative before:content-['•'] before:absolute before:left-2 before:text-emerald-400"
                             >
                               {tip}
                             </li>
@@ -218,7 +218,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                           {category.warnings.map((warning, index) => (
                             <li
                               key={index}
-                              className="text-ghostWhite font-thai text-base pl-6 relative before:content-['•'] before:absolute before:left-2 before:text-amber-400"
+                              className="text-ink font-thai text-base pl-6 relative before:content-['•'] before:absolute before:left-2 before:text-amber-400"
                             >
                               {warning}
                             </li>

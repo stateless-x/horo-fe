@@ -84,10 +84,10 @@ export function StepAuth() {
           transition={{ delay: 0.2 }}
           className="text-center space-y-4"
         >
-          <h1 className="text-2xl md:text-3xl text-ghostWhite font-heading">
+          <h1 className="text-2xl md:text-3xl text-ink font-heading">
             เพื่อเก็บดวงชะตาของเจ้าไว้
           </h1>
-          <p className="text-ashGray">เชื่อมบัญชีของเจ้า</p>
+          <p className="text-inkMuted">เชื่อมบัญชีของเจ้า</p>
         </motion.div>
 
         <motion.div
@@ -144,7 +144,7 @@ export function StepAuth() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-xs text-ashGray/70 text-center"
+          className="text-xs text-inkMuted/70 text-center"
         >
           เมื่อเชื่อมบัญชี เจ้าจะสามารถบันทึกและดูดวงชะตาของเจ้าได้ทุกเมื่อ
         </motion.p>
@@ -159,7 +159,7 @@ export function StepAuth() {
             variant="ghost"
             size="sm"
             onClick={prevStep}
-            className="text-ashGray hover:text-ghostWhite"
+            className="text-inkMuted hover:text-ink"
           >
             ย้อนกลับ
           </Button>

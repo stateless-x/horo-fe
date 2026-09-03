@@ -284,8 +284,8 @@ export default function SettingsPage() {
 
   if (sessionLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
-        <div className="text-ashGray">กำลังโหลด...</div>
+      <div className="min-h-screen bg-ground flex items-center justify-center">
+        <div className="text-inkMuted">กำลังโหลด...</div>
       </div>
     );
   }
@@ -309,12 +309,12 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-voidBlack pb-4">
+    <div className="min-h-screen bg-ground pb-4">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-voidBlack/80 backdrop-blur-sm border-b border-darkPurple">
+      <div className="sticky top-0 z-40 bg-ground/80 backdrop-blur-sm border-b border-surface2">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-heading text-ghostWhite">ตั้งค่า</h1>
+            <h1 className="text-xl font-heading text-ink">ตั้งค่า</h1>
           </div>
 
           {/* Edit button in header when in view mode */}
@@ -360,9 +360,9 @@ export default function SettingsPage() {
         >
           <Card className="p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-heading text-ghostWhite">ข้อมูลส่วนตัว</h2>
+              <h2 className="text-lg font-heading text-ink">ข้อมูลส่วนตัว</h2>
               {isEditMode && (
-                <span className="text-xs text-royalPurple bg-royalPurple/10 px-3 py-1 rounded-full">
+                <span className="text-xs text-accent bg-accent/10 px-3 py-1 rounded-full">
                   กำลังแก้ไข
                 </span>
               )}
@@ -371,8 +371,8 @@ export default function SettingsPage() {
             {/* Display Name */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <User className="text-royalPurple" size={18} />
-                <label className="text-sm font-medium text-ashGray">ชื่อที่แสดง</label>
+                <User className="text-accent" size={18} />
+                <label className="text-sm font-medium text-inkMuted">ชื่อที่แสดง</label>
               </div>
               {isEditMode ? (
                 <Input
@@ -384,15 +384,15 @@ export default function SettingsPage() {
                   maxLength={50}
                 />
               ) : (
-                <p className="text-base text-ghostWhite pl-6">{displayName || '-'}</p>
+                <p className="text-base text-ink pl-6">{displayName || '-'}</p>
               )}
             </div>
 
             {/* Gender */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <User className="text-royalPurple" size={18} />
-                <label className="text-sm font-medium text-ashGray">เพศ</label>
+                <User className="text-accent" size={18} />
+                <label className="text-sm font-medium text-inkMuted">เพศ</label>
               </div>
               {isEditMode ? (
                 <div className="grid grid-cols-2 gap-3">
@@ -400,8 +400,8 @@ export default function SettingsPage() {
                     onClick={() => setGender('male')}
                     className={`p-4 rounded-lg border transition-all ${
                       gender === 'male'
-                        ? 'border-royalPurple bg-royalPurple/10 text-ghostWhite'
-                        : 'border-darkPurple bg-deepNight text-ashGray hover:border-royalPurple/50'
+                        ? 'border-accent bg-accent/10 text-accentInk'
+                        : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
                     }`}
                   >
                     <p className="text-base font-heading">ผู้ชาย</p>
@@ -410,15 +410,15 @@ export default function SettingsPage() {
                     onClick={() => setGender('female')}
                     className={`p-4 rounded-lg border transition-all ${
                       gender === 'female'
-                        ? 'border-royalPurple bg-royalPurple/10 text-ghostWhite'
-                        : 'border-darkPurple bg-deepNight text-ashGray hover:border-royalPurple/50'
+                        ? 'border-accent bg-accent/10 text-accentInk'
+                        : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
                     }`}
                   >
                     <p className="text-base font-heading">ผู้หญิง</p>
                   </button>
                 </div>
               ) : (
-                <p className="text-base text-ghostWhite pl-6">
+                <p className="text-base text-ink pl-6">
                   {gender === 'male' ? 'ผู้ชาย' : 'ผู้หญิง'}
                 </p>
               )}
@@ -433,26 +433,26 @@ export default function SettingsPage() {
           transition={{ duration: 0.3, delay: 0.1 }}
         >
           <Card className="p-6 space-y-6">
-            <h2 className="text-lg font-heading text-ghostWhite">ข้อมูลการเกิด</h2>
+            <h2 className="text-lg font-heading text-ink">ข้อมูลการเกิด</h2>
 
             {/* Birth Date */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Calendar className="text-royalPurple" size={18} />
-                <label className="text-sm font-medium text-ashGray">วันเกิด</label>
+                <Calendar className="text-accent" size={18} />
+                <label className="text-sm font-medium text-inkMuted">วันเกิด</label>
               </div>
               {isEditMode ? (
                 <div className="flex gap-3">
                   {/* Day */}
                   <div className="flex-1">
-                    <label className="block text-xs text-ashGray mb-2 text-center">วัน</label>
+                    <label className="block text-xs text-inkMuted mb-2 text-center">วัน</label>
                     <div className="relative">
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
+                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
                       <select
                         ref={dayRef}
                         value={day}
                         onChange={(e) => setDay(parseInt(e.target.value))}
-                        className="w-full h-40 bg-deepNight border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
+                        className="w-full h-40 bg-surface border border-surface2 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
                         size={5}
                       >
                         {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
@@ -466,14 +466,14 @@ export default function SettingsPage() {
 
                   {/* Month */}
                   <div className="flex-1">
-                    <label className="block text-xs text-ashGray mb-2 text-center">เดือน</label>
+                    <label className="block text-xs text-inkMuted mb-2 text-center">เดือน</label>
                     <div className="relative">
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
+                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
                       <select
                         ref={monthRef}
                         value={month}
                         onChange={(e) => setMonth(parseInt(e.target.value))}
-                        className="w-full h-40 bg-deepNight border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
+                        className="w-full h-40 bg-surface border border-surface2 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
                         size={5}
                       >
                         {THAI_MONTHS.map((m, i) => (
@@ -487,14 +487,14 @@ export default function SettingsPage() {
 
                   {/* Year */}
                   <div className="flex-1">
-                    <label className="block text-xs text-ashGray mb-2 text-center">พ.ศ.</label>
+                    <label className="block text-xs text-inkMuted mb-2 text-center">พ.ศ.</label>
                     <div className="relative">
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
+                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
                       <select
                         ref={yearRef}
                         value={year}
                         onChange={(e) => setYear(parseInt(e.target.value))}
-                        className="w-full h-40 bg-deepNight border border-darkPurple rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
+                        className="w-full h-40 bg-surface border border-surface2 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
                         size={5}
                       >
                         {Array.from({ length: 70 }, (_, i) => currentYear - i).map((y) => (
@@ -507,7 +507,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
               ) : (
-                <p className="text-base text-ghostWhite pl-6">
+                <p className="text-base text-ink pl-6">
                   {day} {THAI_MONTHS[month]} {year}
                 </p>
               )}
@@ -516,8 +516,8 @@ export default function SettingsPage() {
             {/* Birth Time */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Clock className="text-royalPurple" size={18} />
-                <label className="text-sm font-medium text-ashGray">เวลาเกิด</label>
+                <Clock className="text-accent" size={18} />
+                <label className="text-sm font-medium text-inkMuted">เวลาเกิด</label>
               </div>
               {isEditMode ? (
                 <div className="space-y-4">
@@ -532,9 +532,9 @@ export default function SettingsPage() {
                           setSelectedTimePeriod(null);
                         }
                       }}
-                      className="w-5 h-5 rounded border-darkPurple bg-deepNight text-royalPurple focus:ring-2 focus:ring-royalPurple"
+                      className="w-5 h-5 rounded border-surface2 bg-surface text-accent focus:ring-2 focus:ring-accent"
                     />
-                    <span className="text-sm text-ashGray">ไม่ทราบเวลาเกิด</span>
+                    <span className="text-sm text-inkMuted">ไม่ทราบเวลาเกิด</span>
                   </label>
 
                   {/* Time period grid */}
@@ -546,27 +546,27 @@ export default function SettingsPage() {
                           onClick={() => setSelectedTimePeriod(index)}
                           className={`p-3 rounded-lg border transition-all ${
                             selectedTimePeriod === index
-                              ? 'border-royalPurple bg-royalPurple/10 text-ghostWhite'
-                              : 'border-darkPurple bg-deepNight text-ashGray hover:border-royalPurple/50'
+                              ? 'border-accent bg-accent/10 text-accentInk'
+                              : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
                           }`}
                         >
-                          <p className="text-sm font-heading text-ghostWhite">{period.displayName}</p>
-                          <p className="text-xs text-ashGray">{period.timeRange}</p>
+                          <p className="text-sm font-heading text-ink">{period.displayName}</p>
+                          <p className="text-xs text-inkMuted">{period.timeRange}</p>
                         </button>
                       ))}
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-base text-ghostWhite pl-6">{getTimePeriodText()}</p>
+                <p className="text-base text-ink pl-6">{getTimePeriodText()}</p>
               )}
             </div>
 
             {/* MBTI */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Brain className="text-royalPurple" size={18} />
-                <label className="text-sm font-medium text-ashGray">MBTI</label>
+                <Brain className="text-accent" size={18} />
+                <label className="text-sm font-medium text-inkMuted">MBTI</label>
               </div>
               {isEditMode ? (
                 <div className="space-y-4">
@@ -574,7 +574,7 @@ export default function SettingsPage() {
                   {mbtiType && (
                     <button
                       onClick={() => setMbtiType(null)}
-                      className="text-sm text-ashGray hover:text-red-400 transition-colors pl-6"
+                      className="text-sm text-inkMuted hover:text-red-400 transition-colors pl-6"
                     >
                       ✕ ล้างค่า MBTI
                     </button>
@@ -583,7 +583,7 @@ export default function SettingsPage() {
                   {/* MBTI groups grid */}
                   {MBTI_GROUPS.map((group) => (
                     <div key={group.key} className="space-y-2">
-                      <p className="text-xs text-ashGray pl-6">{group.nameTh} ({group.nameEn})</p>
+                      <p className="text-xs text-inkMuted pl-6">{group.nameTh} ({group.nameEn})</p>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {group.types.map((type) => (
                           <button
@@ -591,12 +591,12 @@ export default function SettingsPage() {
                             onClick={() => setMbtiType(type.code)}
                             className={`p-3 rounded-lg border transition-all ${
                               mbtiType === type.code
-                                ? 'border-royalPurple bg-royalPurple/10 text-ghostWhite'
-                                : 'border-darkPurple bg-deepNight text-ashGray hover:border-royalPurple/50'
+                                ? 'border-accent bg-accent/10 text-accentInk'
+                                : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
                             }`}
                           >
-                            <p className="text-sm font-heading text-ghostWhite">{type.code}</p>
-                            <p className="text-xs text-ashGray">{type.nameTh}</p>
+                            <p className="text-sm font-heading text-ink">{type.code}</p>
+                            <p className="text-xs text-inkMuted">{type.nameTh}</p>
                           </button>
                         ))}
                       </div>
@@ -604,7 +604,7 @@ export default function SettingsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-base text-ghostWhite pl-6">
+                <p className="text-base text-ink pl-6">
                   {mbtiType ? `${mbtiType} (${getMbtiInfo(mbtiType)?.nameTh || ''})` : 'ไม่ได้ระบุ'}
                 </p>
               )}
@@ -647,7 +647,7 @@ export default function SettingsPage() {
             transition={{ duration: 0.3, delay: 0.2 }}
           >
             <Card className="p-6 space-y-4">
-              <h2 className="text-lg font-heading text-ghostWhite">บัญชี</h2>
+              <h2 className="text-lg font-heading text-ink">บัญชี</h2>
               <Button
                 onClick={handleLogout}
                 variant="outline"

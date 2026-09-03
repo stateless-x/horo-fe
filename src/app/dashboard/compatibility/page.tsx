@@ -314,11 +314,11 @@ export default function CompatibilityPage() {
   // --- Loading screen ---
   if (sessionLoading || !session) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center pb-24">
+      <div className="min-h-screen bg-ground flex items-center justify-center pb-24">
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-16 h-16 border-4 border-royalPurple border-t-transparent rounded-full animate-spin"
+          className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin"
         />
       </div>
     );
@@ -332,7 +332,7 @@ export default function CompatibilityPage() {
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-1 h-1 bg-royalPurple/20 rounded-full"
+              className="absolute w-1 h-1 bg-accent/20 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -359,17 +359,17 @@ export default function CompatibilityPage() {
           <div className="relative">
             <div className="w-32 h-32 mx-auto relative">
               <motion.div
-                className="absolute inset-0 border-4 border-royalPurple/20 rounded-full"
+                className="absolute inset-0 border-4 border-accent/20 rounded-full"
                 animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               />
               <motion.div
-                className="absolute inset-2 border-4 border-amethyst/40 rounded-full"
+                className="absolute inset-2 border-4 border-accentBright/40 rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               />
               <motion.div
-                className="absolute inset-4 border-4 border-t-royalPurple border-r-transparent border-b-transparent border-l-transparent rounded-full"
+                className="absolute inset-4 border-4 border-t-accent border-r-transparent border-b-transparent border-l-transparent rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
               />
@@ -378,14 +378,14 @@ export default function CompatibilityPage() {
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="w-4 h-4 bg-gradient-to-br from-royalPurple to-amethyst rounded-full shadow-lg shadow-royalPurple/50" />
+                <div className="w-4 h-4 bg-gradient-to-br from-accent to-accentBright rounded-full shadow-lg shadow-accent/50" />
               </motion.div>
             </div>
           </div>
 
           <div className="space-y-3">
             <motion.h2
-              className="text-3xl font-heading text-ghostWhite"
+              className="text-3xl font-heading text-ink"
               animate={{ opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             >
@@ -398,7 +398,7 @@ export default function CompatibilityPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="text-lg md:text-xl text-ashGray font-oracle min-h-[28px]"
+                className="text-lg md:text-xl text-inkMuted font-oracle min-h-[28px]"
               >
                 {calculationStep}
               </motion.p>
@@ -408,7 +408,7 @@ export default function CompatibilityPage() {
               {[...Array(3)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="w-2 h-2 bg-royalPurple/60 rounded-full"
+                  className="w-2 h-2 bg-accent/60 rounded-full"
                   animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
                 />
@@ -433,7 +433,7 @@ export default function CompatibilityPage() {
             <Button
               variant="ghost"
               onClick={handleBackToForm}
-              className="text-ashGray hover:text-ghostWhite -ml-2"
+              className="text-inkMuted hover:text-ink -ml-2"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               ส่องดวงอีกครั้ง
@@ -448,12 +448,12 @@ export default function CompatibilityPage() {
                 </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite">
+              <h1 className="text-3xl md:text-4xl font-heading text-ink">
                 {resultConfig.resultTitle(result.partnerName)}
               </h1>
 
               {result.userElement && result.partnerElement && (
-                <p className="text-ashGray text-sm md:text-base">
+                <p className="text-inkMuted text-sm md:text-base">
                   ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
                 </p>
               )}
@@ -463,7 +463,7 @@ export default function CompatibilityPage() {
           {/* Element visualization */}
           {result.userElement && result.partnerElement && (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
-              <Card className="bg-gradient-to-br from-darkPurple to-deepNight">
+              <Card className="bg-gradient-to-br from-surface2 to-surface">
                 <CardHeader>
                   <CardTitle className="text-center flex items-center justify-center gap-2">
                     <span className="text-2xl">&#x1F31F;</span>
@@ -473,28 +473,28 @@ export default function CompatibilityPage() {
                 <CardContent>
                   <div className="flex items-center justify-center gap-4 py-6">
                     <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-royalPurple/20 border-2 border-royalPurple flex items-center justify-center mb-2">
-                        <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.userElement)}</span>
+                      <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center mb-2">
+                        <span className="text-2xl font-bold text-ink">{toThaiElement(result.userElement)}</span>
                       </div>
-                      <p className="text-sm md:text-base text-ghostWhite">เจ้า</p>
-                      {result.userDayMaster && <p className="text-xs md:text-sm text-ashGray">{result.userDayMaster}</p>}
+                      <p className="text-sm md:text-base text-ink">เจ้า</p>
+                      {result.userDayMaster && <p className="text-xs md:text-sm text-inkMuted">{result.userDayMaster}</p>}
                     </div>
 
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.3, type: 'spring' }}
-                      className="text-4xl text-ashGray"
+                      className="text-4xl text-inkMuted"
                     >
                       &#x27F7;
                     </motion.div>
 
                     <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-amethyst/20 border-2 border-amethyst flex items-center justify-center mb-2">
-                        <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.partnerElement)}</span>
+                      <div className="w-20 h-20 rounded-full bg-accentBright/20 border-2 border-accentBright flex items-center justify-center mb-2">
+                        <span className="text-2xl font-bold text-ink">{toThaiElement(result.partnerElement)}</span>
                       </div>
-                      <p className="text-sm md:text-base text-ghostWhite">{result.partnerName}</p>
-                      {result.partnerDayMaster && <p className="text-xs md:text-sm text-ashGray">{result.partnerDayMaster}</p>}
+                      <p className="text-sm md:text-base text-ink">{result.partnerName}</p>
+                      {result.partnerDayMaster && <p className="text-xs md:text-sm text-inkMuted">{result.partnerDayMaster}</p>}
                     </div>
                   </div>
                 </CardContent>
@@ -560,23 +560,23 @@ export default function CompatibilityPage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
           <div className="text-center space-y-3">
-            <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite">ส่องดวงความสัมพันธ์</h1>
+            <h1 className="text-3xl md:text-4xl font-heading text-ink">ส่องดวงความสัมพันธ์</h1>
 
-            <div className="bg-darkPurple/20 border border-royalPurple/30 rounded-xl p-4 md:p-6 space-y-3">
-              <h3 className="text-lg md:text-xl font-heading text-amethyst">
+            <div className="bg-surface2/20 border border-accent/30 rounded-xl p-4 md:p-6 space-y-3">
+              <h3 className="text-lg md:text-xl font-heading text-accentBright">
                 ค้นพบความลับของความสัมพันธ์
               </h3>
-              <ul className="text-left space-y-2 text-ashGray text-sm md:text-base">
+              <ul className="text-left space-y-2 text-inkMuted text-sm md:text-base">
                 <li className="flex items-start gap-2">
-                  <span className="text-amethyst mt-1 flex-shrink-0">&#x2728;</span>
+                  <span className="text-accentBright mt-1 flex-shrink-0">&#x2728;</span>
                   <span>วิเคราะห์ธาตุและดาวประจำวันเกิดของทั้งสองคน</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-amethyst mt-1 flex-shrink-0">&#x1F4A1;</span>
+                  <span className="text-accentBright mt-1 flex-shrink-0">&#x1F4A1;</span>
                   <span>รับคำแนะนำเฉพาะตัวสำหรับทุกความสัมพันธ์</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-amethyst mt-1 flex-shrink-0">&#x1F3AF;</span>
+                  <span className="text-accentBright mt-1 flex-shrink-0">&#x1F3AF;</span>
                   <span>คนคุย คนรัก หัวหน้า เพื่อนร่วมงาน เพื่อน ครอบครัว</span>
                 </li>
               </ul>
@@ -586,7 +586,7 @@ export default function CompatibilityPage() {
 
         {/* Relationship Type Selector */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
-          <label className="block text-sm md:text-base text-ashGray mb-3">เลือกประเภทความสัมพันธ์</label>
+          <label className="block text-sm md:text-base text-inkMuted mb-3">เลือกประเภทความสัมพันธ์</label>
           <div className="flex flex-wrap gap-2">
             {RELATIONSHIP_TYPES.map((type) => {
               const typeConfig = RELATIONSHIP_CONFIG[type];
@@ -600,7 +600,7 @@ export default function CompatibilityPage() {
                   className={`inline-flex items-center gap-1.5 px-4 h-11 rounded-full text-sm md:text-base font-medium transition-all border ${
                     isSelected
                       ? `${typeConfig.accentBg} ${typeConfig.accentBorder} ${typeConfig.accent}`
-                      : 'bg-deepNight border-darkPurple/50 text-ashGray hover:border-royalPurple/50'
+                      : 'bg-surface border-surface2/50 text-inkMuted hover:border-accent/50'
                   }`}
                   whileTap={{ scale: 0.95 }}
                   {...(type === 'talking' ? {
@@ -645,29 +645,29 @@ export default function CompatibilityPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <Card className="bg-gradient-to-br from-darkPurple to-deepNight border-amethyst/30">
+              <Card className="bg-gradient-to-br from-surface2 to-surface border-accentBright/30">
                 <CardContent className="pt-6">
                   <div className="text-center space-y-3">
                     <motion.div
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                     >
-                      <Moon className="w-10 h-10 text-amethyst mx-auto" />
+                      <Moon className="w-10 h-10 text-accentBright mx-auto" />
                     </motion.div>
-                    <p className="text-ghostWhite font-medium text-base md:text-lg">พลังดวงดาวต้องการเวลาฟื้นฟู</p>
-                    <p className="text-ashGray text-sm md:text-base">
+                    <p className="text-ink font-medium text-base md:text-lg">พลังดวงดาวต้องการเวลาฟื้นฟู</p>
+                    <p className="text-inkMuted text-sm md:text-base">
                       {rateLimitCountdown > 3600
                         ? 'เจ้าส่องดวงครบ 5 ครั้งในวันนี้แล้ว'
                         : 'เจ้าได้ส่องดวงครบ 5 ครั้งในชั่วโมงนี้แล้ว'}
                     </p>
-                    <p className="text-amethyst text-sm md:text-base">
+                    <p className="text-accentBright text-sm md:text-base">
                       {rateLimitCountdown > 3600
                         ? `กลับมาใหม่พรุ่งนี้นะ`
                         : `ดวงดาวจะพร้อมอีกครั้งใน ${Math.ceil(rateLimitCountdown / 60)} นาที`}
                     </p>
-                    <div className="w-full bg-deepNight rounded-full h-1 overflow-hidden" role="progressbar" aria-label="เวลาที่เหลือก่อนส่องดวงได้อีกครั้ง">
+                    <div className="w-full bg-surface rounded-full h-1 overflow-hidden" role="progressbar" aria-label="เวลาที่เหลือก่อนส่องดวงได้อีกครั้ง">
                       <motion.div
-                        className="h-full bg-amethyst/60 rounded-full"
+                        className="h-full bg-accentBright/60 rounded-full"
                         initial={{ width: '100%' }}
                         animate={{ width: '0%' }}
                         transition={{ duration: rateLimitCountdown, ease: 'linear' }}
@@ -698,7 +698,7 @@ export default function CompatibilityPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <label className="block text-sm md:text-base text-ashGray mb-2">ชื่อ</label>
+                <label className="block text-sm md:text-base text-inkMuted mb-2">ชื่อ</label>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={relationshipType}
@@ -718,14 +718,14 @@ export default function CompatibilityPage() {
               </div>
 
               <div>
-                <label className="block text-sm md:text-base text-ashGray mb-3">วันเกิด</label>
+                <label className="block text-sm md:text-base text-inkMuted mb-3">วันเกิด</label>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs md:text-sm text-ashGray/70 mb-2 text-center">วัน</label>
+                    <label className="block text-xs md:text-sm text-inkMuted/70 mb-2 text-center">วัน</label>
                     <select
                       value={day}
                       onChange={(e) => setDay(e.target.value)}
-                      className="w-full h-12 bg-charcoal border border-ashGray/30 rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-amethyst focus:border-transparent transition-all cursor-pointer hover:border-amethyst/50"
+                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
                     >
                       {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
                         <option key={d} value={d}>{d}</option>
@@ -733,11 +733,11 @@ export default function CompatibilityPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs md:text-sm text-ashGray/70 mb-2 text-center">เดือน</label>
+                    <label className="block text-xs md:text-sm text-inkMuted/70 mb-2 text-center">เดือน</label>
                     <select
                       value={month}
                       onChange={(e) => setMonth(e.target.value)}
-                      className="w-full h-12 bg-charcoal border border-ashGray/30 rounded-lg text-center text-sm text-ghostWhite focus:ring-2 focus:ring-amethyst focus:border-transparent transition-all cursor-pointer hover:border-amethyst/50"
+                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-sm text-ink focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
                     >
                       {THAI_MONTHS.map((m, i) => (
                         <option key={i} value={i + 1}>{m}</option>
@@ -745,11 +745,11 @@ export default function CompatibilityPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs md:text-sm text-ashGray/70 mb-2 text-center">พ.ศ.</label>
+                    <label className="block text-xs md:text-sm text-inkMuted/70 mb-2 text-center">พ.ศ.</label>
                     <select
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      className="w-full h-12 bg-charcoal border border-ashGray/30 rounded-lg text-center text-base text-ghostWhite focus:ring-2 focus:ring-amethyst focus:border-transparent transition-all cursor-pointer hover:border-amethyst/50"
+                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
                     >
                       {Array.from({ length: 80 }, (_, i) => currentYear - i).map((y) => (
                         <option key={y} value={y}>{y}</option>
@@ -757,7 +757,7 @@ export default function CompatibilityPage() {
                     </select>
                   </div>
                 </div>
-                <p className="text-xs md:text-sm text-ashGray/60 mt-2 text-center">ตัวอย่าง: 15 มิถุนายน 2540</p>
+                <p className="text-xs md:text-sm text-inkMuted/60 mt-2 text-center">ตัวอย่าง: 15 มิถุนายน 2540</p>
               </div>
 
               <div className="space-y-2">
@@ -805,11 +805,11 @@ export default function CompatibilityPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg md:text-xl font-heading text-ghostWhite flex items-center gap-2">
-                <Stars className="w-5 h-5 text-amethyst" />
+              <h2 className="text-lg md:text-xl font-heading text-ink flex items-center gap-2">
+                <Stars className="w-5 h-5 text-accentBright" />
                 ดวงที่เจ้าเคยส่อง
                 {totalHistory > 0 && (
-                  <span className="text-xs md:text-sm text-ashGray bg-deepNight px-2 py-0.5 rounded-full">
+                  <span className="text-xs md:text-sm text-inkMuted bg-surface px-2 py-0.5 rounded-full">
                     {totalHistory} ครั้ง
                   </span>
                 )}
@@ -818,17 +818,17 @@ export default function CompatibilityPage() {
 
             {historyQuery.isLoading ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 text-ashGray animate-spin" />
+                <Loader2 className="w-6 h-6 text-inkMuted animate-spin" />
               </div>
             ) : allHistoryItems.length === 0 ? (
               // Empty state
               <div className="text-center py-8 space-y-3">
-                <div className="flex justify-center gap-2 text-ashGray/40">
+                <div className="flex justify-center gap-2 text-inkMuted/40">
                   <Stars className="w-8 h-8" />
                   <Users className="w-8 h-8" />
                 </div>
-                <p className="text-ashGray text-base md:text-lg">ยังไม่มีประวัติการส่องดวง</p>
-                <p className="text-ashGray/60 text-sm md:text-base">ลองส่องดวงความสัมพันธ์กับคนรอบข้างเจ้าดูสิ</p>
+                <p className="text-inkMuted text-base md:text-lg">ยังไม่มีประวัติการส่องดวง</p>
+                <p className="text-inkMuted/60 text-sm md:text-base">ลองส่องดวงความสัมพันธ์กับคนรอบข้างเจ้าดูสิ</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -844,30 +844,30 @@ export default function CompatibilityPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => handleViewHistory(item.id)}
-                      className="w-full bg-deepNight/50 border border-darkPurple/30 rounded-xl p-4 hover:border-royalPurple/30 transition-all text-left flex items-center gap-3"
+                      className="w-full bg-surface/50 border border-surface2/30 rounded-xl p-4 hover:border-accent/30 transition-all text-left flex items-center gap-3"
                     >
                       <div className={`w-10 h-10 rounded-full ${itemConfig.accentBg} flex items-center justify-center flex-shrink-0`}>
                         <ItemIcon className={`w-5 h-5 ${itemConfig.accent}`} />
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-ghostWhite font-medium truncate text-base md:text-lg">{item.partnerName}</p>
+                        <p className="text-ink font-medium truncate text-base md:text-lg">{item.partnerName}</p>
                         <div className="flex items-center gap-2 text-xs md:text-sm">
                           <span className={itemConfig.accent}>{RELATIONSHIP_LABELS[item.relationshipType as RelationshipType]}</span>
                           {item.userElement && item.partnerElement && (
                             <>
-                              <span className="text-ashGray/40">&#x2022;</span>
-                              <span className="text-ashGray">{toThaiElement(item.userElement)} x {toThaiElement(item.partnerElement)}</span>
+                              <span className="text-inkMuted/40">&#x2022;</span>
+                              <span className="text-inkMuted">{toThaiElement(item.userElement)} x {toThaiElement(item.partnerElement)}</span>
                             </>
                           )}
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs md:text-sm text-ashGray">
+                        <span className="text-xs md:text-sm text-inkMuted">
                           {formatRelativeDate(item.createdAt)}
                         </span>
-                        <ChevronRight className="w-4 h-4 text-ashGray/50" />
+                        <ChevronRight className="w-4 h-4 text-inkMuted/50" />
                       </div>
                     </motion.button>
                   );
@@ -877,7 +877,7 @@ export default function CompatibilityPage() {
                 {historyQuery.hasNextPage && (
                   <Button
                     variant="ghost"
-                    className="w-full text-ashGray"
+                    className="w-full text-inkMuted"
                     onClick={() => historyQuery.fetchNextPage()}
                     disabled={historyQuery.isFetchingNextPage}
                   >

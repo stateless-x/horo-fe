@@ -43,7 +43,7 @@ function PlatformButton({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-2 bg-charcoal border border-darkPurple/50 rounded-xl p-4 transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
+      className="flex flex-col items-center gap-2 bg-overlay border border-surface2/50 rounded-xl p-4 transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
       style={{ minWidth: '80px', minHeight: '80px' }}
     >
       <div
@@ -52,7 +52,7 @@ function PlatformButton({
       >
         {icon}
       </div>
-      <span className="font-thai text-xs text-ashGray">{label}</span>
+      <span className="font-thai text-xs text-inkMuted">{label}</span>
     </button>
   );
 }
@@ -159,7 +159,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-voidBlack/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-ground/60 backdrop-blur-sm z-50"
             onClick={onClose}
           />
 
@@ -171,15 +171,15 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="fixed bottom-0 left-0 right-0 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-md md:w-full z-50"
           >
-            <div className="bg-deepNight border-t border-darkPurple/50 md:border md:rounded-2xl rounded-t-3xl md:rounded-b-2xl p-6">
+            <div className="bg-surface border-t border-surface2/50 md:border md:rounded-2xl rounded-t-3xl md:rounded-b-2xl p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-heading text-lg font-medium text-ghostWhite">
+                <h3 className="font-heading text-lg font-medium text-ink">
                   {title || (compatibilityData ? 'แชร์ผลดวงความสัมพันธ์' : 'แชร์ดวงชะตาของเจ้า')}
                 </h3>
                 <button
                   onClick={onClose}
-                  className="text-ashGray hover:text-ghostWhite transition-colors"
+                  className="text-inkMuted hover:text-ink transition-colors"
                   aria-label="ปิด"
                 >
                   <X className="w-5 h-5" />
@@ -190,17 +190,17 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
               {phrases.length > 0 && (
                 <button
                   onClick={shufflePhrase}
-                  className="w-full mb-4 p-4 rounded-xl bg-gradient-to-r from-royalPurple/20 to-amethyst/10 border border-royalPurple/30 hover:border-amethyst/50 transition-all text-left group"
+                  className="w-full mb-4 p-4 rounded-xl bg-gradient-to-r from-accent/20 to-accentBright/10 border border-accent/30 hover:border-accentBright/50 transition-all text-left group"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm text-ghostWhite leading-relaxed flex-1">
+                    <p className="text-sm text-ink leading-relaxed flex-1">
                       "{selectedPhrase}"
                     </p>
-                    <div className="flex-shrink-0 text-ashGray group-hover:text-amethyst transition-colors">
+                    <div className="flex-shrink-0 text-inkMuted group-hover:text-accentBright transition-colors">
                       <RefreshCw className="w-4 h-4" />
                     </div>
                   </div>
-                  <p className="text-xs text-ashGray mt-2">แตะเพื่อเปลี่ยนข้อความ</p>
+                  <p className="text-xs text-inkMuted mt-2">แตะเพื่อเปลี่ยนข้อความ</p>
                 </button>
               )}
 
@@ -258,7 +258,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
               {/* Copy link button */}
               <button
                 onClick={() => handleShare('copy')}
-                className="w-full bg-charcoal border border-darkPurple/50 rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20 mb-3"
+                className="w-full bg-overlay border border-surface2/50 rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20 mb-3"
               >
                 {copied ? (
                   <>
@@ -269,8 +269,8 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
                   </>
                 ) : (
                   <>
-                    <LinkIcon className="w-5 h-5 text-ghostWhite" />
-                    <span className="font-heading font-medium text-base text-ghostWhite">
+                    <LinkIcon className="w-5 h-5 text-ink" />
+                    <span className="font-heading font-medium text-base text-ink">
                       คัดลอกลิงก์
                     </span>
                   </>

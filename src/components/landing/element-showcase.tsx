@@ -25,10 +25,10 @@ export function ElementShowcase() {
           transition={{ duration: 0.8 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-heading text-ghostWhite mb-4">
+          <h2 className="text-3xl md:text-4xl font-heading text-ink mb-4">
             ธาตุทั้งห้าเผยชะตา
           </h2>
-          <p className="text-ashGray font-oracle">
+          <p className="text-inkMuted font-oracle">
             แค่วันเกิดของคุณ ก็บอกธาตุประจำตัวได้
           </p>
         </motion.div>
@@ -124,11 +124,11 @@ function ElementOrb({
         <div className="flex flex-col items-center px-4 py-4">
           <p
             className="font-heading text-sm mb-1"
-            style={{ color: element.colors.primary }}
+            style={{ color: `var(--el-${element.key}, ${element.colors.primary})` }}
           >
             {element.name}
           </p>
-          <p className="text-ashGray text-xs font-oracle">
+          <p className="text-inkMuted text-xs font-oracle">
             {element.trait}
           </p>
         </div>

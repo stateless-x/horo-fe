@@ -64,12 +64,12 @@ export function FourPillarsSection({
         <button
           onClick={() => openPillarModal(pillarKey)}
           className={`
-            w-full bg-deepNight rounded-xl p-5 transition-all duration-200 cursor-pointer
-            hover:bg-darkPurple/20 hover:border-royalPurple/50
+            w-full bg-surface rounded-xl p-5 transition-all duration-200 cursor-pointer
+            hover:bg-surface2/20 hover:border-accent/50
             ${
               isDay
-                ? "border-amethyst/50 bg-darkPurple/20 shadow-lg shadow-amethyst/10 transform md:-translate-y-2"
-                : "border-darkPurple/50"
+                ? "border-accentBright/50 bg-surface2/20 shadow-lg shadow-accentBright/10 transform md:-translate-y-2"
+                : "border-surface2/50"
             }
             border
           `}
@@ -80,21 +80,21 @@ export function FourPillarsSection({
           <div className="flex flex-col items-center text-center h-full">
             {/* Icon */}
             <Icon
-              className={`w-6 h-6 mb-3 ${isDay ? "text-amethyst" : "text-lavenderGlow"}`}
+              className={`w-6 h-6 mb-3 ${isDay ? "text-accentBright" : "text-accentSoft"}`}
             />
 
             {/* Pillar label */}
-            <h3 className="font-heading font-medium text-base text-amethyst mb-2">
+            <h3 className="font-heading font-medium text-base text-accentBright mb-2">
               {PILLAR_LABELS[pillarKey]}
             </h3>
 
             {/* Stem and Branch in pinyin */}
-            <p className="font-english text-xs text-ashGray italic mb-3">
+            <p className="font-english text-xs text-inkMuted italic mb-3">
               {pillar.stemPinyin} {pillar.branchPinyin}
             </p>
 
             {/* Life area */}
-            <p className="font-thai text-base text-ghostWhite mb-2">
+            <p className="font-thai text-base text-ink mb-2">
               {pillar.lifeArea}
             </p>
 
@@ -122,11 +122,11 @@ export function FourPillarsSection({
   return (
     <div>
       <div className="text-center mb-6">
-        <h2 className="font-heading text-2xl font-medium text-ghostWhite mb-2">
+        <h2 className="font-heading text-2xl font-medium text-ink mb-2">
           เสาชะตาทั้งสี่ของเจ้า
           <InfoTooltip text="เสาสี่ต้น (四柱) คือหัวใจของ Bazi คำนวณจากปี เดือน วัน และเวลาเกิด แต่ละเสาบอกถึงด้านต่างๆ ของชีวิต" />
         </h2>
-        <p className="font-thai text-ashGray text-sm">
+        <p className="font-thai text-inkMuted text-sm">
           แต่ละเสาเผยถึงอิทธิพลที่หล่อหลอมชีวิตของเจ้า
         </p>
       </div>
@@ -137,7 +137,7 @@ export function FourPillarsSection({
       </div>
 
       {/* Hint text */}
-      <p className="text-center text-ashGray font-thai text-sm">
+      <p className="text-center text-inkMuted font-thai text-sm">
         แตะที่เสาเพื่อดูรายละเอียด
       </p>
 

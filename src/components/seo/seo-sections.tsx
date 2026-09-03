@@ -105,21 +105,21 @@ export function SEOSections() {
 
       {/* Visible FAQ section — matches the FAQPage JSON-LD above so users
           see exactly what search engines see (no hidden/cloaked content). */}
-      <section className="border-t border-darkPurple/20 mt-16">
+      <section className="border-t border-surface2/20 mt-16">
         <div className="max-w-3xl mx-auto px-6 py-12">
-          <h2 className="font-heading text-ghostWhite text-2xl md:text-3xl mb-8 text-center">
+          <h2 className="font-heading text-ink text-2xl md:text-3xl mb-8 text-center">
             คำถามที่พบบ่อย
           </h2>
           <div className="space-y-3">
             {FAQ_ITEMS.map((item) => (
               <details
                 key={item.question}
-                className="group rounded-xl border border-white/10 bg-white/3 open:border-amethyst/40 open:bg-royalPurple/10 transition-colors"
+                className="group rounded-xl border border-edge bg-white/3 open:border-accentBright/40 open:bg-accent/10 transition-colors"
               >
-                <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-5 py-4 text-ghostWhite font-oracle text-sm md:text-base">
+                <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-5 py-4 text-ink font-oracle text-sm md:text-base">
                   {item.question}
                   <svg
-                    className="w-4 h-4 shrink-0 text-amethyst transition-transform group-open:rotate-90"
+                    className="w-4 h-4 shrink-0 text-accentBright transition-transform group-open:rotate-90"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -127,7 +127,7 @@ export function SEOSections() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </summary>
-                <p className="px-5 pb-4 text-ashGray font-oracle text-sm leading-relaxed">
+                <p className="px-5 pb-4 text-inkMuted font-oracle text-sm leading-relaxed">
                   {item.answer}
                 </p>
               </details>

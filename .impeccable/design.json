@@ -222,7 +222,7 @@
       "Film grain (3% opacity) over every page — the room's atmosphere",
       "Glassmorphic cards floating on darkness, edged with white/10",
       "Two voices: contemporary Thai (คุณ) for marketing, the oracle's เจ้า/ข้า in Sarabun Light inside readings",
-      "Dark-only by construction; no light theme"
+      "Two moods, one room: dark Midnight Room (default) + white-and-purple daylight mode; hero and wizard pinned dark"
     ],
     "rules": [
       {
@@ -249,6 +249,11 @@
         "name": "The Clay Cast Rule",
         "body": "All illustrative imagery is soft 3D clay-style renders — matte, rounded, single soft light, transparent ground — on the purple ladder unless the subject is a user's ธาตุ. No photography, no flat vector, no stock 3D gloss.",
         "section": "components"
+      },
+      {
+        "name": "The Two Rooms Rule",
+        "body": "Every surface uses semantic tokens (ground/surface/ink/accent/edge) that resolve per theme. Dark is the brand home; light is white + purple. Sections pinned to one mood wrap themselves in data-theme=\"dark\" — variables cascade.",
+        "section": "colors"
       }
     ],
     "dos": [

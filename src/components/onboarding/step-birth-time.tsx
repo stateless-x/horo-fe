@@ -61,7 +61,7 @@ export function StepBirthTime() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-2xl md:text-3xl text-center text-ghostWhite font-heading"
+          className="text-2xl md:text-3xl text-center text-ink font-heading"
         >
           บอกช่วงเวลาเกิดของเจ้ามาสิ
         </motion.h1>
@@ -75,7 +75,7 @@ export function StepBirthTime() {
         >
           <button
             onClick={handleUnknown}
-            className="inline-flex items-center gap-1.5 text-sm text-ashGray hover:text-amethyst transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-inkMuted hover:text-accentBright transition-colors"
           >
             <HelpCircle className="w-3.5 h-3.5" />
             ไม่ทราบเวลาเกิด?{" "}
@@ -97,14 +97,14 @@ export function StepBirthTime() {
               <Card
                 className={`p-3 flex flex-col items-center justify-center gap-0.5 transition-all ${
                   selectedPeriod === index
-                    ? "border-royalPurple bg-royalPurple/10 shadow-[0_0_15px_rgba(107,33,168,0.3)]"
-                    : "border-royalPurple/20 hover:border-royalPurple/50 hover:shadow-[0_0_12px_rgba(107,33,168,0.15)]"
+                    ? "border-accent bg-accent/10 shadow-[0_0_15px_rgba(107,33,168,0.3)]"
+                    : "border-accent/20 hover:border-accent/50 hover:shadow-[0_0_12px_rgba(107,33,168,0.15)]"
                 }`}
               >
-                <p className="text-base font-heading text-ghostWhite">
+                <p className="text-base font-heading text-ink">
                   {period.displayName}
                 </p>
-                <p className="text-xs text-ashGray">{period.timeRange}</p>
+                <p className="text-xs text-inkMuted">{period.timeRange}</p>
               </Card>
             </motion.button>
           ))}

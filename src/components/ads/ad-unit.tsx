@@ -57,7 +57,7 @@ export function AdUnit({ slot, format = 'auto', label = 'โฆษณา', class
   if (isDev) {
     return (
       <div className={`my-4 ${className}`}>
-        <p className="text-xs text-ashGray/40 text-center font-oracle">
+        <p className="text-xs text-inkMuted/40 text-center font-oracle">
           [AdSense slot {slot} — visible in production only]
         </p>
       </div>
@@ -66,7 +66,7 @@ export function AdUnit({ slot, format = 'auto', label = 'โฆษณา', class
 
   return (
     <div className={`my-4 ${className}`}>
-      <p className="text-xs text-ashGray/50 text-center font-oracle mb-1">{label}</p>
+      <p className="text-xs text-inkMuted/50 text-center font-oracle mb-1">{label}</p>
       <ins
         ref={ref}
         className="adsbygoogle block"

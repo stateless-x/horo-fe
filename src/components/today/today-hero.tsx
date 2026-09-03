@@ -65,7 +65,7 @@ export function TodayHero({
     >
       {/* Compact header: greeting + element badge inline */}
       <div className="flex items-center justify-center gap-2 flex-wrap">
-        <p className="text-paleOrchid font-oracle text-base">
+        <p className="text-accentFaint font-oracle text-base">
           สวัสดี, {displayName}
         </p>
         {(primaryElement || planet) && (
@@ -85,7 +85,7 @@ export function TodayHero({
       </div>
 
       {/* Date - compact */}
-      <ClientDate className="text-ashGray text-sm" />
+      <ClientDate className="text-inkMuted text-sm" />
 
       {/* Overall Score - the main visual hook */}
       {overallScore && (

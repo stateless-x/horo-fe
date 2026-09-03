@@ -111,15 +111,15 @@ export function Footer() {
   return (
     <>
     <footer
-      className={`w-full border-t border-darkPurple/30 bg-deepNight/50 backdrop-blur-sm mt-16 ${
+      className={`w-full border-t border-surface2/30 bg-surface/50 backdrop-blur-sm mt-16 ${
         isDashboardPage ? "pb-28" : ""
       }`}
     >
       <div className="container mx-auto px-4 py-8">
         {/* Share CTA block */}
         {context.shareEnabled && context.shareCta && (
-          <div className="bg-gradient-to-r from-royalPurple/10 to-amethyst/10 border border-amethyst/20 rounded-xl p-6 mb-6">
-            <p className="font-heading text-lg text-ghostWhite font-medium text-center mb-4">
+          <div className="bg-gradient-to-r from-accent/10 to-accentBright/10 border border-accentBright/20 rounded-xl p-6 mb-6">
+            <p className="font-heading text-lg text-ink font-medium text-center mb-4">
               {context.shareCta}
             </p>
 
@@ -136,7 +136,7 @@ export function Footer() {
                     "width=600,height=400",
                   );
                 }}
-                className="w-11 h-11 flex items-center justify-center bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
+                className="w-11 h-11 flex items-center justify-center bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
               >
                 <PlatformIcon platform="line" />
               </button>
@@ -152,7 +152,7 @@ export function Footer() {
                     "width=600,height=400",
                   );
                 }}
-                className="w-11 h-11 flex items-center justify-center bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
+                className="w-11 h-11 flex items-center justify-center bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
               >
                 <PlatformIcon platform="facebook" />
               </button>
@@ -169,7 +169,7 @@ export function Footer() {
                     "width=600,height=400",
                   );
                 }}
-                className="w-11 h-11 flex items-center justify-center bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
+                className="w-11 h-11 flex items-center justify-center bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
               >
                 <PlatformIcon platform="twitter" />
               </button>
@@ -178,10 +178,10 @@ export function Footer() {
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
                 }}
-                className="px-4 h-11 flex items-center justify-center gap-2 bg-charcoal border border-darkPurple/50 rounded-lg transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
+                className="px-4 h-11 flex items-center justify-center gap-2 bg-overlay border border-surface2/50 rounded-lg transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
               >
                 <svg
-                  className="w-4 h-4 text-ghostWhite"
+                  className="w-4 h-4 text-ink"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -193,7 +193,7 @@ export function Footer() {
                     d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
                   />
                 </svg>
-                <span className="font-heading text-base text-ghostWhite">
+                <span className="font-heading text-base text-ink">
                   คัดลอกลิงก์
                 </span>
               </button>
@@ -204,7 +204,7 @@ export function Footer() {
         {/* Cross-promotion links */}
         {/* {context.crossLinks.length > 0 && (
           <div className="mb-6">
-            <h4 className="font-heading text-base text-ghostWhite font-medium text-center mb-4">
+            <h4 className="font-heading text-base text-ink font-medium text-center mb-4">
               ลองฟีเจอร์อื่น
             </h4>
             <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
@@ -214,10 +214,10 @@ export function Footer() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="bg-charcoal border border-darkPurple/50 rounded-xl p-4 flex items-center gap-3 transition-all duration-200 hover:border-royalPurple/50 hover:bg-darkPurple/20"
+                    className="bg-overlay border border-surface2/50 rounded-xl p-4 flex items-center gap-3 transition-all duration-200 hover:border-accent/50 hover:bg-surface2/20"
                   >
-                    <Icon className="text-lavenderGlow w-6 h-6" />
-                    <span className="font-heading text-base text-ghostWhite">
+                    <Icon className="text-accentSoft w-6 h-6" />
+                    <span className="font-heading text-base text-ink">
                       {link.label}
                     </span>
                   </Link>
@@ -229,7 +229,7 @@ export function Footer() {
 
         {/* Donation */}
         <div className="flex flex-col items-center gap-3 mb-6">
-          <p className="font-thai text-sm text-ashGray flex items-center gap-1">
+          <p className="font-thai text-sm text-inkMuted flex items-center gap-1">
             ☕ ชอบใจ? ซื้อกาแฟให้พี่ภูสักแก้ว <Heart className="inline w-3 h-3 text-pink-400" />
           </p>
           <DonationButton variant="subtle" onClick={() => setShowDonationModal(true)}>
@@ -238,25 +238,25 @@ export function Footer() {
         </div>
 
         {/* Attribution */}
-        <div className="flex flex-col items-center justify-center gap-1.5 text-sm text-ashGray">
+        <div className="flex flex-col items-center justify-center gap-1.5 text-sm text-inkMuted">
           <div className="flex items-center gap-1.5">
             <span>Made by</span>
             <a
               href="https://pooh.fyi"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-amethyst hover:text-lavenderGlow transition-colors duration-200"
+              className="font-medium text-accentBright hover:text-accentSoft transition-colors duration-200"
             >
               @Askpurin
             </a>
           </div>
-          <div className="flex items-center gap-3 text-xs text-ashGray/40">
+          <div className="flex items-center gap-3 text-xs text-inkMuted/40">
             <span>v 0.0.1</span>
             <span>·</span>
             <Link
               href="/privacy"
               target="_blank"
-              className="hover:text-ashGray transition-colors duration-200"
+              className="hover:text-inkMuted transition-colors duration-200"
             >
               นโยบายความเป็นส่วนตัว
             </Link>

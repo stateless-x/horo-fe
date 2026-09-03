@@ -84,7 +84,7 @@ export function CookieConsent() {
                 className="fixed inset-0 z-[70] flex items-center justify-center p-4"
               >
                 <div
-                  className="w-full max-w-md rounded-2xl border border-white/10 shadow-2xl overflow-hidden"
+                  className="w-full max-w-md rounded-2xl border border-edge shadow-2xl overflow-hidden"
                   style={{
                     background:
                       'linear-gradient(135deg, rgba(15, 10, 26, 0.98), rgba(10, 10, 15, 0.99))',
@@ -94,10 +94,10 @@ export function CookieConsent() {
                 >
                   {/* Header */}
                   <div className="px-5 pt-5 pb-3">
-                    <h3 className="text-base font-heading text-ghostWhite">
+                    <h3 className="text-base font-heading text-ink">
                       ตั้งค่าคุกกี้
                     </h3>
-                    <p className="text-xs text-ashGray font-oracle mt-1 leading-relaxed">
+                    <p className="text-xs text-inkMuted font-oracle mt-1 leading-relaxed">
                       เลือกประเภทคุกกี้ที่คุณต้องการอนุญาต
                     </p>
                   </div>
@@ -105,32 +105,32 @@ export function CookieConsent() {
                   {/* Cookie categories */}
                   <div className="px-5 pb-2 space-y-3">
                     {/* Necessary */}
-                    <div className="flex items-start justify-between gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3">
+                    <div className="flex items-start justify-between gap-3 rounded-xl border border-edge bg-white/[0.02] p-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-heading text-ghostWhite">
+                        <p className="text-sm font-heading text-ink">
                           คุกกี้ที่จำเป็น
                         </p>
-                        <p className="text-xs text-ashGray font-oracle mt-0.5 leading-relaxed">
+                        <p className="text-xs text-inkMuted font-oracle mt-0.5 leading-relaxed">
                           จำเป็นสำหรับการทำงานของเว็บไซต์ เช่น การเข้าสู่ระบบ
                         </p>
                       </div>
                       <div className="flex-shrink-0 pt-0.5">
-                        <div className="relative w-10 h-[22px] rounded-full bg-royalPurple cursor-not-allowed opacity-60">
-                          <div className="absolute right-0.5 top-0.5 w-[18px] h-[18px] rounded-full bg-ghostWhite shadow-sm" />
+                        <div className="relative w-10 h-[22px] rounded-full bg-accent cursor-not-allowed opacity-60">
+                          <div className="absolute right-0.5 top-0.5 w-[18px] h-[18px] rounded-full bg-ink shadow-sm" />
                         </div>
-                        <p className="text-[10px] text-ashGray/60 font-oracle text-center mt-1">
+                        <p className="text-[10px] text-inkMuted/60 font-oracle text-center mt-1">
                           เปิดเสมอ
                         </p>
                       </div>
                     </div>
 
                     {/* Analytics */}
-                    <div className="flex items-start justify-between gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3">
+                    <div className="flex items-start justify-between gap-3 rounded-xl border border-edge bg-white/[0.02] p-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-heading text-ghostWhite">
+                        <p className="text-sm font-heading text-ink">
                           คุกกี้วิเคราะห์
                         </p>
-                        <p className="text-xs text-ashGray font-oracle mt-0.5 leading-relaxed">
+                        <p className="text-xs text-inkMuted font-oracle mt-0.5 leading-relaxed">
                           ช่วยให้เราเข้าใจการใช้งานเว็บไซต์และปรับปรุงประสบการณ์
                         </p>
                       </div>
@@ -147,12 +147,12 @@ export function CookieConsent() {
                           }
                           className={`relative w-10 h-[22px] rounded-full transition-colors duration-200 ${
                             preferences.analytics
-                              ? 'bg-royalPurple'
-                              : 'bg-white/10'
+                              ? 'bg-accent'
+                              : 'bg-edge'
                           }`}
                         >
                           <div
-                            className={`absolute top-0.5 w-[18px] h-[18px] rounded-full bg-ghostWhite shadow-sm transition-all duration-200 ${
+                            className={`absolute top-0.5 w-[18px] h-[18px] rounded-full bg-ink shadow-sm transition-all duration-200 ${
                               preferences.analytics ? 'right-0.5' : 'left-0.5'
                             }`}
                           />
@@ -161,12 +161,12 @@ export function CookieConsent() {
                     </div>
 
                     {/* Marketing */}
-                    <div className="flex items-start justify-between gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3">
+                    <div className="flex items-start justify-between gap-3 rounded-xl border border-edge bg-white/[0.02] p-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-heading text-ghostWhite">
+                        <p className="text-sm font-heading text-ink">
                           คุกกี้การตลาด
                         </p>
-                        <p className="text-xs text-ashGray font-oracle mt-0.5 leading-relaxed">
+                        <p className="text-xs text-inkMuted font-oracle mt-0.5 leading-relaxed">
                           ใช้สำหรับแสดงโฆษณาที่เกี่ยวข้องและวัดผลแคมเปญ
                         </p>
                       </div>
@@ -183,12 +183,12 @@ export function CookieConsent() {
                           }
                           className={`relative w-10 h-[22px] rounded-full transition-colors duration-200 ${
                             preferences.marketing
-                              ? 'bg-royalPurple'
-                              : 'bg-white/10'
+                              ? 'bg-accent'
+                              : 'bg-edge'
                           }`}
                         >
                           <div
-                            className={`absolute top-0.5 w-[18px] h-[18px] rounded-full bg-ghostWhite shadow-sm transition-all duration-200 ${
+                            className={`absolute top-0.5 w-[18px] h-[18px] rounded-full bg-ink shadow-sm transition-all duration-200 ${
                               preferences.marketing ? 'right-0.5' : 'left-0.5'
                             }`}
                           />
@@ -201,13 +201,13 @@ export function CookieConsent() {
                   <div className="px-5 py-4 flex gap-2">
                     <button
                       onClick={acceptAll}
-                      className="flex-1 px-4 py-2.5 bg-royalPurple hover:bg-amethyst text-ghostWhite text-sm font-heading rounded-lg transition-colors"
+                      className="flex-1 px-4 py-2.5 bg-accent hover:bg-accentBright text-accentInk text-sm font-heading rounded-lg transition-colors"
                     >
                       ยอมรับทั้งหมด
                     </button>
                     <button
                       onClick={saveSettings}
-                      className="flex-1 px-4 py-2.5 border border-white/15 hover:border-white/30 text-ghostWhite text-sm font-heading rounded-lg transition-colors"
+                      className="flex-1 px-4 py-2.5 border border-white/15 hover:border-white/30 text-ink text-sm font-heading rounded-lg transition-colors"
                     >
                       บันทึกการตั้งค่า
                     </button>
@@ -227,7 +227,7 @@ export function CookieConsent() {
               className="fixed bottom-0 left-0 right-0 z-50"
             >
               <div
-                className="border-t border-white/10 px-4 py-4 md:py-5 shadow-[0_-8px_30px_rgba(0,0,0,0.4)]"
+                className="border-t border-edge px-4 py-4 md:py-5 shadow-[0_-8px_30px_rgba(0,0,0,0.4)]"
                 style={{
                   background:
                     'linear-gradient(180deg, rgba(15, 10, 26, 0.97), rgba(10, 10, 15, 0.99))',
@@ -238,19 +238,19 @@ export function CookieConsent() {
                   {/* Close button (dismiss without saving — reappears on refresh) */}
                   <button
                     onClick={dismiss}
-                    className="absolute -top-1 right-0 md:relative md:top-auto md:right-auto md:order-last p-1.5 text-ashGray/60 hover:text-ghostWhite transition-colors rounded-lg"
+                    className="absolute -top-1 right-0 md:relative md:top-auto md:right-auto md:order-last p-1.5 text-inkMuted/60 hover:text-ink transition-colors rounded-lg"
                     aria-label="ปิด"
                   >
                     <X className="w-4 h-4" />
                   </button>
 
                   {/* Text */}
-                  <p className="text-sm text-ghostWhite/80 font-oracle leading-relaxed flex-1 pr-8 md:pr-0">
+                  <p className="text-sm text-ink/80 font-oracle leading-relaxed flex-1 pr-8 md:pr-0">
                     เราใช้คุกกี้เพื่อพัฒนาประสบการณ์การใช้งานของคุณ{' '}
                     <Link
                       href="/privacy"
                       target="_blank"
-                      className="text-amethyst hover:text-lavenderGlow underline underline-offset-2 transition-colors"
+                      className="text-accentBright hover:text-accentSoft underline underline-offset-2 transition-colors"
                     >
                       นโยบายความเป็นส่วนตัว
                     </Link>
@@ -260,13 +260,13 @@ export function CookieConsent() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={acceptAll}
-                      className="flex-1 md:flex-none px-5 py-2.5 bg-royalPurple hover:bg-amethyst text-ghostWhite text-sm font-heading rounded-lg transition-colors whitespace-nowrap"
+                      className="flex-1 md:flex-none px-5 py-2.5 bg-accent hover:bg-accentBright text-accentInk text-sm font-heading rounded-lg transition-colors whitespace-nowrap"
                     >
                       ยอมรับทั้งหมด
                     </button>
                     <button
                       onClick={() => setShowSettings(true)}
-                      className="flex-1 md:flex-none px-5 py-2.5 border border-white/15 hover:border-white/30 text-ghostWhite text-sm font-heading rounded-lg transition-colors whitespace-nowrap"
+                      className="flex-1 md:flex-none px-5 py-2.5 border border-white/15 hover:border-white/30 text-ink text-sm font-heading rounded-lg transition-colors whitespace-nowrap"
                     >
                       ตั้งค่า
                     </button>

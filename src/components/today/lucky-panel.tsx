@@ -21,15 +21,15 @@ interface LuckyItemProps {
 
 function LuckyItem({ icon, label, value, highlight }: LuckyItemProps) {
   return (
-    <div className="flex items-center gap-3 p-3 bg-deepNight/50 rounded-xl border border-darkPurple/30">
-      <div className="w-10 h-10 rounded-lg bg-amethyst/10 flex items-center justify-center shrink-0">
+    <div className="flex items-center gap-3 p-3 bg-surface/50 rounded-xl border border-surface2/30">
+      <div className="w-10 h-10 rounded-lg bg-accentBright/10 flex items-center justify-center shrink-0">
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-ashGray mb-0.5">{label}</p>
+        <p className="text-xs text-inkMuted mb-0.5">{label}</p>
         <p
           className={`font-heading truncate ${
-            highlight ? 'text-xl text-amethyst' : 'text-base text-ghostWhite'
+            highlight ? 'text-xl text-accentBright' : 'text-base text-ink'
           }`}
         >
           {value}
@@ -68,7 +68,7 @@ export function LuckyPanel({
     >
       {/* Lucky numbers - highlighted */}
       <LuckyItem
-        icon={<Hash className="w-5 h-5 text-amethyst" />}
+        icon={<Hash className="w-5 h-5 text-accentBright" />}
         label="เลขมงคล"
         value={displayNumbers}
         highlight
@@ -76,14 +76,14 @@ export function LuckyPanel({
 
       {/* Lucky color */}
       <LuckyItem
-        icon={<Palette className="w-5 h-5 text-amethyst" />}
+        icon={<Palette className="w-5 h-5 text-accentBright" />}
         label="สีมงคล"
         value={displayColor}
       />
 
       {/* Lucky direction */}
       <LuckyItem
-        icon={<Compass className="w-5 h-5 text-amethyst" />}
+        icon={<Compass className="w-5 h-5 text-accentBright" />}
         label="ทิศมงคล"
         value={luckyDirection || '-'}
       />
@@ -91,7 +91,7 @@ export function LuckyPanel({
       {/* Lucky moment */}
       {luckyMoment && (
         <LuckyItem
-          icon={<Clock className="w-5 h-5 text-amethyst" />}
+          icon={<Clock className="w-5 h-5 text-accentBright" />}
           label="เวลามงคล"
           value={luckyMoment}
         />

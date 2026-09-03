@@ -46,7 +46,9 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen relative overflow-x-hidden">
       {/* ===== SECTION 1: Hero — "The Threshold" ===== */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center">
+      {/* data-theme="dark": the hero is the Midnight Room in both themes — the
+          door/eye video is dark art and a full-bleed dark band works on a light page */}
+      <section data-theme="dark" className="relative min-h-[100dvh] flex items-center justify-center bg-ground text-ink">
         {/* Ambient Video Background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {videoLoaded && !shouldReduceMotion && (
@@ -61,17 +63,17 @@ export default function LandingPage() {
               <source src="/horo.webm" type="video/webm" />
             </video>
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-voidBlack/80 via-voidBlack/60 to-voidBlack" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ground/80 via-ground/60 to-ground" />
         </div>
 
         {/* Floating Particles */}
         {!shouldReduceMotion && (
           <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-amethyst/40 animate-float-1" />
-            <div className="absolute top-1/3 right-1/4 w-1 h-1 rounded-full bg-lavenderGlow/30 animate-float-2" />
-            <div className="absolute bottom-1/3 left-1/3 w-2 h-2 rounded-full bg-amethyst/20 animate-float-3" />
-            <div className="absolute top-2/3 right-1/3 w-1 h-1 rounded-full bg-lavenderGlow/25 animate-float-1 [animation-delay:2s]" />
-            <div className="absolute top-1/2 left-2/3 w-1.5 h-1.5 rounded-full bg-amethyst/30 animate-float-2 [animation-delay:3s]" />
+            <div className="absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-accentBright/40 animate-float-1" />
+            <div className="absolute top-1/3 right-1/4 w-1 h-1 rounded-full bg-accentSoft/30 animate-float-2" />
+            <div className="absolute bottom-1/3 left-1/3 w-2 h-2 rounded-full bg-accentBright/20 animate-float-3" />
+            <div className="absolute top-2/3 right-1/3 w-1 h-1 rounded-full bg-accentSoft/25 animate-float-1 [animation-delay:2s]" />
+            <div className="absolute top-1/2 left-2/3 w-1.5 h-1.5 rounded-full bg-accentBright/30 animate-float-2 [animation-delay:3s]" />
           </div>
         )}
 
@@ -82,14 +84,14 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-4xl md:text-7xl font-heading mb-6 tracking-tight bg-gradient-to-br from-ghostWhite via-paleOrchid to-lavenderGlow bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(192,132,252,0.3)]">
+            <h1 className="text-4xl md:text-7xl font-heading mb-6 tracking-tight bg-gradient-to-br from-ink via-accentFaint to-accentSoft bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(192,132,252,0.3)]">
               ดูดวงที่เข้าใจตัวตนของคุณ
             </h1>
 
-            <p className="text-lg md:text-2xl text-paleOrchid/80 mb-6 font-oracle font-light leading-relaxed">
+            <p className="text-lg md:text-2xl text-accentFaint/80 mb-6 font-oracle font-light leading-relaxed">
               ผสานโหราศาสตร์ไทย ดวงจีนปาจื้อ (Bazi) และจิตวิทยา MBTI
               <br />
-              ถอดรหัสทั้งดวงชะตาและนิสัยจริง ไม่ใช่แค่ดวง แต่คือ<span className="text-lavenderGlow/90 font-normal">แก่นแท้ของคุณ</span>
+              ถอดรหัสทั้งดวงชะตาและนิสัยจริง ไม่ใช่แค่ดวง แต่คือ<span className="text-accentSoft/90 font-normal">แก่นแท้ของคุณ</span>
             </p>
 
             {/* Decorative line */}
@@ -97,7 +99,7 @@ export default function LandingPage() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="mx-auto mb-10 h-px w-48 bg-gradient-to-r from-transparent via-lavenderGlow/40 to-transparent origin-center"
+              className="mx-auto mb-10 h-px w-48 bg-gradient-to-r from-transparent via-accentSoft/40 to-transparent origin-center"
             />
 
             {/* CTAs */}
@@ -106,7 +108,7 @@ export default function LandingPage() {
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto px-10 py-4 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-lg font-semibold rounded-lg transition-all shadow-lg shadow-royalPurple/40 hover:shadow-amethyst/40 touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 bg-accent hover:bg-accentBright text-accentInk font-heading text-lg font-semibold rounded-lg transition-all shadow-lg shadow-accent/40 hover:shadow-accentBright/40 touch-manipulation"
                 >
                   เริ่มดูดวงฟรี
                 </motion.button>
@@ -116,14 +118,14 @@ export default function LandingPage() {
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto px-10 py-4 border-2 border-amethyst/60 hover:border-amethyst text-amethyst hover:text-ghostWhite hover:bg-amethyst/15 font-heading text-lg rounded-lg transition-all touch-manipulation"
+                  className="w-full sm:w-auto px-10 py-4 border-2 border-accentBright/60 hover:border-accentBright text-accentBright hover:text-accentInk hover:bg-accentBright/15 font-heading text-lg rounded-lg transition-all touch-manipulation"
                 >
                   เข้าสู่ระบบ
                 </motion.button>
               </Link>
             </div>
 
-            <p className="text-ashGray/70 text-sm font-oracle mt-6">
+            <p className="text-inkMuted/70 text-sm font-oracle mt-6">
               ฟรี · ใช้เวลาไม่ถึง 2 นาที · เห็นผลก่อนสมัครสมาชิก
             </p>
           </motion.div>
@@ -143,7 +145,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-heading text-ghostWhite text-center mb-6"
+            className="text-3xl md:text-4xl font-heading text-ink text-center mb-6"
           >
             ทำไมสายมูถึงทายได้ตรง
           </motion.h2>
@@ -152,7 +154,7 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-ashGray font-oracle text-center mb-16 max-w-2xl mx-auto"
+            className="text-inkMuted font-oracle text-center mb-16 max-w-2xl mx-auto"
           >
             เพราะเราไม่ได้ดูแค่ดวง — เราอ่านทั้งชะตาและนิสัยของคุณ ผสาน 3 ศาสตร์ไว้ในคำทำนายเดียว
           </motion.p>
@@ -166,7 +168,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6 }}
               className="relative group h-full"
             >
-              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-amethyst/30 -z-10" />
+              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accentBright/30 -z-10" />
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
@@ -179,18 +181,18 @@ export default function LandingPage() {
 
                 <div className="relative flex flex-col flex-1 p-6 md:p-8">
                   {/* Watermark */}
-                  <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                  <span className="absolute top-4 right-4 text-5xl font-heading text-ink/[0.04] pointer-events-none select-none">
                     命
                   </span>
 
-                  <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4">
+                  <h3 className="text-xl md:text-2xl font-heading text-accentBright mb-4">
                     ดวงจีนปาจื้อ (Bazi)
                   </h3>
-                  <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4">
+                  <p className="text-ink font-oracle text-sm md:text-base leading-relaxed mb-4">
                     ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากสี่เสาชะตา (ปี เดือน วัน
                     ชั่วโมงเกิด) และธาตุทั้งห้า
                   </p>
-                  <p className="text-ashGray text-xs md:text-sm font-oracle mt-auto">
+                  <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
                     จุดเด่น: วิเคราะห์วงจรชีวิต 10 ปี และพลังธาตุในชาติ
                   </p>
                 </div>
@@ -205,7 +207,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="relative group h-full"
             >
-              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-royalPurple/30 -z-10" />
+              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accent/30 -z-10" />
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
@@ -218,18 +220,18 @@ export default function LandingPage() {
 
                 <div className="relative flex flex-col flex-1 p-6 md:p-8">
                   {/* Watermark */}
-                  <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                  <span className="absolute top-4 right-4 text-5xl font-heading text-ink/[0.04] pointer-events-none select-none">
                     ๙
                   </span>
 
-                  <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4">
+                  <h3 className="text-xl md:text-2xl font-heading text-accentBright mb-4">
                     โหราศาสตร์ไทย
                   </h3>
-                  <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4">
+                  <p className="text-ink font-oracle text-sm md:text-base leading-relaxed mb-4">
                     ภูมิปัญญาไทยที่ดูดวงจากวันเกิด นพเคราะห์ และจักรนพคุณ
                     เพื่อดูความสัมพันธ์และโชคลาภ
                   </p>
-                  <p className="text-ashGray text-xs md:text-sm font-oracle mt-auto">
+                  <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
                     จุดเด่น: วิเคราะห์ความสัมพันธ์ โชคลาภ และจังหวะเวลา
                   </p>
                 </div>
@@ -244,7 +246,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative group h-full"
             >
-              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-lavenderGlow/30 -z-10" />
+              <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accentSoft/30 -z-10" />
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
@@ -257,19 +259,19 @@ export default function LandingPage() {
 
                 <div className="relative flex flex-col flex-1 p-6 md:p-8">
                   {/* Watermark */}
-                  <span className="absolute top-4 right-4 text-5xl font-heading text-white/[0.03] pointer-events-none select-none">
+                  <span className="absolute top-4 right-4 text-5xl font-heading text-ink/[0.04] pointer-events-none select-none">
                     心
                   </span>
 
-                  <h3 className="text-xl md:text-2xl font-heading text-amethyst mb-4">
+                  <h3 className="text-xl md:text-2xl font-heading text-accentBright mb-4">
                     จิตวิทยา MBTI
                   </h3>
-                  <p className="text-ghostWhite font-oracle text-sm md:text-base leading-relaxed mb-4">
+                  <p className="text-ink font-oracle text-sm md:text-base leading-relaxed mb-4">
                     จิตวิทยาบุคลิกภาพ 16 แบบ
                     เสริมให้คำทำนายเข้าถึงตัวตนของคุณอย่างลึกซึ้ง
                     พร้อมเตือนจุดอ่อนที่บุคลิกภาพแบบคุณมักเจอ
                   </p>
-                  <p className="text-ashGray text-xs md:text-sm font-oracle mt-auto">
+                  <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
                     จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวคุณ
                   </p>
                 </div>
@@ -289,7 +291,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-heading text-ghostWhite text-center mb-6"
+            className="text-3xl md:text-4xl font-heading text-ink text-center mb-6"
           >
             คำทำนายหน้าตาเป็นแบบนี้
           </motion.h2>
@@ -298,7 +300,7 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-ashGray font-oracle text-center mb-12 max-w-2xl mx-auto"
+            className="text-inkMuted font-oracle text-center mb-12 max-w-2xl mx-auto"
           >
             ไม่ใช่คำทำนายกว้าง ๆ ที่ใครอ่านก็ตรง —
             ทุกบรรทัดคำนวณจากวันเกิด เวลาเกิด และบุคลิกภาพของคุณคนเดียว
@@ -325,15 +327,15 @@ export default function LandingPage() {
               className="space-y-6"
             >
               <div className="glass-card p-6 md:p-8">
-                <p className="font-mono text-xs tracking-wider text-ashGray/60 mb-3">ตัวอย่างคำทำนาย · ธาตุไม้ · INFP</p>
-                <p className="font-oracle text-paleOrchid/90 leading-relaxed">
+                <p className="font-mono text-xs tracking-wider text-inkMuted/60 mb-3">ตัวอย่างคำทำนาย · ธาตุไม้ · INFP</p>
+                <p className="font-oracle text-accentFaint/90 leading-relaxed">
                   &ldquo;เจ้าเป็นไม้ที่โตท่ามกลางลมแรง — ใจอ่อนโยนแต่รากลึก
                   ช่วงนี้การงานของเจ้ากำลังเข้าเดือนที่ธาตุทองกดทับ
                   คนบุคลิกแบบเจ้ามักยอมรับงานเกินตัวเพราะไม่กล้าปฏิเสธ
                   จงระวังสัปดาห์ที่สามของเดือน&rdquo;
                 </p>
               </div>
-              <p className="text-ashGray text-sm leading-relaxed">
+              <p className="text-inkMuted text-sm leading-relaxed">
                 สังเกตบรรทัดสุดท้าย — คำเตือนอิงจากจุดอ่อนของบุคลิกภาพแบบคุณโดยตรง
                 นี่คือสิ่งที่โหราศาสตร์อย่างเดียวให้ไม่ได้ และแบบทดสอบบุคลิกภาพอย่างเดียวก็ให้ไม่ได้
               </p>
@@ -345,7 +347,7 @@ export default function LandingPage() {
       {/* ===== SECTION 6: Final CTA — "The Invitation" ===== */}
       <section className="py-24 px-6 text-center relative">
         {/* Top divider */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-royalPurple/30 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -353,28 +355,28 @@ export default function LandingPage() {
           viewport={{ once: true }}
           className="max-w-3xl mx-auto"
         >
-          <h2 className="text-3xl md:text-5xl font-heading text-ghostWhite mb-4">
+          <h2 className="text-3xl md:text-5xl font-heading text-ink mb-4">
             พร้อมรู้จักตัวเองลึกกว่าเดิมหรือยัง
           </h2>
-          <p className="text-ashGray font-oracle mb-10">
+          <p className="text-inkMuted font-oracle mb-10">
             ฟรี ไม่เสียค่าใช้จ่าย · ใช้เวลาไม่ถึง 2 นาที · เห็นผลก่อนสมัครสมาชิก
           </p>
 
           <Link href="/fortune">
             <div className="relative inline-block">
               {/* Glow pulse behind button */}
-              <div className="absolute inset-0 bg-royalPurple rounded-lg blur-xl animate-ctaGlow" />
+              <div className="absolute inset-0 bg-accent rounded-lg blur-xl animate-ctaGlow" />
               <motion.button
                 whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative px-14 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl font-semibold rounded-lg transition-all shadow-xl shadow-royalPurple/40 hover:shadow-amethyst/40 touch-manipulation"
+                className="relative px-14 py-5 bg-accent hover:bg-accentBright text-accentInk font-heading text-xl font-semibold rounded-lg transition-all shadow-xl shadow-accent/40 hover:shadow-accentBright/40 touch-manipulation"
               >
                 เริ่มดูดวงฟรี
               </motion.button>
             </div>
           </Link>
 
-          <p className="text-ashGray/60 text-sm font-oracle mt-6">
+          <p className="text-inkMuted/60 text-sm font-oracle mt-6">
             ดูดวงด้วย โหราศาสตร์ไทย × ดวงจีนปาจื้อ (Bazi) × จิตวิทยา MBTI
           </p>
         </motion.div>

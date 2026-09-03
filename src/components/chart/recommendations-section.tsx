@@ -53,7 +53,7 @@ export function RecommendationsSection({
           <div
             key={dot}
             className={`w-2 h-2 rounded-full ${
-              dot <= rating ? "bg-amethyst" : "bg-darkPurple/50"
+              dot <= rating ? "bg-accentBright" : "bg-surface2/50"
             }`}
           />
         ))}
@@ -64,8 +64,8 @@ export function RecommendationsSection({
   return (
     <div>
       <div className="flex items-center justify-center gap-2 mb-6">
-        <Sparkles className="text-lavenderGlow w-6 h-6" />
-        <h2 className="font-heading text-xl font-medium text-ghostWhite">
+        <Sparkles className="text-accentSoft w-6 h-6" />
+        <h2 className="font-heading text-xl font-medium text-ink">
           คำแนะนำ & ฤกษ์มงคล
           <InfoTooltip text="ฤกษ์มงคล คือช่วงเวลาที่ดวงดาวเรียงตัวเป็นมงคล เหมาะสำหรับเริ่มต้นสิ่งใหม่ เช่น ลงทุน แต่งงาน หรือขึ้นบ้านใหม่" />
         </h2>
@@ -73,32 +73,32 @@ export function RecommendationsSection({
 
       {/* Lucky attributes grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <p className="text-lavenderGlow font-thai text-sm mb-2">
+        <div className="bg-overlay border border-surface2/50 rounded-lg p-4">
+          <p className="text-accentSoft font-thai text-sm mb-2">
             สีมงคลปีนี้
           </p>
-          <p className="text-ghostWhite font-heading font-medium text-base">
+          <p className="text-ink font-heading font-medium text-base">
             {recommendations.luckyColors.join(", ")}
           </p>
         </div>
 
-        <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <p className="text-lavenderGlow font-thai text-sm mb-2">เลขมงคล</p>
-          <p className="text-ghostWhite font-heading font-medium text-base">
+        <div className="bg-overlay border border-surface2/50 rounded-lg p-4">
+          <p className="text-accentSoft font-thai text-sm mb-2">เลขมงคล</p>
+          <p className="text-ink font-heading font-medium text-base">
             {recommendations.luckyNumbers.join(", ")}
           </p>
         </div>
 
-        <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <p className="text-lavenderGlow font-thai text-sm mb-2">ทิศมงคล</p>
-          <p className="text-ghostWhite font-heading font-medium text-base">
+        <div className="bg-overlay border border-surface2/50 rounded-lg p-4">
+          <p className="text-accentSoft font-thai text-sm mb-2">ทิศมงคล</p>
+          <p className="text-ink font-heading font-medium text-base">
             {recommendations.luckyDirection}
           </p>
         </div>
 
-        <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <p className="text-lavenderGlow font-thai text-sm mb-2">วันมงคล</p>
-          <p className="text-ghostWhite font-heading font-medium text-base">
+        <div className="bg-overlay border border-surface2/50 rounded-lg p-4">
+          <p className="text-accentSoft font-thai text-sm mb-2">วันมงคล</p>
+          <p className="text-ink font-heading font-medium text-base">
             {recommendations.luckyDay}
           </p>
         </div>
@@ -106,8 +106,8 @@ export function RecommendationsSection({
 
       {/* Monthly highlights - Swipeable Timeline */}
       {recommendations.monthlyHighlights.length > 0 && (
-        <div className="bg-deepNight border border-darkPurple/50 rounded-xl p-6 mb-6">
-          <h3 className="text-lavenderGlow font-heading font-medium text-base mb-4">
+        <div className="bg-surface border border-surface2/50 rounded-xl p-6 mb-6">
+          <h3 className="text-accentSoft font-heading font-medium text-base mb-4">
             เดือนเด่นของเจ้า
           </h3>
 
@@ -133,10 +133,10 @@ export function RecommendationsSection({
                     transition-all duration-200
                     ${
                       isSelected
-                        ? 'bg-amethyst text-voidBlack font-medium'
+                        ? 'bg-accentBright text-ground font-medium'
                         : isHighRating
-                        ? 'bg-amethyst/20 border border-amethyst/50 text-amethyst hover:bg-amethyst/30'
-                        : 'bg-charcoal border border-darkPurple/50 text-ghostWhite hover:border-royalPurple/50'
+                        ? 'bg-accentBright/20 border border-accentBright/50 text-accentBright hover:bg-accentBright/30'
+                        : 'bg-overlay border border-surface2/50 text-ink hover:border-accent/50'
                     }
                     ${isHighRating && !isSelected ? 'shadow-[0_0_12px_rgba(161,106,203,0.3)]' : ''}
                   `}
@@ -156,23 +156,23 @@ export function RecommendationsSection({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="bg-charcoal border border-darkPurple/50 rounded-lg p-5 space-y-4"
+                className="bg-overlay border border-surface2/50 rounded-lg p-5 space-y-4"
               >
                 {/* Header with month and rating */}
                 <div className="flex items-center justify-between">
-                  <h4 className="text-ghostWhite font-heading font-medium text-lg">
+                  <h4 className="text-ink font-heading font-medium text-lg">
                     {recommendations.monthlyHighlights[selectedMonth].month}
                   </h4>
                   {renderDotRating(recommendations.monthlyHighlights[selectedMonth].rating)}
                 </div>
 
                 {/* Summary note */}
-                <p className="text-amethyst font-thai text-base font-medium">
+                <p className="text-accentBright font-thai text-base font-medium">
                   {recommendations.monthlyHighlights[selectedMonth].note}
                 </p>
 
                 {/* Detailed description */}
-                <p className="text-ashGray font-thai text-base leading-relaxed">
+                <p className="text-inkMuted font-thai text-base leading-relaxed">
                   {recommendations.monthlyHighlights[selectedMonth].description}
                 </p>
 
@@ -183,7 +183,7 @@ export function RecommendationsSection({
                     {recommendations.monthlyHighlights[selectedMonth].highlights!.map((highlight, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1 bg-amethyst/10 border border-amethyst/30 rounded-full text-lavenderGlow font-thai text-sm"
+                        className="px-3 py-1 bg-accentBright/10 border border-accentBright/30 rounded-full text-accentSoft font-thai text-sm"
                       >
                         {highlight}
                       </span>
@@ -193,11 +193,11 @@ export function RecommendationsSection({
 
                 {/* Advice */}
                 {recommendations.monthlyHighlights[selectedMonth].advice && (
-                  <div className="bg-royalPurple/10 border border-royalPurple/30 rounded-lg p-3">
-                    <p className="text-lavenderGlow font-thai text-sm font-medium mb-1">
+                  <div className="bg-accent/10 border border-accent/30 rounded-lg p-3">
+                    <p className="text-accentSoft font-thai text-sm font-medium mb-1">
                       คำแนะนำ:
                     </p>
-                    <p className="text-ghostWhite font-thai text-sm leading-relaxed">
+                    <p className="text-ink font-thai text-sm leading-relaxed">
                       {recommendations.monthlyHighlights[selectedMonth].advice}
                     </p>
                   </div>
@@ -227,8 +227,8 @@ export function RecommendationsSection({
       )}
 
       {/* Do's and Don'ts */}
-      <div className="bg-deepNight border border-darkPurple/50 rounded-xl p-6">
-        <h3 className="text-lavenderGlow font-heading font-medium text-base mb-4">
+      <div className="bg-surface border border-surface2/50 rounded-xl p-6">
+        <h3 className="text-accentSoft font-heading font-medium text-base mb-4">
           สิ่งที่ควรทำ & หลีกเลี่ยงปีนี้
         </h3>
 
@@ -240,7 +240,7 @@ export function RecommendationsSection({
                 {recommendations.dos.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <Check className="text-emerald-400 w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <p className="text-ghostWhite font-thai text-base">{item}</p>
+                    <p className="text-ink font-thai text-base">{item}</p>
                   </li>
                 ))}
               </ul>
@@ -249,12 +249,12 @@ export function RecommendationsSection({
 
           {/* Don'ts */}
           {recommendations.donts.length > 0 && (
-            <div className="pt-4 border-t border-darkPurple/50">
+            <div className="pt-4 border-t border-surface2/50">
               <ul className="space-y-2">
                 {recommendations.donts.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <X className="text-red-400 w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <p className="text-ghostWhite font-thai text-base">{item}</p>
+                    <p className="text-ink font-thai text-base">{item}</p>
                   </li>
                 ))}
               </ul>

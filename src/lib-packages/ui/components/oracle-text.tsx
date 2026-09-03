@@ -42,7 +42,7 @@ export function OracleText({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cn(
-        'font-light text-ghostWhite/90 leading-relaxed',
+        'font-light text-ink/90 leading-relaxed',
         'font-oracle', // Sarabun weight 200
         className
       )}
@@ -52,7 +52,7 @@ export function OracleText({
         <motion.span
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.5, repeat: Infinity }}
-          className="inline-block w-0.5 h-5 bg-amethyst ml-1"
+          className="inline-block w-0.5 h-5 bg-accentBright ml-1"
         />
       )}
     </motion.p>

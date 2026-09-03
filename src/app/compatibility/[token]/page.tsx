@@ -93,11 +93,11 @@ export default function CompatibilitySharePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
+      <div className="min-h-screen bg-ground flex items-center justify-center">
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-16 h-16 border-4 border-royalPurple border-t-transparent rounded-full animate-spin"
+          className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin"
         />
       </div>
     );
@@ -105,11 +105,11 @@ export default function CompatibilitySharePage() {
 
   if (error || !result) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center p-6">
+      <div className="min-h-screen bg-ground flex items-center justify-center p-6">
         <div className="text-center space-y-6 max-w-md">
-          <Sparkles className="w-12 h-12 text-ashGray mx-auto" />
-          <h1 className="text-2xl font-heading text-ghostWhite">{error || 'ไม่พบผลดวง'}</h1>
-          <p className="text-ashGray">ลิงก์อาจหมดอายุหรือไม่ถูกต้อง</p>
+          <Sparkles className="w-12 h-12 text-inkMuted mx-auto" />
+          <h1 className="text-2xl font-heading text-ink">{error || 'ไม่พบผลดวง'}</h1>
+          <p className="text-inkMuted">ลิงก์อาจหมดอายุหรือไม่ถูกต้อง</p>
           <Button onClick={() => router.push('/dashboard/compatibility')} className="w-full max-w-xs mx-auto">
             ส่องดวงของเจ้าเลย
           </Button>
@@ -135,12 +135,12 @@ export default function CompatibilitySharePage() {
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite">
+          <h1 className="text-3xl md:text-4xl font-heading text-ink">
             ดวง{label}กับ {result.partnerName}
           </h1>
 
           {result.userElement && result.partnerElement && (
-            <p className="text-ashGray text-sm">
+            <p className="text-inkMuted text-sm">
               ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
             </p>
           )}
@@ -149,7 +149,7 @@ export default function CompatibilitySharePage() {
         {/* Element visualization */}
         {result.userElement && result.partnerElement && (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
-            <Card className="bg-gradient-to-br from-darkPurple to-deepNight">
+            <Card className="bg-gradient-to-br from-surface2 to-surface">
               <CardHeader>
                 <CardTitle className="text-center flex items-center justify-center gap-2">
                   <span className="text-2xl">&#x1F31F;</span>
@@ -159,28 +159,28 @@ export default function CompatibilitySharePage() {
               <CardContent>
                 <div className="flex items-center justify-center gap-4 py-6">
                   <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-royalPurple/20 border-2 border-royalPurple flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.userElement)}</span>
+                    <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center mb-2">
+                      <span className="text-2xl font-bold text-ink">{toThaiElement(result.userElement)}</span>
                     </div>
-                    <p className="text-sm text-ghostWhite">เพื่อนของเจ้า</p>
-                    {result.userDayMaster && <p className="text-xs text-ashGray">{result.userDayMaster}</p>}
+                    <p className="text-sm text-ink">เพื่อนของเจ้า</p>
+                    {result.userDayMaster && <p className="text-xs text-inkMuted">{result.userDayMaster}</p>}
                   </div>
 
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.3, type: 'spring' }}
-                    className="text-4xl text-ashGray"
+                    className="text-4xl text-inkMuted"
                   >
                     &#x27F7;
                   </motion.div>
 
                   <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-amethyst/20 border-2 border-amethyst flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ghostWhite">{toThaiElement(result.partnerElement)}</span>
+                    <div className="w-20 h-20 rounded-full bg-accentBright/20 border-2 border-accentBright flex items-center justify-center mb-2">
+                      <span className="text-2xl font-bold text-ink">{toThaiElement(result.partnerElement)}</span>
                     </div>
-                    <p className="text-sm text-ghostWhite">{result.partnerName}</p>
-                    {result.partnerDayMaster && <p className="text-xs text-ashGray">{result.partnerDayMaster}</p>}
+                    <p className="text-sm text-ink">{result.partnerName}</p>
+                    {result.partnerDayMaster && <p className="text-xs text-inkMuted">{result.partnerDayMaster}</p>}
                   </div>
                 </div>
               </CardContent>
@@ -205,12 +205,12 @@ export default function CompatibilitySharePage() {
 
         {/* CTA: Try it yourself */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-          <Card className="bg-gradient-to-br from-royalPurple/20 to-amethyst/10 border-royalPurple/30">
+          <Card className="bg-gradient-to-br from-accent/20 to-accentBright/10 border-accent/30">
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
-                <Sparkles className="w-8 h-8 text-amethyst mx-auto" />
-                <h3 className="text-lg font-heading text-ghostWhite">อยากรู้ดวงความสัมพันธ์ของเจ้าบ้างไหม?</h3>
-                <p className="text-ashGray text-sm">ส่องดวงกับคนรอบข้างของเจ้าได้ฟรี! วิเคราะห์ด้วย AI ผสานโหราศาสตร์</p>
+                <Sparkles className="w-8 h-8 text-accentBright mx-auto" />
+                <h3 className="text-lg font-heading text-ink">อยากรู้ดวงความสัมพันธ์ของเจ้าบ้างไหม?</h3>
+                <p className="text-inkMuted text-sm">ส่องดวงกับคนรอบข้างของเจ้าได้ฟรี! วิเคราะห์ด้วย AI ผสานโหราศาสตร์</p>
                 <Button
                   size="lg"
                   className="w-full max-w-xs mx-auto"
@@ -225,8 +225,8 @@ export default function CompatibilitySharePage() {
 
         {/* Footer */}
         <div className="text-center py-4">
-          <p className="text-ashGray/60 text-xs">
-            <a href="/" className="hover:text-ashGray transition-colors">สายมู.com</a> ดูดวงออนไลน์ฟรี ด้วย AI
+          <p className="text-inkMuted/60 text-xs">
+            <a href="/" className="hover:text-inkMuted transition-colors">สายมู.com</a> ดูดวงออนไลน์ฟรี ด้วย AI
           </p>
         </div>
       </div>

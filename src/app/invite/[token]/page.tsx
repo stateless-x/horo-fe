@@ -109,8 +109,8 @@ export default function InvitePage() {
   // Loading state
   if (loading || sessionLoading) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
-        <div className="text-ghostWhite text-lg font-oracle">กำลังโหลด...</div>
+      <div className="min-h-screen bg-ground flex items-center justify-center">
+        <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
       </div>
     );
   }
@@ -118,20 +118,20 @@ export default function InvitePage() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center p-6">
+      <div className="min-h-screen bg-ground flex items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-6 max-w-md"
         >
           <div className="text-6xl">😕</div>
-          <h1 className="text-2xl text-ghostWhite font-heading">
+          <h1 className="text-2xl text-ink font-heading">
             ลิงก์ไม่ถูกต้อง
           </h1>
-          <p className="text-ashGray font-oracle">{error}</p>
+          <p className="text-inkMuted font-oracle">{error}</p>
           <button
             onClick={() => router.push('/')}
-            className="px-6 py-3 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading rounded-lg transition-all"
+            className="px-6 py-3 bg-accent hover:bg-accentBright text-accentInk font-heading rounded-lg transition-all"
           >
             กลับสู่หน้าหลัก
           </button>
@@ -147,7 +147,7 @@ export default function InvitePage() {
 
   // Show invite context page
   return (
-    <div className="min-h-screen bg-voidBlack flex items-center justify-center p-6">
+    <div className="min-h-screen bg-ground flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -165,10 +165,10 @@ export default function InvitePage() {
 
         {/* Heading */}
         <div className="space-y-4">
-          <h1 className="text-3xl md:text-4xl text-ghostWhite font-heading">
+          <h1 className="text-3xl md:text-4xl text-ink font-heading">
             {inviteData?.inviterName} เชิญเจ้ามาดูดวงคู่
           </h1>
-          <p className="text-xl text-paleOrchid font-oracle">
+          <p className="text-xl text-accentFaint font-oracle">
             มาดูกันว่าดวงของเจ้าและ {inviteData?.inviterName} จะเข้ากันหรือไม่
           </p>
         </div>
@@ -178,14 +178,14 @@ export default function InvitePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="bg-deepNight border border-darkPurple rounded-xl p-6 space-y-3"
+          className="bg-surface border border-surface2 rounded-xl p-6 space-y-3"
         >
-          <p className="text-ghostWhite font-oracle leading-relaxed">
+          <p className="text-ink font-oracle leading-relaxed">
             เจ้าจะต้องกรอกข้อมูลวันเกิดของเจ้าเพื่อคำนวณดวงคู่
             <br />
             ระบบจะวิเคราะห์ความเข้ากันของเจ้าทั้งสองด้วยศาสตร์โหราจีนและไทย
           </p>
-          <p className="text-ashGray text-sm font-oracle">
+          <p className="text-inkMuted text-sm font-oracle">
             ข้อมูลของเจ้าจะถูกเก็บไว้เพื่อดูดวงในอนาคต
           </p>
         </motion.div>
@@ -198,7 +198,7 @@ export default function InvitePage() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleStartOnboarding}
-          className="px-12 py-5 bg-royalPurple hover:bg-amethyst text-ghostWhite font-heading text-xl rounded-lg transition-all shadow-xl shadow-royalPurple/50"
+          className="px-12 py-5 bg-accent hover:bg-accentBright text-accentInk font-heading text-xl rounded-lg transition-all shadow-xl shadow-accent/50"
         >
           เริ่มกรอกข้อมูล
         </motion.button>
@@ -208,7 +208,7 @@ export default function InvitePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-sm text-ashGray/70 font-oracle"
+          className="text-sm text-inkMuted/70 font-oracle"
         >
           {daysUntilExpiry !== null && (
             <>ลิงก์นี้จะหมดอายุใน {daysUntilExpiry} วัน</>

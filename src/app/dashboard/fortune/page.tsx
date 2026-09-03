@@ -111,21 +111,21 @@ export default function FortuneChartPage() {
             <AlertCircle className="w-8 h-8 text-amber-400" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-lg font-heading text-ghostWhite">แก้ไขข้อมูลบ่อยเกินไป</h2>
-            <p className="text-sm text-ashGray">
+            <h2 className="text-lg font-heading text-ink">แก้ไขข้อมูลบ่อยเกินไป</h2>
+            <p className="text-sm text-inkMuted">
               ดวงของคุณจะอัปเดตใหม่ได้{timeText}
             </p>
           </div>
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => router.push('/dashboard/today')}
-              className="px-6 py-2.5 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-lg transition-colors font-heading text-sm"
+              className="px-6 py-2.5 bg-accent hover:bg-accentBright text-accentInk rounded-lg transition-colors font-heading text-sm"
             >
               กลับหน้าหลัก
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-2.5 border border-royalPurple/50 text-ashGray hover:text-ghostWhite rounded-lg transition-colors font-heading text-sm"
+              className="px-6 py-2.5 border border-accent/50 text-inkMuted hover:text-ink rounded-lg transition-colors font-heading text-sm"
             >
               ลองใหม่
             </button>
@@ -192,7 +192,7 @@ export default function FortuneChartPage() {
             exit={{ opacity: 0, y: -10 }}
             className="max-w-4xl mx-auto px-4 pt-6"
           >
-            <div className="p-4 rounded-lg bg-royalPurple/20 border border-royalPurple/30 text-amethyst text-sm">
+            <div className="p-4 rounded-lg bg-accent/20 border border-accent/30 text-accentBright text-sm">
               กำลังอัปเดตดวงตามข้อมูลใหม่...
             </div>
           </motion.div>

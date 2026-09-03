@@ -83,7 +83,7 @@ export function StepBirthDate() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-2xl md:text-3xl text-center text-ghostWhite font-heading leading-relaxed"
+          className="text-2xl md:text-3xl text-center text-ink font-heading leading-relaxed"
         >
           อยากรู้ดวงชะตาของเจ้างั้นรึ
           <br />
@@ -95,17 +95,17 @@ export function StepBirthDate() {
           <div className="flex gap-4 justify-center">
             {/* Day */}
             <div className="flex-1 relative">
-              <label className="block text-sm text-ashGray mb-2 text-center">
+              <label className="block text-sm text-inkMuted mb-2 text-center">
                 วัน
               </label>
               <div className="relative">
                 {/* Center highlight overlay */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
                 <select
                   ref={dayRef}
                   value={day}
                   onChange={(e) => setDay(parseInt(e.target.value))}
-                  className="w-full h-48 bg-deepNight border border-darkPurple rounded-lg text-center text-lg text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
+                  className="w-full h-48 bg-surface border border-surface2 rounded-lg text-center text-lg text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
                   size={7}
                 >
                   {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((d) => (
@@ -119,17 +119,17 @@ export function StepBirthDate() {
 
             {/* Month */}
             <div className="flex-1 relative">
-              <label className="block text-sm text-ashGray mb-2 text-center">
+              <label className="block text-sm text-inkMuted mb-2 text-center">
                 เดือน
               </label>
               <div className="relative">
                 {/* Center highlight overlay */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
                 <select
                   ref={monthRef}
                   value={month}
                   onChange={(e) => setMonth(parseInt(e.target.value))}
-                  className="w-full h-48 bg-deepNight border border-darkPurple rounded-lg text-center text-lg text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
+                  className="w-full h-48 bg-surface border border-surface2 rounded-lg text-center text-lg text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
                   size={7}
                 >
                   {THAI_MONTHS.map((m, i) => (
@@ -143,17 +143,17 @@ export function StepBirthDate() {
 
             {/* Year (Buddhist Era) */}
             <div className="flex-1 relative">
-              <label className="block text-sm text-ashGray mb-2 text-center">
+              <label className="block text-sm text-inkMuted mb-2 text-center">
                 พ.ศ.
               </label>
               <div className="relative">
                 {/* Center highlight overlay */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-royalPurple/10 border-y border-royalPurple/30 pointer-events-none z-10" />
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
                 <select
                   ref={yearRef}
                   value={year}
                   onChange={(e) => setYear(parseInt(e.target.value))}
-                  className="w-full h-48 bg-deepNight border border-darkPurple rounded-lg text-center text-lg text-ghostWhite focus:ring-2 focus:ring-royalPurple focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
+                  className="w-full h-48 bg-surface border border-surface2 rounded-lg text-center text-lg text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
                   size={7}
                 >
                   {Array.from({ length: 70 }, (_, i) => currentYear - i).map((y) => (

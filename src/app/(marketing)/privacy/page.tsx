@@ -14,13 +14,13 @@ const LAST_UPDATED = '16 มีนาคม 2569';
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-voidBlack">
+    <div className="min-h-screen bg-ground">
       {/* Header */}
-      <header className="border-b border-white/5">
+      <header className="border-b border-edge">
         <div className="max-w-3xl mx-auto px-6 py-6">
           <Link
             href="/"
-            className="text-sm text-ashGray hover:text-ghostWhite font-oracle transition-colors"
+            className="text-sm text-inkMuted hover:text-ink font-oracle transition-colors"
           >
             &larr; กลับหน้าหลัก
           </Link>
@@ -29,14 +29,14 @@ export default function PrivacyPage() {
 
       {/* Content */}
       <main className="max-w-3xl mx-auto px-6 py-12 md:py-16">
-        <h1 className="text-3xl md:text-4xl font-heading text-ghostWhite mb-3">
+        <h1 className="text-3xl md:text-4xl font-heading text-ink mb-3">
           นโยบายความเป็นส่วนตัว
         </h1>
-        <p className="text-sm text-ashGray/60 font-oracle mb-10">
+        <p className="text-sm text-inkMuted/60 font-oracle mb-10">
           ปรับปรุงล่าสุด: {LAST_UPDATED}
         </p>
 
-        <div className="space-y-8 text-ghostWhite/70 font-oracle text-sm leading-[1.8]">
+        <div className="space-y-8 text-ink/70 font-oracle text-sm leading-[1.8]">
           <p>
             นโยบายความเป็นส่วนตัวฉบับนี้ (&quot;นโยบาย&quot;) จัดทำขึ้นโดย สายมู.com
             (&quot;เว็บไซต์&quot; &quot;เรา&quot; หรือ &quot;ของเรา&quot;)
@@ -180,7 +180,7 @@ export default function PrivacyPage() {
                 href="https://x.com/askpurin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-amethyst hover:text-lavenderGlow underline underline-offset-2 transition-colors"
+                className="text-accentBright hover:text-accentSoft underline underline-offset-2 transition-colors"
               >
                 @Askpurin บน X (Twitter)
               </a>
@@ -200,8 +200,8 @@ function SectionTitle({
   children: React.ReactNode;
 }) {
   return (
-    <h2 className="text-base font-heading text-ghostWhite/90 mb-2">
-      <span className="text-ashGray/50 mr-1.5">{number}.</span>
+    <h2 className="text-base font-heading text-ink/90 mb-2">
+      <span className="text-inkMuted/50 mr-1.5">{number}.</span>
       {children}
     </h2>
   );

@@ -43,7 +43,7 @@ export function StepName() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl md:text-4xl text-center text-ghostWhite font-heading"
+          className="text-3xl md:text-4xl text-center text-ink font-heading"
         >
           บอกชื่อของเจ้ามาสิ
         </motion.h1>

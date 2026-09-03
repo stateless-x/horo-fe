@@ -64,8 +64,8 @@ function FortunePageContent() {
   // Block render until session is resolved — prevents onboarding flash for logged-in users
   if (isPending || (session && !isSetupMode)) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
-        <div className="text-ghostWhite text-lg font-oracle">กำลังโหลด...</div>
+      <div className="min-h-screen bg-ground flex items-center justify-center">
+        <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
       </div>
     );
   }
@@ -78,8 +78,8 @@ export default function FortunePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-voidBlack flex items-center justify-center">
-          <div className="text-ghostWhite text-lg font-oracle">กำลังโหลด...</div>
+        <div className="min-h-screen bg-ground flex items-center justify-center">
+          <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
         </div>
       }
     >

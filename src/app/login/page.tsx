@@ -64,14 +64,14 @@ export default function LoginPage() {
   // Show loading state while checking session
   if (isPending) {
     return (
-      <div className="min-h-screen bg-voidBlack flex items-center justify-center">
-        <div className="text-ghostWhite text-lg font-oracle">กำลังโหลด...</div>
+      <div className="min-h-screen bg-ground flex items-center justify-center">
+        <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-voidBlack flex items-center justify-center p-6">
+    <div className="min-h-screen bg-ground flex items-center justify-center p-6">
       <div className="w-full max-w-4xl grid lg:grid-cols-2 gap-12 items-center">
       {/* Side illustration — desktop only */}
       <MediaPlaceholder
@@ -92,10 +92,10 @@ export default function LoginPage() {
           transition={{ delay: 0.2 }}
           className="text-center space-y-4"
         >
-          <h1 className="text-3xl md:text-4xl text-ghostWhite font-heading">
+          <h1 className="text-3xl md:text-4xl text-ink font-heading">
             ยินดีต้อนรับกลับมา
           </h1>
-          <p className="text-ashGray font-oracle">
+          <p className="text-inkMuted font-oracle">
             เข้าสู่ระบบเพื่อดูดวงชะตาของเจ้า
           </p>
         </motion.div>
@@ -158,18 +158,18 @@ export default function LoginPage() {
           transition={{ delay: 0.6 }}
           className="text-center space-y-3"
         >
-          <p className="text-sm text-ashGray font-oracle">
+          <p className="text-sm text-inkMuted font-oracle">
             ยังไม่มีบัญชี?{' '}
             <Link
               href="/fortune"
-              className="text-amethyst hover:text-lavenderGlow underline"
+              className="text-accentBright hover:text-accentSoft underline"
             >
               เริ่มดูดวงฟรีก่อนได้เลย
             </Link>
           </p>
           <Link
             href="/"
-            className="block text-sm text-ashGray/70 hover:text-ashGray transition-colors"
+            className="block text-sm text-inkMuted/70 hover:text-inkMuted transition-colors"
           >
             ← กลับสู่หน้าหลัก
           </Link>
@@ -180,7 +180,7 @@ export default function LoginPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-xs text-ashGray/70 text-center font-oracle"
+          className="text-xs text-inkMuted/70 text-center font-oracle"
         >
           เมื่อเข้าสู่ระบบ เจ้ายอมรับ
           <br />

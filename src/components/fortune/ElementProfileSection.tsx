@@ -65,7 +65,7 @@ export function ElementProfileSection({
 
       {/* Main container with glassmorphism */}
       <div
-        className="relative rounded-3xl md:rounded-[32px] border border-white/10 p-5 sm:p-8 md:p-10 overflow-hidden backdrop-blur-sm"
+        className="relative rounded-3xl md:rounded-[32px] border border-edge p-5 sm:p-8 md:p-10 overflow-hidden backdrop-blur-sm"
         style={{
           background: `linear-gradient(135deg, ${elementColor.glow}15, rgba(15, 10, 26, 0.8))`,
         }}
@@ -134,7 +134,7 @@ export function ElementProfileSection({
 
         {/* Element name and description with better spacing */}
         <div className="text-center mb-8 md:mb-10 relative z-10 px-2">
-          <p className="font-thai text-ghostWhite/80 text-base md:text-lg mb-2 md:mb-3">
+          <p className="font-thai text-ink/80 text-base md:text-lg mb-2 md:mb-3">
             ธาตุประจำตัวของเจ้าคือ
           </p>
           <h2
@@ -146,7 +146,7 @@ export function ElementProfileSection({
           >
             {elementNames[elementProfile.primaryElement]}
           </h2>
-          <p className="font-oracle text-ghostWhite text-base md:text-lg leading-relaxed md:leading-relaxed max-w-2xl mx-auto">
+          <p className="font-oracle text-ink text-base md:text-lg leading-relaxed md:leading-relaxed max-w-2xl mx-auto">
             {elementProfile.corePersonality}
           </p>
         </div>
@@ -212,7 +212,7 @@ export function ElementProfileSection({
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 + index * 0.05 }}
-                        className="text-ghostWhite font-thai text-base md:text-lg flex items-start gap-3 leading-relaxed"
+                        className="text-ink font-thai text-base md:text-lg flex items-start gap-3 leading-relaxed"
                       >
                         <span
                           className="inline-block w-2 h-2 rounded-full mt-2 flex-shrink-0"
@@ -305,11 +305,11 @@ export function ElementProfileSection({
             <AlertTriangle className="text-amber-400 w-5 h-5 md:w-6 md:h-6 flex-shrink-0 mt-0.5 relative z-10" />
           </motion.div>
           <div className="relative z-10">
-            <p className="text-ghostWhite font-thai text-sm md:text-base lg:text-lg leading-relaxed">
+            <p className="text-ink font-thai text-sm md:text-base lg:text-lg leading-relaxed">
               <span className="text-amber-400 font-medium">ระวังธาตุ:</span>{" "}
               <span className="font-semibold">{elementNames[elementProfile.conflictingElement]}</span>
               {" "}
-              <span className="text-ashGray">(ธาตุนี้ข่มธาตุของเจ้า)</span>
+              <span className="text-inkMuted">(ธาตุนี้ข่มธาตุของเจ้า)</span>
             </p>
           </div>
         </div>

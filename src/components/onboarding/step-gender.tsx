@@ -34,7 +34,7 @@ export function StepGender() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-2xl md:text-3xl text-center text-ghostWhite font-heading"
+          className="text-2xl md:text-3xl text-center text-ink font-heading"
         >
           แล้วเพศกำเนิดของเจ้าเป็นผู้ชาย หรือ ผู้หญิงล่ะ
         </motion.h1>
@@ -46,15 +46,15 @@ export function StepGender() {
             onClick={() => handleSelect("male")}
             className="group"
           >
-            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-royalPurple hover:shadow-[0_0_20px_rgba(107,33,168,0.3)]">
+            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-[0_0_20px_rgba(107,33,168,0.3)]">
               <div className="relative">
                 <User
                   size={64}
-                  className="text-royalPurple stroke-[1.5] transition-colors group-hover:text-amethyst"
+                  className="text-accent stroke-[1.5] transition-colors group-hover:text-accentBright"
                   strokeWidth={1.5}
                 />
               </div>
-              <p className="text-xl font-heading text-ghostWhite">ผู้ชาย</p>
+              <p className="text-xl font-heading text-ink">ผู้ชาย</p>
             </Card>
           </motion.button>
 
@@ -64,15 +64,15 @@ export function StepGender() {
             onClick={() => handleSelect("female")}
             className="group"
           >
-            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-royalPurple hover:shadow-[0_0_20px_rgba(107,33,168,0.3)]">
+            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-[0_0_20px_rgba(107,33,168,0.3)]">
               <div className="relative">
                 <User
                   size={64}
-                  className="text-amethyst stroke-[1.5] transition-colors group-hover:text-royalPurple"
+                  className="text-accentBright stroke-[1.5] transition-colors group-hover:text-accent"
                   strokeWidth={1.5}
                 />
               </div>
-              <p className="text-xl font-heading text-ghostWhite">ผู้หญิง</p>
+              <p className="text-xl font-heading text-ink">ผู้หญิง</p>
             </Card>
           </motion.button>
         </div>

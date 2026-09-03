@@ -58,14 +58,14 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
       {/* Scroll buttons for desktop */}
       <button
         onClick={() => scroll('left')}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-deepNight/90 border border-darkPurple/50 text-ashGray hover:text-ghostWhite transition-colors"
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-surface/90 border border-surface2/50 text-inkMuted hover:text-ink transition-colors"
         aria-label="Scroll left"
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
       <button
         onClick={() => scroll('right')}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-deepNight/90 border border-darkPurple/50 text-ashGray hover:text-ghostWhite transition-colors"
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-surface/90 border border-surface2/50 text-inkMuted hover:text-ink transition-colors"
         aria-label="Scroll right"
       >
         <ChevronRight className="w-4 h-4" />
@@ -87,7 +87,7 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
             <motion.button
               key={key}
               onClick={() => setExpanded(isExpanded ? null : key)}
-              className={`flex-shrink-0 snap-center bg-deepNight border border-darkPurple/50 rounded-xl p-4 text-left transition-all duration-200 hover:border-royalPurple/30 ${
+              className={`flex-shrink-0 snap-center bg-surface border border-surface2/50 rounded-xl p-4 text-left transition-all duration-200 hover:border-accent/30 ${
                 isExpanded ? 'w-[85vw] max-w-sm' : 'w-[70vw] max-w-[200px]'
               }`}
               layout
@@ -100,7 +100,7 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
                 >
                   <Icon className="w-4 h-4" style={{ color: config.color }} />
                 </div>
-                <span className="font-heading text-sm font-medium text-ghostWhite">
+                <span className="font-heading text-sm font-medium text-ink">
                   {config.label}
                 </span>
               </div>
@@ -111,7 +111,7 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
               </div>
 
               {/* Tip (always visible) */}
-              <p className="text-sm text-ashGray font-thai line-clamp-2">
+              <p className="text-sm text-inkMuted font-thai line-clamp-2">
                 {data.tip}
               </p>
 
@@ -121,9 +121,9 @@ export function CategoryCarousel({ categories }: CategoryCarouselProps) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-3 pt-3 border-t border-darkPurple/30"
+                  className="mt-3 pt-3 border-t border-surface2/30"
                 >
-                  <p className="text-base text-ghostWhite/80 font-oracle font-light leading-relaxed">
+                  <p className="text-base text-ink/80 font-oracle font-light leading-relaxed">
                     {data.reading}
                   </p>
                 </motion.div>

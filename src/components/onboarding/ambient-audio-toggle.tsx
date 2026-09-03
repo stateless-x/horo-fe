@@ -22,7 +22,7 @@ export function AmbientAudioToggle({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 1, duration: 0.3 }}
       onClick={onToggle}
-      className="fixed top-6 right-6 z-50 p-2.5 rounded-full bg-charcoal/60 backdrop-blur-md border border-darkPurple/50 text-ashGray hover:text-ghostWhite hover:border-amethyst/50 transition-colors duration-200 cursor-pointer"
+      className="fixed top-6 right-6 z-50 p-2.5 rounded-full bg-overlay/60 backdrop-blur-md border border-surface2/50 text-inkMuted hover:text-ink hover:border-accentBright/50 transition-colors duration-200 cursor-pointer"
       aria-label={isMuted ? 'เปิดเสียง' : 'ปิดเสียง'}
       title={isMuted ? 'เปิดเสียง' : 'ปิดเสียง'}
     >

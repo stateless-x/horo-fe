@@ -36,7 +36,7 @@ export function StepWelcome() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-voidBlack"
+      className="fixed inset-0 bg-ground"
     >
       <video
         ref={videoRef}
@@ -50,7 +50,7 @@ export function StepWelcome() {
       {/* Skip button for impatient users */}
       <button
         onClick={nextStep}
-        className="absolute bottom-8 right-8 text-ashGray/50 hover:text-ghostWhite text-sm transition-colors"
+        className="absolute bottom-8 right-8 text-inkMuted/50 hover:text-ink text-sm transition-colors"
       >
         ข้าม
       </button>

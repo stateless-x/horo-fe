@@ -34,11 +34,11 @@ export function PawjaiAdsBanner() {
       }}
       className="max-w-4xl mx-auto px-4 mt-8 mb-4"
     >
-      <p className="font-thai text-xs text-ashGray/60 text-center mb-2">
+      <p className="font-thai text-xs text-inkMuted/60 text-center mb-2">
         โฆษณา
       </p>
 
-      <div className="bg-deepNight border border-darkPurple/50 rounded-2xl p-4 space-y-3">
+      <div className="bg-surface border border-surface2/50 rounded-2xl p-4 space-y-3">
         {/* Banner Image */}
         <a
           href={PAWJAI_URL}

@@ -39,31 +39,31 @@ function AttributeBadge({
       >
         {/* Front of card */}
         <div
-          className="absolute inset-0 bg-charcoal border border-darkPurple/50 rounded-lg p-4 flex flex-col items-center justify-center"
+          className="absolute inset-0 bg-overlay border border-surface2/50 rounded-lg p-4 flex flex-col items-center justify-center"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
           }}
         >
-          <Icon className="text-lavenderGlow w-5 h-5 mb-2" />
-          <p className="text-ashGray font-thai text-sm text-center mb-1">
+          <Icon className="text-accentSoft w-5 h-5 mb-2" />
+          <p className="text-inkMuted font-thai text-sm text-center mb-1">
             {label}
           </p>
-          <p className="text-ghostWhite font-heading font-medium text-lg text-center">
+          <p className="text-ink font-heading font-medium text-lg text-center">
             {value}
           </p>
         </div>
 
         {/* Back of card */}
         <div
-          className="absolute inset-0 bg-gradient-to-br from-darkPurple to-royalPurple/50 border border-amethyst/50 rounded-lg p-4 flex items-center justify-center"
+          className="absolute inset-0 bg-gradient-to-br from-surface2 to-accent/50 border border-accentBright/50 rounded-lg p-4 flex items-center justify-center"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
           }}
         >
-          <p className="text-paleOrchid font-thai text-sm text-center leading-relaxed">
+          <p className="text-accentFaint font-thai text-sm text-center leading-relaxed">
             {tooltip}
           </p>
         </div>
@@ -77,8 +77,8 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
     <div>
       {/* Section header */}
       <div className="flex items-center justify-center gap-2 mb-4">
-        <Moon className="text-lavenderGlow w-6 h-6" />
-        <h2 className="font-heading text-xl font-medium text-ghostWhite">
+        <Moon className="text-accentSoft w-6 h-6" />
+        <h2 className="font-heading text-xl font-medium text-ink">
           ดาวประจำวันเกิดของเจ้า
           <InfoTooltip text="ดาวประจำวันเกิด (Day Master) คือดาวที่ครองวันเกิดของเจ้า บอกถึงพลังงานหลักที่กำกับชีวิตและบุคลิกภาพ" />
         </h2>
@@ -86,10 +86,10 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
 
       {/* Planet name and description */}
       <div className="text-center mb-8">
-        <h3 className="font-heading text-2xl md:text-3xl font-semibold text-amethyst mb-2">
+        <h3 className="font-heading text-2xl md:text-3xl font-semibold text-accentBright mb-2">
           {birthStar.planet}
         </h3>
-        <p className="font-oracle text-lg md:text-xl font-light text-ghostWhite leading-[1.75] max-w-2xl mx-auto">
+        <p className="font-oracle text-lg md:text-xl font-light text-ink leading-[1.75] max-w-2xl mx-auto">
           {birthStar.planetDescription}
         </p>
       </div>
@@ -123,7 +123,7 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
       </div>
 
       {/* Hint text */}
-      <p className="text-center text-ashGray font-thai text-xs">
+      <p className="text-center text-inkMuted font-thai text-xs">
         แตะการ์ดเพื่อดูวิธีใช้
       </p>
     </div>

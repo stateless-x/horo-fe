@@ -75,7 +75,7 @@ export function TabsList({ children, className }: TabsListProps) {
   return (
     <div
       className={cn(
-        'flex gap-1 p-1 bg-deepNight/80 backdrop-blur-sm rounded-xl border border-darkPurple/30 sticky top-0 z-10',
+        'flex gap-1 p-1 bg-surface/80 backdrop-blur-sm rounded-xl border border-surface2/30 sticky top-0 z-10',
         className
       )}
     >
@@ -97,15 +97,15 @@ export function TabsTrigger({ value, children, className, icon }: TabsTriggerPro
       className={cn(
         'relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-heading text-sm transition-colors',
         isActive
-          ? 'text-ghostWhite'
-          : 'text-ashGray hover:text-ghostWhite/80',
+          ? 'text-ink'
+          : 'text-inkMuted hover:text-ink/80',
         className
       )}
     >
       {isActive && (
         <motion.div
           layoutId="activeTab"
-          className="absolute inset-0 bg-royalPurple/40 rounded-lg border border-royalPurple/30"
+          className="absolute inset-0 bg-accent/40 rounded-lg border border-accent/30"
           transition={{ type: 'spring', duration: 0.3, bounce: 0.15 }}
         />
       )}

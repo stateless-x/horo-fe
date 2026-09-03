@@ -2,16 +2,17 @@
 name: สายมู
 description: ดูดวงออนไลน์ที่เข้าใจตัวตน — โหราศาสตร์ไทย × ดวงจีนปาจื้อ × จิตวิทยา MBTI
 colors:
-  void-black: "#0A0A0F"
-  deep-night: "#0F0A1A"
-  dark-purple: "#1A0A2E"
-  royal-purple: "#6B21A8"
-  amethyst: "#A855F7"
-  lavender-glow: "#C084FC"
-  pale-orchid: "#E9D5FF"
-  ghost-white: "#F5F5F5"
-  ash-gray: "#A1A1AA"
-  charcoal: "#18181B"
+  ground: "#0A0A0F"
+  surface: "#0F0A1A"
+  surface-2: "#1A0A2E"
+  overlay: "#18181B"
+  ink: "#F5F5F5"
+  ink-muted: "#A1A1AA"
+  accent: "#6B21A8"
+  accent-bright: "#A855F7"
+  accent-soft: "#C084FC"
+  accent-faint: "#E9D5FF"
+  accent-ink: "#F5F5F5"
   element-earth: "#D4A843"
   element-fire: "#E85D3A"
   element-water: "#4A90D9"
@@ -65,20 +66,20 @@ spacing:
   section: "80px"
 components:
   button-primary:
-    backgroundColor: "{colors.royal-purple}"
-    textColor: "{colors.ghost-white}"
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.accent-ink}"
     rounded: "{rounded.md}"
     padding: "16px 40px"
   button-primary-hover:
-    backgroundColor: "{colors.amethyst}"
+    backgroundColor: "{colors.accent-bright}"
   button-outline:
     backgroundColor: "transparent"
-    textColor: "{colors.amethyst}"
+    textColor: "{colors.accent-bright}"
     rounded: "{rounded.md}"
     padding: "16px 40px"
   card-glass:
-    backgroundColor: "{colors.deep-night}"
-    textColor: "{colors.ghost-white}"
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.accent-ink}"
     rounded: "{rounded.xl}"
     padding: "24px 32px"
 ---
@@ -106,12 +107,34 @@ pulse — never busy.
 - Film grain (3% opacity) over every page — the room's atmosphere
 - Glassmorphic cards floating on darkness, edged with `white/10`
 - Two voices: contemporary Thai (คุณ) for marketing, the oracle's เจ้า/ข้า in Sarabun Light inside readings
-- Dark-only by construction; there is no light theme and none should be added
+- Two moods, one room: the Midnight Room (dark, default) and a white + purple daylight mode; the hero and the onboarding wizard stay always-dark via a `data-theme="dark"` wrapper
 
 ## Colors
 
-A ten-step purple ladder from near-black to pale orchid, plus five element accents
-that belong to the user, not the brand.
+Colors are **semantic tokens** (`ground / surface / surface2 / overlay / ink /
+ink-muted / accent / accent-bright / accent-soft / accent-faint / edge`),
+defined per theme as CSS variables in `globals.css` and exposed as Tailwind
+utilities (`bg-ground`, `text-ink`, `border-edge`, ...). Never hardcode a
+palette hex in a component. The frontmatter lists the dark (canonical) values;
+light mode is white + purple:
+
+| role | dark (Midnight Room) | light (daylight) |
+|---|---|---|
+| ground | #0A0A0F | #FAF9FD |
+| surface | #0F0A1A | #FFFFFF |
+| surface2 | #1A0A2E | #F3F0FA |
+| overlay | #18181B | #EFECF7 |
+| ink | #F5F5F5 | #1C1226 |
+| ink-muted | #A1A1AA | #645D78 |
+| accent | #6B21A8 | #6B21A8 |
+| accent-bright | #A855F7 | #7C3AED |
+| accent-soft | #C084FC | #6D28D9 |
+| accent-faint | #E9D5FF | #3B2A55 |
+| accent-ink | #F5F5F5 | #F5F5F5 (text on accent fills, both modes) |
+| edge | white 10% | ink 10% |
+
+Element hues also flip for text (`--el-*` vars; e.g. metal #C0C0C0 → #6E7480
+on light); fills and glows keep the ELEMENT_COLORS values.
 
 ### Primary
 - **Royal Purple** (#6B21A8): the action color — primary buttons, active states, CTA glow. Rest state only; it always brightens on interaction.
@@ -186,8 +209,9 @@ deepNight → darkPurple), 1px `white/10` edges on glass cards, and colored glow
 Glassmorphism (`backdrop-filter: blur(8–10px)` over a 135° deepNight gradient) is
 reserved for content cards floating over imagery or video.
 
-**The Glow-Not-Shadow Rule.** If an element needs lift, it emits light (a colored
-glow from its own hue family); it never casts a gray drop shadow.
+**The Glow-Not-Shadow Rule.** Lift is always colored, never gray. In the dark
+room an element emits light (a glow from its own hue family); in daylight it
+casts a soft purple-tinted shadow (`rgba(107,33,168,0.08)` on glass cards).
 
 ## Shapes
 
@@ -248,7 +272,8 @@ diviner's room.
 - **Do** add new public sections inside `(marketing)` and register them in the nav config only.
 
 ### Don't:
-- **Don't** add a light theme, gray drop shadows, or pure #000/#FFF.
+- **Don't** cast gray shadows in either mode — lift is colored (glow in dark, purple-tinted shadow in light).
+- **Don't** hardcode palette hex in components — use the semantic tokens; a section pinned to one mood wraps itself in `data-theme="dark"`.
 - **Don't** use the oracle voice (เจ้า/ข้า, Sarabun) on marketing chrome, or คุณ inside the reading experience.
 - **Don't** stack a second grain/noise layer on any surface.
 - **Don't** use emoji as icons in UI chrome (lucide-react is the icon system); emoji live only in share copy.

@@ -136,9 +136,9 @@ export function StepTeaser() {
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="w-16 h-16 mx-auto border-4 border-royalPurple border-t-transparent rounded-full animate-spin"
+            className="w-16 h-16 mx-auto border-4 border-accent border-t-transparent rounded-full animate-spin"
           />
-          <p className="text-ashGray font-oracle text-lg">
+          <p className="text-inkMuted font-oracle text-lg">
             กำลังมองดูดวงชะตาของเจ้า...
           </p>
         </div>
@@ -156,11 +156,11 @@ export function StepTeaser() {
         className="min-h-screen flex items-center justify-center p-6"
       >
         <div className="w-full max-w-lg space-y-6 text-center">
-          <Sparkles className="w-12 h-12 mx-auto text-amethyst" />
-          <h2 className="text-2xl font-heading text-ghostWhite">
+          <Sparkles className="w-12 h-12 mx-auto text-accentBright" />
+          <h2 className="text-2xl font-heading text-ink">
             เจ้ากลับมาบ่อยนะ
           </h2>
-          <p className="text-ashGray font-oracle text-lg leading-relaxed">
+          <p className="text-inkMuted font-oracle text-lg leading-relaxed">
             ข้าเห็นว่าเจ้าสนใจดวงชะตามาก ลองกลับมาใหม่พรุ่งนี้สิ
             แล้วข้าจะเปิดเผยดวงของเจ้าให้
           </p>
@@ -182,11 +182,11 @@ export function StepTeaser() {
         className="min-h-screen flex items-center justify-center p-6"
       >
         <div className="w-full max-w-lg space-y-6 text-center">
-          <Sparkles className="w-12 h-12 mx-auto text-ashGray" />
-          <h2 className="text-2xl font-heading text-ghostWhite">
+          <Sparkles className="w-12 h-12 mx-auto text-inkMuted" />
+          <h2 className="text-2xl font-heading text-ink">
             ดวงชะตายังไม่พร้อมเปิดเผย
           </h2>
-          <p className="text-ashGray font-oracle text-lg leading-relaxed">
+          <p className="text-inkMuted font-oracle text-lg leading-relaxed">
             ข้าไม่สามารถอ่านดวงของเจ้าได้ในตอนนี้ ลองอีกครั้งสิ
           </p>
           <div className="flex gap-3 justify-center">
@@ -215,13 +215,13 @@ export function StepTeaser() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-deepNight border border-darkPurple rounded-lg p-6 space-y-5"
+          className="bg-surface border border-surface2 rounded-lg p-6 space-y-5"
         >
           {/* Element + Lucky Info Row */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-ashGray mb-1">องค์ประกอบหลัก</p>
-              <p className="text-2xl font-heading text-amethyst capitalize">
+              <p className="text-xs text-inkMuted mb-1">องค์ประกอบหลัก</p>
+              <p className="text-2xl font-heading text-accentBright capitalize">
                 {result?.elementType}
               </p>
             </div>
@@ -229,16 +229,16 @@ export function StepTeaser() {
               <div className="flex gap-4">
                 {result?.luckyColor && (
                   <div className="text-right">
-                    <p className="text-xs text-ashGray mb-0.5">สีมงคล</p>
-                    <p className="text-sm text-ghostWhite">
+                    <p className="text-xs text-inkMuted mb-0.5">สีมงคล</p>
+                    <p className="text-sm text-ink">
                       {result.luckyColor}
                     </p>
                   </div>
                 )}
                 {result?.luckyNumber && (
                   <div className="text-right">
-                    <p className="text-xs text-ashGray mb-0.5">เลขมงคล</p>
-                    <p className="text-sm text-ghostWhite">
+                    <p className="text-xs text-inkMuted mb-0.5">เลขมงคล</p>
+                    <p className="text-sm text-ink">
                       {result.luckyNumber}
                     </p>
                   </div>
@@ -247,7 +247,7 @@ export function StepTeaser() {
             )}
           </div>
 
-          <hr className="border-darkPurple" />
+          <hr className="border-surface2" />
 
           {/* Oracle Reading */}
           <OracleText
@@ -263,7 +263,7 @@ export function StepTeaser() {
           transition={{ delay: 0.6 }}
           className="space-y-3"
         >
-          <p className="text-sm text-ashGray text-center">
+          <p className="text-sm text-inkMuted text-center">
             ดวงชะตาของเจ้ายังมีอีกมาก
           </p>
 
@@ -271,25 +271,25 @@ export function StepTeaser() {
             {LOCKED_CATEGORIES.map(({ icon: Icon, label }) => (
               <div
                 key={label}
-                className="flex items-center justify-between rounded-lg border border-royalPurple/10 bg-deepNight/50 px-4 py-3"
+                className="flex items-center justify-between rounded-lg border border-accent/10 bg-surface/50 px-4 py-3"
               >
                 <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-royalPurple/40" />
-                  <span className="text-sm text-ashGray">{label}</span>
+                  <Icon className="w-4 h-4 text-accent/40" />
+                  <span className="text-sm text-inkMuted">{label}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-ashGray/50">?/5</span>
-                  <Lock className="w-3 h-3 text-ashGray/30" />
+                  <span className="text-xs text-inkMuted/50">?/5</span>
+                  <Lock className="w-3 h-3 text-inkMuted/30" />
                 </div>
               </div>
             ))}
           </div>
 
           <div className="text-center space-y-0.5">
-            <p className="text-xs text-ashGray/60">
+            <p className="text-xs text-inkMuted/60">
               + ทำนายรายปี รายวัน
             </p>
-            <p className="text-xs text-ashGray/60">
+            <p className="text-xs text-inkMuted/60">
               + ดูดวงคู่ความเข้ากัน
             </p>
           </div>
@@ -310,7 +310,7 @@ export function StepTeaser() {
               เปิดดวงทั้งหมดของเจ้า
             </Button>
           </div>
-          <p className="text-xs text-ashGray/50 text-center">
+          <p className="text-xs text-inkMuted/50 text-center">
             ดูดวงชะตาครบ 6 ด้าน + ทำนายรายวัน
           </p>
         </motion.div>

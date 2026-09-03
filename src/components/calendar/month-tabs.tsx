@@ -51,13 +51,13 @@ export function MonthTabs({ selectedYearMonth, currentYearMonth }: MonthTabsProp
               className={`
                 relative flex flex-col items-center px-3 py-2 rounded-xl border transition-all text-center min-w-[52px]
                 ${isSelected
-                  ? 'bg-royalPurple/30 border-amethyst/60 text-amethyst'
-                  : 'bg-white/3 border-white/8 text-ashGray hover:text-ghostWhite hover:border-white/20 hover:bg-white/8'
+                  ? 'bg-accent/30 border-accentBright/60 text-accentBright'
+                  : 'bg-white/3 border-white/8 text-inkMuted hover:text-ink hover:border-white/20 hover:bg-white/8'
                 }
               `}
             >
               {isToday && (
-                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amethyst" />
+                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-accentBright" />
               )}
               <span className="font-oracle text-xs leading-tight">{label}</span>
               <span className="font-oracle text-[10px] opacity-60 leading-none">{beYear}</span>

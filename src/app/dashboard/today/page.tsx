@@ -103,7 +103,7 @@ export default function TodayPage() {
         {/* ===== HERO SECTION ===== */}
         <section className="text-center mb-8">
           {/* Date */}
-          <ClientDate className="text-ashGray text-base mb-3" />
+          <ClientDate className="text-inkMuted text-base mb-3" />
 
           {/* Main Score - Big visual hook */}
           <div className="flex items-center justify-center gap-1.5 mb-4">
@@ -130,9 +130,9 @@ export default function TodayPage() {
 
           {/* Daily element pill */}
           {dailyElementNameThai && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-deepNight/50 border border-darkPurple/30">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/50 border border-surface2/30">
               <Sparkles className="w-4 h-4" style={{ color: colors.primary }} />
-              <span className="text-base text-ghostWhite/80">
+              <span className="text-base text-ink/80">
                 {displayName} · ธาตุประจำวัน: {dailyElementNameThai}
                 <InfoTooltip text="ธาตุที่มีอิทธิพลต่อพลังงานของวันนี้ ถ้าเข้ากับธาตุประจำตัวของเจ้าจะเป็นวันที่ดี" />
               </span>
@@ -144,10 +144,10 @@ export default function TodayPage() {
         {structured?.overallReading && (
           <section className="mb-8">
             <div
-              className="p-5 md:p-6 rounded-2xl bg-deepNight/50 border-l-4"
+              className="p-5 md:p-6 rounded-2xl bg-surface/50 border-l-4"
               style={{ borderLeftColor: colors.primary }}
             >
-              <p className="text-lg md:text-xl leading-relaxed text-ghostWhite/90 font-oracle">
+              <p className="text-lg md:text-xl leading-relaxed text-ink/90 font-oracle">
                 {showFullReading ? structured.overallReading : readingPreview}
               </p>
               {structured.overallReading.length > 150 && (
@@ -178,7 +178,7 @@ export default function TodayPage() {
                   <button
                     key={key}
                     onClick={() => setExpandedCategory(isExpanded ? null : key)}
-                    className={`text-left p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 transition-colors ${
+                    className={`text-left p-4 rounded-xl bg-surface/50 border border-surface2/30 transition-colors ${
                       isExpanded ? 'col-span-2' : ''
                     }`}
                     style={{ borderColor: isExpanded ? config.color : undefined }}
@@ -186,7 +186,7 @@ export default function TodayPage() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Icon className="w-5 h-5" style={{ color: config.color }} />
-                        <span className="font-heading text-base text-ghostWhite">{config.label}</span>
+                        <span className="font-heading text-base text-ink">{config.label}</span>
                       </div>
                       <div className="flex gap-0.5">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -200,10 +200,10 @@ export default function TodayPage() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-sm text-ashGray line-clamp-2">{data.tip}</p>
+                    <p className="text-sm text-inkMuted line-clamp-2">{data.tip}</p>
 
                     {isExpanded && (
-                      <p className="mt-3 pt-3 border-t border-darkPurple/30 text-base text-ghostWhite/80 font-oracle leading-relaxed">
+                      <p className="mt-3 pt-3 border-t border-surface2/30 text-base text-ink/80 font-oracle leading-relaxed">
                         {data.reading}
                       </p>
                     )}
@@ -216,36 +216,36 @@ export default function TodayPage() {
 
         {/* ===== LUCKY ATTRIBUTES - Grid with labels ===== */}
         <section className="mb-8">
-          <h2 className="text-lg font-heading text-ghostWhite mb-4 text-center">สิ่งมงคลวันนี้</h2>
+          <h2 className="text-lg font-heading text-ink mb-4 text-center">สิ่งมงคลวันนี้</h2>
           <div className="grid grid-cols-2 gap-3">
             {/* Lucky Numbers */}
-            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
-              <p className="text-sm text-ashGray mb-1">เลขมงคล</p>
-              <p className="text-xl font-heading text-amethyst">
+            <div className="p-4 rounded-xl bg-surface/50 border border-surface2/30 text-center">
+              <p className="text-sm text-inkMuted mb-1">เลขมงคล</p>
+              <p className="text-xl font-heading text-accentBright">
                 {structured?.luckyNumbers?.join(', ') || dailyReading?.luckyNumber || '-'}
               </p>
             </div>
 
             {/* Lucky Color */}
-            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
-              <p className="text-sm text-ashGray mb-1">สีมงคล</p>
-              <p className="text-xl font-heading text-amethyst">
+            <div className="p-4 rounded-xl bg-surface/50 border border-surface2/30 text-center">
+              <p className="text-sm text-inkMuted mb-1">สีมงคล</p>
+              <p className="text-xl font-heading text-accentBright">
                 {structured?.luckyColor || dailyReading?.luckyColor || '-'}
               </p>
             </div>
 
             {/* Lucky Direction */}
-            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
-              <p className="text-sm text-ashGray mb-1">ทิศมงคล</p>
-              <p className="text-xl font-heading text-amethyst">
+            <div className="p-4 rounded-xl bg-surface/50 border border-surface2/30 text-center">
+              <p className="text-sm text-inkMuted mb-1">ทิศมงคล</p>
+              <p className="text-xl font-heading text-accentBright">
                 {structured?.luckyDirection || dailyReading?.luckyDirection || '-'}
               </p>
             </div>
 
             {/* Lucky Moment */}
-            <div className="p-4 rounded-xl bg-deepNight/50 border border-darkPurple/30 text-center">
-              <p className="text-sm text-ashGray mb-1">เวลามงคล</p>
-              <p className="text-lg font-heading text-amethyst">
+            <div className="p-4 rounded-xl bg-surface/50 border border-surface2/30 text-center">
+              <p className="text-sm text-inkMuted mb-1">เวลามงคล</p>
+              <p className="text-lg font-heading text-accentBright">
                 {structured?.luckyMoment || '-'}
               </p>
             </div>
@@ -266,7 +266,7 @@ export default function TodayPage() {
                 </div>
                 <ul className="space-y-4">
                   {structured.dos.map((item, i) => (
-                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed pl-4 border-l-2 border-emerald-500/30">
+                    <li key={i} className="text-sm text-ink/80 leading-relaxed pl-4 border-l-2 border-emerald-500/30">
                       {item}
                     </li>
                   ))}
@@ -281,7 +281,7 @@ export default function TodayPage() {
                 </div>
                 <ul className="space-y-4">
                   {structured.donts.map((item, i) => (
-                    <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed pl-4 border-l-2 border-amber-500/30">
+                    <li key={i} className="text-sm text-ink/80 leading-relaxed pl-4 border-l-2 border-amber-500/30">
                       {item}
                     </li>
                   ))}
@@ -297,7 +297,7 @@ export default function TodayPage() {
             <h3 className="font-heading text-base text-red-400 mb-3">คำเตือน</h3>
             <ul className="space-y-2">
               {structured.warnings.map((item, i) => (
-                <li key={i} className="text-sm text-ghostWhite/80 leading-relaxed">· {item}</li>
+                <li key={i} className="text-sm text-ink/80 leading-relaxed">· {item}</li>
               ))}
             </ul>
           </section>
@@ -306,7 +306,7 @@ export default function TodayPage() {
         {/* ===== SHARE BUTTON ===== */}
         <button
           onClick={() => setShowShareSheet(true)}
-          className="w-full py-4 rounded-xl font-heading text-lg text-ghostWhite flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          className="w-full py-4 rounded-xl font-heading text-lg text-ink flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           style={{ backgroundColor: colors.primary }}
         >
           <Share2 className="w-5 h-5" />

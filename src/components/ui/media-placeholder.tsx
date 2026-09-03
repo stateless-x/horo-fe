@@ -53,7 +53,7 @@ export function MediaPlaceholder({
       role="img"
       aria-label={label}
       title={`${label} — ${spec}`}
-      className={`relative overflow-hidden ${flush ? '' : 'rounded-2xl border border-white/10'} bg-deepNight ${className}`}
+      className={`relative overflow-hidden ${flush ? '' : 'rounded-2xl border border-edge'} bg-surface ${className}`}
       style={{ aspectRatio: aspect }}
     >
       {/* Ambient orb — element-tinted when the asset belongs to a ธาตุ */}
@@ -62,12 +62,12 @@ export function MediaPlaceholder({
         style={{ backgroundColor: glowColor ? `${glowColor}26` : 'rgba(107,33,168,0.15)' }}
       />
       <div className={`absolute inset-0 flex flex-col items-center justify-center text-center ${iconOnly ? '' : compact ? 'gap-1 px-2' : 'gap-2 px-6'}`}>
-        <ImageIcon className={iconOnly ? 'w-5 h-5 text-amethyst/50' : compact ? 'w-4 h-4 text-amethyst/50' : 'w-6 h-6 text-amethyst/50'} aria-hidden />
+        <ImageIcon className={iconOnly ? 'w-5 h-5 text-accentBright/50' : compact ? 'w-4 h-4 text-accentBright/50' : 'w-6 h-6 text-accentBright/50'} aria-hidden />
         {!compact && !iconOnly && (
-          <p className="text-ashGray text-sm leading-relaxed max-w-[36ch]">{label}</p>
+          <p className="text-inkMuted text-sm leading-relaxed max-w-[36ch]">{label}</p>
         )}
         {!iconOnly && (
-          <p className="font-mono text-xs tracking-wider text-ashGray/60">{spec}</p>
+          <p className="font-mono text-xs tracking-wider text-inkMuted/60">{spec}</p>
         )}
       </div>
     </div>

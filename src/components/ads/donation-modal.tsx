@@ -82,7 +82,7 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-voidBlack/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-ground/60 backdrop-blur-sm z-50"
             onClick={onClose}
           />
 
@@ -98,21 +98,21 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-deepNight border border-darkPurple/50 flex items-center justify-center text-ashGray hover:text-ghostWhite hover:border-amethyst/50 transition-all duration-200"
+                className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-surface border border-surface2/50 flex items-center justify-center text-inkMuted hover:text-ink hover:border-accentBright/50 transition-all duration-200"
                 aria-label="ปิด"
               >
                 <X className="w-4 h-4" />
               </button>
 
               {/* Card */}
-              <div className="bg-deepNight border border-darkPurple/50 rounded-2xl overflow-hidden max-h-[85vh] overflow-y-auto">
+              <div className="bg-surface border border-surface2/50 rounded-2xl overflow-hidden max-h-[85vh] overflow-y-auto">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-royalPurple/20 to-amethyst/10 px-6 pt-6 pb-4 text-center">
+                <div className="bg-gradient-to-r from-accent/20 to-accentBright/10 px-6 pt-6 pb-4 text-center">
                   <span className="text-4xl" aria-hidden="true">☕✨</span>
-                  <h2 className="font-heading text-lg font-semibold text-ghostWhite mt-2">
+                  <h2 className="font-heading text-lg font-semibold text-ink mt-2">
                     ซื้อกาแฟให้พี่ภูสักแก้ว
                   </h2>
-                  <p className="font-thai text-sm text-ashGray mt-2 leading-relaxed">
+                  <p className="font-thai text-sm text-inkMuted mt-2 leading-relaxed">
                     ดูดวงฟรีไม่อั้น ไม่มีกั๊ก
                   </p>
                   <p className="font-thai text-sm text-lavender mt-1 leading-relaxed">
@@ -145,7 +145,7 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
                           {/* Save/Share image button */}
                           <button
                             onClick={handleSaveImage}
-                            className="flex items-center justify-center gap-2 w-full max-w-[280px] font-thai text-sm bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-xl py-2.5 px-4 transition-all duration-200 shadow-md shadow-royalPurple/30"
+                            className="flex items-center justify-center gap-2 w-full max-w-[280px] font-thai text-sm bg-accent hover:bg-accentBright text-accentInk rounded-xl py-2.5 px-4 transition-all duration-200 shadow-md shadow-accent/30"
                           >
                             <Share className="w-4 h-4 sm:hidden" />
                             <Download className="w-4 h-4 hidden sm:block" />
@@ -159,7 +159,7 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
                             className="w-full max-w-[280px] rounded-xl shadow-lg"
                           />
 
-                          <p className="font-thai text-xs text-ashGray text-center">
+                          <p className="font-thai text-xs text-inkMuted text-center">
                             บันทึกไปเปิดในแอปธนาคาร
                           </p>
                         </div>
@@ -174,7 +174,7 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
                 <div className="mt-3 text-center">
                   <button
                     onClick={handleDismissForever}
-                    className="font-thai text-xs text-ashGray hover:text-ghostWhite transition-colors underline underline-offset-2"
+                    className="font-thai text-xs text-inkMuted hover:text-ink transition-colors underline underline-offset-2"
                   >
                     ไม่แสดงอีก
                   </button>

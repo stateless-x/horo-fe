@@ -101,13 +101,13 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
               opacity: [0.2, 0.4, 0.2],
             }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute inset-0 w-24 h-24 md:w-32 md:h-32 rounded-full bg-amethyst/20 blur-xl"
+            className="absolute inset-0 w-24 h-24 md:w-32 md:h-32 rounded-full bg-accentBright/20 blur-xl"
           />
           {/* Spinning ring */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-royalPurple/30 border-t-amethyst border-r-royalPurple"
+            className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-accent/30 border-t-accentBright border-r-accent"
           />
           {/* Inner orb */}
           <motion.div
@@ -118,7 +118,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-amethyst/60 to-royalPurple/40 backdrop-blur-sm" />
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-accentBright/60 to-accent/40 backdrop-blur-sm" />
           </motion.div>
           {/* Center star */}
           <motion.div
@@ -139,7 +139,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-paleOrchid font-oracle text-base md:text-lg"
+              className="text-accentFaint font-oracle text-base md:text-lg"
             >
               ดูเหมือนจะใช้เวลานานกว่าปกติ...
             </motion.p>
@@ -151,7 +151,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.4 }}
-                className="text-paleOrchid font-oracle text-base md:text-lg"
+                className="text-accentFaint font-oracle text-base md:text-lg"
               >
                 {getLoadingMessage()}
               </motion.p>
@@ -165,7 +165,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 3 }}
-            className="text-ashGray/60 text-xs md:text-sm"
+            className="text-inkMuted/60 text-xs md:text-sm"
           >
             อาจใช้เวลาสักครู่ในการวิเคราะห์ดวงชะตา
           </motion.p>
@@ -181,13 +181,13 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-2 bg-royalPurple hover:bg-amethyst text-ghostWhite rounded-lg transition-colors font-heading"
+                className="px-6 py-2 bg-accent hover:bg-accentBright text-accentInk rounded-lg transition-colors font-heading"
               >
                 ลองใหม่
               </button>
               <button
                 onClick={() => router.push('/dashboard')}
-                className="px-6 py-2 border border-royalPurple/50 text-ashGray hover:text-ghostWhite rounded-lg transition-colors font-heading"
+                className="px-6 py-2 border border-accent/50 text-inkMuted hover:text-ink rounded-lg transition-colors font-heading"
               >
                 กลับหน้าหลัก
               </button>

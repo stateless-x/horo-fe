@@ -22,7 +22,7 @@ export function ElementProfileSection({
 
   return (
     <div
-      className="rounded-2xl border border-darkPurple/50 p-8"
+      className="rounded-2xl border border-surface2/50 p-8"
       style={{
         background: `linear-gradient(to bottom, ${elementColor.glow}, rgb(15, 10, 26))`,
       }}
@@ -45,7 +45,7 @@ export function ElementProfileSection({
 
       {/* Element name and description */}
       <div className="text-center mb-8">
-        <p className="font-thai text-ghostWhite text-base mb-2">
+        <p className="font-thai text-ink text-base mb-2">
           ธาตุประจำตัวของเจ้าคือ
           <InfoTooltip text="ธาตุหลักที่กำหนดบุคลิกและชะตาของเจ้า คำนวณจากวันเดือนปีเกิดตามหลัก Bazi (ซื่อจู๋)" />
         </p>
@@ -55,7 +55,7 @@ export function ElementProfileSection({
         >
           {elementNames[elementProfile.primaryElement]}
         </h2>
-        <p className="font-oracle text-ghostWhite text-base leading-relaxed">
+        <p className="font-oracle text-ink text-base leading-relaxed">
           {elementProfile.corePersonality}
         </p>
       </div>
@@ -63,13 +63,13 @@ export function ElementProfileSection({
       {/* Three info columns */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {/* Strengths */}
-        <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <h3 className="text-lavenderGlow font-heading font-medium text-base mb-3">
+        <div className="bg-overlay border border-surface2/50 rounded-lg p-4">
+          <h3 className="text-accentSoft font-heading font-medium text-base mb-3">
             จุดแข็ง
           </h3>
           <ul className="space-y-1.5">
             {elementProfile.strengths.map((strength, index) => (
-              <li key={index} className="text-ghostWhite font-thai text-base">
+              <li key={index} className="text-ink font-thai text-base">
                 {strength}
               </li>
             ))}
@@ -77,13 +77,13 @@ export function ElementProfileSection({
         </div>
 
         {/* Weaknesses */}
-        <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <h3 className="text-lavenderGlow font-heading font-medium text-base mb-3">
+        <div className="bg-overlay border border-surface2/50 rounded-lg p-4">
+          <h3 className="text-accentSoft font-heading font-medium text-base mb-3">
             จุดอ่อน
           </h3>
           <ul className="space-y-1.5">
             {elementProfile.weaknesses.map((weakness, index) => (
-              <li key={index} className="text-ghostWhite font-thai text-base">
+              <li key={index} className="text-ink font-thai text-base">
                 {weakness}
               </li>
             ))}
@@ -91,13 +91,13 @@ export function ElementProfileSection({
         </div>
 
         {/* Compatible elements */}
-        <div className="bg-charcoal border border-darkPurple/50 rounded-lg p-4">
-          <h3 className="text-lavenderGlow font-heading font-medium text-base mb-3">
+        <div className="bg-overlay border border-surface2/50 rounded-lg p-4">
+          <h3 className="text-accentSoft font-heading font-medium text-base mb-3">
             เข้ากันดี
           </h3>
           <ul className="space-y-1.5">
             {elementProfile.compatibleElements.map((element, index) => (
-              <li key={index} className="text-ghostWhite font-thai text-base">
+              <li key={index} className="text-ink font-thai text-base">
                 {elementNames[element]}
               </li>
             ))}
@@ -106,10 +106,10 @@ export function ElementProfileSection({
       </div>
 
       {/* Conflict warning */}
-      <div className="bg-darkPurple/20 border border-amber-400/20 rounded-lg p-4 flex items-start gap-3">
+      <div className="bg-surface2/20 border border-amber-400/20 rounded-lg p-4 flex items-start gap-3">
         <AlertTriangle className="text-amber-400 w-5 h-5 flex-shrink-0 mt-0.5" />
         <div>
-          <p className="text-ashGray font-thai text-base">
+          <p className="text-inkMuted font-thai text-base">
             <span className="text-amber-400 font-medium">ระวังธาตุ:</span>{" "}
             {elementNames[elementProfile.conflictingElement]} (ข่มธาตุของเจ้า)
           </p>

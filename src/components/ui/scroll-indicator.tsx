@@ -76,8 +76,8 @@ export function ScrollIndicator({
             className="flex flex-col items-center gap-2"
           >
             {/* Animated arrow */}
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-royalPurple to-amethyst flex items-center justify-center shadow-[0_0_20px_rgba(161,106,203,0.5)]">
-              <ChevronDown className="w-5 h-5 text-ghostWhite" />
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-accentBright flex items-center justify-center shadow-[0_0_20px_rgba(161,106,203,0.5)]">
+              <ChevronDown className="w-5 h-5 text-ink" />
             </div>
           </motion.div>
         </motion.div>

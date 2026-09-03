@@ -58,31 +58,31 @@ export function IdentityAnchor({
       )}
 
       {/* Greeting */}
-      <p className="text-paleOrchid font-oracle text-base md:text-lg">
+      <p className="text-accentFaint font-oracle text-base md:text-lg">
         สวัสดี, {displayName}
       </p>
 
       {/* Main heading */}
-      <h1 className="text-3xl sm:text-4xl font-heading text-ghostWhite">
+      <h1 className="text-3xl sm:text-4xl font-heading text-ink">
         ดวงชะตาวันนี้
       </h1>
 
       {/* Date */}
-      <ClientDate className="text-ashGray text-base" />
+      <ClientDate className="text-inkMuted text-base" />
 
       {/* Freshness pill */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amethyst/10 border border-amethyst/20"
+        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accentBright/10 border border-accentBright/20"
       >
         <motion.span
-          className="w-1.5 h-1.5 rounded-full bg-amethyst"
+          className="w-1.5 h-1.5 rounded-full bg-accentBright"
           animate={{ opacity: [1, 0.4, 1] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <span className="text-xs font-heading text-amethyst">ดวงใหม่วันนี้</span>
+        <span className="text-xs font-heading text-accentBright">ดวงใหม่วันนี้</span>
       </motion.div>
     </motion.div>
   );

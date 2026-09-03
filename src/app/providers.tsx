@@ -6,7 +6,7 @@ import { queryClient } from '@/lib/query-client';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem disableTransitionOnChange>
+    <ThemeProvider attribute="data-theme" defaultTheme="light" disableTransitionOnChange>
       <QueryClientProvider client={queryClient}>
         {children}
       </QueryClientProvider>

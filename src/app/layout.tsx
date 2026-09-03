@@ -109,10 +109,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0A0A0F" },
-    { media: "(prefers-color-scheme: light)", color: "#FAF9FD" },
-  ],
+  // Light is the app default regardless of OS scheme, so the tab color matches it.
+  themeColor: "#FAF9FD",
 };
 
 export default function RootLayout({

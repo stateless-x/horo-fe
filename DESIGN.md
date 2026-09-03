@@ -107,7 +107,7 @@ pulse — never busy.
 - Film grain (3% opacity) over every page — the room's atmosphere
 - Glassmorphic cards floating on darkness, edged with `white/10`
 - Two voices: contemporary Thai (คุณ) for marketing, the oracle's เจ้า/ข้า in Sarabun Light inside readings
-- Two moods, one room: the Midnight Room (dark, default) and a white + purple daylight mode; the hero and the onboarding wizard stay always-dark via a `data-theme="dark"` wrapper
+- Two moods, one room: white + purple daylight mode is the default; the Midnight Room (dark) is one toggle away and always hosts the hero and the onboarding wizard via a `data-theme="dark"` wrapper
 
 ## Colors
 
@@ -115,8 +115,9 @@ Colors are **semantic tokens** (`ground / surface / surface2 / overlay / ink /
 ink-muted / accent / accent-bright / accent-soft / accent-faint / edge`),
 defined per theme as CSS variables in `globals.css` and exposed as Tailwind
 utilities (`bg-ground`, `text-ink`, `border-edge`, ...). Never hardcode a
-palette hex in a component. The frontmatter lists the dark (canonical) values;
-light mode is white + purple:
+palette hex in a component. Light (white + purple) is the default theme;
+the frontmatter lists the dark Midnight Room values, which remain the brand's
+cinematic home (hero, wizard, and the dark toggle):
 
 | role | dark (Midnight Room) | light (daylight) |
 |---|---|---|

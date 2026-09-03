@@ -222,7 +222,7 @@
       "Film grain (3% opacity) over every page — the room's atmosphere",
       "Glassmorphic cards floating on darkness, edged with white/10",
       "Two voices: contemporary Thai (คุณ) for marketing, the oracle's เจ้า/ข้า in Sarabun Light inside readings",
-      "Two moods, one room: dark Midnight Room (default) + white-and-purple daylight mode; hero and wizard pinned dark"
+      "Two moods, one room: white + purple daylight is the default; the dark Midnight Room is a toggle away and pins the hero and wizard"
     ],
     "rules": [
       {
@@ -252,7 +252,7 @@
       },
       {
         "name": "The Two Rooms Rule",
-        "body": "Every surface uses semantic tokens (ground/surface/ink/accent/edge) that resolve per theme. Dark is the brand home; light is white + purple. Sections pinned to one mood wrap themselves in data-theme=\"dark\" — variables cascade.",
+        "body": "Every surface uses semantic tokens (ground/surface/ink/accent/edge) that resolve per theme. Light (white + purple) is the default; the Midnight Room is one toggle away and always hosts the hero and wizard. Sections pinned to one mood wrap themselves in data-theme=\"dark\" — variables cascade.",
         "section": "colors"
       }
     ],

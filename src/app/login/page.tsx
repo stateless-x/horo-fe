@@ -29,7 +29,7 @@ export default function LoginPage() {
       const onboardingCompleted = (session.user as any)?.onboardingCompleted;
 
       if (onboardingCompleted) {
-        router.push('/dashboard');
+        router.push('/dashboard/today');
       } else {
         // Redirect to fortune flow to complete onboarding
         router.push('/fortune');
@@ -42,7 +42,7 @@ export default function LoginPage() {
     try {
       await signIn.social({
         provider: 'google',
-        callbackURL: getCallbackUrl('/dashboard'),
+        callbackURL: getCallbackUrl('/dashboard/today'),
       });
     } catch (error) {
       console.error('[Login] Google login error:', error);
@@ -54,7 +54,7 @@ export default function LoginPage() {
     try {
       await signIn.social({
         provider: 'twitter',
-        callbackURL: getCallbackUrl('/dashboard'),
+        callbackURL: getCallbackUrl('/dashboard/today'),
       });
     } catch (error) {
       console.error('[Login] X login error:', error);

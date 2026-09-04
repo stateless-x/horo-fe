@@ -48,8 +48,8 @@ export function PublicNav() {
     return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [drawerOpen]);
 
-  const ctaHref = session ? '/dashboard' : '/fortune';
-  const ctaLabel = session ? 'กลับสู่ดวงของเจ้า' : 'เริ่มดูดวงฟรี';
+  const ctaHref = session ? '/dashboard/today' : '/fortune';
+  const ctaLabel = session ? 'ดูดวงวันนี้' : 'เริ่มดูดวงฟรี';
 
   return (
     <header ref={headerRef} className="border-b border-edge sticky top-0 z-20 backdrop-blur bg-ground/80">

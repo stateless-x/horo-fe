@@ -3,20 +3,16 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Sun, Orbit, Heart, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
+import { SYSTEMS, type DashboardTab } from '@/lib/systems';
 
-interface NavTab {
-  key: string;
-  label: string;
-  href: string;
-  icon: React.ElementType;
-}
+// Settings is dashboard chrome, not a fortune-telling system, so it isn't
+// part of the systems registry — it's appended here as a fixed last tab.
+const SETTINGS_TAB: DashboardTab = { key: 'settings', label: 'ตั้งค่า', href: '/dashboard/settings', icon: Settings };
 
-const NAV_TABS: NavTab[] = [
-  { key: 'fortune', label: 'ดวงชะตา', href: '/dashboard/fortune', icon: Orbit },
-  { key: 'today', label: 'ดวงวันนี้', href: '/dashboard/today', icon: Sun },
-  { key: 'compatibility', label: 'ดวงคู่', href: '/dashboard/compatibility', icon: Heart },
-  { key: 'settings', label: 'ตั้งค่า', href: '/dashboard/settings', icon: Settings },
+const NAV_TABS: DashboardTab[] = [
+  ...SYSTEMS.filter((system) => system.enabled).flatMap((system) => system.dashboardTabs),
+  SETTINGS_TAB,
 ];
 
 export function DashboardNavBar() {

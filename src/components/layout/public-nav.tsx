@@ -11,8 +11,6 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const NAV_LINKS = SITE_SECTIONS;
 
-const LINK_BASE =
-  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-oracle text-sm transition-colors';
 const LINK_REST = 'text-inkMuted hover:text-ink hover:bg-edgeSoft';
 const LINK_ACTIVE = 'bg-accent/15 text-accentBright';
 
@@ -51,40 +49,43 @@ export function PublicNav() {
   }, [drawerOpen]);
 
   const ctaHref = session ? '/dashboard' : '/fortune';
-  const ctaLabel = session ? 'กลับสู่ดวงของเจ้า →' : 'เริ่มดูดวงฟรี →';
+  const ctaLabel = session ? 'กลับสู่ดวงของเจ้า' : 'เริ่มดูดวงฟรี';
 
   return (
     <header ref={headerRef} className="border-b border-edge sticky top-0 z-20 backdrop-blur bg-ground/80">
-      {/* Main row — one row at every breakpoint, ~56px */}
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+      {/* Main row — one row at every breakpoint, ~56px.
+          Structure: brand + links grouped LEFT, actions pushed right — no
+          orphaned link floating in the middle of the bar. */}
+      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-6">
         {/* Brand */}
-        <Link href="/" className="font-heading text-accentBright text-lg shrink-0">
+        <Link href="/" className="font-heading font-semibold text-accentBright text-xl shrink-0 leading-none">
           สายมู
         </Link>
 
-        {/* Inline links — desktop/tablet only */}
-        <nav className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+        {/* Inline links — desktop/tablet, beside the brand. Text only; the
+            active route is an underline anchored to the bar, not a pill. */}
+        <nav className="hidden md:flex items-center gap-1 h-full">
+          {NAV_LINKS.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className={`${LINK_BASE} ${pathname === href ? LINK_ACTIVE : LINK_REST}`}
+              className={`flex items-center h-full px-3 font-thai text-sm border-b-2 -mb-px transition-colors ${
+                pathname === href
+                  ? 'border-accent text-ink font-medium'
+                  : 'border-transparent text-inkMuted hover:text-ink'
+              }`}
             >
-              <Icon className="w-3.5 h-3.5" />
               {label}
             </Link>
           ))}
         </nav>
 
-        {/* Spacer pushes trailing controls to the right on mobile */}
-        <div className="flex-1 md:hidden" />
-
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="ml-auto flex items-center gap-1.5 shrink-0">
           <ThemeToggle />
 
           <Link
             href={ctaHref}
-            className="shrink-0 whitespace-nowrap px-3 md:px-4 py-2 bg-accent hover:bg-accentBright text-accentInk font-heading text-xs md:text-sm rounded-lg transition-colors shadow-md shadow-accent/20 dark:shadow-accent/30"
+            className="shrink-0 whitespace-nowrap px-4 py-2 bg-accent hover:bg-accentBright text-accentInk font-heading text-sm font-medium rounded-lg transition-colors shadow-md shadow-accent/20 dark:shadow-accent/30"
           >
             {ctaLabel}
           </Link>

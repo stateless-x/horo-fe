@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, Heart, Coins, Activity, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import type { StructuredDailyContent } from '@/features/fusion/hooks/use-daily-fortune';
+import type { StructuredDailyContent } from '@/features/fortune/hooks/use-daily-fortune';
 
 const CATEGORY_CONFIG = {
   career: { label: 'การงาน', icon: Briefcase, color: '#4A90D9' },

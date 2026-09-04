@@ -5,8 +5,8 @@ Placeholder. Tarot is registered as a disabled system in
 
 When tarot is built, this folder holds:
 - **Components** — card spread UI, draw animation, result cards (follow the
-  patterns in `src/features/fusion/chart/` and `today/`).
-- **Hooks** — data fetching/mutation hooks (see `src/features/fusion/hooks/`).
+  patterns in `src/features/fortune/chart/` and `today/`).
+- **Hooks** — data fetching/mutation hooks (see `src/features/fortune/hooks/`).
 - **Prompts contract** — the request/response shape tarot's LLM prompt
   builder expects, mirroring how `horo-be/src/lib/prompts.ts` documents
   `buildCompatibilityPrompt`/`buildTeaserPrompt` for the backend side.

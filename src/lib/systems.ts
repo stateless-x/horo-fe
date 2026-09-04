@@ -30,7 +30,7 @@ export interface FortuneSystem {
 
 export const SYSTEMS: FortuneSystem[] = [
   {
-    id: 'fusion',
+    id: 'fortune',
     enabled: true,
     dashboardRoute: '/dashboard/fortune',
     dashboardTabs: [

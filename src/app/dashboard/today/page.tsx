@@ -16,9 +16,9 @@ import {
   XCircle,
 } from 'lucide-react';
 
-import { useDailyFortune, useUserProfile } from '@/features/fusion/hooks/use-daily-fortune';
-import { LoadingSkeleton } from '@/features/fusion/loading-skeleton';
-import { ErrorDisplay } from '@/features/fusion/error-display';
+import { useDailyFortune, useUserProfile } from '@/features/fortune/hooks/use-daily-fortune';
+import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
+import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ClientDate } from '@/components/client-date';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';

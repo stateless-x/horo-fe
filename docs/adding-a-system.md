@@ -1,6 +1,6 @@
 # Adding a fortune-telling system (tarot, shop-adjacent readings, …)
 
-A "system" is a full product feature (Bazi/fusion, compatibility, tarot),
+A "system" is a full product feature (Bazi/fortune, compatibility, tarot),
 not just a public page — see [`adding-a-section.md`](./adding-a-section.md)
 for marketing-only sections. Adding a system touches both repos:
 

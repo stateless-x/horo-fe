@@ -170,7 +170,7 @@ export default function LandingPage() {
             เพราะเราไม่ได้ดูแค่ดวง — เราอ่านทั้งชะตาและนิสัยของคุณ ผสาน 3 ศาสตร์ไว้ในคำทำนายเดียว
           </motion.p>
 
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8 relative">
+          <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 relative max-w-md lg:max-w-none mx-auto">
             {/* Bazi */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -183,8 +183,8 @@ export default function LandingPage() {
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
-                  aspect="16/9"
-                  spec="1200×675 · PNG"
+                  aspect="4/3"
+                  spec="1200×900 · PNG"
                   label="โมเดล 3D clay เสาจีนโบราณสี่ต้น — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
                   flush
                   className="w-full rounded-t-2xl"
@@ -222,8 +222,8 @@ export default function LandingPage() {
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
-                  aspect="16/9"
-                  spec="1200×675 · PNG"
+                  aspect="4/3"
+                  spec="1200×900 · PNG"
                   label="โมเดล 3D clay ดาวนพเคราะห์ไทยลอยรอบดวงจันทร์ — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
                   flush
                   className="w-full rounded-t-2xl"
@@ -261,8 +261,8 @@ export default function LandingPage() {
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
                 <MediaPlaceholder
-                  aspect="16/9"
-                  spec="1200×675 · PNG"
+                  aspect="4/3"
+                  spec="1200×900 · PNG"
                   label="โมเดล 3D clay สมองสองซีกสองสี — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
                   flush
                   className="w-full rounded-t-2xl"
@@ -278,9 +278,8 @@ export default function LandingPage() {
                     จิตวิทยา MBTI
                   </h3>
                   <p className="text-ink font-oracle text-sm md:text-base leading-relaxed mb-4">
-                    จิตวิทยาบุคลิกภาพ 16 แบบ
-                    เสริมให้คำทำนายเข้าถึงตัวตนของคุณอย่างลึกซึ้ง
-                    พร้อมเตือนจุดอ่อนที่บุคลิกภาพแบบคุณมักเจอ
+                    จิตวิทยาบุคลิกภาพ 16 แบบ ที่ทำให้คำทำนายรู้จักนิสัยจริง
+                    และเตือนจุดอ่อนของคนแบบคุณ
                   </p>
                   <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
                     จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวคุณ

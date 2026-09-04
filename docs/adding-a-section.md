@@ -19,3 +19,7 @@ chrome (nav + canonical rules). Adding a section takes four steps:
 A commerce section (shop) will also need its own `(marketing)/shop/layout.tsx`
 if it wants extra chrome (cart button); put it in the section's folder, not in
 the group layout.
+
+Note: this is about public *pages* only. Product-feature code (fusion reading
+components/hooks, and any future feature-specific UI) belongs under
+`src/features/<feature>/`, not `src/components/` — see `src/features/fusion/`.

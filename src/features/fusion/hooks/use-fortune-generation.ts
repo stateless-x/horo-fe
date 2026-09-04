@@ -5,7 +5,7 @@ import { useSession } from '@/lib/auth-client';
 import { api } from '@/lib/api';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { useFortuneStore } from '@/stores/fortune';
-import { useSessionRetry } from './use-session-retry';
+import { useSessionRetry } from '@/hooks/use-session-retry';
 import { getValidProfileWithFallback } from '@/lib/profile-utils';
 import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
 

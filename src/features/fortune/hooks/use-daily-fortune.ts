@@ -5,28 +5,12 @@ import { api } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
 import { getMsUntilThaiMidnight } from '@/lib/date-utils';
 
-/**
- * Structured daily reading from the API
- */
-export interface StructuredDailyContent {
-  dailyTheme?: string;
-  overallScore?: number;
-  overallReading: string;
-  categories: {
-    career: { reading: string; score: number; tip: string };
-    love: { reading: string; score: number; tip: string };
-    finance: { reading: string; score: number; tip: string };
-    health: { reading: string; score: number; tip: string };
-  };
-  dos: string[];
-  donts: string[];
-  luckyMoment: string;
-  luckyNumbers?: number[];
-  luckyColor?: string;
-  luckyDirection?: string;
-  warnings?: string[];
-  suggestions?: string[];
-}
+export {
+  getDailyHookLine,
+  HOOK_LINE_MAX_CHARS,
+  type StructuredDailyContent,
+} from '../daily-content';
+import type { StructuredDailyContent } from '../daily-content';
 
 export interface DailyReadingResponse {
   id: string;

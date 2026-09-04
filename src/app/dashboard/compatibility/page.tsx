@@ -1,157 +1,23 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardHeader, CardTitle, CardContent, Button, Input } from '@/lib-packages/ui';
+import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { THAI_MONTHS, BE_OFFSET, createUTCDateFromBE, type RelationshipType, RELATIONSHIP_TYPES, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
+import { BE_OFFSET, createUTCDateFromBE, type RelationshipType } from '@/lib-packages/shared';
 import { useInfiniteQuery, useQueryClient, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import {
-  Loader2, ArrowLeft, ChevronRight, Share2,
-  Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Moon, Stars,
-} from 'lucide-react';
-import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
-import { ShareSheet } from '@/components/share/share-sheet';
-import { SITE_URL, type CompatibilityShareData } from '@/lib/share-utils';
+import { Sparkles, Lightbulb, Target } from 'lucide-react';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
-import { AutoDonationModal } from '@/components/ads/donation-modal';
-import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
-
-// --- Constants ---
-
-const RELATIONSHIP_CONFIG: Record<RelationshipType, {
-  icon: typeof Heart;
-  accent: string;
-  accentBg: string;
-  accentBorder: string;
-  cardTitle: string;
-  placeholder: string;
-  cta: string;
-  resultTitle: (name: string) => string;
-  loadingSteps: string[];
-}> = {
-  talking: {
-    icon: MessageCircleHeart,
-    accent: 'text-pink-600 dark:text-pink-400',
-    accentBg: 'bg-pink-500/15',
-    accentBorder: 'border-pink-400/50',
-    cardTitle: 'กรอกข้อมูลคนที่เจ้าคุยอยู่',
-    placeholder: 'ชื่อคนที่เจ้าคุยอยู่',
-    cta: 'ส่องดวงคนคุย',
-    resultTitle: (name: string) => `ดวงระหว่างเจ้ากับ ${name}`,
-    loadingSteps: ['วิเคราะห์ไวบ์ระหว่างสองคน...', 'อ่านสัญญาณดวงดาว...', 'ประมวลผลความสัมพันธ์...'],
-  },
-  romantic: {
-    icon: Heart,
-    accent: 'text-danger',
-    accentBg: 'bg-danger/15',
-    accentBorder: 'border-danger/50',
-    cardTitle: 'กรอกข้อมูลคนรักของเจ้า',
-    placeholder: 'ชื่อคนรักของเจ้า',
-    cta: 'ส่องดวงคู่รัก',
-    resultTitle: (name: string) => `ดวงรักระหว่างเจ้ากับ ${name}`,
-    loadingSteps: ['วิเคราะห์ธาตุของทั้งสองคน...', 'เปรียบเทียบดาวประจำวัน...', 'ประมวลผลความสัมพันธ์...'],
-  },
-  boss: {
-    icon: Crown,
-    accent: 'text-warn',
-    accentBg: 'bg-warn/15',
-    accentBorder: 'border-warn/50',
-    cardTitle: 'กรอกข้อมูลหัวหน้าของเจ้า',
-    placeholder: 'ชื่อหัวหน้าของเจ้า',
-    cta: 'ส่องดวงหัวหน้า',
-    resultTitle: (name: string) => `ดวงการงานกับ ${name}`,
-    loadingSteps: ['วิเคราะห์สไตล์การทำงาน...', 'เปรียบเทียบพลังงานการงาน...', 'ประมวลผลความสัมพันธ์...'],
-  },
-  coworker: {
-    icon: Users,
-    accent: 'text-blue-600 dark:text-blue-400',
-    accentBg: 'bg-blue-500/15',
-    accentBorder: 'border-blue-400/50',
-    cardTitle: 'กรอกข้อมูลเพื่อนร่วมงาน',
-    placeholder: 'ชื่อเพื่อนร่วมงาน',
-    cta: 'ส่องดวงเพื่อนร่วมงาน',
-    resultTitle: (name: string) => `ดวงการงานกับ ${name}`,
-    loadingSteps: ['วิเคราะห์สไตล์การทำงาน...', 'เปรียบเทียบจุดแข็งของทีม...', 'ประมวลผลความสัมพันธ์...'],
-  },
-  friend: {
-    icon: Laugh,
-    accent: 'text-green-600 dark:text-green-400',
-    accentBg: 'bg-green-500/15',
-    accentBorder: 'border-green-400/50',
-    cardTitle: 'กรอกข้อมูลเพื่อนของเจ้า',
-    placeholder: 'ชื่อเพื่อนของเจ้า',
-    cta: 'ส่องดวงเพื่อน',
-    resultTitle: (name: string) => `ดวงมิตรภาพกับ ${name}`,
-    loadingSteps: ['วิเคราะห์พลังงานมิตรภาพ...', 'เปรียบเทียบธาตุของสองคน...', 'ประมวลผลความสัมพันธ์...'],
-  },
-  family: {
-    icon: Home,
-    accent: 'text-purple-600 dark:text-purple-400',
-    accentBg: 'bg-purple-500/15',
-    accentBorder: 'border-purple-400/50',
-    cardTitle: 'กรอกข้อมูลสมาชิกในครอบครัว',
-    placeholder: 'ชื่อคนในครอบครัว',
-    cta: 'ส่องดวงครอบครัว',
-    resultTitle: (name: string) => `ดวงครอบครัวกับ ${name}`,
-    loadingSteps: ['วิเคราะห์สายสัมพันธ์ครอบครัว...', 'เปรียบเทียบธาตุของสองคน...', 'ประมวลผลความสัมพันธ์...'],
-  },
-};
-
-// --- Types ---
-
-interface CompatibilityResult {
-  id: string;
-  profileAId: string;
-  partnerName: string;
-  partnerBirthDate: string;
-  relationshipType: string;
-  score: number;
-  analysis: string;
-  strengths?: string[];
-  challenges?: string[];
-  userElement?: string;
-  userDayMaster?: string;
-  partnerElement?: string;
-  partnerDayMaster?: string;
-  shareToken?: string;
-  cached?: boolean;
-  createdAt: string;
-}
-
-interface HistoryItem {
-  id: string;
-  partnerName: string;
-  partnerBirthDate: string;
-  relationshipType: string;
-  score: number;
-  userElement?: string;
-  partnerElement?: string;
-  createdAt: string;
-}
-
-interface HistoryResponse {
-  data: HistoryItem[];
-  nextCursor: string | null;
-  total: number;
-}
-
-// --- Element Translation ---
-
-const ELEMENT_NAMES_THAI: Record<string, string> = {
-  wood: 'ไม้',
-  fire: 'ไฟ',
-  earth: 'ดิน',
-  metal: 'ทอง',
-  water: 'น้ำ',
-};
-
-function toThaiElement(element: string | undefined): string {
-  if (!element) return '';
-  return ELEMENT_NAMES_THAI[element.toLowerCase()] || element;
-}
+import {
+  RELATIONSHIP_CONFIG,
+  type CompatibilityResult,
+  type HistoryResponse,
+} from '@/features/compatibility/relationship-config';
+import { CompatibilityForm } from '@/features/compatibility/compatibility-form';
+import { CompatibilityLoading } from '@/features/compatibility/compatibility-loading';
+import { CompatibilityResultView } from '@/features/compatibility/compatibility-result';
+import { CompatibilityHistory } from '@/features/compatibility/compatibility-history';
 
 // --- Page ---
 
@@ -167,6 +33,7 @@ export default function CompatibilityPage() {
   const [month, setMonth] = useState('1');
   const currentYear = new Date().getFullYear() + BE_OFFSET;
   const [year, setYear] = useState((currentYear - 25).toString());
+  const [partnerMbti, setPartnerMbti] = useState('');
 
   // Calculation state
   const [calculating, setCalculating] = useState(false);
@@ -274,6 +141,7 @@ export default function CompatibilityPage() {
           partnerName: partnerName.trim(),
           partnerBirthDate: birthDate.toISOString(),
           relationshipType,
+          ...(partnerMbti ? { partnerMbti } : {}),
         },
         {
           onHeaders: (headers) => {
@@ -301,7 +169,7 @@ export default function CompatibilityPage() {
       setCalculating(false);
       setCalculationStep('');
     }
-  }, [partnerName, day, month, year, relationshipType, config.loadingSteps, queryClient]);
+  }, [partnerName, day, month, year, partnerMbti, relationshipType, config.loadingSteps, queryClient]);
 
   const handleBackToForm = () => {
     setResult(null);
@@ -327,204 +195,20 @@ export default function CompatibilityPage() {
 
   // --- Calculating screen ---
   if (calculating) {
-    return (
-      <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-accent/20 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                opacity: [0.2, 0.8, 0.2],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center space-y-8 max-w-md relative z-10"
-        >
-          <div className="relative flex min-h-56 items-center justify-center sm:min-h-64">
-            <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
-            <ClayOracleLoader />
-          </div>
-
-          <div className="space-y-3">
-            <motion.h2
-              className="text-3xl font-heading text-ink"
-              animate={{ opacity: [0.8, 1, 0.8] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              กำลังคำนวณ...
-            </motion.h2>
-
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={calculationStep}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="text-lg md:text-xl text-inkMuted font-oracle min-h-[28px]"
-              >
-                {calculationStep}
-              </motion.p>
-            </AnimatePresence>
-
-            <div className="flex justify-center gap-2 mt-4">
-              {[...Array(3)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="w-2 h-2 bg-accent/60 rounded-full"
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
-                />
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    );
+    return <CompatibilityLoading calculationStep={calculationStep} />;
   }
 
   // --- Result view ---
   if (result) {
-    const resultConfig = RELATIONSHIP_CONFIG[result.relationshipType as RelationshipType] || config;
-    const ResultIcon = resultConfig.icon;
-
     return (
-      <div className="min-h-[calc(100vh-3.5rem)] p-4 md:p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Header */}
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-            <Button
-              variant="ghost"
-              onClick={handleBackToForm}
-              className="text-inkMuted hover:text-ink -ml-2"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              ส่องดวงอีกครั้ง
-            </Button>
-
-            <div className="text-center space-y-3">
-              {/* Relationship type badge */}
-              <div className="flex justify-center">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm ${resultConfig.accentBg} ${resultConfig.accentBorder} border ${resultConfig.accent}`}>
-                  <ResultIcon className="w-3.5 h-3.5" />
-                  {RELATIONSHIP_LABELS[result.relationshipType as RelationshipType]}
-                </span>
-              </div>
-
-              <h1 className="text-3xl md:text-4xl font-heading text-ink">
-                {resultConfig.resultTitle(result.partnerName)}
-              </h1>
-
-              {result.userElement && result.partnerElement && (
-                <p className="text-inkMuted text-sm md:text-base">
-                  ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
-                </p>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Element visualization */}
-          {result.userElement && result.partnerElement && (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
-              <Card className="bg-gradient-to-br from-surface2 to-surface">
-                <CardHeader>
-                  <CardTitle className="text-center flex items-center justify-center gap-2">
-                    <span className="text-2xl">&#x1F31F;</span>
-                    <span>พลังธาตุของทั้งสองคน</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center gap-4 py-6">
-                    <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center mb-2">
-                        <span className="text-2xl font-bold text-ink">{toThaiElement(result.userElement)}</span>
-                      </div>
-                      <p className="text-sm md:text-base text-ink">เจ้า</p>
-                      {result.userDayMaster && <p className="text-xs md:text-sm text-inkMuted">{result.userDayMaster}</p>}
-                    </div>
-
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.3, type: 'spring' }}
-                      className="text-4xl text-inkMuted"
-                    >
-                      &#x27F7;
-                    </motion.div>
-
-                    <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-accentBright/20 border-2 border-accentBright flex items-center justify-center mb-2">
-                        <span className="text-2xl font-bold text-ink">{toThaiElement(result.partnerElement)}</span>
-                      </div>
-                      <p className="text-sm md:text-base text-ink">{result.partnerName}</p>
-                      {result.partnerDayMaster && <p className="text-xs md:text-sm text-inkMuted">{result.partnerDayMaster}</p>}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* LLM Analysis */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-                  <span className="text-xl">&#x2728;</span>
-                  <span>คำวิเคราะห์จากดวงดาว</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MarkdownRenderer content={result.analysis} />
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Actions */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="space-y-3">
-            <Button
-              size="lg"
-              className="w-full"
-              onClick={() => setShowShareSheet(true)}
-            >
-              <Share2 className="w-5 h-5 mr-2" />
-              แชร์ผลดวง
-            </Button>
-            <Button size="lg" variant="outline" className="w-full" onClick={handleBackToForm}>
-              ส่องดวงอีกครั้ง
-            </Button>
-          </motion.div>
-
-          {/* Share Sheet */}
-          <ShareSheet
-            isOpen={showShareSheet}
-            onClose={() => setShowShareSheet(false)}
-            compatibilityData={{
-              url: result.shareToken ? `${SITE_URL}/compatibility/${result.shareToken}` : `${SITE_URL}/dashboard/compatibility`,
-              partnerName: result.partnerName,
-              relationshipLabel: RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType,
-              userElement: toThaiElement(result.userElement) || '',
-              partnerElement: toThaiElement(result.partnerElement) || '',
-            }}
-          />
-        </div>
-      </div>
+      <CompatibilityResultView
+        result={result}
+        fallbackConfig={config}
+        showShareSheet={showShareSheet}
+        onOpenShareSheet={() => setShowShareSheet(true)}
+        onCloseShareSheet={() => setShowShareSheet(false)}
+        onBackToForm={handleBackToForm}
+      />
     );
   }
 
@@ -547,15 +231,15 @@ export default function CompatibilityPage() {
               </h3>
               <ul className="text-left space-y-2 text-inkMuted text-sm md:text-base">
                 <li className="flex items-start gap-2">
-                  <span className="text-accentBright mt-1 flex-shrink-0">&#x2728;</span>
+                  <Sparkles className="w-4 h-4 text-accentBright mt-1 flex-shrink-0" aria-hidden="true" />
                   <span>วิเคราะห์ธาตุและดาวประจำวันเกิดของทั้งสองคน</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-accentBright mt-1 flex-shrink-0">&#x1F4A1;</span>
+                  <Lightbulb className="w-4 h-4 text-accentBright mt-1 flex-shrink-0" aria-hidden="true" />
                   <span>รับคำแนะนำเฉพาะตัวสำหรับทุกความสัมพันธ์</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-accentBright mt-1 flex-shrink-0">&#x1F3AF;</span>
+                  <Target className="w-4 h-4 text-accentBright mt-1 flex-shrink-0" aria-hidden="true" />
                   <span>คนคุย คนรัก หัวหน้า เพื่อนร่วมงาน เพื่อน ครอบครัว</span>
                 </li>
               </ul>
@@ -563,335 +247,43 @@ export default function CompatibilityPage() {
           </div>
         </motion.div>
 
-        {/* Relationship Type Selector */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
-          <label className="block text-sm md:text-base text-inkMuted mb-3">เลือกประเภทความสัมพันธ์</label>
-          <div className="flex flex-wrap gap-2">
-            {RELATIONSHIP_TYPES.map((type) => {
-              const typeConfig = RELATIONSHIP_CONFIG[type];
-              const Icon = typeConfig.icon;
-              const isSelected = relationshipType === type;
+        <CompatibilityForm
+          config={config}
+          relationshipType={relationshipType}
+          onRelationshipTypeChange={setRelationshipType}
+          partnerName={partnerName}
+          onPartnerNameChange={setPartnerName}
+          day={day}
+          onDayChange={setDay}
+          month={month}
+          onMonthChange={setMonth}
+          year={year}
+          onYearChange={setYear}
+          partnerMbti={partnerMbti}
+          onPartnerMbtiChange={setPartnerMbti}
+          currentYear={currentYear}
+          error={error}
+          calculating={calculating}
+          isRateLimited={isRateLimited}
+          rateLimitCountdown={rateLimitCountdown}
+          rateLimitInfo={rateLimitInfo}
+          onCalculate={handleCalculate}
+        />
 
-              return (
-                <motion.button
-                  key={type}
-                  onClick={() => setRelationshipType(type)}
-                  className={`inline-flex items-center gap-1.5 px-4 h-11 rounded-full text-sm md:text-base font-medium transition-all border ${
-                    isSelected
-                      ? `${typeConfig.accentBg} ${typeConfig.accentBorder} ${typeConfig.accent}`
-                      : 'bg-surface border-surface2/50 text-inkMuted hover:border-accent/50'
-                  }`}
-                  whileTap={{ scale: 0.95 }}
-                  {...(type === 'talking' ? {
-                    initial: { boxShadow: '0 0 0 0 rgba(236, 72, 153, 0)' },
-                    animate: isSelected ? {} : {
-                      boxShadow: [
-                        '0 0 0 0 rgba(236, 72, 153, 0)',
-                        '0 0 8px 2px rgba(236, 72, 153, 0.3)',
-                        '0 0 0 0 rgba(236, 72, 153, 0)',
-                      ],
-                    },
-                    transition: { duration: 2, repeat: 1, delay: 0.5 },
-                  } : {})}
-                >
-                  <Icon className="w-4 h-4" />
-                  {RELATIONSHIP_LABELS[type]}
-                </motion.button>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* Error Display */}
-        <AnimatePresence>
-          {error && !isRateLimited && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-danger/10 border border-danger/30 rounded-xl p-4"
-            >
-              <p className="text-danger text-center text-base md:text-lg">{error}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Rate Limit Card */}
-        <AnimatePresence>
-          {isRateLimited && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-            >
-              <Card className="bg-gradient-to-br from-surface2 to-surface border-accentBright/30">
-                <CardContent className="pt-6">
-                  <div className="text-center space-y-3">
-                    <motion.div
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <Moon className="w-10 h-10 text-accentBright mx-auto" />
-                    </motion.div>
-                    <p className="text-ink font-medium text-base md:text-lg">พลังดวงดาวต้องการเวลาฟื้นฟู</p>
-                    <p className="text-inkMuted text-sm md:text-base">
-                      {rateLimitCountdown > 3600
-                        ? 'เจ้าส่องดวงครบ 5 ครั้งในวันนี้แล้ว'
-                        : 'เจ้าได้ส่องดวงครบ 5 ครั้งในชั่วโมงนี้แล้ว'}
-                    </p>
-                    <p className="text-accentBright text-sm md:text-base">
-                      {rateLimitCountdown > 3600
-                        ? `กลับมาใหม่พรุ่งนี้นะ`
-                        : `ดวงดาวจะพร้อมอีกครั้งใน ${Math.ceil(rateLimitCountdown / 60)} นาที`}
-                    </p>
-                    <div className="w-full bg-surface rounded-full h-1 overflow-hidden" role="progressbar" aria-label="เวลาที่เหลือก่อนส่องดวงได้อีกครั้ง">
-                      <motion.div
-                        className="h-full bg-accentBright/60 rounded-full"
-                        initial={{ width: '100%' }}
-                        animate={{ width: '0%' }}
-                        transition={{ duration: rateLimitCountdown, ease: 'linear' }}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Input Form */}
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
-          <Card>
-            <CardHeader>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={relationshipType}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <CardTitle className="text-lg md:text-xl">{config.cardTitle}</CardTitle>
-                </motion.div>
-              </AnimatePresence>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <label className="block text-sm md:text-base text-inkMuted mb-2">ชื่อ</label>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={relationshipType}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <Input
-                      value={partnerName}
-                      onChange={(e) => setPartnerName(e.target.value)}
-                      placeholder={config.placeholder}
-                      className="text-base"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              <div>
-                <label className="block text-sm md:text-base text-inkMuted mb-3">วันเกิด</label>
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-xs md:text-sm text-inkMuted/70 mb-2 text-center">วัน</label>
-                    <select
-                      value={day}
-                      onChange={(e) => setDay(e.target.value)}
-                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
-                    >
-                      {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs md:text-sm text-inkMuted/70 mb-2 text-center">เดือน</label>
-                    <select
-                      value={month}
-                      onChange={(e) => setMonth(e.target.value)}
-                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-sm text-ink focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
-                    >
-                      {THAI_MONTHS.map((m, i) => (
-                        <option key={i} value={i + 1}>{m}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs md:text-sm text-inkMuted/70 mb-2 text-center">พ.ศ.</label>
-                    <select
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
-                    >
-                      {Array.from({ length: 80 }, (_, i) => currentYear - i).map((y) => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <p className="text-xs md:text-sm text-inkMuted/60 mt-2 text-center">ตัวอย่าง: 15 มิถุนายน 2540</p>
-              </div>
-
-              <div className="space-y-2">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`${relationshipType}-cta`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <Button
-                      onClick={handleCalculate}
-                      size="lg"
-                      className="w-full"
-                      disabled={!partnerName.trim() || calculating || isRateLimited}
-                    >
-                      {isRateLimited ? (
-                        <>
-                          <Moon className="w-5 h-5 mr-2" />
-                          ดวงดาวกำลังฟื้นฟู...
-                        </>
-                      ) : calculating ? (
-                        <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          กำลังคำนวณ...
-                        </>
-                      ) : (
-                        config.cta
-                      )}
-                    </Button>
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* Low remaining warning */}
-                {rateLimitInfo && rateLimitInfo.remaining <= 2 && rateLimitInfo.remaining > 0 && !isRateLimited && (
-                  <p className="text-warn text-xs md:text-sm text-center">ส่องดวงได้อีก {rateLimitInfo.remaining} ครั้งในวันนี้</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <PawjaiAdsBanner />
         {/* History Section */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg md:text-xl font-heading text-ink flex items-center gap-2">
-                <Stars className="w-5 h-5 text-accentBright" />
-                ดวงที่เจ้าเคยส่อง
-                {totalHistory > 0 && (
-                  <span className="text-xs md:text-sm text-inkMuted bg-surface px-2 py-0.5 rounded-full">
-                    {totalHistory} ครั้ง
-                  </span>
-                )}
-              </h2>
-            </div>
+        <CompatibilityHistory
+          items={allHistoryItems}
+          totalHistory={totalHistory}
+          isLoading={historyQuery.isLoading}
+          hasNextPage={!!historyQuery.hasNextPage}
+          isFetchingNextPage={historyQuery.isFetchingNextPage}
+          onLoadMore={() => historyQuery.fetchNextPage()}
+          onViewHistory={handleViewHistory}
+        />
 
-            {historyQuery.isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 text-inkMuted animate-spin" />
-              </div>
-            ) : allHistoryItems.length === 0 ? (
-              // Empty state
-              <div className="text-center py-8 space-y-3">
-                <div className="flex justify-center gap-2 text-inkMuted/40">
-                  <Stars className="w-8 h-8" />
-                  <Users className="w-8 h-8" />
-                </div>
-                <p className="text-inkMuted text-base md:text-lg">ยังไม่มีประวัติการส่องดวง</p>
-                <p className="text-inkMuted/60 text-sm md:text-base">ลองส่องดวงความสัมพันธ์กับคนรอบข้างเจ้าดูสิ</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {allHistoryItems.map((item, index) => {
-                  const itemConfig = RELATIONSHIP_CONFIG[item.relationshipType as RelationshipType];
-                  if (!itemConfig) return null;
-                  const ItemIcon = itemConfig.icon;
-
-                  return (
-                    <motion.button
-                      key={item.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => handleViewHistory(item.id)}
-                      className="w-full bg-surface/50 border border-surface2/30 rounded-xl p-4 hover:border-accent/30 transition-all text-left flex items-center gap-3"
-                    >
-                      <div className={`w-10 h-10 rounded-full ${itemConfig.accentBg} flex items-center justify-center flex-shrink-0`}>
-                        <ItemIcon className={`w-5 h-5 ${itemConfig.accent}`} />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-ink font-medium truncate text-base md:text-lg">{item.partnerName}</p>
-                        <div className="flex items-center gap-2 text-xs md:text-sm">
-                          <span className={itemConfig.accent}>{RELATIONSHIP_LABELS[item.relationshipType as RelationshipType]}</span>
-                          {item.userElement && item.partnerElement && (
-                            <>
-                              <span className="text-inkMuted/40">&#x2022;</span>
-                              <span className="text-inkMuted">{toThaiElement(item.userElement)} x {toThaiElement(item.partnerElement)}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs md:text-sm text-inkMuted">
-                          {formatRelativeDate(item.createdAt)}
-                        </span>
-                        <ChevronRight className="w-4 h-4 text-inkMuted/50" />
-                      </div>
-                    </motion.button>
-                  );
-                })}
-
-                {/* Load more */}
-                {historyQuery.hasNextPage && (
-                  <Button
-                    variant="ghost"
-                    className="w-full text-inkMuted"
-                    onClick={() => historyQuery.fetchNextPage()}
-                    disabled={historyQuery.isFetchingNextPage}
-                  >
-                    {historyQuery.isFetchingNextPage ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : null}
-                    โหลดเพิ่ม
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        <AutoDonationModal />
+        {/* Ad sits after the form + history value unit */}
+        <PawjaiAdsBanner />
       </div>
     </div>
   );
-}
-
-// --- Helpers ---
-
-function formatRelativeDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return 'เมื่อสักครู่';
-  if (diffMins < 60) return `${diffMins} นาทีที่แล้ว`;
-  if (diffHours < 24) return `${diffHours} ชม.ที่แล้ว`;
-  if (diffDays < 7) return `${diffDays} วันที่แล้ว`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} สัปดาห์ที่แล้ว`;
-
-  return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
 }

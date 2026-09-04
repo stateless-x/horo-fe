@@ -4,6 +4,7 @@ import type {
   FortuneReadingCategory,
   Recommendations,
 } from '@/lib-packages/shared/types/astrology';
+import { localizeColorName, localizeDayName } from '@/lib/thai-localize';
 
 interface FortuneOverviewSectionProps {
   fortuneReadings: FortuneReadingCategory[];
@@ -49,6 +50,16 @@ export function FortuneOverviewSection({
           <p className="font-oracle text-lg font-light leading-[1.8] text-ink sm:text-xl">
             {getReadingSummary(lifeReading.reading)}
           </p>
+          {lifeReading.reading.length > 320 && (
+            <button
+              type="button"
+              onClick={onOpenReadings}
+              className="mt-3 flex min-h-11 items-center gap-1 font-heading text-accentBright transition-colors hover:text-accentSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright rounded"
+            >
+              อ่านต่อในคำทำนายฉบับเต็ม
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </button>
+          )}
         </div>
       )}
 
@@ -91,10 +102,10 @@ export function FortuneOverviewSection({
       <div className="py-8">
         <h3 className="font-heading text-lg font-semibold text-ink">ตัวช่วยเล็ก ๆ ของคุณ</h3>
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
-          <div><dt className="text-sm text-inkMuted">สีมงคล</dt><dd className="mt-1 font-heading text-ink">{birthStar.luckyColor}</dd></div>
+          <div><dt className="text-sm text-inkMuted">สีมงคล</dt><dd className="mt-1 font-heading text-ink">{localizeColorName(birthStar.luckyColor)}</dd></div>
           <div><dt className="text-sm text-inkMuted">เลขมงคล</dt><dd className="mt-1 font-heading text-ink">{birthStar.luckyNumber}</dd></div>
           <div><dt className="text-sm text-inkMuted">ทิศมงคล</dt><dd className="mt-1 font-heading text-ink">{birthStar.luckyDirection}</dd></div>
-          <div><dt className="text-sm text-inkMuted">วันมงคล</dt><dd className="mt-1 font-heading text-ink">{birthStar.luckyDay}</dd></div>
+          <div><dt className="text-sm text-inkMuted">วันมงคล</dt><dd className="mt-1 font-heading text-ink">{localizeDayName(birthStar.luckyDay)}</dd></div>
         </dl>
       </div>
 

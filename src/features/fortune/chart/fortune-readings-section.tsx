@@ -2,32 +2,19 @@
 
 import { useState } from 'react';
 import {
-  Activity,
-  Briefcase,
   ChevronDown,
-  Coins,
-  Heart,
-  Home,
   Lightbulb,
   Orbit,
   TriangleAlert,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { FortuneReadingCategory } from '@/lib-packages/shared/types/astrology';
-import { FORTUNE_CATEGORIES } from '@/lib-packages/shared/constants/design';
+import { CategoryClayImage } from '@/components/ui/category-clay-image';
+import { FORTUNE_CATEGORY_CONFIG, type FortuneCategoryKey } from '@/lib/fortune-category-config';
 
 interface FortuneReadingsSectionProps {
   fortuneReadings: FortuneReadingCategory[];
 }
-
-const CATEGORY_ICONS: Record<string, React.ElementType> = {
-  life_overview: Orbit,
-  love: Heart,
-  career: Briefcase,
-  finance: Coins,
-  health: Activity,
-  family: Home,
-};
 
 const SCORE_LABELS = ['ค่อยเป็นค่อยไป', 'ต้องใส่ใจ', 'สมดุล', 'จังหวะดี', 'โดดเด่น'];
 
@@ -58,8 +45,8 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
       <div className="divide-y divide-edge border-y border-edge">
         {fortuneReadings.map((category) => {
           const isExpanded = expandedCategories.has(category.key);
-          const Icon = CATEGORY_ICONS[category.key] ?? Orbit;
-          const label = FORTUNE_CATEGORIES[category.key]?.label || category.key;
+          const categoryConfig = FORTUNE_CATEGORY_CONFIG[category.key as FortuneCategoryKey];
+          const label = categoryConfig?.fullLabel || category.key;
           const panelId = `fortune-reading-${category.key}`;
 
           return (
@@ -72,7 +59,11 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                 aria-controls={panelId}
               >
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accentBright">
-                  <Icon className="size-5" aria-hidden="true" />
+                  {categoryConfig ? (
+                    <CategoryClayImage category={category.key as FortuneCategoryKey} sizes="32px" className="size-8" />
+                  ) : (
+                    <Orbit className="size-5" aria-hidden="true" />
+                  )}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-heading text-lg font-semibold text-ink">{label}</span>

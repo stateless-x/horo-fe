@@ -45,11 +45,14 @@ export function PawjaiAdsBanner() {
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full rounded-xl overflow-hidden hover:opacity-95 transition-opacity duration-200"
+          style={{ aspectRatio: '1336 / 611' }}
         >
           <img
             src={BANNER_IMAGE_CDN}
             alt="Pawjai.co - บริการลงโฆษณา"
-            className="w-full h-auto"
+            width={1336}
+            height={611}
+            className="w-full h-full object-cover"
             loading="lazy"
             onError={(e) => {
               e.currentTarget.src = BANNER_IMAGE_FALLBACK;

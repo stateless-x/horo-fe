@@ -5,6 +5,7 @@ import { Moon, Compass, Palette, Hash, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { BirthStarDetail } from "@/lib-packages/shared/types/astrology";
 import { InfoTooltip } from "@/components/ui/info-tooltip";
+import { localizeColorName, localizeDayName } from "@/lib/thai-localize";
 
 interface BirthStarSectionProps {
   birthStar: BirthStarDetail;
@@ -105,7 +106,7 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
         <AttributeBadge
           icon={Palette}
           label="สีประจำวัน"
-          value={birthStar.luckyColor}
+          value={localizeColorName(birthStar.luckyColor)}
           tooltip={birthStar.luckyColorTooltip}
         />
         <AttributeBadge
@@ -117,7 +118,7 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
         <AttributeBadge
           icon={Calendar}
           label="วันมงคล"
-          value={birthStar.luckyDay}
+          value={localizeDayName(birthStar.luckyDay)}
           tooltip={birthStar.luckyDayTooltip}
         />
       </div>

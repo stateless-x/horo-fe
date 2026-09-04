@@ -5,11 +5,12 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/lib-packages/ui';
 import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib-packages/shared';
+import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
 import {
-  Loader2, Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Sparkles,
+  Loader2, Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Sparkles, Stars, ArrowLeftRight,
 } from 'lucide-react';
-import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
 
 // Relationship type icon mapping (reuse from dashboard page)
 const RELATIONSHIP_ICONS: Record<string, typeof Heart> = {
@@ -35,12 +36,12 @@ function toThaiElement(element: string | null | undefined): string {
 }
 
 const RELATIONSHIP_ACCENTS: Record<string, { accent: string; accentBg: string; accentBorder: string }> = {
-  romantic: { accent: 'text-red-400', accentBg: 'bg-red-500/15', accentBorder: 'border-red-400/50' },
-  talking: { accent: 'text-pink-400', accentBg: 'bg-pink-500/15', accentBorder: 'border-pink-400/50' },
-  boss: { accent: 'text-amber-400', accentBg: 'bg-amber-500/15', accentBorder: 'border-amber-400/50' },
-  coworker: { accent: 'text-blue-400', accentBg: 'bg-blue-500/15', accentBorder: 'border-blue-400/50' },
-  friend: { accent: 'text-green-400', accentBg: 'bg-green-500/15', accentBorder: 'border-green-400/50' },
-  family: { accent: 'text-purple-400', accentBg: 'bg-purple-500/15', accentBorder: 'border-purple-400/50' },
+  romantic: { accent: 'text-pink-600 dark:text-pink-400', accentBg: 'bg-pink-500/15', accentBorder: 'border-pink-400/50' },
+  talking: { accent: 'text-pink-600 dark:text-pink-400', accentBg: 'bg-pink-500/15', accentBorder: 'border-pink-400/50' },
+  boss: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
+  coworker: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
+  friend: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
+  family: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
 };
 
 interface SharedResult {
@@ -48,6 +49,8 @@ interface SharedResult {
   relationshipType: string;
   score: number;
   analysis: string;
+  contentVersion?: number;
+  structuredContent?: CompatibilityStructuredContent | null;
   strengths: string[];
   challenges: string[];
   userElement: string | null;
@@ -152,7 +155,7 @@ export default function CompatibilitySharePage() {
             <Card className="bg-gradient-to-br from-surface2 to-surface">
               <CardHeader>
                 <CardTitle className="text-center flex items-center justify-center gap-2">
-                  <span className="text-2xl">&#x1F31F;</span>
+                  <Stars className="w-6 h-6 text-accentBright" aria-hidden="true" />
                   <span>พลังธาตุของทั้งสองคน</span>
                 </CardTitle>
               </CardHeader>
@@ -162,7 +165,7 @@ export default function CompatibilitySharePage() {
                     <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center mb-2">
                       <span className="text-2xl font-bold text-ink">{toThaiElement(result.userElement)}</span>
                     </div>
-                    <p className="text-sm text-ink">เพื่อนของเจ้า</p>
+                    <p className="text-sm text-ink">เจ้าของดวง</p>
                     {result.userDayMaster && <p className="text-xs text-inkMuted">{result.userDayMaster}</p>}
                   </div>
 
@@ -170,9 +173,9 @@ export default function CompatibilitySharePage() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.3, type: 'spring' }}
-                    className="text-4xl text-inkMuted"
+                    className="text-inkMuted"
                   >
-                    &#x27F7;
+                    <ArrowLeftRight className="w-8 h-8" aria-hidden="true" />
                   </motion.div>
 
                   <div className="text-center">
@@ -188,19 +191,13 @@ export default function CompatibilitySharePage() {
           </motion.div>
         )}
 
-        {/* LLM Analysis */}
+        {/* Compatibility reading: v2 cards with legacy markdown fallback */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-                <span className="text-xl">&#x2728;</span>
-                <span>คำวิเคราะห์จากดวงดาว</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MarkdownRenderer content={result.analysis} />
-            </CardContent>
-          </Card>
+          <CompatibilityReading
+            score={result.score}
+            analysis={result.analysis}
+            structuredContent={result.structuredContent}
+          />
         </motion.div>
 
         {/* CTA: Try it yourself */}

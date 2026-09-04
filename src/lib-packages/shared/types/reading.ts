@@ -1,3 +1,4 @@
+// GENERATED from horo-be/lib/shared/types — do not edit. Run `bun run sync:types` in horo-be.
 import { z } from 'zod';
 
 export const DailyReadingSchema = z.object({

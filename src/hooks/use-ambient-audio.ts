@@ -5,7 +5,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 const STORAGE_KEY = 'horo-ambient-muted';
 const TARGET_VOLUME = 0.03;
 const FADE_IN_MS = 3000;
-const AUDIO_SRC = '/ambient.mp3';
+const AUDIO_SRC = '/ambient-new.mp3';
 
 interface UseAmbientAudioReturn {
   isMuted: boolean;

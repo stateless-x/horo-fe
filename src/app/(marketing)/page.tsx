@@ -58,10 +58,21 @@ export default function LandingPage() {
               loop
               muted
               playsInline
+              poster="/horo-hero-poster.webp"
+              preload="metadata"
               className="absolute inset-0 w-full h-full object-cover opacity-20"
             >
-              <source src="/horo.webm" type="video/webm" />
+              <source src="/horo-hero.webm" type="video/webm" />
+              <source src="/horo-hero.mp4" type="video/mp4" />
             </video>
+          )}
+          {shouldReduceMotion && (
+            <img
+              src="/horo-hero-poster.webp"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover opacity-20"
+            />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-ground/80 via-ground/60 to-ground" />
         </div>

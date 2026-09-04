@@ -7,7 +7,7 @@ import { useOnboardingStore } from "@/stores/onboarding";
 /**
  * Step 1: Welcome Animation
  *
- * Full-screen video (horo.webm):
+ * Full-screen video (horo-welcome.webm / horo-welcome.mp4):
  * - Rinnegan-inspired eye behind Gate of Truth door
  * - Gate slides open → eye appears → stares → closes → 6 smaller eyes appear then vanish
  * - Must feel sacred and unsettling
@@ -43,9 +43,12 @@ export function StepWelcome() {
         autoPlay
         muted
         playsInline
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover [object-position:calc(50%_-_20px)_50%] md:object-center"
-        src="/horo.webm"
-      />
+      >
+        <source src="/horo-welcome.webm" type="video/webm" />
+        <source src="/horo-welcome.mp4" type="video/mp4" />
+      </video>
 
       {/* Skip button for impatient users */}
       <button

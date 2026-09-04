@@ -19,7 +19,7 @@ for marketing-only sections. Adding a system touches both repos:
      prompts contract — not `src/components/`).
    - Add an entry to `SYSTEMS` in [`src/lib/systems.ts`](../src/lib/systems.ts)
      with `id`, `enabled`, `dashboardRoute`, and `dashboardTabs`. The
-     dashboard bottom nav (`dashboard-nav-bar.tsx`) renders enabled systems'
+     app header (`app-header.tsx`) renders enabled systems'
      tabs from this registry — nothing else to touch.
    - Add the dashboard route(s) under `src/app/dashboard/<id>/`.
 4. **Marketing section** — if the system also needs a public-facing page

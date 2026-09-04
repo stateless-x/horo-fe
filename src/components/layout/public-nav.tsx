@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -67,8 +68,17 @@ export function PublicNav() {
           orphaned link floating in the middle of the bar. */}
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-6">
         {/* Brand */}
-        <Link href="/" className="font-heading font-semibold text-accentBright text-xl shrink-0 leading-none">
-          สายมู
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-heading text-xl font-semibold leading-none text-accentBright">
+          <Image
+            src="/assets/clay/little-oracle-mark-v1.webp"
+            alt=""
+            width={256}
+            height={256}
+            sizes="32px"
+            priority
+            className="h-8 w-8 object-contain"
+          />
+          <span>สายมู</span>
         </Link>
 
         {/* Inline links — desktop/tablet, beside the brand. Text only; the

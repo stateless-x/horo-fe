@@ -1,0 +1,16 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "createdAt": "2026-09-04",
+  "sharedStyle": "Premium soft 3D clay matching the Little Oracle mascot; matte polymer clay, rounded handmade forms, lavender-led palette, cute Gen-Z feminine appeal, soft studio light, transparent background, no text, logos, watermarks, photorealism, glossy plastic, or cropped subjects.",
+  "assets": {
+    "systems/bazi.png": "Four ancient Chinese destiny pillars arranged as a miniature divination altar, with a tiny scroll and five elemental pebbles; centered for a safe 4:3 crop.",
+    "systems/thai-astrology.png": "A Thai astrology mobile with nine softly rounded celestial planets orbiting a lavender crescent moon; centered for a safe 4:3 crop.",
+    "systems/mbti.png": "A two-sided clay brain with interlocking lavender and blush-pink halves joined by a cream star; centered for a safe 4:3 crop.",
+    "categories/life-overview.png": "A lavender crystal ball containing a winding cream path toward a small star, readable as a 72px square icon.",
+    "categories/love.png": "Two lavender and blush clay hearts leaning together with a connecting sparkle, readable as a 72px square icon.",
+    "categories/career.png": "A rounded lavender briefcase with a cream star badge and upward arrow, readable as a 72px square icon.",
+    "categories/finance.png": "A lavender lucky pouch spilling three cream-gold coins with a star charm, readable as a 72px square icon.",
+    "categories/health.png": "A lavender lotus cradling a glowing cream heart with one green leaf, readable as a 72px square icon.",
+    "categories/family.png": "Three connected lavender, blush, and cream clay figures gathered beneath a heart-shaped canopy, readable as a 72px square icon."
+  }
+}

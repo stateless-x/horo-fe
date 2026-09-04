@@ -9,6 +9,7 @@ import {
   Loader2, Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Sparkles,
 } from 'lucide-react';
 import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
+import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 
 // Relationship type icon mapping (reuse from dashboard page)
 const RELATIONSHIP_ICONS: Record<string, typeof Heart> = {
@@ -94,11 +95,10 @@ export default function CompatibilitySharePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-ground flex items-center justify-center">
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin"
-        />
+        <div className="relative flex min-h-64 items-center justify-center">
+          <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
+          <ClayOracleLoader alt="กำลังเปิดผลดวงความสัมพันธ์" />
+        </div>
       </div>
     );
   }

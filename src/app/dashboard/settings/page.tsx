@@ -284,7 +284,7 @@ export default function SettingsPage() {
 
   if (sessionLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-ground flex items-center justify-center">
+      <div className="min-h-[calc(100vh-3.5rem)] bg-ground flex items-center justify-center">
         <div className="text-inkMuted">กำลังโหลด...</div>
       </div>
     );
@@ -309,9 +309,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-ground pb-4">
+    <div className="min-h-[calc(100vh-3.5rem)] bg-ground pb-4">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-ground/80 backdrop-blur-sm border-b border-surface2">
+      <div className="sticky top-14 z-30 bg-ground/80 backdrop-blur-sm border-b border-surface2">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-heading text-ink">ตั้งค่า</h1>
@@ -343,8 +343,8 @@ export default function SettingsPage() {
               exit={{ opacity: 0, y: -10 }}
               className={`p-4 rounded-lg border ${
                 saveMessage.type === 'success'
-                  ? 'bg-green-900/20 border-green-500/30 text-green-400'
-                  : 'bg-red-900/20 border-red-500/30 text-red-400'
+                  ? 'bg-success/10 border-success/30 text-success'
+                  : 'bg-danger/10 border-danger/30 text-danger'
               }`}
             >
               {saveMessage.text}
@@ -574,7 +574,7 @@ export default function SettingsPage() {
                   {mbtiType && (
                     <button
                       onClick={() => setMbtiType(null)}
-                      className="text-sm text-inkMuted hover:text-red-400 transition-colors pl-6"
+                      className="text-sm text-inkMuted hover:text-danger transition-colors pl-6"
                     >
                       ✕ ล้างค่า MBTI
                     </button>
@@ -652,7 +652,7 @@ export default function SettingsPage() {
                 onClick={handleLogout}
                 variant="outline"
                 size="lg"
-                className="w-full flex items-center justify-center gap-2 text-red-400 border-red-400/30 hover:bg-red-900/20 hover:border-red-400/50"
+                className="w-full flex items-center justify-center gap-2 text-danger border-danger/30 hover:bg-danger/10 hover:border-danger/50"
               >
                 <LogOut size={20} />
                 ออกจากระบบ

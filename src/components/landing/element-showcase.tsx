@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
-import { MediaPlaceholder } from '@/components/ui/media-placeholder';
+import { ElementClayImage } from '@/components/ui/element-clay-image';
 
 const elements = [
   { key: 'wood', name: 'ธาตุไม้', trait: 'เติบโต', colors: ELEMENT_COLORS.wood },
@@ -10,7 +10,7 @@ const elements = [
   { key: 'earth', name: 'ธาตุดิน', trait: 'มั่นคง', colors: ELEMENT_COLORS.earth },
   { key: 'metal', name: 'ธาตุทอง', trait: 'ระเบียบ', colors: ELEMENT_COLORS.metal },
   { key: 'water', name: 'ธาตุน้ำ', trait: 'ปัญญา', colors: ELEMENT_COLORS.water },
-];
+] as const;
 
 export function ElementShowcase() {
   const shouldReduceMotion = useReducedMotion();
@@ -33,7 +33,6 @@ export function ElementShowcase() {
           </p>
         </motion.div>
 
-        {/* Desktop: grid, Mobile: horizontal scroll */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -44,29 +43,11 @@ export function ElementShowcase() {
               transition: { staggerChildren: shouldReduceMotion ? 0 : 0.1 },
             },
           }}
-          className="hidden md:grid grid-cols-5 gap-4"
-        >
-          {elements.map((el, i) => (
-            <ElementOrb key={el.key} element={el} index={i} shouldReduceMotion={shouldReduceMotion} />
-          ))}
-        </motion.div>
-
-        {/* Mobile: horizontal scroll */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: { staggerChildren: shouldReduceMotion ? 0 : 0.1 },
-            },
-          }}
-          className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 px-2 -mx-2 pb-4 scrollbar-hide"
+          className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-4 scrollbar-hide md:mx-0 md:grid md:grid-cols-5 md:overflow-visible md:px-0 md:pb-0"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {elements.map((el, i) => (
-            <ElementOrb key={el.key} element={el} index={i} shouldReduceMotion={shouldReduceMotion} mobile />
+            <ElementOrb key={el.key} element={el} index={i} shouldReduceMotion={shouldReduceMotion} />
           ))}
         </motion.div>
       </div>
@@ -78,12 +59,10 @@ function ElementOrb({
   element,
   index,
   shouldReduceMotion,
-  mobile,
 }: {
   element: (typeof elements)[number];
   index: number;
   shouldReduceMotion: boolean | null;
-  mobile?: boolean;
 }) {
   const floatDuration = 2.5 + index * 0.25;
 
@@ -94,7 +73,7 @@ function ElementOrb({
         visible: { opacity: 1, y: 0 },
       }}
       transition={{ duration: 0.5 }}
-      className={mobile ? 'snap-center flex-shrink-0 w-28' : 'h-full'}
+      className="h-full w-28 flex-shrink-0 snap-center md:w-auto"
     >
       <motion.div
         animate={
@@ -111,15 +90,19 @@ function ElementOrb({
         className="glass-card relative overflow-hidden text-center cursor-default flex flex-col h-full"
         style={{ boxShadow: `0 8px 24px ${element.colors.glow}` }}
       >
-        {/* 3D clay element model — full-bleed top media area */}
-        <MediaPlaceholder
-          aspect="1/1"
-          spec="480×480 · PNG"
-          label={`โมเดล 3D clay ${element.name} — สไตล์ดินปั้นนุ่ม แสงเดียว พื้นหลังโปร่งใส`}
-          glowColor={element.colors.primary}
-          flush
-          className="w-full rounded-t-2xl"
-        />
+        <div className="relative aspect-square w-full overflow-hidden rounded-t-2xl bg-surface2/40 p-2">
+          <div
+            className="absolute inset-1/4 rounded-full blur-2xl opacity-25"
+            style={{ backgroundColor: element.colors.primary }}
+            aria-hidden="true"
+          />
+          <ElementClayImage
+            element={element.key}
+            alt={`โมเดลดินปั้น ${element.name}`}
+            sizes="(min-width: 768px) 176px, 112px"
+            className="relative h-full w-full drop-shadow-[0_12px_20px_rgba(107,33,168,0.12)]"
+          />
+        </div>
 
         <div className="flex flex-col items-center px-4 py-4">
           <p

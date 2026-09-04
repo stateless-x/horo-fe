@@ -1,16 +1,16 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { MediaPlaceholder } from '@/components/ui/media-placeholder';
+import Image from 'next/image';
 
 const categories = [
-  { label: 'ภาพรวมชีวิต', desc: 'ทิศทางและเส้นทางชะตา' },
-  { label: 'ความรัก & เนื้อคู่', desc: 'ดวงรักและความสัมพันธ์' },
-  { label: 'การงาน & อาชีพ', desc: 'เส้นทางอาชีพและโอกาส' },
-  { label: 'การเงิน & โชคลาภ', desc: 'โชคทรัพย์และการลงทุน' },
-  { label: 'สุขภาพ & พลังงาน', desc: 'สมดุลกายและจิต' },
-  { label: 'ครอบครัว & ความสัมพันธ์', desc: 'สายสัมพันธ์คนรอบข้าง' },
-];
+  { label: 'ภาพรวมชีวิต', desc: 'ทิศทางและเส้นทางชะตา', image: 'life-overview' },
+  { label: 'ความรัก & เนื้อคู่', desc: 'ดวงรักและความสัมพันธ์', image: 'love' },
+  { label: 'การงาน & อาชีพ', desc: 'เส้นทางอาชีพและโอกาส', image: 'career' },
+  { label: 'การเงิน & โชคลาภ', desc: 'โชคทรัพย์และการลงทุน', image: 'finance' },
+  { label: 'สุขภาพ & พลังงาน', desc: 'สมดุลกายและจิต', image: 'health' },
+  { label: 'ครอบครัว & ความสัมพันธ์', desc: 'สายสัมพันธ์คนรอบข้าง', image: 'family' },
+] as const;
 
 export function ReadingCategories() {
   const shouldReduceMotion = useReducedMotion();
@@ -59,13 +59,13 @@ export function ReadingCategories() {
               <div className="absolute inset-0 rounded-2xl blur-xl opacity-0 group-hover:opacity-15 bg-accentBright/30 -z-10 transition-opacity duration-300" />
 
               <div className="glass-card glass-card-lift flex flex-col items-center text-center p-4 md:p-5 h-full md:hover:border-accentBright/30">
-                <MediaPlaceholder
-                  aspect="1/1"
-                  spec="240×240 · PNG"
-                  label={`ไอคอน 3D clay ${cat.label} — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส`}
-                  iconOnly
-                  flush
-                  className="w-14 h-14 md:w-[72px] md:h-[72px] rounded-xl border border-edge mb-3"
+                <Image
+                  src={`/assets/clay/categories/${cat.image}.webp`}
+                  alt={`โมเดลดินปั้น ${cat.label}`}
+                  width={480}
+                  height={480}
+                  sizes="(min-width: 768px) 72px, 56px"
+                  className="mb-3 size-14 object-contain drop-shadow-[0_8px_14px_rgba(107,33,168,0.12)] md:size-[72px]"
                 />
                 <p className="font-heading text-ink text-sm md:text-base mb-1">
                   {cat.label}

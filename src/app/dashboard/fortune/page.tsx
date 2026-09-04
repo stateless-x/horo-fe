@@ -10,19 +10,26 @@ import { useFortuneData } from '@/features/fortune/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
 import { ErrorDisplay } from '@/features/fortune/error-display';
-import { HeroSection } from '@/features/fortune/chart/hero-section';
 import { ElementProfileSection } from '@/features/fortune/chart/element-profile-section';
 import { FourPillarsSection } from '@/features/fortune/chart/four-pillars-section';
 import { BirthStarSection } from '@/features/fortune/chart/birth-star-section';
 import { FortuneReadingsSection } from '@/features/fortune/chart/fortune-readings-section';
 import { RecommendationsSection } from '@/features/fortune/chart/recommendations-section';
+import { FortuneResultHeader } from '@/features/fortune/chart/fortune-result-header';
+import { FortuneOverviewSection } from '@/features/fortune/chart/fortune-overview-section';
+import { ResultDisclosure } from '@/features/fortune/chart/result-disclosure';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, type FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/features/fortune/chart/compatibility-cta';
-import { ScrollIndicator } from '@/components/ui/scroll-indicator';
-import { AutoDonationModal } from '@/components/ads/donation-modal';
-import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
+
+const ELEMENT_NAMES = {
+  earth: 'ธาตุดิน',
+  fire: 'ธาตุไฟ',
+  water: 'ธาตุน้ำ',
+  wood: 'ธาตุไม้',
+  metal: 'ธาตุทอง',
+} as const;
 
 /**
  * Fortune Chart Page (Redesigned Dashboard)
@@ -46,7 +53,7 @@ export default function FortuneChartPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [showShareSheet, setShowShareSheet] = useState(false);
-  const [activeTab, setActiveTab] = useState<FortuneTab>('fortune');
+  const [activeTab, setActiveTab] = useState<FortuneTab>('overview');
   const [showProfileUpdatedToast, setShowProfileUpdatedToast] = useState(false);
 
   // State management
@@ -86,6 +93,13 @@ export default function FortuneChartPage() {
     setShowShareSheet(true);
   };
 
+  const handleTabChange = (tab: FortuneTab) => {
+    setActiveTab(tab);
+    window.requestAnimationFrame(() => {
+      document.getElementById('fortune-content')?.scrollIntoView({ block: 'start' });
+    });
+  };
+
   // Show loading skeleton while initializing or generating
   if (sessionLoading || !session || loadingState !== 'complete') {
     return <LoadingSkeleton loadingState={loadingState} />;
@@ -105,10 +119,10 @@ export default function FortuneChartPage() {
     const timeText = diffHours <= 1 ? 'ไม่นานนี้' : `ในอีก ${diffHours} ชั่วโมง`;
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center p-6">
         <div className="max-w-md w-full text-center space-y-6">
-          <div className="w-16 h-16 mx-auto rounded-full bg-amber-900/20 border border-amber-500/30 flex items-center justify-center">
-            <AlertCircle className="w-8 h-8 text-amber-400" />
+          <div className="w-16 h-16 mx-auto rounded-full bg-warn/10 border border-warn/30 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-warn" />
           </div>
           <div className="space-y-2">
             <h2 className="text-lg font-heading text-ink">แก้ไขข้อมูลบ่อยเกินไป</h2>
@@ -140,21 +154,11 @@ export default function FortuneChartPage() {
     return <LoadingSkeleton loadingState={loadingState} />;
   }
 
-  const elementColor = ELEMENT_COLORS[chartData.elementProfile.primaryElement]?.primary;
-
-  const sections = [
-    { key: 'hero', component: HeroSection, delay: 0 },
-    { key: 'element', component: ElementProfileSection, delay: 100 },
-    { key: 'pillars', component: FourPillarsSection, delay: 200 },
-    { key: 'birthstar', component: BirthStarSection, delay: 300 },
-    { key: 'readings', component: FortuneReadingsSection, delay: 400 },
-    { key: 'recommendations', component: RecommendationsSection, delay: 500 },
-  ];
+  const userName = (session.user as any).displayName || session.user.name;
+  const element = chartData.elementProfile.primaryElement;
 
   return (
-    <div className="min-h-screen pb-4 relative">
-      {/* Scroll Indicator - Bottom Center */}
-      <ScrollIndicator />
+    <div className="relative min-h-[calc(100vh-3.5rem)] pb-12">
 
       {/* Rate Limit Banner */}
       <AnimatePresence>
@@ -165,7 +169,7 @@ export default function FortuneChartPage() {
             exit={{ opacity: 0, y: -10 }}
             className="max-w-4xl mx-auto px-4 pt-6"
           >
-            <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-900/20 border border-amber-500/30 text-amber-300 text-sm">
+            <div className="flex items-start gap-3 p-4 rounded-lg bg-warn/10 border border-warn/30 text-warn text-sm">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
               <p>
                 คุณแก้ไขข้อมูลบ่อยเกินไป ดวงจะอัปเดตใหม่ได้อีกครั้งใน{' '}
@@ -199,83 +203,94 @@ export default function FortuneChartPage() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        {/* Section 1: Hero - Always visible */}
+      <div className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
         <motion.div
           initial={{ opacity: 0, translateY: 12 }}
           animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut', delay: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <HeroSection
+          <FortuneResultHeader
             personalityTraits={chartData.personalityTraits}
             birthDateFormatted={chartData.birthDateFormatted}
             currentAge={chartData.currentAge}
-            userName={(session.user as any).displayName || session.user.name}
-            elementAccent={elementColor}
+            userName={userName}
+            element={element}
+            elementName={ELEMENT_NAMES[element]}
+            corePersonality={chartData.elementProfile.corePersonality}
+            onShare={handleShare}
           />
         </motion.div>
-
-        {/* Section 2: Element Profile - Always visible */}
-        <motion.div
-          initial={{ opacity: 0, translateY: 12 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut', delay: 0.1 }}
-        >
-          <ElementProfileSection elementProfile={chartData.elementProfile} />
-        </motion.div>
-
       </div>
 
       {/* Tab Navigation - Sticky when scrolled past */}
-      <FortuneTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <FortuneTabBar activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Tab Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        {/* Tab 1: Fortune Readings */}
-        {activeTab === 'fortune' && (
+      <div id="fortune-content" className="mx-auto max-w-4xl scroll-mt-28 px-4 py-8 sm:py-10">
+        {activeTab === 'overview' && (
           <motion.div
+            id="fortune-panel-overview"
+            role="tabpanel"
             initial={{ opacity: 0, translateY: 12 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="space-y-8"
+          >
+            <FortuneOverviewSection
+              fortuneReadings={chartData.fortuneReadings}
+              recommendations={chartData.recommendations}
+              birthStar={chartData.birthStar}
+              onOpenReadings={() => handleTabChange('readings')}
+            />
+          </motion.div>
+        )}
+
+        {activeTab === 'readings' && (
+          <motion.div
+            id="fortune-panel-readings"
+            role="tabpanel"
+            initial={{ opacity: 0, translateY: 12 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="space-y-12"
           >
             <FortuneReadingsSection fortuneReadings={chartData.fortuneReadings} />
             <CompatibilityCTA />
           </motion.div>
         )}
 
-        {/* Tab 2: Four Pillars + Birth Star */}
-        {activeTab === 'pillars' && (
+        {activeTab === 'details' && (
           <motion.div
-            initial={{ opacity: 0, translateY: 12 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="space-y-8"
-          >
-            <FourPillarsSection
-              pillars={chartData.pillars}
-              pillarInterpretations={chartData.pillarInterpretations}
-              pillarInteractions={chartData.pillarInteractions}
-            />
-            <BirthStarSection birthStar={chartData.birthStar} />
-          </motion.div>
-        )}
-
-        {/* Tab 3: Recommendations */}
-        {activeTab === 'recommendations' && (
-          <motion.div
+            id="fortune-panel-details"
+            role="tabpanel"
             initial={{ opacity: 0, translateY: 12 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
-            <RecommendationsSection recommendations={chartData.recommendations} />
+            <div className="mb-6">
+              <h2 className="font-heading text-2xl font-semibold text-ink sm:text-3xl">เจาะลึกเมื่อคุณพร้อม</h2>
+              <p className="mt-2 font-thai text-inkMuted">รายละเอียดทั้งหมดอยู่ตรงนี้ แต่ไม่จำเป็นต้องอ่านรวดเดียว</p>
+            </div>
+            <div className="border-t border-edge">
+              <ResultDisclosure title="รู้จักธาตุของฉัน" description="จุดแข็ง จุดอ่อน และธาตุที่เข้ากัน">
+                <ElementProfileSection elementProfile={chartData.elementProfile} />
+              </ResultDisclosure>
+              <ResultDisclosure title="จังหวะและฤกษ์มงคล" description="ดูคำแนะนำ สี เลข ทิศ และเดือนเด่น">
+                <RecommendationsSection recommendations={chartData.recommendations} />
+              </ResultDisclosure>
+              <ResultDisclosure title="ที่มาจากเสาชะตา" description="เปิดดูข้อมูลโหราศาสตร์และปาจื้อเบื้องหลังคำทำนาย">
+                <div className="space-y-12">
+                  <FourPillarsSection
+                    pillars={chartData.pillars}
+                    pillarInterpretations={chartData.pillarInterpretations}
+                    pillarInteractions={chartData.pillarInteractions}
+                  />
+                  <BirthStarSection birthStar={chartData.birthStar} />
+                </div>
+              </ResultDisclosure>
+            </div>
           </motion.div>
         )}
-
       </div>
-
-      {/* Auto-open donation modal */}
-      <AutoDonationModal />
 
       {/* Share Sheet */}
       <ShareSheet
@@ -283,7 +298,7 @@ export default function FortuneChartPage() {
         onClose={() => setShowShareSheet(false)}
         shareData={{
           url: `${SITE_URL}/dashboard/fortune`,
-          userName: (session.user as any).displayName || session.user.name,
+          userName,
           element: chartData.elementProfile.primaryElement,
           luckyColor: chartData.birthStar.luckyColor,
           luckyNumber: chartData.birthStar.luckyNumber,

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { DashboardNavBar } from '@/components/layout/dashboard-nav-bar';
+import { AppHeader } from '@/components/layout/app-header';
 
 export const metadata: Metadata = {
   title: 'ดวงชะตาของเจ้า | สายมู.com',
@@ -44,10 +44,8 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <div className="pb-20">
-        {children}
-      </div>
-      <DashboardNavBar />
+      <AppHeader />
+      {children}
     </>
   );
 }

@@ -17,6 +17,7 @@ import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL, type CompatibilityShareData } from '@/lib/share-utils';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import { AutoDonationModal } from '@/components/ads/donation-modal';
+import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 
 // --- Constants ---
 
@@ -33,7 +34,7 @@ const RELATIONSHIP_CONFIG: Record<RelationshipType, {
 }> = {
   talking: {
     icon: MessageCircleHeart,
-    accent: 'text-pink-400',
+    accent: 'text-pink-600 dark:text-pink-400',
     accentBg: 'bg-pink-500/15',
     accentBorder: 'border-pink-400/50',
     cardTitle: 'กรอกข้อมูลคนที่เจ้าคุยอยู่',
@@ -44,9 +45,9 @@ const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   },
   romantic: {
     icon: Heart,
-    accent: 'text-red-400',
-    accentBg: 'bg-red-500/15',
-    accentBorder: 'border-red-400/50',
+    accent: 'text-danger',
+    accentBg: 'bg-danger/15',
+    accentBorder: 'border-danger/50',
     cardTitle: 'กรอกข้อมูลคนรักของเจ้า',
     placeholder: 'ชื่อคนรักของเจ้า',
     cta: 'ส่องดวงคู่รัก',
@@ -55,9 +56,9 @@ const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   },
   boss: {
     icon: Crown,
-    accent: 'text-amber-400',
-    accentBg: 'bg-amber-500/15',
-    accentBorder: 'border-amber-400/50',
+    accent: 'text-warn',
+    accentBg: 'bg-warn/15',
+    accentBorder: 'border-warn/50',
     cardTitle: 'กรอกข้อมูลหัวหน้าของเจ้า',
     placeholder: 'ชื่อหัวหน้าของเจ้า',
     cta: 'ส่องดวงหัวหน้า',
@@ -66,7 +67,7 @@ const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   },
   coworker: {
     icon: Users,
-    accent: 'text-blue-400',
+    accent: 'text-blue-600 dark:text-blue-400',
     accentBg: 'bg-blue-500/15',
     accentBorder: 'border-blue-400/50',
     cardTitle: 'กรอกข้อมูลเพื่อนร่วมงาน',
@@ -77,7 +78,7 @@ const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   },
   friend: {
     icon: Laugh,
-    accent: 'text-green-400',
+    accent: 'text-green-600 dark:text-green-400',
     accentBg: 'bg-green-500/15',
     accentBorder: 'border-green-400/50',
     cardTitle: 'กรอกข้อมูลเพื่อนของเจ้า',
@@ -88,7 +89,7 @@ const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   },
   family: {
     icon: Home,
-    accent: 'text-purple-400',
+    accent: 'text-purple-600 dark:text-purple-400',
     accentBg: 'bg-purple-500/15',
     accentBorder: 'border-purple-400/50',
     cardTitle: 'กรอกข้อมูลสมาชิกในครอบครัว',
@@ -314,7 +315,7 @@ export default function CompatibilityPage() {
   // --- Loading screen ---
   if (sessionLoading || !session) {
     return (
-      <div className="min-h-screen bg-ground flex items-center justify-center pb-24">
+      <div className="min-h-[calc(100vh-3.5rem)] bg-ground flex items-center justify-center">
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
@@ -327,7 +328,7 @@ export default function CompatibilityPage() {
   // --- Calculating screen ---
   if (calculating) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 pb-24 relative overflow-hidden">
+      <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           {[...Array(20)].map((_, i) => (
             <motion.div
@@ -356,31 +357,9 @@ export default function CompatibilityPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center space-y-8 max-w-md relative z-10"
         >
-          <div className="relative">
-            <div className="w-32 h-32 mx-auto relative">
-              <motion.div
-                className="absolute inset-0 border-4 border-accent/20 rounded-full"
-                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute inset-2 border-4 border-accentBright/40 rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              />
-              <motion.div
-                className="absolute inset-4 border-4 border-t-accent border-r-transparent border-b-transparent border-l-transparent rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-              />
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <div className="w-4 h-4 bg-gradient-to-br from-accent to-accentBright rounded-full shadow-lg shadow-accent/50" />
-              </motion.div>
-            </div>
+          <div className="relative flex min-h-56 items-center justify-center sm:min-h-64">
+            <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
+            <ClayOracleLoader />
           </div>
 
           <div className="space-y-3">
@@ -426,7 +405,7 @@ export default function CompatibilityPage() {
     const ResultIcon = resultConfig.icon;
 
     return (
-      <div className="min-h-screen p-4 md:p-6 pb-24">
+      <div className="min-h-[calc(100vh-3.5rem)] p-4 md:p-6">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -555,7 +534,7 @@ export default function CompatibilityPage() {
   const isRateLimited = rateLimitCountdown > 0;
 
   return (
-    <div className="min-h-screen p-4 md:p-6 pb-24">
+    <div className="min-h-[calc(100vh-3.5rem)] p-4 md:p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -630,9 +609,9 @@ export default function CompatibilityPage() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="bg-red-500/10 border border-red-500/30 rounded-xl p-4"
+              className="bg-danger/10 border border-danger/30 rounded-xl p-4"
             >
-              <p className="text-red-400 text-center text-base md:text-lg">{error}</p>
+              <p className="text-danger text-center text-base md:text-lg">{error}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -794,7 +773,7 @@ export default function CompatibilityPage() {
 
                 {/* Low remaining warning */}
                 {rateLimitInfo && rateLimitInfo.remaining <= 2 && rateLimitInfo.remaining > 0 && !isRateLimited && (
-                  <p className="text-amber-400 text-xs md:text-sm text-center">ส่องดวงได้อีก {rateLimitInfo.remaining} ครั้งในวันนี้</p>
+                  <p className="text-warn text-xs md:text-sm text-center">ส่องดวงได้อีก {rateLimitInfo.remaining} ครั้งในวันนี้</p>
                 )}
               </div>
             </CardContent>

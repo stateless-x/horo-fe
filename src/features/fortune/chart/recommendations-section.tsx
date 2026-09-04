@@ -133,12 +133,12 @@ export function RecommendationsSection({
                     transition-all duration-200
                     ${
                       isSelected
-                        ? 'bg-accentBright text-ground font-medium'
+                        ? 'bg-accentBright text-accentInk font-medium'
                         : isHighRating
                         ? 'bg-accentBright/20 border border-accentBright/50 text-accentBright hover:bg-accentBright/30'
                         : 'bg-overlay border border-surface2/50 text-ink hover:border-accent/50'
                     }
-                    ${isHighRating && !isSelected ? 'shadow-[0_0_12px_rgba(161,106,203,0.3)]' : ''}
+                    ${isHighRating && !isSelected ? 'shadow-[0_0_12px_color-mix(in_srgb,var(--accent-bright)_30%,transparent)]' : ''}
                   `}
                 >
                   {highlight.month}
@@ -205,11 +205,11 @@ export function RecommendationsSection({
 
                 {/* Warning */}
                 {recommendations.monthlyHighlights[selectedMonth].warning && (
-                  <div className="bg-red-900/10 border border-red-500/30 rounded-lg p-3">
-                    <p className="text-red-400 font-thai text-sm font-medium mb-1">
+                  <div className="bg-danger/10 border border-danger/30 rounded-lg p-3">
+                    <p className="text-danger font-thai text-sm font-medium mb-1">
                       ข้อควรระวัง:
                     </p>
-                    <p className="text-red-200 font-thai text-sm leading-relaxed">
+                    <p className="text-danger font-thai text-sm leading-relaxed">
                       {recommendations.monthlyHighlights[selectedMonth].warning}
                     </p>
                   </div>
@@ -239,7 +239,7 @@ export function RecommendationsSection({
               <ul className="space-y-2">
                 {recommendations.dos.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <Check className="text-emerald-400 w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <Check className="text-success w-5 h-5 flex-shrink-0 mt-0.5" />
                     <p className="text-ink font-thai text-base">{item}</p>
                   </li>
                 ))}
@@ -253,7 +253,7 @@ export function RecommendationsSection({
               <ul className="space-y-2">
                 {recommendations.donts.map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <X className="text-red-400 w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <X className="text-danger w-5 h-5 flex-shrink-0 mt-0.5" />
                     <p className="text-ink font-thai text-base">{item}</p>
                   </li>
                 ))}

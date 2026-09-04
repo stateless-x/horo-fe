@@ -6,7 +6,7 @@ import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { MediaPlaceholder } from '@/components/ui/media-placeholder';
+import Image from 'next/image';
 
 /**
  * Login Page
@@ -74,12 +74,17 @@ export default function LoginPage() {
     <div className="min-h-screen bg-ground flex items-center justify-center p-6">
       <div className="w-full max-w-4xl grid lg:grid-cols-2 gap-12 items-center">
       {/* Side illustration — desktop only */}
-      <MediaPlaceholder
-        aspect="4/5"
-        spec="960×1200 · WebP"
-        label="ภาพบรรยากาศห้องดูดวง — ดวงตา ประตู หรือแผนภูมิดาว โทนม่วงอเมทิสต์"
-        className="hidden lg:block"
-      />
+      <div className="relative hidden aspect-[4/5] overflow-hidden rounded-3xl border border-edge bg-surface2/50 lg:block">
+        <div className="absolute inset-1/4 rounded-full bg-accentBright/20 blur-3xl" aria-hidden="true" />
+        <Image
+          src="/assets/clay/little-oracle-master-v1.png"
+          alt="มาสคอตนักพยากรณ์ตัวน้อยของสายมู"
+          fill
+          sizes="(min-width: 1024px) 448px, 0px"
+          priority
+          className="object-contain p-8 drop-shadow-[0_24px_36px_rgba(107,33,168,0.16)]"
+        />
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

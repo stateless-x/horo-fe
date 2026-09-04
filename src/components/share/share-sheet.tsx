@@ -262,8 +262,8 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
               >
                 {copied ? (
                   <>
-                    <Check className="w-5 h-5 text-emerald-400" />
-                    <span className="font-heading font-medium text-base text-emerald-400">
+                    <Check className="w-5 h-5 text-success" />
+                    <span className="font-heading font-medium text-base text-success">
                       คัดลอกแล้ว!
                     </span>
                   </>

@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { ClientDate } from '@/components/client-date';
 import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { ElementShowcase } from '@/components/landing/element-showcase';
 import { ReadingCategories } from '@/components/landing/reading-categories';
-import { MediaPlaceholder } from '@/components/ui/media-placeholder';
+import { FortuneProofPreview } from '@/components/landing/fortune-proof-preview';
 import { SEOSections } from '@/components/seo/seo-sections';
 import { CookieConsent } from '@/components/cookie-consent';
 
@@ -182,12 +183,13 @@ export default function LandingPage() {
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accentBright/30 -z-10" />
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
-                <MediaPlaceholder
-                  aspect="4/3"
-                  spec="1200×900 · PNG"
-                  label="โมเดล 3D clay เสาจีนโบราณสี่ต้น — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
-                  flush
-                  className="w-full rounded-t-2xl"
+                <Image
+                  src="/assets/clay/systems/bazi.webp"
+                  alt="โมเดลดินปั้นแท่นสี่เสาชะตาปาจื้อ"
+                  width={960}
+                  height={720}
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 448px, 100vw"
+                  className="aspect-[4/3] w-full object-contain p-4"
                 />
 
                 <div className="relative flex flex-col flex-1 p-6 md:p-8">
@@ -221,12 +223,13 @@ export default function LandingPage() {
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accent/30 -z-10" />
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
-                <MediaPlaceholder
-                  aspect="4/3"
-                  spec="1200×900 · PNG"
-                  label="โมเดล 3D clay ดาวนพเคราะห์ไทยลอยรอบดวงจันทร์ — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
-                  flush
-                  className="w-full rounded-t-2xl"
+                <Image
+                  src="/assets/clay/systems/thai-astrology.webp"
+                  alt="โมเดลดินปั้นนพเคราะห์โคจรรอบดวงจันทร์"
+                  width={960}
+                  height={720}
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 448px, 100vw"
+                  className="aspect-[4/3] w-full object-contain p-4"
                 />
 
                 <div className="relative flex flex-col flex-1 p-6 md:p-8">
@@ -260,12 +263,13 @@ export default function LandingPage() {
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accentSoft/30 -z-10" />
 
               <div className="glass-card glass-card-lift relative overflow-hidden flex flex-col h-full">
-                <MediaPlaceholder
-                  aspect="4/3"
-                  spec="1200×900 · PNG"
-                  label="โมเดล 3D clay สมองสองซีกสองสี — สไตล์ดินปั้นนุ่ม โทนม่วง พื้นหลังโปร่งใส"
-                  flush
-                  className="w-full rounded-t-2xl"
+                <Image
+                  src="/assets/clay/systems/mbti.webp"
+                  alt="โมเดลดินปั้นสมองสองซีกแทนบุคลิกภาพ MBTI"
+                  width={960}
+                  height={720}
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 448px, 100vw"
+                  className="aspect-[4/3] w-full object-contain p-4"
                 />
 
                 <div className="relative flex flex-col flex-1 p-6 md:p-8">
@@ -322,12 +326,7 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <MediaPlaceholder
-                aspect="4/5"
-                spec="1080×1350 · WebP"
-                label="ภาพหน้าจอจริงของหน้าดวงชะตา — สี่เสาชะตา ธาตุประจำตัว และคะแนน 6 ด้าน"
-                className="max-w-md mx-auto w-full"
-              />
+              <FortuneProofPreview />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 30 }}

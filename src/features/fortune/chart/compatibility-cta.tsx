@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart } from 'lucide-react';
+import { Heart, Sparkles, Lightbulb, Target } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
 
 export function CompatibilityCTA() {
@@ -10,7 +10,7 @@ export function CompatibilityCTA() {
       <div className="bg-gradient-to-r from-pink-500/10 to-accentBright/10 border border-pink-500/20 rounded-2xl p-6 transition-all duration-200 hover:border-pink-500/40 hover:shadow-lg hover:shadow-pink-500/10 cursor-pointer group">
         {/* Header */}
         <div className="flex items-center justify-center gap-2 mb-3">
-          <Heart className="text-pink-400 w-6 h-6 group-hover:scale-110 transition-transform" />
+          <Heart className="text-pink-600 dark:text-pink-400 w-6 h-6 group-hover:scale-110 transition-transform" />
           <h3 className="font-heading text-xl font-medium text-ink">
             ส่องดวงความสัมพันธ์
           </h3>
@@ -24,22 +24,22 @@ export function CompatibilityCTA() {
         {/* Features */}
         <ul className="space-y-2 mb-4 text-sm text-inkMuted">
           <li className="flex items-start gap-2">
-            <span className="text-pink-400 mt-0.5">&#x2728;</span>
+            <Sparkles className="text-pink-600 dark:text-pink-400 w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>วิเคราะห์ธาตุและดาวของทั้งสองคน</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-pink-400 mt-0.5">&#x1F4A1;</span>
+            <Lightbulb className="text-pink-600 dark:text-pink-400 w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>เข้าใจจุดแข็งและสิ่งที่ควรระวัง</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-pink-400 mt-0.5">&#x1F3AF;</span>
+            <Target className="text-pink-600 dark:text-pink-400 w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>รับคำแนะนำเฉพาะตามประเภทความสัมพันธ์</span>
           </li>
         </ul>
 
         {/* CTA Button */}
         <Button
-          className="w-full bg-gradient-to-r from-pink-500 to-accentBright hover:from-pink-600 hover:to-purple-600"
+          className="w-full bg-gradient-to-r from-pink-500 to-accentBright hover:from-pink-600 hover:to-accentSoft"
           size="lg"
         >
           ส่องดวงความสัมพันธ์

@@ -1,8 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
-export type FortuneTab = 'fortune' | 'pillars' | 'recommendations';
+export type FortuneTab = 'overview' | 'readings' | 'details';
 
 interface FortuneTabBarProps {
   activeTab: FortuneTab;
@@ -15,55 +13,57 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
-  { key: 'fortune', label: 'ดวงชะตา' },
-  { key: 'pillars', label: 'เสาชะตา' },
-  { key: 'recommendations', label: 'คำแนะนำ' },
+  { key: 'overview', label: 'สรุป' },
+  { key: 'readings', label: 'อ่าน 6 ด้าน' },
+  { key: 'details', label: 'ที่มาของดวง' },
 ];
 
 export function FortuneTabBar({ activeTab, onTabChange }: FortuneTabBarProps) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex = index;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % TABS.length;
+    else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + TABS.length) % TABS.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = TABS.length - 1;
+    else return;
+
+    event.preventDefault();
+    onTabChange(TABS[nextIndex].key);
+    const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    buttons?.[nextIndex]?.focus();
+  };
+
   return (
-    <div className="sticky top-0 z-30 bg-surface/95 backdrop-blur-lg border-b border-surface2">
-      {/* Top accent line */}
-      <div className="h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
+    <nav className="sticky top-14 z-30 border-b border-edge bg-ground/95 backdrop-blur-lg" aria-label="ส่วนของคำทำนาย">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center py-1">
-          {TABS.map((tab) => {
+        <div className="flex items-center gap-1 p-1.5" role="tablist" aria-label="เลือกเนื้อหาคำทำนาย">
+          {TABS.map((tab, index) => {
             const isActive = activeTab === tab.key;
 
             return (
               <button
+                type="button"
+                role="tab"
                 key={tab.key}
                 onClick={() => onTabChange(tab.key)}
-                className={`flex-1 relative py-3 px-4 transition-all duration-200 rounded-lg mx-1 ${
+                onKeyDown={(event) => handleKeyDown(event, index)}
+                aria-selected={isActive}
+                aria-controls={`fortune-panel-${tab.key}`}
+                tabIndex={isActive ? 0 : -1}
+                className={`relative min-h-11 flex-1 rounded-lg px-2 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright sm:px-4 ${
                   isActive
-                    ? 'bg-accent/15'
-                    : 'hover:bg-surface2/30'
+                    ? 'bg-accent text-accentInk'
+                    : 'text-inkMuted hover:bg-surface2 hover:text-ink'
                 }`}
               >
-                {/* Tab label */}
-                <span
-                  className={`font-heading text-base transition-colors duration-200 ${
-                    isActive
-                      ? 'text-accentSoft font-semibold'
-                      : 'text-inkMuted font-medium hover:text-accentFaint'
-                  }`}
-                >
+                <span className="font-heading text-sm font-semibold sm:text-base">
                   {tab.label}
                 </span>
-
-                {/* Active indicator */}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute bottom-0 left-2 right-2 h-[3px] rounded-full bg-gradient-to-r from-accentBright to-accentSoft shadow-[0_0_8px_rgba(168,85,247,0.4)]"
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  />
-                )}
               </button>
             );
           })}
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

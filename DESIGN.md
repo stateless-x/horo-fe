@@ -160,6 +160,11 @@ star fills, element-themed share cards) — never as generic decoration, never i
 marketing chrome. A future section (tarot, shop) extends the purple ladder; it does
 not introduce a new brand hue.
 
+One further payload hue is reserved: **Romance Pink** (#E85D75, and Tailwind's pink
+ramp) marks love/relationship content only — the love category on daily readings,
+the compatibility (ดวงคู่) surfaces, and their CTAs. Fills and glows may stay fixed
+pink; pink TEXT must be theme-legible (`text-pink-600 dark:text-pink-400`).
+
 **The Grain Rule.** The 3% film-grain overlay is global and non-negotiable. New
 full-screen surfaces inherit it automatically via `body::before`; never stack a
 second grain layer.
@@ -194,8 +199,8 @@ sentence; never let the oracle voice write a button label on a marketing page.
 Mobile-first, single-column narrative flow. Marketing sections are full-width bands
 with `py-20`–`py-24` (80–96px) vertical rhythm and centered containers: `max-w-4xl`
 for text-led sections, `max-w-6xl` for card grids. Card grids collapse
-3→1 (`md:grid-cols-3`) with 24–32px gaps. The app shell (dashboard) uses a bottom
-tab bar on mobile with safe-area insets and a 44px minimum touch target everywhere.
+3→1 (`md:grid-cols-3`) with 24–32px gaps. The app shell (dashboard) shares the
+public top bar + hamburger chrome, with a 44px minimum touch target everywhere.
 
 Route architecture mirrors the sectioning: all public marketing surfaces live in the
 `(marketing)` route group and share one nav/footer chrome; new sections (tarot,
@@ -253,7 +258,7 @@ hand-rolled one-off button styling in page components.
   - **Mobile <768px:** brand · spacer · ThemeToggle · CTA · hamburger (lucide `Menu`/`X`, ≥44px target). No second link row.
   - **Hamburger drawer:** slide-down panel attached under the bar (`bg-ground/95` blur, `border-b border-edge`), section links + เข้าสู่ระบบ as full-width 44px rows; framer-motion height/opacity reveal honoring reduced motion; `aria-expanded`/`aria-controls`, closes on Escape, outside tap, and route change.
   - **Link states:** rest `text-inkMuted`, hover `text-ink bg-edgeSoft`, active route `bg-accent/15 text-accentBright`.
-- **App nav:** bottom tab bar (mobile) with icon+label, active tab in `accentBright`.
+- **App nav:** same sticky top bar as marketing (`AppHeader`), `sticky top-0 z-40 h-14`; inline underline-active tab links ≥md, hamburger drawer <md with icon+label rows, theme toggle, and ออกจากระบบ.
 
 ### Signature: the Oracle reveal
 Long-form readings appear letter-by-letter (30ms/glyph) in Sarabun Light, as if

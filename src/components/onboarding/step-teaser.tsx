@@ -6,6 +6,7 @@ import { Heart, Briefcase, Wallet, Activity, Lock, Sparkles } from 'lucide-react
 import { Button, OracleText } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { api } from '@/lib/api';
+import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 
 const LOCKED_CATEGORIES = [
   { icon: Heart, label: 'ความรัก' },
@@ -126,18 +127,10 @@ export function StepTeaser() {
         className="min-h-screen flex items-center justify-center p-6"
       >
         <div className="text-center space-y-4">
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.5, 1, 0.5],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            className="w-16 h-16 mx-auto border-4 border-accent border-t-transparent rounded-full animate-spin"
-          />
+          <div className="relative flex min-h-56 items-center justify-center sm:min-h-64">
+            <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
+            <ClayOracleLoader />
+          </div>
           <p className="text-inkMuted font-oracle text-lg">
             กำลังมองดูดวงชะตาของเจ้า...
           </p>

@@ -38,6 +38,9 @@
   --el-earth: #946a00;
   --el-metal: #6e7480;
   --el-water: #2563eb;
+  --success: #047857;
+  --warn: #b45309;
+  --danger: #b91c1c;
 }
 
 [data-theme='dark'] {
@@ -64,6 +67,9 @@
   --el-earth: #d4a843;
   --el-metal: #c0c0c0;
   --el-water: #4a90d9;
+  --success: #34d399;
+  --warn: #fbbf24;
+  --danger: #f87171;
 }
 
 /* Theme-aware color utilities (bg-ground, text-ink, border-edge, ...) */
@@ -81,6 +87,9 @@
   --color-accentInk: var(--accent-ink);
   --color-edge: var(--edge);
   --color-edgeSoft: var(--edge-soft);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
 }
 
 /* Static tokens: fonts + animations (theme-independent) */

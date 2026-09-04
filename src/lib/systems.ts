@@ -8,8 +8,8 @@ import { Sun, Orbit, Heart, type LucideIcon } from 'lucide-react';
  *   1. Build its feature code under src/features/<id>/ (see
  *      src/features/tarot/README.md for the placeholder).
  *   2. Add its route(s) under src/app/dashboard/<id>/.
- *   3. Set `enabled: true` and fill in `dashboardTabs` below. The bottom
- *      nav (dashboard-nav-bar.tsx) renders from this list — nothing else
+ *   3. Set `enabled: true` and fill in `dashboardTabs` below. The app
+ *      header (app-header.tsx) renders from this list — nothing else
  *      to touch.
  *
  * See docs/adding-a-system.md for the full cross-repo recipe.

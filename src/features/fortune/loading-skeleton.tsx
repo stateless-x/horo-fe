@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import type { LoadingState } from '@/stores/fortune';
+import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 
 interface LoadingSkeletonProps {
   /** Loading state from the fortune store (chart flow) */
@@ -88,49 +89,16 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6">
       <div className="max-w-md w-full mx-auto flex flex-col items-center text-center space-y-8">
-        {/* Mystical orb animation */}
+        {/* The generated clay sequence is decorative; the live message below
+            carries the loading status for assistive technology. */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="relative"
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="relative flex min-h-56 items-center justify-center sm:min-h-64"
         >
-          {/* Outer glow ring */}
-          <motion.div
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.2, 0.4, 0.2],
-            }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute inset-0 w-24 h-24 md:w-32 md:h-32 rounded-full bg-accentBright/20 blur-xl"
-          />
-          {/* Spinning ring */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-accent/30 border-t-accentBright border-r-accent"
-          />
-          {/* Inner orb */}
-          <motion.div
-            animate={{
-              scale: [0.9, 1.1, 0.9],
-              opacity: [0.6, 1, 0.6],
-            }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-accentBright/60 to-accent/40 backdrop-blur-sm" />
-          </motion.div>
-          {/* Center star */}
-          <motion.div
-            animate={{
-              rotate: [0, 180, 360],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute inset-0 flex items-center justify-center text-2xl md:text-3xl"
-          >
-            ✦
-          </motion.div>
+          <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
+          <ClayOracleLoader />
         </motion.div>
 
         {/* Status message with crossfade */}

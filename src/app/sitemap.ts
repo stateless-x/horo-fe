@@ -34,6 +34,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      // Entry point for the whole funnel — the page every "ดูดวงฟรี" query
+      // should land on. It was missing from the sitemap entirely.
+      url: `${BASE_URL}/fortune`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
       url: `${BASE_URL}/privacy`,
       lastModified: now,
       changeFrequency: 'yearly',

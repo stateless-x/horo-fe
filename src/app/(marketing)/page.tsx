@@ -33,13 +33,6 @@ export default function LandingPage() {
     }
   }, [session, isPending, router]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVideoLoaded(true);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
   if (session) {
     return null;
   }
@@ -52,7 +45,26 @@ export default function LandingPage() {
       <section data-theme="dark" className="relative min-h-[100dvh] flex items-center justify-center bg-ground text-ink">
         {/* Ambient Video Background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          {videoLoaded && !shouldReduceMotion && (
+          {/* The poster is the base layer and is always in the server HTML, so
+              the hero has art at first paint and the browser's preload scanner
+              can find it. Previously both branches were gated (on a 500ms
+              timer, and on shouldReduceMotion which is null on the server), so
+              neither reached the prerendered markup and the hero stayed empty
+              until hydration finished. The video fades in on top once it can
+              actually play. */}
+          <img
+            src="/horo-hero-poster.webp"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover opacity-20"
+          />
+          {/* `=== false`, not `!`: useReducedMotion() returns null on the
+              server, and `!null` is true — which would put a 597 kB webm /
+              678 kB mp4 into the prerendered HTML and start fetching it at
+              first paint, competing with the fonts and the poster. Explicit
+              `false` keeps the video client-only. Same idiom as
+              components/ui/clay-oracle-loader.tsx. */}
+          {shouldReduceMotion === false && (
             <video
               ref={videoRef}
               autoPlay
@@ -61,19 +73,14 @@ export default function LandingPage() {
               playsInline
               poster="/horo-hero-poster.webp"
               preload="metadata"
-              className="absolute inset-0 w-full h-full object-cover opacity-20"
+              onCanPlay={() => setVideoLoaded(true)}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                videoLoaded ? 'opacity-20' : 'opacity-0'
+              }`}
             >
               <source src="/horo-hero.webm" type="video/webm" />
               <source src="/horo-hero.mp4" type="video/mp4" />
             </video>
-          )}
-          {shouldReduceMotion && (
-            <img
-              src="/horo-hero-poster.webp"
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover opacity-20"
-            />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-ground/80 via-ground/60 to-ground" />
         </div>

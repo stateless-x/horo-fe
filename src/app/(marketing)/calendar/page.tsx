@@ -295,7 +295,10 @@ export async function generateMetadata(
   const beYear = year + 543;
 
   return {
-    title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ วันโกน สีประจำวัน ฤกษ์ดี | สายมู`,
+    // No "| สายมู" suffix here: the root layout's title.template already
+    // appends "| สายมู - ดูดวงออนไลน์", and having both produced an 87-char
+    // title with the brand twice, well past Google's ~60-char display limit.
+    title: `ปฏิทินไทย ${monthName} ${beYear} วันพระ วันโกน ฤกษ์ดี`,
     description: `ปฏิทินไทยพุทธศักราช ${beYear} เดือน${monthName}วันพระ วันโกน ทำบุญ ตัดผม ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน เปิดกิจการ สีประจำวัน เลขมงคล ดาวประจำวัน และวันหยุดราชการ ตามหลักโหราศาสตร์ไทยสำหรับสายมูและสายบุญ`,
     keywords: [
       'ปฏิทินไทย', `ปฏิทิน ${beYear}`, `ปฏิทิน ${monthName} ${beYear}`,

@@ -1,5 +1,3 @@
-import Script from 'next/script';
-
 /**
  * Same 7 Q&As rendered both as the visible FAQ section below and as the
  * FAQPage JSON-LD in structuredData — keep these in sync when editing either.
@@ -96,9 +94,14 @@ export function SEOSections() {
 
   return (
     <>
-      {/* JSON-LD Structured Data */}
-      <Script
-        id="structured-data"
+      {/* JSON-LD Structured Data.
+          Plain <script>, not next/script: next/script defaults to
+          strategy="afterInteractive", which injects the tag client-side after
+          hydration, so the JSON-LD was absent from the server HTML that
+          crawlers and AI answer engines read. A plain tag is rendered into
+          the prerendered markup. Verify with:
+            grep -c 'application/ld+json' .next/server/app/index.html */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />

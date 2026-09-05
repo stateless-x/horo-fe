@@ -1,10 +1,64 @@
 import type { Metadata, Viewport } from "next";
+import { Noto_Sans_Thai, Anuphan, Sarabun, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import { Footer } from "@/components/layout/footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AdSenseScript } from "@/components/ads/adsense-script";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+
+
+/**
+ * Fonts are self-hosted via next/font instead of the Google Fonts CSS
+ * @import that used to sit at the top of globals.css. That @import created a
+ * three-hop critical chain (app stylesheet -> fonts.googleapis.com ->
+ * fonts.gstatic.com) with no preconnect. next/font serves the files from our
+ * own origin, preloads them, and adds size-adjust fallback metrics so the
+ * swap costs less CLS. Weights below mirror the ones the old @import
+ * requested; each exposes a CSS variable consumed by @theme in globals.css.
+ */
+const notoSansThai = Noto_Sans_Thai({
+  subsets: ["thai", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-noto-thai",
+  display: "swap",
+});
+
+const anuphan = Anuphan({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-anuphan",
+  display: "swap",
+});
+
+const sarabun = Sarabun({
+  subsets: ["thai", "latin"],
+  weight: ["200", "300", "400"],
+  variable: "--font-sarabun",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
+const fontVariables = [
+  notoSansThai.variable,
+  anuphan.variable,
+  sarabun.variable,
+  spaceGrotesk.variable,
+  jetbrainsMono.variable,
+].join(" ");
 
 export const metadata: Metadata = {
   title: {
@@ -120,7 +174,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" suppressHydrationWarning>
+    <html lang="th" className={fontVariables} suppressHydrationWarning>
+      <head>
+        {/* Fonts are self-hosted via next/font, so the only third-party origin
+            left on the critical path is AdSense. Warming the connection saves
+            a DNS + TLS round trip before the afterInteractive script fires. */}
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+      </head>
       <body>
         <AdSenseScript />
         <Analytics />

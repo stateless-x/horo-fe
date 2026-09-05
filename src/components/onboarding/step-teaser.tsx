@@ -129,7 +129,7 @@ export function StepTeaser() {
         <div className="text-center space-y-4">
           <div className="relative flex min-h-56 items-center justify-center sm:min-h-64">
             <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
-            <ClayOracleLoader showSkip />
+            <ClayOracleLoader />
           </div>
           <p className="text-inkMuted font-oracle text-lg">
             กำลังมองดูดวงชะตาของเจ้า...

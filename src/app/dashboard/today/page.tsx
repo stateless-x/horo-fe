@@ -40,8 +40,13 @@ const ELEMENT_NAMES_THAI = {
 type CategoryKey = (typeof DAILY_CATEGORY_KEYS)[number];
 type ElementKey = keyof typeof ELEMENT_NAMES_THAI;
 
-function scoreToPercent(score: number): number {
-  return Math.round((Math.min(Math.max(score, 0), 5) / 5) * 100);
+/**
+ * Scores are already 0-100 (computed in horo-be/lib/astrology/daily-scores.ts).
+ * Clamp only — legacy rows written under the old 1-5 scale are upgraded on read
+ * by the API, so nothing here needs to rescale.
+ */
+function clampScore(score: number): number {
+  return Math.round(Math.min(Math.max(score, 0), 100));
 }
 
 /**
@@ -90,7 +95,7 @@ export default function TodayPage() {
   const dailyElementNameThai = dailyElementKey ? ELEMENT_NAMES_THAI[dailyElementKey] : null;
   const structured = dailyReading?.structuredContent;
   const overallScore = structured?.overallScore ?? 3;
-  const overallPercent = scoreToPercent(overallScore);
+  const overallPercent = clampScore(overallScore);
   const hookLine = getDailyHookLine(structured);
 
   // Truncate reading for preview
@@ -234,7 +239,7 @@ export default function TodayPage() {
                 const data = structured.categories[key];
                 const isExpanded = expandedCategory === key;
                 const panelId = `daily-category-panel-${key}`;
-                const percent = scoreToPercent(data.score);
+                const percent = clampScore(data.score);
                 const isLove = key === 'love';
                 const accentClass = isLove ? 'bg-pink-500' : 'bg-accentBright';
                 const textAccentClass = isLove ? 'text-pink-600 dark:text-pink-400' : 'text-accentBright';

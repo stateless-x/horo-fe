@@ -1,6 +1,0 @@
-{
-  "prompt": "Animation assembled from six generated Little Oracle loader frames. Playback order: 01, 02, 03, 04, 05, 06, 05, 03, 02. Frame delay: 140ms. Plays once (loop count 1), then the UI swaps to little-oracle-loader-poster-v1.webp as the rest pose. Transparent 1024x1024 canvas. Source-frame generation prompts are embedded in public/assets/clay/loader/frame-01.png through frame-06.png.",
-  "derivedFrom": "little-oracle-loader-v1.webp",
-  "note": "Identical frame data to v1; only the ANIM loop count differs (0 = forever -> 1 = play once). Produced with: webpmux -set loop 1.",
-  "createdAt": "2026-09-05T08:10:00.000Z"
-}

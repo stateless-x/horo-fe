@@ -98,7 +98,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
           className="relative flex min-h-56 items-center justify-center sm:min-h-64"
         >
           <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
-          <ClayOracleLoader showSkip />
+          <ClayOracleLoader />
         </motion.div>
 
         {/* Status message with crossfade */}

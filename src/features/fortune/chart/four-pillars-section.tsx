@@ -1,15 +1,17 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Users, Briefcase, Heart, Sparkles, ChevronRight } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useReducedMotion } from 'framer-motion';
 import type {
   EnrichedPillar,
   PillarInterpretation,
   PillarInteraction,
-} from "@/lib-packages/shared/types/astrology";
-import { ELEMENT_COLORS } from "@/lib-packages/shared/constants/design";
-import { PillarDetailModal } from "./pillar-detail-modal";
-import { InfoTooltip } from "@/components/ui/info-tooltip";
+} from '@/lib-packages/shared/types/astrology';
+import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
+import { PillarDetailModal } from './pillar-detail-modal';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { firstClauseOrTruncate } from '@/lib/text-utils';
 
 interface FourPillarsSectionProps {
   pillars: {
@@ -22,19 +24,14 @@ interface FourPillarsSectionProps {
   pillarInteractions: PillarInteraction[];
 }
 
-const PILLAR_ICONS = {
-  year: Users,
-  month: Briefcase,
-  day: Heart,
-  hour: Sparkles,
+const PILLAR_LABELS: Record<string, string> = {
+  year: 'เสาปี',
+  month: 'เสาเดือน',
+  day: 'เสาวัน',
+  hour: 'เสาชั่วโมง',
 };
 
-const PILLAR_LABELS: Record<string, string> = {
-  year: "เสาปี",
-  month: "เสาเดือน",
-  day: "เสาวัน",
-  hour: "เสาชั่วโมง",
-};
+type PillarKey = 'year' | 'month' | 'day' | 'hour';
 
 export function FourPillarsSection({
   pillars,
@@ -42,90 +39,172 @@ export function FourPillarsSection({
   pillarInteractions,
 }: FourPillarsSectionProps) {
   const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const reduceMotion = useReducedMotion();
 
   const openPillarModal = (pillarKey: string) => {
     setSelectedPillar(pillarKey);
   };
 
-  const renderPillar = (
-    pillarKey: "year" | "month" | "day" | "hour",
-    pillar: EnrichedPillar,
-  ) => {
-    const Icon = PILLAR_ICONS[pillarKey];
-    const isDay = pillarKey === "day";
-    const elementColor = ELEMENT_COLORS[pillar.stemElement];
+  const pillarArray: { key: PillarKey; pillar: EnrichedPillar }[] = [
+    { key: 'year', pillar: pillars.year },
+    { key: 'month', pillar: pillars.month },
+    { key: 'day', pillar: pillars.day },
+    ...(pillars.hour ? [{ key: 'hour' as const, pillar: pillars.hour }] : []),
+  ];
+  const dayIndex = pillarArray.findIndex((p) => p.key === 'day');
+
+  // The day pillar (เสาวัน) is the self, so the carousel opens there — but only
+  // once the track has real width. It mounts inside a closed <details>, which
+  // renders at zero width until opened, so scrollIntoView before then is a
+  // silent no-op. A ResizeObserver catches the moment the disclosure opens.
+  useEffect(() => {
+    const track = trackRef.current;
+    const target = slideRefs.current[dayIndex];
+    if (!track || !target || dayIndex < 0) return;
+
+    let started = false;
+    const tryScroll = () => {
+      if (started || track.clientWidth === 0) return;
+      started = true;
+      // A track-local write, not scrollIntoView: scrollIntoView walks every
+      // scrollable ancestor, which can jump the whole page the instant the
+      // disclosure opens and this effect fires. This only ever moves the
+      // carousel's own scroll position.
+      track.scrollLeft = target.offsetLeft - (track.clientWidth - target.offsetWidth) / 2;
+      setActiveIndex(dayIndex);
+    };
+
+    tryScroll();
+    const observer = new ResizeObserver(tryScroll);
+    observer.observe(track);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Active dot follows real scroll position (swipes included), not a click
+  // counter: find the slide whose center is closest to the track's center.
+  const updateActiveFromScroll = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+
+    let closest = 0;
+    let closestDistance = Infinity;
+    slideRefs.current.forEach((slide, i) => {
+      if (!slide) return;
+      const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
+      const distance = Math.abs(slideCenter - trackCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = i;
+      }
+    });
+    setActiveIndex(closest);
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.addEventListener('scroll', updateActiveFromScroll, { passive: true });
+    return () => track.removeEventListener('scroll', updateActiveFromScroll);
+  }, [updateActiveFromScroll]);
+
+  const scrollToIndex = (index: number) => {
+    const target = slideRefs.current[index];
+    if (!target) return;
+    target.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    });
+    setActiveIndex(index);
+  };
+
+  const goPrev = () => scrollToIndex(Math.max(0, activeIndex - 1));
+  const goNext = () => scrollToIndex(Math.min(pillarArray.length - 1, activeIndex + 1));
+
+  const handleTrackKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      goPrev();
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      goNext();
+    }
+  };
+
+  const renderCard = (pillarKey: PillarKey, pillar: EnrichedPillar, index: number) => {
+    const isDay = pillarKey === 'day';
+    const interpretation = pillarInterpretations.find((p) => p.pillarKey === pillarKey);
+    const summary = interpretation?.summary
+      ? interpretation.summary
+      : interpretation?.interpretation
+        ? firstClauseOrTruncate(interpretation.interpretation)
+        : null;
+    const firstTip = interpretation?.tips?.[0];
 
     return (
       <div
         key={pillarKey}
-        className={isDay ? "md:col-span-1 order-1 md:order-none" : ""}
+        ref={(el) => {
+          slideRefs.current[index] = el;
+        }}
+        role="group"
+        aria-roledescription="slide"
+        aria-label={`${PILLAR_LABELS[pillarKey]}, ${index + 1} จาก ${pillarArray.length}`}
+        className="w-[83%] shrink-0 snap-center md:w-auto md:shrink md:snap-align-none"
       >
-        {/* Pillar card */}
         <button
           onClick={() => openPillarModal(pillarKey)}
           aria-haspopup="dialog"
           className={`
-            w-full bg-surface rounded-xl p-5 transition-all duration-200 cursor-pointer
+            flex h-full w-full flex-col items-center rounded-xl border p-5 text-center transition-all duration-200 cursor-pointer
             hover:bg-surface2/20 hover:border-accent/50 active:scale-[0.98] motion-reduce:active:scale-100
             ${
               isDay
-                ? "border-accentBright/50 bg-surface2/20 shadow-lg shadow-accentBright/10 transform md:-translate-y-2"
-                : "border-surface2/50"
+                ? 'border-accentBright/50 bg-surface2/20 shadow-lg shadow-accentBright/10 md:-translate-y-2'
+                : 'border-edge bg-surface'
             }
-            border
           `}
-          style={{
-            minHeight: isDay ? "200px" : "180px",
-          }}
+          style={{ minHeight: isDay ? '220px' : '200px' }}
         >
-          <div className="flex h-full flex-col items-center text-center">
-            {/* Icon */}
-            <Icon
-              className={`w-6 h-6 mb-3 ${isDay ? "text-accentBright" : "text-accentSoft"}`}
-            />
+          <ElementClayImage
+            element={pillar.stemElement as ClayElement}
+            alt=""
+            className="mb-2 h-14 w-14"
+            sizes="56px"
+          />
 
-            {/* Pillar label */}
-            <h3 className="font-heading font-medium text-base text-accentBright mb-2">
-              {PILLAR_LABELS[pillarKey]}
-            </h3>
+          <h3 className="font-heading font-medium text-base text-accentBright mb-1">
+            {PILLAR_LABELS[pillarKey]}
+          </h3>
 
-            {/* Stem and Branch in pinyin */}
-            <p className="font-english text-xs text-inkMuted italic mb-3">
-              {pillar.stemPinyin} {pillar.branchPinyin}
-            </p>
+          <p className="font-english text-xs text-inkMuted italic mb-2">
+            {pillar.stemPinyin} {pillar.branchPinyin}
+          </p>
 
-            {/* Life area */}
-            <p className="font-thai text-base text-ink mb-2">
-              {pillar.lifeArea}
-            </p>
+          <p className="font-thai text-base text-ink mb-2">{pillar.lifeArea}</p>
 
-            {/* Element indicator dot */}
-            <div
-              className="w-2 h-2 rounded-full mt-auto mb-3"
-              style={{
-                backgroundColor: elementColor.primary,
-                boxShadow: `0 0 6px ${elementColor.glow}`,
-              }}
-            />
+          {summary && (
+            <p className="font-thai text-sm text-inkMuted leading-snug mb-1">{summary}</p>
+          )}
+          {firstTip && (
+            <p className="line-clamp-1 font-thai text-xs text-inkMuted/80 leading-snug">{firstTip}</p>
+          )}
 
-            {/* In-card tap affordance: the caption below the grid was easy to
-                miss, so the hint now lives on every card it applies to. */}
-            <span className="flex items-center gap-0.5 font-heading text-xs text-accentBright">
-              ดูรายละเอียด
-              <ChevronRight className="size-3.5" aria-hidden="true" />
-            </span>
-          </div>
+          {/* The clay image already carries the element hue, so the dot that
+              used to be the only element cue is redundant now and dropped. */}
+          <span className="mt-auto pt-3 flex items-center gap-0.5 font-heading text-xs text-accentBright">
+            ดูรายละเอียด
+            <ChevronRight className="size-3.5" aria-hidden="true" />
+          </span>
         </button>
       </div>
     );
   };
-
-  const pillarArray = [
-    { key: "year" as const, pillar: pillars.year },
-    { key: "month" as const, pillar: pillars.month },
-    { key: "day" as const, pillar: pillars.day },
-    ...(pillars.hour ? [{ key: "hour" as const, pillar: pillars.hour }] : []),
-  ];
 
   return (
     <div>
@@ -139,9 +218,51 @@ export function FourPillarsSection({
         </p>
       </div>
 
-      {/* Pillars grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {pillarArray.map(({ key, pillar }) => renderPillar(key, pillar))}
+      {/* Mobile: horizontal scroll-snap carousel. md+: four-column grid. */}
+      <div
+        ref={trackRef}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="เสาชะตาทั้งสี่"
+        tabIndex={0}
+        onKeyDown={handleTrackKeyDown}
+        className="flex items-stretch gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 pb-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright md:mx-0 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible md:snap-none md:px-0"
+      >
+        {pillarArray.map(({ key, pillar }, index) => renderCard(key, pillar, index))}
+      </div>
+
+      {/* Arrows + dots: mobile only, the grid shows every card at md+. */}
+      <div className="mt-4 flex items-center justify-center gap-4 md:hidden">
+        <button
+          type="button"
+          onClick={goPrev}
+          disabled={activeIndex === 0}
+          aria-label="เสาก่อนหน้า"
+          className="flex size-11 items-center justify-center rounded-full border-2 border-accentBright text-accentBright transition-colors hover:bg-accentBright/10 disabled:opacity-30 disabled:pointer-events-none"
+        >
+          <ChevronLeft className="size-5" aria-hidden="true" />
+        </button>
+
+        <div className="flex items-center gap-1.5" aria-hidden="true">
+          {pillarArray.map((p, index) => (
+            <span
+              key={p.key}
+              className={`h-1.5 rounded-full transition-all ${
+                index === activeIndex ? 'w-4 bg-accentBright' : 'w-1.5 bg-edge'
+              }`}
+            />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={goNext}
+          disabled={activeIndex === pillarArray.length - 1}
+          aria-label="เสาถัดไป"
+          className="flex size-11 items-center justify-center rounded-full border-2 border-accentBright text-accentBright transition-colors hover:bg-accentBright/10 disabled:opacity-30 disabled:pointer-events-none"
+        >
+          <ChevronRight className="size-5" aria-hidden="true" />
+        </button>
       </div>
 
       {/* Pillar Detail Modal */}

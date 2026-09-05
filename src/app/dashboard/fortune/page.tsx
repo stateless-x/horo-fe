@@ -23,7 +23,7 @@ import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, fortuneTabId, type FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
 import { ReadNext, READ_NEXT_OVERVIEW, READ_NEXT_READINGS, READ_NEXT_DETAILS } from '@/features/fortune/chart/read-next';
-import { resolveChartReadingPeriod } from '@/lib/date-utils';
+import { getChartReadingPeriod, resolveChartReadingPeriod } from '@/lib/date-utils';
 
 const ELEMENT_NAMES = {
   earth: 'ธาตุดิน',
@@ -81,7 +81,7 @@ export default function FortuneChartPage() {
   const { session, sessionLoading } = useFortuneGeneration();
 
   // Fortune data fetching
-  const { data: chartData } = useFortuneData(loadingState === 'complete');
+  const { data: chartData, isFetching: isChartFetching } = useFortuneData(loadingState === 'complete');
 
   // Redirect unauthenticated users
   useEffect(() => {
@@ -158,6 +158,19 @@ export default function FortuneChartPage() {
   // Show main content
   if (!chartData) {
     return <LoadingSkeleton loadingState={loadingState} />;
+  }
+
+  // The backend regenerates at the Bangkok month boundary and that takes 1 to
+  // 3 minutes, during which React Query still serves last month's chart. A
+  // legacy chart with no readingPeriod can't be behind (it has never carried
+  // a period), so it never triggers this.
+  const isRegeneratingForNewMonth =
+    isChartFetching &&
+    !!chartData.readingPeriod &&
+    chartData.readingPeriod.yearMonth !== getChartReadingPeriod().yearMonth;
+
+  if (isRegeneratingForNewMonth) {
+    return <LoadingSkeleton loadingState="generating-narrative" />;
   }
 
   const userName = (session.user as any).displayName || session.user.name;
@@ -300,13 +313,25 @@ export default function FortuneChartPage() {
               <p className="mt-2 font-thai text-inkMuted">รายละเอียดทั้งหมดอยู่ตรงนี้ แต่ไม่จำเป็นต้องอ่านรวดเดียว</p>
             </div>
             <div className="border-t border-edge">
-              <ResultDisclosure title="รู้จักธาตุของเจ้า" description="จุดแข็ง จุดอ่อน และธาตุที่เข้ากัน">
+              <ResultDisclosure
+                title="รู้จักธาตุของเจ้า"
+                description="จุดแข็ง จุดอ่อน และธาตุที่เข้ากัน"
+                image={{ src: `/assets/clay/elements/${chartData.elementProfile.primaryElement}.webp` }}
+              >
                 <ElementProfileSection elementProfile={chartData.elementProfile} />
               </ResultDisclosure>
-              <ResultDisclosure title="จังหวะและฤกษ์มงคล" description="ดูคำแนะนำ สี เลข ทิศ และเดือนเด่น">
+              <ResultDisclosure
+                title="จังหวะและฤกษ์มงคล"
+                description="ดูคำแนะนำ สี เลข ทิศ และเดือนเด่น"
+                image={{ src: '/assets/clay/chart-scroll-oracle.webp' }}
+              >
                 <RecommendationsSection recommendations={chartData.recommendations} />
               </ResultDisclosure>
-              <ResultDisclosure title="เสาชะตาทั้งสี่" description="เปิดดูข้อมูลโหราศาสตร์และปาจื้อเบื้องหลังคำทำนาย">
+              <ResultDisclosure
+                title="เสาชะตาทั้งสี่"
+                description="เปิดดูข้อมูลโหราศาสตร์และปาจื้อเบื้องหลังคำทำนาย"
+                image={{ src: '/assets/clay/systems/bazi.webp' }}
+              >
                 <div className="space-y-12">
                   <FourPillarsSection
                     pillars={chartData.pillars}

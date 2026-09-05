@@ -18,7 +18,10 @@ export function useFortuneData(enabled: boolean = true) {
 
   return useQuery<StructuredChartResponse>({
     queryKey: ['fortune', 'chart', userId],
-    queryFn: () => api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 45_000 }),
+    // Normally a cache hit, but it can land on a cold generation (e.g. the
+    // month-boundary regeneration), so allow the same budget the backend does
+    // rather than aborting work that is still running.
+    queryFn: () => api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 240_000 }),
     enabled: enabled && !!userId,
     staleTime: Infinity, // Fortune data doesn't change frequently
     gcTime: 30 * 60 * 1000, // Cache for 30 minutes

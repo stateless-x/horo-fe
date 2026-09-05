@@ -85,9 +85,13 @@ export function useFortuneGeneration() {
         // Step 2: Fetch chart data (this will return cached data if it exists, not regenerate)
         setLoadingState('generating-chart');
         console.log('[FortuneGeneration] Fetching fortune chart (cached or new)');
-        // Use longer timeout — this GET triggers LLM generation on first load (no cache)
-        // 90s to accommodate cold starts + LLM generation time
-        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 90_000 });
+        // This GET triggers LLM generation on first load (no cache). The backend
+        // allows the model 180s (llm.ts: structured charts run 3-5k output tokens
+        // at ~25-60 tok/s) and can spend another 180s on one validation retry, so
+        // a 90s client timeout aborted a generation that was still healthy — the
+        // user saw an error, then a refresh succeeded because the server-side work
+        // had finished into cache meanwhile. Sit above the backend's own budget.
+        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 240_000 });
 
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 

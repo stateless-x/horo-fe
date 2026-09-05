@@ -1,6 +1,0 @@
-{
-  "prompt": "Animation assembled from the six generated Little Oracle loader frames in assets/clay-masters/loader/. Playback order: 01, 02, 03, 04, 05, 06, 05, 03, 02. Frame delay: 70ms (~14fps, was 140ms/~7fps in v1). Loop forever. Transparent 512x512 canvas (2x for the 224-256px display slot; v1 was a 4x oversample at 1024).",
-  "derivedFrom": "assets/clay-masters/loader/frame-01..06.png",
-  "note": "Same nine real poses as v1 — no interpolated in-betweens. Cross-dissolve morphing was tried and rejected: the mascot shifts position between poses, so tweens ghosted with visible double edges. Smoothness instead comes from halving the frame delay plus a CSS float on the wrapper, which runs at 60fps for zero bytes. Encoded with: img2webp -loop 0 -lossy -q 80 -m 6 -d 70. 170KB vs v1's 431KB.",
-  "createdAt": "2026-09-05T00:00:00.000Z"
-}

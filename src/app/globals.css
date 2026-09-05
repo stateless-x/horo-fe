@@ -103,7 +103,6 @@
   --animate-glow: glow 1.5s ease-in-out infinite;
   --animate-ctaGlow: ctaGlow 3s ease-in-out infinite;
   --animate-float-1: float-1 6s ease-in-out infinite;
-  --animate-drift: drift 5.5s ease-in-out infinite;
   --animate-float-2: float-2 8s ease-in-out infinite;
   --animate-float-3: float-3 7s ease-in-out infinite;
 
@@ -115,14 +114,6 @@
   @keyframes ctaGlow {
     0%, 100% { opacity: 0.3; transform: scale(1); }
     50% { opacity: 0.6; transform: scale(1.08); }
-  }
-
-  /* Gentle hover for the loader mascot — small enough to read as breathing
-     rather than the 30px drift the particle floats use. Pure translate: on a
-     hooded figure a rotate reads as leaning over, not floating. */
-  @keyframes drift {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
   }
 
   @keyframes float-1 {

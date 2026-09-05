@@ -147,7 +147,7 @@ export default function TodayPage() {
 
             <div className="order-1 mx-auto w-36 md:order-2 md:w-full">
               <Image
-                src="/assets/clay/little-oracle-master-v1.png"
+                src="/assets/clay/little-oracle-master-v1.webp"
                 alt="มาสคอตนักพยากรณ์ของสายมู"
                 width={1024}
                 height={1024}

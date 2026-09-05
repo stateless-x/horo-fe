@@ -224,7 +224,7 @@ export default function CompatibilityPage() {
           <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-accentBright/10 blur-3xl" aria-hidden="true" />
           <div className="relative flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
             <Image
-              src="/assets/clay/little-oracle-master-v1.png"
+              src="/assets/clay/little-oracle-master-v1.webp"
               alt="มาสคอตนักพยากรณ์ของสายมู"
               width={1024}
               height={1024}

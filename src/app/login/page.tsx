@@ -77,7 +77,7 @@ export default function LoginPage() {
       <div className="relative hidden aspect-[4/5] overflow-hidden rounded-3xl border border-edge bg-surface2/50 lg:block">
         <div className="absolute inset-1/4 rounded-full bg-accentBright/20 blur-3xl" aria-hidden="true" />
         <Image
-          src="/assets/clay/little-oracle-master-v1.png"
+          src="/assets/clay/little-oracle-master-v1.webp"
           alt="มาสคอตนักพยากรณ์ตัวน้อยของสายมู"
           fill
           sizes="(min-width: 1024px) 448px, 0px"

@@ -62,6 +62,8 @@ export function ClayOracleLoader({
         height={1024}
         sizes="(min-width: 640px) 256px, 224px"
         priority
+        // Load-bearing, not an oversight: Next's optimizer re-encodes, which
+        // flattens the animated WebP to a single frame. Do not remove.
         unoptimized
         onLoad={() => setDecoded(true)}
         className={className}

@@ -32,3 +32,33 @@ export function getMsUntilThaiMidnight(): number {
   // Minimum 1 minute to avoid edge cases at exactly midnight
   return Math.max(msUntilMidnight, 60 * 1000);
 }
+
+/**
+ * Thai month names, indexed 0-11 to match Date#getMonth().
+ */
+const THAI_MONTHS = [
+  'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+  'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม',
+];
+
+/**
+ * The month the current chart reading belongs to, and the date it is replaced.
+ *
+ * The backend regenerates a chart narrative when the Bangkok-time month rolls
+ * over (systems/fortune/routes.ts), and the API exposes no expiry field — so
+ * this is derived. It MUST be computed in Bangkok time, not the browser's
+ * locale, or a user abroad (or one near midnight on the last day of the month)
+ * would be shown a date that disagrees with when the reading actually changes.
+ *
+ * Only the narrative regenerates: pillars, birth star and element profile are
+ * birth-derived and never change. Copy using this should say คำทำนาย, not ดวง.
+ */
+export function getChartReadingPeriod(): { currentMonth: string; renewsOn: string } {
+  const now = getBangkokDate();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  return {
+    currentMonth: THAI_MONTHS[now.getMonth()],
+    renewsOn: `1 ${THAI_MONTHS[nextMonth.getMonth()]}`,
+  };
+}

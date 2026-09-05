@@ -75,11 +75,15 @@ function PlatformIcon({
 }: {
   platform: "line" | "facebook" | "twitter";
 }) {
+  // X's mark is monochrome and has no brand fill of its own, so a bare white
+  // glyph disappears on the light theme. Give it the black roundel X itself
+  // ships, which reads in both themes; LINE and Facebook keep their own hues.
   const colors = {
     line: "#00B900",
     facebook: "#1877F2",
     twitter: "#FFFFFF",
   };
+  const isRoundel = platform === "twitter";
 
   const icons = {
     line: (
@@ -98,6 +102,14 @@ function PlatformIcon({
       </svg>
     ),
   };
+
+  if (isRoundel) {
+    return (
+      <span className="flex size-7 items-center justify-center rounded-full bg-[#0F1419] text-white">
+        {icons[platform]}
+      </span>
+    );
+  }
 
   return <span style={{ color: colors[platform] }}>{icons[platform]}</span>;
 }

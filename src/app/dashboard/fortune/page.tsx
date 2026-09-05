@@ -20,7 +20,7 @@ import { FortuneOverviewSection } from '@/features/fortune/chart/fortune-overvie
 import { ResultDisclosure } from '@/features/fortune/chart/result-disclosure';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
-import { FortuneTabBar, type FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
+import { FortuneTabBar, fortuneTabId, type FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
 import { CompatibilityCTA } from '@/features/fortune/chart/compatibility-cta';
 
 const ELEMENT_NAMES = {
@@ -231,6 +231,8 @@ export default function FortuneChartPage() {
           <motion.div
             id="fortune-panel-overview"
             role="tabpanel"
+            aria-labelledby={fortuneTabId('overview')}
+            tabIndex={0}
             initial={{ opacity: 0, translateY: 12 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
@@ -248,6 +250,8 @@ export default function FortuneChartPage() {
           <motion.div
             id="fortune-panel-readings"
             role="tabpanel"
+            aria-labelledby={fortuneTabId('readings')}
+            tabIndex={0}
             initial={{ opacity: 0, translateY: 12 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
@@ -262,6 +266,8 @@ export default function FortuneChartPage() {
           <motion.div
             id="fortune-panel-details"
             role="tabpanel"
+            aria-labelledby={fortuneTabId('details')}
+            tabIndex={0}
             initial={{ opacity: 0, translateY: 12 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}

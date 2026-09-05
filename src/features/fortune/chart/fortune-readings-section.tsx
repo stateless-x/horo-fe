@@ -17,6 +17,16 @@ interface FortuneReadingsSectionProps {
 
 const SCORE_LABELS = ['ค่อยเป็นค่อยไป', 'ต้องใส่ใจ', 'สมดุล', 'จังหวะดี', 'โดดเด่น'];
 
+/**
+ * Scores are 0-100 (computed in horo-be/lib/astrology/chart-scores.ts). Bucket
+ * them into the five qualitative labels — the word is what belongs on a reading,
+ * while the precise number lives on the overview tab's energy bars.
+ */
+function scoreLabel(score: number): string {
+  const index = Math.min(4, Math.max(0, Math.floor((score - 1) / 20)));
+  return SCORE_LABELS[index];
+}
+
 export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSectionProps) {
   const shouldReduceMotion = useReducedMotion();
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
@@ -70,8 +80,8 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                     <span className="mt-1 block line-clamp-1 font-thai text-sm text-inkMuted">{category.reading}</span>
                   )}
                 </span>
-                <span className="hidden shrink-0 rounded-full bg-surface2 px-3 py-1 text-sm text-inkMuted sm:block">
-                  {SCORE_LABELS[category.score - 1]}
+                <span className="shrink-0 rounded-full bg-surface2 px-3 py-1 text-sm text-inkMuted">
+                  {scoreLabel(category.score)}
                 </span>
                 <ChevronDown
                   className={`size-5 shrink-0 text-inkMuted transition-transform ${isExpanded ? 'rotate-180' : ''}`}

@@ -7,6 +7,7 @@ import type {
 } from '@/lib-packages/shared/types/astrology';
 import { localizeColorName, localizeDayName } from '@/lib/thai-localize';
 import { GuidanceColumns } from '@/features/fortune/chart/fortune-guidance';
+import { FortuneEnergySection } from '@/features/fortune/chart/fortune-energy-section';
 
 interface FortuneOverviewSectionProps {
   fortuneReadings: FortuneReadingCategory[];
@@ -64,6 +65,8 @@ export function FortuneOverviewSection({
           )}
         </div>
       )}
+
+      <FortuneEnergySection fortuneReadings={fortuneReadings} onOpenReadings={onOpenReadings} />
 
       {monthHighlight && (
         <div className="border-b border-edge py-8">

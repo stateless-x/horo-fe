@@ -1,9 +1,14 @@
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 
+/**
+ * Illustrative values shaped like real output: the chart's per-area scores are
+ * computed deterministically on 0-100 (horo-be/lib/astrology/chart-scores.ts),
+ * so these are representative of what a real reading produces.
+ */
 const scores = [
-  { label: 'ความรัก', value: 86 },
+  { label: 'ความรัก', value: 91 },
   { label: 'การงาน', value: 74 },
-  { label: 'การเงิน', value: 68 },
+  { label: 'การเงิน', value: 60 },
 ] as const;
 
 export function FortuneProofPreview() {

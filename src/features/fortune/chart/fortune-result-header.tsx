@@ -28,7 +28,7 @@ export function FortuneResultHeader({
     <section className="overflow-hidden rounded-3xl border border-edge bg-surface px-5 py-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)] sm:px-8 sm:py-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="font-thai text-sm text-inkMuted">คำทำนายของคุณพร้อมแล้ว</p>
+          <p className="font-thai text-sm text-inkMuted">คำทำนายของเจ้าพร้อมแล้ว</p>
           <h1 className="mt-1 font-heading text-3xl font-bold text-ink sm:text-4xl">
             ดวงของ {userName}
           </h1>
@@ -57,7 +57,7 @@ export function FortuneResultHeader({
           className="size-24 self-center sm:size-28"
         />
         <div className="min-w-0 flex-1 text-center sm:text-left">
-          <p className="font-thai text-sm text-inkMuted">พลังหลักของคุณ</p>
+          <p className="font-thai text-sm text-inkMuted">พลังหลักของเจ้า</p>
           <h2
             className="mt-1 font-heading text-2xl font-semibold"
             style={{ color: `var(--el-${element})` }}

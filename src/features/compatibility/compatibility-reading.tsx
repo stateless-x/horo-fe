@@ -10,8 +10,8 @@ interface CompatibilityReadingProps {
 
 const SECTIONS = [
   { key: 'chemistry', label: 'เคมีของคู่นี้', icon: Sparkles },
-  { key: 'caution', label: 'จุดที่ต้องระวัง', icon: ShieldAlert },
-  { key: 'advice', label: 'ลองทำแบบนี้', icon: Lightbulb },
+  { key: 'caution', label: 'จุดที่ควรค่อย ๆ ดู', icon: ShieldAlert },
+  { key: 'advice', label: 'จังหวะที่ไปต่อได้', icon: Lightbulb },
 ] as const;
 
 export function CompatibilityReading({ score, analysis, structuredContent }: CompatibilityReadingProps) {
@@ -34,17 +34,20 @@ export function CompatibilityReading({ score, analysis, structuredContent }: Com
   }
 
   return (
-    <section aria-labelledby="compatibility-verdict" className="overflow-hidden rounded-2xl border border-pink-400/30 bg-surface shadow-lg shadow-accent/10">
-      <div className="grid gap-4 bg-pink-500/10 p-5 md:grid-cols-[7rem_1fr] md:items-center md:p-7">
-        <p className="font-heading text-ink tabular-nums" aria-label={`คะแนนความเข้ากันได้ ${score} เต็ม 100`}>
-          <span className="text-5xl font-semibold tracking-tight">{score}</span>
-          <span className="text-sm text-inkMuted">/100</span>
-        </p>
+    <section aria-labelledby="compatibility-verdict" className="overflow-hidden rounded-2xl border border-pink-400/30 bg-surface shadow-[0_18px_50px_rgba(107,33,168,0.08)]">
+      <div className="grid gap-4 bg-pink-500/10 p-5 md:grid-cols-[9rem_1fr] md:items-center md:p-7">
+        <div className="font-heading text-ink tabular-nums" aria-label={`ความเข้ากัน ${score} เปอร์เซ็นต์`}>
+          <p className="text-sm text-inkMuted">ความเข้ากัน</p>
+          <p className="mt-1">
+            <span className="text-5xl font-semibold tracking-tight">{score}</span>
+            <span className="ml-1 text-lg text-inkMuted">%</span>
+          </p>
+        </div>
         <div>
           <h2 id="compatibility-verdict" className="text-balance font-heading text-xl font-semibold text-ink md:text-2xl">
             {structuredContent.verdict}
           </h2>
-          <p className="mt-2 max-w-[65ch] text-sm leading-relaxed text-inkMuted">
+          <p className="mt-2 max-w-[65ch] font-thai leading-relaxed text-inkMuted">
             {structuredContent.scoreExplanation}
           </p>
         </div>
@@ -57,7 +60,7 @@ export function CompatibilityReading({ score, analysis, structuredContent }: Com
               <Icon className="size-5 shrink-0 text-pink-600 dark:text-pink-400" aria-hidden="true" />
               {label}
             </h3>
-            <p className="max-w-[65ch] leading-7 text-ink">{structuredContent[key]}</p>
+            <p className="max-w-[65ch] font-oracle text-lg font-light leading-[1.8] text-ink">{structuredContent[key]}</p>
           </div>
         ))}
       </div>

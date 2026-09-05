@@ -52,9 +52,9 @@ export function CompatibilityForm({
   return (
     <>
       {/* Relationship Type Selector */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
-        <label className="block text-sm md:text-base text-inkMuted mb-3">เลือกประเภทความสัมพันธ์</label>
-        <div className="flex flex-wrap gap-2">
+      <motion.fieldset initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
+        <legend className="mb-3 block font-heading text-lg font-semibold text-ink">ความสัมพันธ์แบบไหน</legend>
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {RELATIONSHIP_TYPES.map((type) => {
             const typeConfig = RELATIONSHIP_CONFIG[type];
             const Icon = typeConfig.icon;
@@ -63,24 +63,15 @@ export function CompatibilityForm({
             return (
               <motion.button
                 key={type}
+                type="button"
                 onClick={() => onRelationshipTypeChange(type)}
-                className={`inline-flex items-center gap-1.5 px-4 h-11 rounded-full text-sm md:text-base font-medium transition-all border ${
+                aria-pressed={isSelected}
+                className={`inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-3 text-sm font-medium transition-colors sm:px-4 md:text-base ${
                   isSelected
                     ? `${typeConfig.accentBg} ${typeConfig.accentBorder} ${typeConfig.accent}`
-                    : 'bg-surface border-surface2/50 text-inkMuted hover:border-accent/50'
+                    : 'bg-surface border-edge text-inkMuted hover:border-accent/50 hover:text-ink'
                 }`}
                 whileTap={{ scale: 0.95 }}
-                {...(type === 'talking' ? {
-                  initial: { boxShadow: '0 0 0 0 rgba(236, 72, 153, 0)' },
-                  animate: isSelected ? {} : {
-                    boxShadow: [
-                      '0 0 0 0 rgba(236, 72, 153, 0)',
-                      '0 0 8px 2px rgba(236, 72, 153, 0.3)',
-                      '0 0 0 0 rgba(236, 72, 153, 0)',
-                    ],
-                  },
-                  transition: { duration: 2, repeat: 1, delay: 0.5 },
-                } : {})}
               >
                 <Icon className="w-4 h-4" />
                 {RELATIONSHIP_LABELS[type]}
@@ -88,7 +79,7 @@ export function CompatibilityForm({
             );
           })}
         </div>
-      </motion.div>
+      </motion.fieldset>
 
       {/* Error Display */}
       <AnimatePresence>

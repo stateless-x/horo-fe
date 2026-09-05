@@ -127,7 +127,7 @@ export default function FortuneChartPage() {
           <div className="space-y-2">
             <h2 className="text-lg font-heading text-ink">แก้ไขข้อมูลบ่อยเกินไป</h2>
             <p className="text-sm text-inkMuted">
-              ดวงของคุณจะอัปเดตใหม่ได้{timeText}
+              ดวงจะอัปเดตใหม่ได้{timeText}
             </p>
           </div>
           <div className="flex gap-3 justify-center">
@@ -172,7 +172,7 @@ export default function FortuneChartPage() {
             <div className="flex items-start gap-3 p-4 rounded-lg bg-warn/10 border border-warn/30 text-warn text-sm">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
               <p>
-                คุณแก้ไขข้อมูลบ่อยเกินไป ดวงจะอัปเดตใหม่ได้อีกครั้งใน{' '}
+                เปลี่ยนข้อมูลบ่อยเกินไป ดวงจะอัปเดตใหม่ได้อีกครั้งใน{' '}
                 {(() => {
                   const resetDate = new Date(rateLimitResetAt);
                   const now = new Date();
@@ -267,11 +267,11 @@ export default function FortuneChartPage() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             <div className="mb-6">
-              <h2 className="font-heading text-2xl font-semibold text-ink sm:text-3xl">เจาะลึกเมื่อคุณพร้อม</h2>
+              <h2 className="font-heading text-2xl font-semibold text-ink sm:text-3xl">เจาะลึกเมื่อเจ้าพร้อม</h2>
               <p className="mt-2 font-thai text-inkMuted">รายละเอียดทั้งหมดอยู่ตรงนี้ แต่ไม่จำเป็นต้องอ่านรวดเดียว</p>
             </div>
             <div className="border-t border-edge">
-              <ResultDisclosure title="รู้จักธาตุของฉัน" description="จุดแข็ง จุดอ่อน และธาตุที่เข้ากัน">
+              <ResultDisclosure title="รู้จักธาตุของเจ้า" description="จุดแข็ง จุดอ่อน และธาตุที่เข้ากัน">
                 <ElementProfileSection elementProfile={chartData.elementProfile} />
               </ResultDisclosure>
               <ResultDisclosure title="จังหวะและฤกษ์มงคล" description="ดูคำแนะนำ สี เลข ทิศ และเดือนเด่น">

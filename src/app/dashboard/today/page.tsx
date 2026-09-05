@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import {
-  Star,
   ChevronDown,
   Share2,
   CheckCircle2,
@@ -13,6 +13,7 @@ import {
   Palette,
   Compass,
   Clock,
+  Sparkles,
 } from 'lucide-react';
 
 import { useDailyFortune, useUserProfile, getDailyHookLine } from '@/features/fortune/hooks/use-daily-fortune';
@@ -21,35 +22,27 @@ import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ClientDate } from '@/components/client-date';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
-import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
-import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 import { CategoryClayImage } from '@/components/ui/category-clay-image';
 import { FORTUNE_CATEGORY_CONFIG, DAILY_CATEGORY_KEYS } from '@/lib/fortune-category-config';
 import { localizeColorName } from '@/lib/thai-localize';
 
-const ELEMENT_NAMES_THAI: Record<string, string> = {
+const ELEMENT_NAMES_THAI = {
   wood: 'ไม้',
   fire: 'ไฟ',
   earth: 'ดิน',
   metal: 'ทอง',
   water: 'น้ำ',
-};
+} as const;
 
 type CategoryKey = (typeof DAILY_CATEGORY_KEYS)[number];
+type ElementKey = keyof typeof ELEMENT_NAMES_THAI;
 
-// Score/star styling per category: accent purple everywhere, Romance Pink on
-// love only (DESIGN.md: element and category hues are payloads, not decoration).
-const CATEGORY_STAR_CLASS: Record<CategoryKey, { filled: string; border: string }> = {
-  career: { filled: 'fill-accentBright stroke-accentBright', border: 'border-accentBright' },
-  love: { filled: 'fill-pink-500 stroke-pink-500', border: 'border-pink-500' },
-  finance: { filled: 'fill-accentBright stroke-accentBright', border: 'border-accentBright' },
-  health: { filled: 'fill-accentBright stroke-accentBright', border: 'border-accentBright' },
-};
-
-const EMPTY_STAR_CLASS = 'fill-transparent stroke-inkMuted opacity-35';
+function scoreToPercent(score: number): number {
+  return Math.round((Math.min(Math.max(score, 0), 5) / 5) * 100);
+}
 
 /**
  * Daily Fortune Page - /dashboard/today
@@ -90,10 +83,14 @@ export default function TodayPage() {
     'เจ้า';
   // Daily element energy (changes each day)
   const dailyElement = dailyReading?.elementEnergy || null;
-  const dailyElementKey = dailyElement ? (dailyElement.toLowerCase() as keyof typeof ELEMENT_COLORS) : null;
+  const normalizedElement = dailyElement?.toLowerCase();
+  const dailyElementKey = normalizedElement && normalizedElement in ELEMENT_NAMES_THAI
+    ? normalizedElement as ElementKey
+    : null;
   const dailyElementNameThai = dailyElementKey ? ELEMENT_NAMES_THAI[dailyElementKey] : null;
   const structured = dailyReading?.structuredContent;
-  const overallScore = structured?.overallScore || 3;
+  const overallScore = structured?.overallScore ?? 3;
+  const overallPercent = scoreToPercent(overallScore);
   const hookLine = getDailyHookLine(structured);
 
   // Truncate reading for preview
@@ -112,170 +109,166 @@ export default function TodayPage() {
   const visibleAvoidItems = showAllGuidance ? avoidItems : avoidItems.slice(0, 2);
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)]">
-      {/* Desktop: centered container */}
-      <div className="max-w-2xl mx-auto px-4 py-6 md:py-10">
+    <div className="min-h-[calc(100vh-3.5rem)] overflow-hidden">
+      <div className="mx-auto max-w-4xl px-4 py-6 md:px-6 md:py-10">
+        <section className="relative overflow-hidden rounded-2xl border border-edge bg-surface px-5 py-6 shadow-xl shadow-accent/10 md:px-9 md:py-9">
+          <div className="pointer-events-none absolute -right-24 -top-28 size-72 rounded-full bg-accentBright/10 blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute -bottom-28 left-1/4 size-64 rounded-full bg-accent/10 blur-3xl" aria-hidden="true" />
 
-        {/* ===== HERO — one screenshot-ready card: date, score, theme, hook, element, lucky ===== */}
-        <section className="mb-8">
-          <div className="rounded-2xl bg-surface border border-edge p-5 pt-6 md:p-8 text-center">
-            {/* Date */}
-            <ClientDate className="text-inkMuted text-base mb-3" />
-
-            {/* Main Score - Big visual hook */}
-            <div className="flex items-center justify-center gap-1.5 mb-4" role="img" aria-label={`คะแนนวันนี้ ${overallScore} จาก 5`}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={`w-9 h-9 md:w-11 md:h-11 ${star <= overallScore ? 'fill-accentBright stroke-accentBright' : EMPTY_STAR_CLASS}`}
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                />
-              ))}
+          <div className="relative grid items-center gap-2 md:grid-cols-[1fr_13rem] md:gap-8">
+            <div className="order-2 md:order-1">
+              <ClientDate className="block text-sm text-inkMuted" />
+              <p className="mt-3 font-heading text-lg text-ink">ดวงของ {displayName} วันนี้</p>
+              <h1 className="mt-2 max-w-[18ch] text-balance font-heading text-3xl font-semibold leading-tight text-ink md:text-4xl">
+                {structured?.dailyTheme || 'วันนี้มีเรื่องดีรออยู่'}
+              </h1>
+              <div
+                className="mt-4 max-w-sm"
+                role="progressbar"
+                aria-label="พลังวันนี้"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={overallPercent}
+              >
+                <div className="flex items-baseline justify-between gap-4">
+                  <span className="text-sm text-inkMuted">พลังวันนี้จาก 4 ด้าน</span>
+                  <span className="font-heading text-xl tabular-nums text-accentBright">{overallPercent}%</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-edgeSoft">
+                  <div className="h-full rounded-full bg-accentBright transition-[width] duration-500 motion-reduce:transition-none" style={{ width: `${overallPercent}%` }} />
+                </div>
+              </div>
+              {hookLine && hookLine !== structured?.dailyTheme && (
+                <p className="mt-3 max-w-[42ch] font-oracle text-lg leading-relaxed text-accentFaint md:text-xl">
+                  {hookLine}
+                </p>
+              )}
             </div>
 
-            {/* Daily Theme */}
-            {structured?.dailyTheme && (
-              <h1 className="text-2xl md:text-3xl font-heading font-semibold mb-3 text-ink">
-                {structured.dailyTheme}
-              </h1>
-            )}
-
-            {/* Hook line — the one-sentence takeaway (v2 field; derived for legacy) */}
-            {hookLine && hookLine !== structured?.dailyTheme && (
-              <p className="text-lg md:text-xl font-oracle text-accentBright mb-4 max-w-[40ch] mx-auto text-balance">
-                {hookLine}
-              </p>
-            )}
-
-            {/* Daily element pill */}
-            {dailyElementNameThai && dailyElementKey && (
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface2/60 border border-edge">
-                <ElementClayImage
-                  element={dailyElementKey}
-                  alt=""
-                  sizes="32px"
-                  className="h-8 w-8"
-                />
-                <span className="text-base text-ink/80">
-                  {displayName} · ธาตุประจำวัน: {dailyElementNameThai}
-                  <InfoTooltip text="ธาตุที่มีอิทธิพลต่อพลังงานของวันนี้ ถ้าเข้ากับธาตุประจำตัวของเจ้าจะเป็นวันที่ดี" />
-                </span>
-              </div>
-            )}
-
-            {/* Lucky attributes — part of the shareable hero composition */}
-            <dl className="mt-6 pt-5 border-t border-edge grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-5">
-              <div>
-                <dt className="flex items-center justify-center gap-1.5 text-sm text-inkMuted mb-1">
-                  <Hash className="w-4 h-4" aria-hidden="true" />
-                  เลขมงคล
-                </dt>
-                <dd className="text-xl font-heading text-accentBright">
-                  {structured?.luckyNumbers?.join(', ') || dailyReading?.luckyNumber || '-'}
-                </dd>
-              </div>
-              <div>
-                <dt className="flex items-center justify-center gap-1.5 text-sm text-inkMuted mb-1">
-                  <Palette className="w-4 h-4" aria-hidden="true" />
-                  สีมงคล
-                </dt>
-                <dd className="text-xl font-heading text-accentBright">
-                  {localizeColorName(structured?.luckyColor || dailyReading?.luckyColor || '-')}
-                </dd>
-              </div>
-              <div>
-                <dt className="flex items-center justify-center gap-1.5 text-sm text-inkMuted mb-1">
-                  <Compass className="w-4 h-4" aria-hidden="true" />
-                  ทิศมงคล
-                </dt>
-                <dd className="text-xl font-heading text-accentBright">
-                  {structured?.luckyDirection || dailyReading?.luckyDirection || '-'}
-                </dd>
-              </div>
-              <div>
-                <dt className="flex items-center justify-center gap-1.5 text-sm text-inkMuted mb-1">
-                  <Clock className="w-4 h-4" aria-hidden="true" />
-                  เวลามงคล
-                </dt>
-                <dd className="text-lg font-heading text-accentBright">
-                  {structured?.luckyMoment || '-'}
-                </dd>
-              </div>
-            </dl>
+            <div className="order-1 mx-auto w-36 md:order-2 md:w-full">
+              <Image
+                src="/assets/clay/little-oracle-master-v1.png"
+                alt="มาสคอตนักพยากรณ์ของสายมู"
+                width={1024}
+                height={1024}
+                priority
+                sizes="(min-width: 768px) 208px, 144px"
+                className="h-auto w-full animate-float-1 object-contain motion-reduce:animate-none"
+              />
+            </div>
           </div>
         </section>
 
-        {/* ===== READING SECTION ===== */}
-        {structured?.overallReading && (
-          <section className="mb-8">
-            <div className="p-5 md:p-6 rounded-2xl bg-surface border border-edge">
-              <p className="text-lg md:text-xl leading-relaxed text-ink/90 font-oracle flex gap-3">
-                <span
-                  className="mt-2.5 w-1.5 h-1.5 rounded-full shrink-0 bg-accentBright"
-                  aria-hidden="true"
-                />
-                <span>{showFullReading ? structured.overallReading : readingPreview}</span>
-              </p>
-              {structured.overallReading.length > 150 && (
-                <button
-                  onClick={() => setShowFullReading(!showFullReading)}
-                  className="mt-4 min-h-11 text-base font-heading flex items-center gap-1 transition-colors text-accentBright hover:text-accentSoft"
-                >
-                  {showFullReading ? 'ย่อ' : 'อ่านต่อ'}
-                  <ChevronDown className={`w-4 h-4 transition-transform ${showFullReading ? 'rotate-180' : ''}`} />
-                </button>
-              )}
+        <section className="mt-6" aria-labelledby="lucky-moments-title">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 id="lucky-moments-title" className="font-heading text-xl font-semibold text-ink">จังหวะดีของวันนี้</h2>
+              <p className="mt-0.5 text-sm text-inkMuted">หยิบไปใช้เมื่อเจ้าต้องตัดสินใจเล็ก ๆ</p>
             </div>
+            {dailyElementNameThai && dailyElementKey && (
+              <div className="flex items-center gap-2 rounded-full border border-edge bg-surface px-3 py-2">
+                <ElementClayImage element={dailyElementKey} alt="" sizes="32px" className="size-8" />
+                <p className="text-sm text-inkMuted">
+                  ธาตุวันนี้ <span className="font-heading text-ink">{dailyElementNameThai}</span>
+                  <InfoTooltip text="ธาตุที่มีอิทธิพลต่อพลังงานของวันนี้" />
+                </p>
+              </div>
+            )}
+          </div>
+          <dl className="grid grid-cols-2 overflow-hidden rounded-2xl border border-edge bg-surface sm:grid-cols-4">
+            {[
+              { label: 'เลขมงคล', value: structured?.luckyNumbers?.join(', ') || dailyReading?.luckyNumber || '-', icon: Hash },
+              { label: 'สีมงคล', value: localizeColorName(structured?.luckyColor || dailyReading?.luckyColor || '-'), icon: Palette },
+              { label: 'ทิศมงคล', value: structured?.luckyDirection || dailyReading?.luckyDirection || '-', icon: Compass },
+              { label: 'เวลามงคล', value: structured?.luckyMoment || '-', icon: Clock },
+            ].map(({ label, value, icon: Icon }, index) => (
+              <div
+                key={label}
+                className={`px-4 py-4 ${index % 2 === 1 ? 'border-l border-edge' : ''} ${index >= 2 ? 'border-t border-edge sm:border-t-0' : ''} ${index > 0 ? 'sm:border-l' : ''}`}
+              >
+                <dt className="flex items-center gap-1.5 text-xs text-inkMuted">
+                  <Icon className="size-3.5 text-accentBright" aria-hidden="true" />
+                  {label}
+                </dt>
+                <dd className="mt-1 truncate font-heading text-base text-ink">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        {structured?.overallReading && (
+          <section className="mx-auto mt-10 max-w-3xl" aria-labelledby="today-reading-title">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-5 text-accentBright" aria-hidden="true" />
+              <h2 id="today-reading-title" className="font-heading text-xl font-semibold text-ink">คำทำนายวันนี้</h2>
+            </div>
+            <p className="mt-4 border-t border-edge pt-5 font-oracle text-lg leading-[1.8] text-ink md:text-xl">
+              {showFullReading ? structured.overallReading : readingPreview}
+            </p>
+            {structured.overallReading.length > 150 && (
+              <button
+                type="button"
+                onClick={() => setShowFullReading(!showFullReading)}
+                className="mt-3 inline-flex min-h-11 items-center gap-1 rounded-lg px-2 font-heading text-base text-accentBright transition-colors hover:bg-accent/10 hover:text-accentSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+              >
+                {showFullReading ? 'ย่อคำทำนาย' : 'อ่านต่อ'}
+                <ChevronDown className={`size-4 transition-transform ${showFullReading ? 'rotate-180' : ''}`} aria-hidden="true" />
+              </button>
+            )}
           </section>
         )}
 
-        {/* ===== CATEGORY SCORES - one responsive list: swipe on mobile, grid on desktop ===== */}
         {structured?.categories && (
-          <section className="mb-8">
-            <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 gap-3 md:grid md:grid-cols-2 md:overflow-visible md:mx-0 md:px-0">
-              {DAILY_CATEGORY_KEYS.map((key) => {
+          <section className="mt-12" aria-labelledby="daily-areas-title">
+            <div className="mb-4 flex items-end justify-between gap-4">
+              <div>
+                <h2 id="daily-areas-title" className="font-heading text-2xl font-semibold text-ink">วันนี้แต่ละด้านเป็นยังไงบ้าง</h2>
+                <p className="mt-1 text-sm text-inkMuted">แตะหนึ่งด้านเพื่ออ่านรายละเอียด</p>
+              </div>
+              <p className="hidden text-sm text-inkMuted sm:block">เปอร์เซ็นต์คือระดับพลังของวัน</p>
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-edge bg-surface shadow-lg shadow-accent/5">
+              {DAILY_CATEGORY_KEYS.map((key, index) => {
                 const config = FORTUNE_CATEGORY_CONFIG[key];
                 const data = structured.categories[key];
-                const starClass = CATEGORY_STAR_CLASS[key];
                 const isExpanded = expandedCategory === key;
                 const panelId = `daily-category-panel-${key}`;
+                const percent = scoreToPercent(data.score);
+                const isLove = key === 'love';
+                const accentClass = isLove ? 'bg-pink-500' : 'bg-accentBright';
+                const textAccentClass = isLove ? 'text-pink-600 dark:text-pink-400' : 'text-accentBright';
 
                 return (
-                  <div
-                    key={key}
-                    className={`snap-center shrink-0 w-[78%] md:w-auto md:shrink rounded-xl bg-surface/50 border transition-colors ${
-                      isExpanded ? `${starClass.border} md:col-span-2` : 'border-edge'
-                    }`}
-                  >
+                  <div key={key} className={index > 0 ? 'border-t border-edge' : ''}>
                     <button
                       type="button"
                       onClick={() => setExpandedCategory(isExpanded ? null : key)}
                       aria-expanded={isExpanded}
                       aria-controls={panelId}
-                      className="w-full text-left p-4 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright rounded-xl"
+                      className="grid w-full grid-cols-[3.5rem_1fr_auto] items-center gap-3 p-4 text-left transition-colors hover:bg-surface2/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright md:grid-cols-[4.5rem_1fr_12rem_auto] md:gap-5 md:p-5"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <CategoryClayImage category={key} sizes="32px" className="w-8 h-8" />
-                          <span className="font-heading text-lg text-ink">{config.label}</span>
+                      <CategoryClayImage category={key} sizes="72px" className="size-14 md:size-[4.5rem]" />
+                      <div className="min-w-0">
+                        <p className="font-heading text-lg font-semibold text-ink">{config.label}</p>
+                        <p className="mt-0.5 line-clamp-2 text-sm leading-relaxed text-inkMuted md:text-base">{data.tip}</p>
+                      </div>
+                      <div className="hidden md:block">
+                        <div className="flex items-center justify-between gap-3 text-sm">
+                          <span className="text-inkMuted">พลังวันนี้</span>
+                          <span className={`font-heading tabular-nums ${textAccentClass}`}>{percent}%</span>
                         </div>
-                        <div className="flex gap-0.5" role="img" aria-label={`คะแนน ${data.score} จาก 5`}>
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`w-5 h-5 ${star <= data.score ? starClass.filled : EMPTY_STAR_CLASS}`}
-                              strokeWidth={1.5}
-                              aria-hidden="true"
-                            />
-                          ))}
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-edgeSoft" aria-hidden="true">
+                          <div className={`h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none ${accentClass}`} style={{ width: `${percent}%` }} />
                         </div>
                       </div>
-                      <p className="text-base text-ink/80">{data.tip}</p>
+                      <div className="flex items-center gap-2">
+                        <span className={`font-heading text-lg tabular-nums md:hidden ${textAccentClass}`}>{percent}%</span>
+                        <ChevronDown className={`size-5 text-inkMuted transition-transform ${isExpanded ? 'rotate-180' : ''}`} aria-hidden="true" />
+                      </div>
                     </button>
-
-                    <div id={panelId} hidden={!isExpanded} className="px-4 pb-4">
-                      <p className="pt-3 border-t border-edge text-base text-ink/80 font-oracle leading-relaxed">
+                    <div id={panelId} hidden={!isExpanded} className="px-4 pb-5 md:px-5 md:pb-6">
+                      <p className="ml-0 max-w-[64ch] border-t border-edge pt-4 font-oracle text-lg leading-[1.8] text-ink md:ml-[5.75rem]">
                         {data.reading}
                       </p>
                     </div>
@@ -286,69 +279,64 @@ export default function TodayPage() {
           </section>
         )}
 
-        {/* ===== ทำ / เลี่ยง - one card, legacy warnings folded into เลี่ยง ===== */}
         {(doItems.length > 0 || avoidItems.length > 0) && (
-          <section className="mb-8">
-            <div className="rounded-2xl bg-surface border border-edge p-4 md:p-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {doItems.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <CheckCircle2 className="w-5 h-5 text-success" aria-hidden="true" />
-                      <h2 className="font-heading text-base text-success">ควรทำ</h2>
-                    </div>
-                    <ul className="space-y-3">
-                      {visibleDoItems.map((item, i) => (
-                        <li key={i} className="text-sm text-ink/80 leading-relaxed pl-4 relative before:content-['·'] before:absolute before:left-0 before:text-success">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+          <section className="mt-12 overflow-hidden rounded-2xl border border-edge bg-surface2/55" aria-label="สิ่งที่ควรทำและควรเลี่ยง">
+            <div className="grid md:grid-cols-2">
+              {doItems.length > 0 && (
+                <div className="p-5 md:p-7">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="size-5 text-success" aria-hidden="true" />
+                    <h2 className="font-heading text-xl font-semibold text-ink">ลองทำแบบนี้</h2>
                   </div>
-                )}
+                  <ul className="mt-4 space-y-3">
+                    {visibleDoItems.map((item, i) => (
+                      <li key={i} className="relative pl-5 text-sm leading-relaxed text-ink md:text-base before:absolute before:left-0 before:top-2.5 before:size-1.5 before:rounded-full before:bg-success">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-                {avoidItems.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <XCircle className="w-5 h-5 text-warn" aria-hidden="true" />
-                      <h2 className="font-heading text-base text-warn">ควรเลี่ยง</h2>
-                    </div>
-                    <ul className="space-y-3">
-                      {visibleAvoidItems.map((item, i) => (
-                        <li key={i} className="text-sm text-ink/80 leading-relaxed pl-4 relative before:content-['·'] before:absolute before:left-0 before:text-warn">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+              {avoidItems.length > 0 && (
+                <div className="border-t border-edge p-5 md:border-l md:border-t-0 md:p-7">
+                  <div className="flex items-center gap-2">
+                    <XCircle className="size-5 text-warn" aria-hidden="true" />
+                    <h2 className="font-heading text-xl font-semibold text-ink">เก็บไว้ในใจ</h2>
                   </div>
-                )}
-              </div>
-
-              {hiddenGuidanceCount > 0 && !showAllGuidance && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllGuidance(true)}
-                  className="mt-4 min-h-11 w-full flex items-center justify-center gap-1 font-heading text-sm text-accentBright hover:text-accentSoft transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright rounded"
-                >
-                  ดูคำแนะนำทั้งหมด ({hiddenGuidanceCount})
-                  <ChevronDown className="w-4 h-4" aria-hidden="true" />
-                </button>
+                  <ul className="mt-4 space-y-3">
+                    {visibleAvoidItems.map((item, i) => (
+                      <li key={i} className="relative pl-5 text-sm leading-relaxed text-ink md:text-base before:absolute before:left-0 before:top-2.5 before:size-1.5 before:rounded-full before:bg-warn">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
+
+            {hiddenGuidanceCount > 0 && !showAllGuidance && (
+              <button
+                type="button"
+                onClick={() => setShowAllGuidance(true)}
+                className="flex min-h-12 w-full items-center justify-center gap-1 border-t border-edge bg-surface/70 font-heading text-sm text-accentBright transition-colors hover:bg-accent/10 hover:text-accentSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright"
+              >
+                ดูคำแนะนำทั้งหมด ({hiddenGuidanceCount})
+                <ChevronDown className="size-4" aria-hidden="true" />
+              </button>
+            )}
           </section>
         )}
 
-        {/* ===== SHARE BUTTON ===== */}
         <button
+          type="button"
           onClick={() => setShowShareSheet(true)}
-          className="w-full py-4 rounded-xl font-heading text-lg bg-accent text-accentInk flex items-center justify-center gap-2 transition-all active:scale-[0.98] border"
-          style={{ borderColor: dailyElementKey ? `var(--el-${dailyElementKey})` : 'transparent' }}
+          className="mt-10 flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 font-heading text-lg text-accentInk shadow-lg shadow-accent/30 transition-all hover:bg-accentBright active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-ground"
         >
-          <Share2 className="w-5 h-5" />
+          <Share2 className="size-5" aria-hidden="true" />
           แชร์ดวงวันนี้
         </button>
 
-        {/* Ad sits after the full value/action unit so it never interrupts the reading */}
         <PawjaiAdsBanner />
 
         <ShareSheet
@@ -363,7 +351,6 @@ export default function TodayPage() {
           }}
         />
 
-        {structured && <AutoDonationModal />}
       </div>
     </div>
   );

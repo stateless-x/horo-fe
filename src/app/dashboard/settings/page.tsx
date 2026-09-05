@@ -309,12 +309,12 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] bg-ground pb-4">
-      {/* Header */}
-      <div className="sticky top-14 z-30 bg-ground/80 backdrop-blur-sm border-b border-surface2">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-heading text-ink">ตั้งค่า</h1>
+    <div className="min-h-[calc(100vh-3.5rem)] bg-ground pb-10">
+      <div className="border-b border-edge bg-surface">
+        <div className="max-w-2xl mx-auto px-4 py-5 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="font-heading text-2xl font-semibold text-ink">โปรไฟล์ของ {displayName}</h1>
+            <p className="mt-1 text-sm text-inkMuted">ข้อมูลนี้ช่วยให้คำทำนายตรงกับเจ้ามากขึ้น</p>
           </div>
 
           {/* Edit button in header when in view mode */}
@@ -358,7 +358,7 @@ export default function SettingsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="p-6 space-y-6">
+          <Card className="rounded-2xl p-6 space-y-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)]">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-heading text-ink">ข้อมูลส่วนตัว</h2>
               {isEditMode && (
@@ -432,7 +432,7 @@ export default function SettingsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <Card className="p-6 space-y-6">
+          <Card className="rounded-2xl p-6 space-y-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)]">
             <h2 className="text-lg font-heading text-ink">ข้อมูลการเกิด</h2>
 
             {/* Birth Date */}
@@ -576,7 +576,7 @@ export default function SettingsPage() {
                       onClick={() => setMbtiType(null)}
                       className="text-sm text-inkMuted hover:text-danger transition-colors pl-6"
                     >
-                      ✕ ล้างค่า MBTI
+                      <X className="mr-1 inline size-4" aria-hidden="true" />ล้างค่า MBTI
                     </button>
                   )}
 
@@ -646,7 +646,7 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
           >
-            <Card className="p-6 space-y-4">
+            <Card className="rounded-2xl p-6 space-y-4 shadow-[0_18px_50px_rgba(107,33,168,0.08)]">
               <h2 className="text-lg font-heading text-ink">บัญชี</h2>
               <Button
                 onClick={handleLogout}

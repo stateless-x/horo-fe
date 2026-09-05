@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { SkipForward } from 'lucide-react';
 import { useOnboardingStore } from "@/stores/onboarding";
 
 /**
@@ -15,21 +16,28 @@ import { useOnboardingStore } from "@/stores/onboarding";
 export function StepWelcome() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { nextStep } = useOnboardingStore();
+  const hasAdvancedRef = useRef(false);
+
+  const advanceOnce = useCallback(() => {
+    if (hasAdvancedRef.current) return;
+    hasAdvancedRef.current = true;
+    nextStep();
+  }, [nextStep]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleEnded = () => {
-      // Auto-advance to next step when video ends
-      setTimeout(() => {
-        nextStep();
-      }, 500);
-    };
+    const handleEnded = () => window.setTimeout(advanceOnce, 500);
 
     video.addEventListener("ended", handleEnded);
     return () => video.removeEventListener("ended", handleEnded);
-  }, [nextStep]);
+  }, [advanceOnce]);
+
+  const handleSkip = () => {
+    videoRef.current?.pause();
+    advanceOnce();
+  };
 
   return (
     <motion.div
@@ -50,12 +58,14 @@ export function StepWelcome() {
         <source src="/horo-welcome.mp4" type="video/mp4" />
       </video>
 
-      {/* Skip button for impatient users */}
+      {/* The reveal has no loop attribute: it plays once, then advances. */}
       <button
-        onClick={nextStep}
-        className="absolute bottom-8 right-8 text-inkMuted/50 hover:text-ink text-sm transition-colors"
+        type="button"
+        onClick={handleSkip}
+        className="absolute bottom-6 right-4 z-10 inline-flex min-h-11 items-center gap-2 rounded-lg border border-edge bg-ground/80 px-4 font-heading text-sm text-inkMuted backdrop-blur transition-colors hover:border-accent/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright sm:bottom-8 sm:right-8"
       >
-        ข้าม
+        <SkipForward className="size-4" aria-hidden="true" />
+        ข้ามแอนิเมชัน
       </button>
     </motion.div>
   );

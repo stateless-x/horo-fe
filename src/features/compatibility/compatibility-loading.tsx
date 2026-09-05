@@ -1,6 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 
+const PARTICLES = [
+  [8, 16, 0.2, 0], [18, 72, 0.35, 0.3], [29, 32, 0.25, 0.9], [39, 84, 0.4, 1.3],
+  [52, 13, 0.25, 0.5], [63, 63, 0.3, 1.7], [75, 28, 0.4, 0.7], [87, 78, 0.2, 1.1],
+  [94, 43, 0.35, 1.9], [11, 48, 0.3, 0.6], [25, 8, 0.2, 1.5], [46, 55, 0.4, 0.2],
+] as const;
+
 interface CompatibilityLoadingProps {
   calculationStep: string;
 }
@@ -8,24 +14,24 @@ interface CompatibilityLoadingProps {
 export function CompatibilityLoading({ calculationStep }: CompatibilityLoadingProps) {
   return (
     <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        {PARTICLES.map(([left, top, opacity, delay], i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-accent/20 rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${left}%`,
+              top: `${top}%`,
             }}
             animate={{
-              opacity: [0.2, 0.8, 0.2],
+              opacity: [opacity, 0.8, opacity],
               scale: [1, 1.5, 1],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 3.5 + (i % 3) * 0.4,
               repeat: Infinity,
               ease: 'easeInOut',
-              delay: Math.random() * 2,
+              delay,
             }}
           />
         ))}

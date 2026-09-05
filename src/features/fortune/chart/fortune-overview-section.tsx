@@ -1,10 +1,12 @@
-import { ArrowRight, Check, Sparkles, TriangleAlert } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import type {
   BirthStarDetail,
   FortuneReadingCategory,
   Recommendations,
 } from '@/lib-packages/shared/types/astrology';
 import { localizeColorName, localizeDayName } from '@/lib/thai-localize';
+import { GuidanceColumns } from '@/features/fortune/chart/fortune-guidance';
 
 interface FortuneOverviewSectionProps {
   fortuneReadings: FortuneReadingCategory[];
@@ -78,29 +80,32 @@ export function FortuneOverviewSection({
         </div>
       )}
 
-      <div className="grid gap-8 border-b border-edge py-8 sm:grid-cols-2">
-        {recommendations.dos.length > 0 && <div>
-          <div className="flex items-center gap-2 text-success">
-            <Check className="size-5" aria-hidden="true" />
-            <h3 className="font-heading font-semibold">ทำสิ่งนี้ก่อน</h3>
+      <div className="border-b border-edge py-8">
+        <div className="flex items-center gap-4">
+          <Image
+            src="/assets/clay/chart-scroll-oracle.webp"
+            alt=""
+            width={1254}
+            height={1254}
+            sizes="72px"
+            className="size-16 shrink-0 object-contain sm:size-[72px]"
+          />
+          <div>
+            <h3 className="font-heading text-xl font-semibold text-ink">แนวทางที่หยิบไปใช้ได้</h3>
+            <p className="mt-1 font-thai text-sm text-inkMuted">เก็บไว้เป็นเข็มทิศ ไม่ต้องทำทุกอย่างในคราวเดียว</p>
           </div>
-          <ul className="mt-3 space-y-2 font-thai leading-relaxed text-ink">
-            {recommendations.dos.slice(0, 2).map((item) => <li key={item}>• {item}</li>)}
-          </ul>
-        </div>}
-        {recommendations.donts.length > 0 && <div>
-          <div className="flex items-center gap-2 text-warn">
-            <TriangleAlert className="size-5" aria-hidden="true" />
-            <h3 className="font-heading font-semibold">ระวังเรื่องนี้</h3>
-          </div>
-          <ul className="mt-3 space-y-2 font-thai leading-relaxed text-ink">
-            {recommendations.donts.slice(0, 2).map((item) => <li key={item}>• {item}</li>)}
-          </ul>
-        </div>}
+        </div>
+        <GuidanceColumns
+          positiveItems={recommendations.dos.slice(0, 2)}
+          negativeItems={recommendations.donts.slice(0, 2)}
+          positiveLabel="เริ่มจากสิ่งนี้"
+          negativeLabel="พักเรื่องนี้ไว้ก่อน"
+          className="mt-6"
+        />
       </div>
 
       <div className="py-8">
-        <h3 className="font-heading text-lg font-semibold text-ink">ตัวช่วยเล็ก ๆ ของคุณ</h3>
+        <h3 className="font-heading text-lg font-semibold text-ink">ตัวช่วยเล็ก ๆ ของเจ้า</h3>
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
           <div><dt className="text-sm text-inkMuted">สีมงคล</dt><dd className="mt-1 font-heading text-ink">{localizeColorName(birthStar.luckyColor)}</dd></div>
           <div><dt className="text-sm text-inkMuted">เลขมงคล</dt><dd className="mt-1 font-heading text-ink">{birthStar.luckyNumber}</dd></div>

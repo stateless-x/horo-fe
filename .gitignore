@@ -22,3 +22,6 @@ bun.lockb
 
 # Vercel
 .vercel
+
+# Impeccable review artifacts (local tooling screenshots)
+.impeccable/review/

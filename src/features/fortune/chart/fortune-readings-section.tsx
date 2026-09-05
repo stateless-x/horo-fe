@@ -3,14 +3,13 @@
 import { useState } from 'react';
 import {
   ChevronDown,
-  Lightbulb,
   Orbit,
-  TriangleAlert,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { FortuneReadingCategory } from '@/lib-packages/shared/types/astrology';
 import { CategoryClayImage } from '@/components/ui/category-clay-image';
 import { FORTUNE_CATEGORY_CONFIG, type FortuneCategoryKey } from '@/lib/fortune-category-config';
+import { FortuneGuidance } from '@/features/fortune/chart/fortune-guidance';
 
 interface FortuneReadingsSectionProps {
   fortuneReadings: FortuneReadingCategory[];
@@ -39,7 +38,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
         <h2 id="fortune-readings-title" className="font-heading text-2xl font-semibold text-ink sm:text-3xl">
           คำทำนาย 6 ด้านของชีวิต
         </h2>
-        <p className="mt-2 font-thai text-inkMuted">อ่านภาพรวมก่อน แล้วเลือกเปิดเฉพาะเรื่องที่คุณสนใจ</p>
+        <p className="mt-2 font-thai text-inkMuted">อ่านภาพรวมก่อน แล้วเลือกเปิดเฉพาะเรื่องที่อยากรู้</p>
       </div>
 
       <div className="divide-y divide-edge border-y border-edge">
@@ -95,28 +94,13 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                         {category.reading}
                       </p>
 
-                      <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                        {category.tips.length > 0 && (
-                          <div>
-                            <h3 className="flex items-center gap-2 font-heading font-semibold text-success">
-                              <Lightbulb className="size-5" aria-hidden="true" /> สิ่งที่ช่วยคุณ
-                            </h3>
-                            <ul className="mt-3 space-y-2 font-thai leading-relaxed text-ink">
-                              {category.tips.map((tip, index) => <li key={`${tip}-${index}`}>• {tip}</li>)}
-                            </ul>
-                          </div>
-                        )}
-                        {category.warnings.length > 0 && (
-                          <div>
-                            <h3 className="flex items-center gap-2 font-heading font-semibold text-warn">
-                              <TriangleAlert className="size-5" aria-hidden="true" /> สิ่งที่ควรระวัง
-                            </h3>
-                            <ul className="mt-3 space-y-2 font-thai leading-relaxed text-ink">
-                              {category.warnings.map((warning, index) => <li key={`${warning}-${index}`}>• {warning}</li>)}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
+                      {categoryConfig && (
+                        <FortuneGuidance
+                          category={category.key as FortuneCategoryKey}
+                          tips={category.tips}
+                          warnings={category.warnings}
+                        />
+                      )}
                     </div>
                   </motion.div>
                 )}

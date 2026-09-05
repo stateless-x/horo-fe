@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { BE_OFFSET, createUTCDateFromBE, type RelationshipType } from '@/lib-packages/shared';
 import { useInfiniteQuery, useQueryClient, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Sparkles, Lightbulb, Target } from 'lucide-react';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import {
   RELATIONSHIP_CONFIG,
@@ -220,29 +220,23 @@ export default function CompatibilityPage() {
   return (
     <div className="min-h-[calc(100vh-3.5rem)] p-4 md:p-6">
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          <div className="text-center space-y-3">
-            <h1 className="text-3xl md:text-4xl font-heading text-ink">ส่องดวงความสัมพันธ์</h1>
-
-            <div className="bg-surface2/20 border border-accent/30 rounded-xl p-4 md:p-6 space-y-3">
-              <h3 className="text-lg md:text-xl font-heading text-accentBright">
-                ค้นพบความลับของความสัมพันธ์
-              </h3>
-              <ul className="text-left space-y-2 text-inkMuted text-sm md:text-base">
-                <li className="flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-accentBright mt-1 flex-shrink-0" aria-hidden="true" />
-                  <span>วิเคราะห์ธาตุและดาวประจำวันเกิดของทั้งสองคน</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Lightbulb className="w-4 h-4 text-accentBright mt-1 flex-shrink-0" aria-hidden="true" />
-                  <span>รับคำแนะนำเฉพาะตัวสำหรับทุกความสัมพันธ์</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Target className="w-4 h-4 text-accentBright mt-1 flex-shrink-0" aria-hidden="true" />
-                  <span>คนคุย คนรัก หัวหน้า เพื่อนร่วมงาน เพื่อน ครอบครัว</span>
-                </li>
-              </ul>
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="relative overflow-hidden rounded-2xl border border-edge bg-surface px-5 py-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)] md:px-8 md:py-7">
+          <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-accentBright/10 blur-3xl" aria-hidden="true" />
+          <div className="relative flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
+            <Image
+              src="/assets/clay/little-oracle-master-v1.png"
+              alt="มาสคอตนักพยากรณ์ของสายมู"
+              width={1024}
+              height={1024}
+              sizes="112px"
+              priority
+              className="size-24 shrink-0 object-contain sm:size-28"
+            />
+            <div>
+              <h1 className="font-heading text-3xl font-semibold text-ink md:text-4xl">ส่องดวงความสัมพันธ์</h1>
+              <p className="mt-2 max-w-[44ch] font-thai leading-relaxed text-inkMuted">
+                เลือกความสัมพันธ์ แล้วบอกชื่อกับวันเกิดของอีกฝ่าย เหลือให้ดวงดาวอ่านจังหวะของทั้งคู่
+              </p>
             </div>
           </div>
         </motion.div>

@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowLeftRight, Share2, Stars } from 'lucide-react';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
+import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
 import {
   RELATIONSHIP_CONFIG,
   toThaiElement,
@@ -70,42 +71,46 @@ export function CompatibilityResultView({
         {/* Element visualization */}
         {result.userElement && result.partnerElement && (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
-            <Card className="bg-gradient-to-br from-surface2 to-surface">
-              <CardHeader>
-                <CardTitle className="text-center flex items-center justify-center gap-2">
-                  <Stars className="w-6 h-6 text-accentBright" aria-hidden="true" />
-                  <span>พลังธาตุของทั้งสองคน</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center gap-4 py-6">
-                  <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ink">{toThaiElement(result.userElement)}</span>
-                    </div>
-                    <p className="text-sm md:text-base text-ink">เจ้า</p>
-                    {result.userDayMaster && <p className="text-xs md:text-sm text-inkMuted">{result.userDayMaster}</p>}
-                  </div>
-
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.3, type: 'spring' }}
-                    className="text-inkMuted"
-                  >
-                    <ArrowLeftRight className="w-8 h-8" aria-hidden="true" />
-                  </motion.div>
-
-                  <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-accentBright/20 border-2 border-accentBright flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ink">{toThaiElement(result.partnerElement)}</span>
-                    </div>
-                    <p className="text-sm md:text-base text-ink">{result.partnerName}</p>
-                    {result.partnerDayMaster && <p className="text-xs md:text-sm text-inkMuted">{result.partnerDayMaster}</p>}
-                  </div>
+            <section aria-labelledby="compatibility-elements-title" className="rounded-2xl border border-edge bg-surface px-5 py-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)] md:px-7 md:py-7">
+              <h2 id="compatibility-elements-title" className="flex items-center justify-center gap-2 font-heading text-lg font-semibold text-ink">
+                <Stars className="size-5 text-accentBright" aria-hidden="true" />
+                พลังธาตุของทั้งสองคน
+              </h2>
+              <div className="mt-5 flex items-center justify-center gap-5 sm:gap-8">
+                <div className="min-w-24 text-center">
+                  <ElementClayImage
+                    element={result.userElement as ClayElement}
+                    alt={`โมเดลดินปั้น ธาตุ${toThaiElement(result.userElement)}`}
+                    sizes="80px"
+                    className="mx-auto size-20"
+                  />
+                  <p className="mt-2 font-heading text-ink">เจ้า</p>
+                  <p className="mt-0.5 text-sm text-inkMuted">ธาตุ{toThaiElement(result.userElement)}</p>
+                  {result.userDayMaster && <p className="mt-1 text-xs text-inkMuted">{result.userDayMaster}</p>}
                 </div>
-              </CardContent>
-            </Card>
+
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3, type: 'spring' }}
+                  className="text-pink-600 dark:text-pink-400"
+                >
+                  <ArrowLeftRight className="size-7" aria-hidden="true" />
+                </motion.div>
+
+                <div className="min-w-24 text-center">
+                  <ElementClayImage
+                    element={result.partnerElement as ClayElement}
+                    alt={`โมเดลดินปั้น ธาตุ${toThaiElement(result.partnerElement)}`}
+                    sizes="80px"
+                    className="mx-auto size-20"
+                  />
+                  <p className="mt-2 font-heading text-ink">{result.partnerName}</p>
+                  <p className="mt-0.5 text-sm text-inkMuted">ธาตุ{toThaiElement(result.partnerElement)}</p>
+                  {result.partnerDayMaster && <p className="mt-1 text-xs text-inkMuted">{result.partnerDayMaster}</p>}
+                </div>
+              </div>
+            </section>
           </motion.div>
         )}
 

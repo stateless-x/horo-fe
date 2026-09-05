@@ -113,12 +113,16 @@ export function FourPillarsSection({
   }, [updateActiveFromScroll]);
 
   const scrollToIndex = (index: number) => {
+    const track = trackRef.current;
     const target = slideRefs.current[index];
-    if (!target) return;
-    target.scrollIntoView({
+    if (!track || !target) return;
+    // Track-local scrollTo, same as the initial centering above. scrollIntoView
+    // on a child of a snap-mandatory track is unreliable in Chromium: the snap
+    // logic can cancel the programmatic scroll or snap back, and in testing
+    // arrow taps were silently dropped about half the time.
+    track.scrollTo({
+      left: target.offsetLeft - (track.clientWidth - target.offsetWidth) / 2,
       behavior: reduceMotion ? 'auto' : 'smooth',
-      inline: 'center',
-      block: 'nearest',
     });
     setActiveIndex(index);
   };

@@ -99,8 +99,10 @@ export default function TodayPage() {
     : null;
   const dailyElementNameThai = dailyElementKey ? ELEMENT_NAMES_THAI[dailyElementKey] : null;
   const structured = dailyReading?.structuredContent;
-  const overallScore = structured?.overallScore ?? 3;
-  const overallPercent = clampScore(overallScore);
+  // No fabricated default: a legacy reading without a structured score simply
+  // shows no bar. The old `?? 3` was a 1-to-5 era value and rendered as 3%.
+  const overallPercent =
+    typeof structured?.overallScore === 'number' ? clampScore(structured.overallScore) : null;
   const hookLine = getDailyHookLine(structured);
 
   // Truncate reading for preview
@@ -132,22 +134,24 @@ export default function TodayPage() {
               <h1 className="mt-2 max-w-[18ch] text-balance font-heading text-3xl font-semibold leading-tight text-ink md:text-4xl">
                 {structured?.dailyTheme || 'วันนี้มีเรื่องดีรออยู่'}
               </h1>
-              <div
-                className="mt-4 max-w-sm"
-                role="progressbar"
-                aria-label="พลังวันนี้"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={overallPercent}
-              >
-                <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-sm text-inkMuted">พลังวันนี้จาก 4 ด้าน</span>
-                  <span className="font-heading text-xl tabular-nums text-accentBright">{overallPercent}%</span>
+              {overallPercent !== null && (
+                <div
+                  className="mt-4 max-w-sm"
+                  role="progressbar"
+                  aria-label="พลังวันนี้"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={overallPercent}
+                >
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span className="text-sm text-inkMuted">พลังวันนี้จาก 4 ด้าน</span>
+                    <span className="font-heading text-xl tabular-nums text-accentBright">{overallPercent}%</span>
+                  </div>
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-edgeSoft">
+                    <div className="h-full rounded-full bg-accentBright transition-[width] duration-500 motion-reduce:transition-none" style={{ width: `${overallPercent}%` }} />
+                  </div>
                 </div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-edgeSoft">
-                  <div className="h-full rounded-full bg-accentBright transition-[width] duration-500 motion-reduce:transition-none" style={{ width: `${overallPercent}%` }} />
-                </div>
-              </div>
+              )}
               {hookLine && hookLine !== structured?.dailyTheme && (
                 <p className="mt-3 max-w-[42ch] font-oracle text-lg leading-relaxed text-accentFaint md:text-xl">
                   {hookLine}

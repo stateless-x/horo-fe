@@ -9,6 +9,7 @@ import { useFortuneGeneration } from '@/features/fortune/hooks/use-fortune-gener
 import { useFortuneData } from '@/features/fortune/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
+import { useMinLoading } from '@/hooks/use-min-loading';
 import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ElementProfileSection } from '@/features/fortune/chart/element-profile-section';
 import { FourPillarsSection } from '@/features/fortune/chart/four-pillars-section';
@@ -101,7 +102,11 @@ export default function FortuneChartPage() {
   };
 
   // Show loading skeleton while initializing or generating
-  if (sessionLoading || !session || loadingState !== 'complete') {
+  // Floor the loader at 3s even on a cache hit; the skeleton keeps rotating
+  // copy while loadingState is already 'complete'.
+  const holdLoader = useMinLoading(loadingState !== 'complete');
+
+  if (sessionLoading || !session || holdLoader) {
     return <LoadingSkeleton loadingState={loadingState} />;
   }
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMinLoading } from '@/hooks/use-min-loading';
+
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -40,6 +42,8 @@ export default function CompatibilityPage() {
   const [calculationStep, setCalculationStep] = useState('');
   // Set once the scripted steps run out, which is when the real LLM wait starts.
   const [stepsExhausted, setStepsExhausted] = useState(false);
+  // Floor the calculating screen at 3s so its copy and sponsored card are seen.
+  const showCalculating = useMinLoading(calculating);
   const [error, setError] = useState('');
 
   // Result state
@@ -199,7 +203,7 @@ export default function CompatibilityPage() {
   }
 
   // --- Calculating screen ---
-  if (calculating) {
+  if (showCalculating) {
     return (
       <CompatibilityLoading
         calculationStep={calculationStep}

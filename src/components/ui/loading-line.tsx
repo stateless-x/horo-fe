@@ -7,16 +7,15 @@ import { useLoadingLines } from '@/features/fortune/hooks/use-loading-lines';
 import { useIsIOS } from '@/hooks/use-is-ios';
 import type { LoadingSurface, SponsoredLine } from '@/lib-packages/shared';
 
-/** Slow on purpose. Long enough to actually read a full Thai sentence. */
-const REGULAR_MS = 8_000;
-/** A sponsored card holds longer, since it carries a link worth noticing. */
-const SPONSORED_MS = 12_000;
+/** Long enough to read a full Thai sentence, short enough not to drag. */
+const REGULAR_MS = 5_000;
 /**
- * One sponsored card per loading session, never in slot 0 so the oracle speaks
- * first, and always within the first few slots so a typical wait actually
- * reaches it. Which sponsor shows is random too.
+ * The sponsored card is slot 0 and holds at least as long as the loading
+ * floor (useMinLoading, 3s), so it is seen even on a cache hit. That is the
+ * point of the floor. One card per page load; which sponsor is random.
  */
-const SPONSORED_WITHIN_SLOTS = 5;
+const SPONSORED_MS = 4_000;
+const AD_SLOT = 0;
 
 /**
  * Surfaces that have already shown their ad during this page load. Module
@@ -25,12 +24,6 @@ const SPONSORED_WITHIN_SLOTS = 5;
  * resets on a real reload, which is a new wait and may show one again.
  */
 const adShownThisLoad = new Set<LoadingSurface>();
-
-function pickAdSlot(regularCount: number): number {
-  // Slot 1..min(5, regularCount). With one regular line the ad lands at slot 1.
-  const span = Math.max(1, Math.min(SPONSORED_WITHIN_SLOTS, regularCount));
-  return 1 + Math.floor(Math.random() * span);
-}
 
 /** Fisher-Yates. Called once per mount so lines never repeat back to back. */
 function shuffle<T>(items: readonly T[]): T[] {
@@ -119,7 +112,7 @@ export function LoadingLine({ surface, fallback }: LoadingLineProps) {
   const ad = useMemo(() => {
     if (!hasLines || sponsored.length === 0 || adShownThisLoad.has(surface)) return null;
     return {
-      slot: pickAdSlot(shuffled.length),
+      slot: AD_SLOT,
       line: sponsored[Math.floor(Math.random() * sponsored.length)]!,
     };
   }, [shuffled, sponsored, hasLines, surface]);

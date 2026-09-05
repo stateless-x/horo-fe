@@ -18,6 +18,7 @@ import {
 
 import { useDailyFortune, useUserProfile, getDailyHookLine } from '@/features/fortune/hooks/use-daily-fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
+import { useMinLoading } from '@/hooks/use-min-loading';
 import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ClientDate } from '@/components/client-date';
 import { ShareSheet } from '@/components/share/share-sheet';
@@ -77,8 +78,12 @@ export default function TodayPage() {
   } = useDailyFortune(isReady);
   const { data: userProfile } = useUserProfile(isReady);
 
+  // Floor the loader at 3s even on a cache hit so the rotating copy and the
+  // sponsored card are actually seen.
+  const showLoader = useMinLoading(dailyLoading);
+
   if (sessionLoading || !session) return <LoadingSkeleton isLoading />;
-  if (dailyLoading) return <LoadingSkeleton isLoading />;
+  if (showLoader) return <LoadingSkeleton isLoading />;
   if (dailyError) return <ErrorDisplay error="ไม่สามารถโหลดดวงชะตาวันนี้ได้" showRetry />;
 
   const displayName =

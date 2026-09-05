@@ -90,7 +90,10 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
   // The states that previously rotated MYSTICAL_MESSAGES / DAILY_MESSAGES.
   // Only these hand off to LoadingLine; saving-profile and initializing keep
   // their fixed status text, which reports real progress rather than filling time.
-  const isRotating = isGenerating;
+  // 'complete' here means the page is holding the skeleton for the loading
+  // floor (useMinLoading) after data already arrived; keep the copy rotating
+  // so the floor has something to show.
+  const isRotating = isGenerating || loadingState === 'complete';
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6">

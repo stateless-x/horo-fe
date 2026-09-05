@@ -105,7 +105,14 @@ export function LoadingLine({ surface, fallback }: LoadingLineProps) {
   // land twice in a row, which is exactly what a rotation must avoid.
   const shuffled = useMemo(() => shuffle(lines), [lines]);
 
-  const hasLines = shuffled.length > 0;
+  // Never render shuffled copy during hydration. The order comes from
+  // Math.random, so any pool the server happens to hold (Providers uses a
+  // module-level QueryClient, shared across SSR requests on one process) would
+  // hydrate against a different order. Same guard as clay-oracle-loader.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const hasLines = mounted && shuffled.length > 0;
 
   // One ad per session: which sponsor and which slot are both drawn once, when
   // the pool arrives, and never again. After its slot passes it does not return.
@@ -158,18 +165,18 @@ export function LoadingLine({ surface, fallback }: LoadingLineProps) {
     </p>
   );
 
-  if (reduceMotion) {
-    return <div key={slot}>{content}</div>;
-  }
-
+  // One element tree in both motion modes. useReducedMotion is null on the
+  // server and resolved on the client's first render, so branching the DOM on
+  // it (a plain div vs motion.div) hydrates against the wrong structure. Zero
+  // duration and no initial offset give reduced motion the same markup.
   return (
     <AnimatePresence mode="wait">
       <motion.div
         key={slot}
-        initial={{ opacity: 0, y: 8 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.4 }}
+        exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+        transition={{ duration: reduceMotion ? 0 : 0.4 }}
       >
         {content}
       </motion.div>

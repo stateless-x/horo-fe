@@ -122,7 +122,7 @@ export function FortuneOverviewSection({
         onClick={onOpenReadings}
         className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-accent px-6 py-3 font-heading font-semibold text-accentInk transition-colors hover:bg-accentBright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-ground sm:w-auto"
       >
-        อ่านคำทำนายทั้ง 6 ด้าน
+        ดูโชค 6 ด้าน
         <ArrowRight className="size-5" aria-hidden="true" />
       </button>
     </section>

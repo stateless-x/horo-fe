@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Briefcase, Heart, Sparkles } from "lucide-react";
+import { Users, Briefcase, Heart, Sparkles, ChevronRight } from "lucide-react";
 import type {
   EnrichedPillar,
   PillarInterpretation,
@@ -63,9 +63,10 @@ export function FourPillarsSection({
         {/* Pillar card */}
         <button
           onClick={() => openPillarModal(pillarKey)}
+          aria-haspopup="dialog"
           className={`
             w-full bg-surface rounded-xl p-5 transition-all duration-200 cursor-pointer
-            hover:bg-surface2/20 hover:border-accent/50
+            hover:bg-surface2/20 hover:border-accent/50 active:scale-[0.98] motion-reduce:active:scale-100
             ${
               isDay
                 ? "border-accentBright/50 bg-surface2/20 shadow-lg shadow-accentBright/10 transform md:-translate-y-2"
@@ -77,7 +78,7 @@ export function FourPillarsSection({
             minHeight: isDay ? "200px" : "180px",
           }}
         >
-          <div className="flex flex-col items-center text-center h-full">
+          <div className="flex h-full flex-col items-center text-center">
             {/* Icon */}
             <Icon
               className={`w-6 h-6 mb-3 ${isDay ? "text-accentBright" : "text-accentSoft"}`}
@@ -100,12 +101,19 @@ export function FourPillarsSection({
 
             {/* Element indicator dot */}
             <div
-              className="w-2 h-2 rounded-full mt-auto"
+              className="w-2 h-2 rounded-full mt-auto mb-3"
               style={{
                 backgroundColor: elementColor.primary,
                 boxShadow: `0 0 6px ${elementColor.glow}`,
               }}
             />
+
+            {/* In-card tap affordance: the caption below the grid was easy to
+                miss, so the hint now lives on every card it applies to. */}
+            <span className="flex items-center gap-0.5 font-heading text-xs text-accentBright">
+              ดูรายละเอียด
+              <ChevronRight className="size-3.5" aria-hidden="true" />
+            </span>
           </div>
         </button>
       </div>
@@ -132,14 +140,9 @@ export function FourPillarsSection({
       </div>
 
       {/* Pillars grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {pillarArray.map(({ key, pillar }) => renderPillar(key, pillar))}
       </div>
-
-      {/* Hint text */}
-      <p className="text-center text-inkMuted font-thai text-sm">
-        แตะที่เสาเพื่อดูรายละเอียด
-      </p>
 
       {/* Pillar Detail Modal */}
       <PillarDetailModal

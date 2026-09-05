@@ -60,6 +60,9 @@ export function PillarDetailModal({
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={0.2}
             onDragEnd={handleDragEnd}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pillar-modal-title"
             className="fixed bottom-0 left-0 right-0 md:bottom-auto md:top-0 md:right-0 md:left-auto md:w-[400px] md:h-full z-50 overflow-hidden"
           >
             <div className="bg-surface2/95 backdrop-blur-xl border-t md:border-t-0 md:border-l border-surface2/50 rounded-t-3xl md:rounded-none h-[70vh] md:h-full overflow-y-auto">
@@ -71,7 +74,7 @@ export function PillarDetailModal({
               {/* Header */}
               <div className="sticky top-0 bg-surface2/95 backdrop-blur-xl border-b border-surface2/50 p-6 flex items-center justify-between">
                 <div>
-                  <h3 className="font-heading text-xl font-medium text-accentBright mb-1">
+                  <h3 id="pillar-modal-title" className="font-heading text-xl font-medium text-accentBright mb-1">
                     {PILLAR_LABELS[pillarKey]}
                   </h3>
                   <p className="font-oracle text-base text-accentSoft">

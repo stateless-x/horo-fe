@@ -14,8 +14,8 @@ interface Tab {
 
 const TABS: Tab[] = [
   { key: 'overview', label: 'สรุป' },
-  { key: 'readings', label: 'อ่าน 6 ด้าน' },
-  { key: 'details', label: 'ที่มาของดวง' },
+  { key: 'readings', label: 'โชค 6 ด้าน' },
+  { key: 'details', label: 'แผนผังชีวิต' },
 ];
 
 /** Shared with the panels in the fortune page so aria wiring points both ways. */
@@ -39,9 +39,11 @@ export function FortuneTabBar({ activeTab, onTabChange }: FortuneTabBarProps) {
   };
 
   return (
-    // bg-surface (not ground) so the strip reads as a control track rather than
-    // dissolving into the page it sits on.
-    <nav className="sticky top-14 z-30 border-b border-edge bg-surface/95 backdrop-blur-lg" aria-label="ส่วนของคำทำนาย">
+    // bg-surface2 (not surface/ground) plus a soft purple-tinted shadow so the
+    // strip reads as its own control track rather than dissolving into the
+    // page it sits on (the previous bg-surface/95 was too close to the page
+    // background to register as a bar at a glance).
+    <nav className="sticky top-14 z-30 border-b border-edge bg-surface2/70 shadow-[0_1px_12px_-4px_rgba(107,33,168,0.18)] backdrop-blur-lg" aria-label="ส่วนของคำทำนาย">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-stretch gap-1 px-1.5" role="tablist" aria-label="เลือกเนื้อหาคำทำนาย">
           {TABS.map((tab, index) => {
@@ -59,17 +61,21 @@ export function FortuneTabBar({ activeTab, onTabChange }: FortuneTabBarProps) {
                 aria-controls={`fortune-panel-${tab.key}`}
                 tabIndex={isActive ? 0 : -1}
                 // Underline-active matches AppHeader's nav language directly
-                // above it, and frees bg-accent to mean "button" again.
-                // pb-* > pt-* keeps the border clear of Thai below-baseline marks.
-                className={`relative min-h-11 flex-1 border-b-2 px-2 pt-2.5 pb-2 -mb-px transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none sm:px-4 ${
-                  isActive
-                    ? 'border-accent text-ink'
-                    : 'border-transparent text-inkMuted hover:bg-edgeSoft hover:text-ink'
+                // above it, and frees bg-accent to mean "button" again. The
+                // border sits on the inner span so it spans the label, not
+                // the flex-1 cell; pb-* > pt-* keeps it clear of Thai
+                // below-baseline marks.
+                className={`relative min-h-11 flex-1 px-2 pt-2.5 pb-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-surface2 motion-reduce:transition-none sm:px-4 ${
+                  isActive ? 'text-ink' : 'text-ink/75 hover:bg-edgeSoft hover:text-ink'
                 }`}
               >
                 {/* Weight carries state alongside color, so selection survives
                     in grayscale and for low-vision users (WCAG 1.4.1). */}
-                <span className={`font-heading text-sm sm:text-base ${isActive ? 'font-semibold' : 'font-normal'}`}>
+                <span
+                  className={`inline-block border-b-[3px] font-heading text-sm sm:text-base ${
+                    isActive ? 'border-accent font-semibold' : 'border-transparent font-normal'
+                  }`}
+                >
                   {tab.label}
                 </span>
               </button>

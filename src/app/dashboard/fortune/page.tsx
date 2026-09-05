@@ -22,7 +22,7 @@ import { ResultDisclosure } from '@/features/fortune/chart/result-disclosure';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, fortuneTabId, type FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
-import { CompatibilityCTA } from '@/features/fortune/chart/compatibility-cta';
+import { ReadNext, READ_NEXT_OVERVIEW, READ_NEXT_READINGS, READ_NEXT_DETAILS } from '@/features/fortune/chart/read-next';
 
 const ELEMENT_NAMES = {
   earth: 'ธาตุดิน',
@@ -248,6 +248,9 @@ export default function FortuneChartPage() {
               birthStar={chartData.birthStar}
               onOpenReadings={() => handleTabChange('readings')}
             />
+            <div className="mt-12">
+              <ReadNext items={READ_NEXT_OVERVIEW} onTabChange={handleTabChange} />
+            </div>
           </motion.div>
         )}
 
@@ -263,7 +266,7 @@ export default function FortuneChartPage() {
             className="space-y-12"
           >
             <FortuneReadingsSection fortuneReadings={chartData.fortuneReadings} />
-            <CompatibilityCTA />
+            <ReadNext items={READ_NEXT_READINGS} onTabChange={handleTabChange} />
           </motion.div>
         )}
 
@@ -278,7 +281,7 @@ export default function FortuneChartPage() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             <div className="mb-6">
-              <h2 className="font-heading text-2xl font-semibold text-ink sm:text-3xl">เจาะลึกเมื่อเจ้าพร้อม</h2>
+              <h2 className="font-heading text-2xl font-semibold text-ink sm:text-3xl">แผนผังชีวิตของเจ้า</h2>
               <p className="mt-2 font-thai text-inkMuted">รายละเอียดทั้งหมดอยู่ตรงนี้ แต่ไม่จำเป็นต้องอ่านรวดเดียว</p>
             </div>
             <div className="border-t border-edge">
@@ -288,7 +291,7 @@ export default function FortuneChartPage() {
               <ResultDisclosure title="จังหวะและฤกษ์มงคล" description="ดูคำแนะนำ สี เลข ทิศ และเดือนเด่น">
                 <RecommendationsSection recommendations={chartData.recommendations} />
               </ResultDisclosure>
-              <ResultDisclosure title="ที่มาจากเสาชะตา" description="เปิดดูข้อมูลโหราศาสตร์และปาจื้อเบื้องหลังคำทำนาย">
+              <ResultDisclosure title="เสาชะตาทั้งสี่" description="เปิดดูข้อมูลโหราศาสตร์และปาจื้อเบื้องหลังคำทำนาย">
                 <div className="space-y-12">
                   <FourPillarsSection
                     pillars={chartData.pillars}
@@ -298,6 +301,9 @@ export default function FortuneChartPage() {
                   <BirthStarSection birthStar={chartData.birthStar} />
                 </div>
               </ResultDisclosure>
+            </div>
+            <div className="mt-12">
+              <ReadNext items={READ_NEXT_DETAILS} onTabChange={handleTabChange} />
             </div>
           </motion.div>
         )}

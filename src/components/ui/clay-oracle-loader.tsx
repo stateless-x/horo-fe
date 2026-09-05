@@ -19,22 +19,28 @@ export function ClayOracleLoader({
   // Render the static poster on both, then swap to the animation after mount.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  const src = mounted && shouldReduceMotion === false
-    ? '/assets/clay/little-oracle-loader-v1.webp'
+  const isAnimating = mounted && shouldReduceMotion === false;
+  const src = isAnimating
+    ? '/assets/clay/little-oracle-loader-v3.webp'
     : '/assets/clay/little-oracle-loader-poster-v1.webp';
 
   return (
-    <Image
-      src={src}
-      alt={alt}
-      width={1024}
-      height={1024}
-      sizes="(min-width: 640px) 256px, 224px"
-      priority
-      // Load-bearing, not an oversight: Next's optimizer re-encodes, which
-      // flattens the animated WebP to a single frame. Do not remove.
-      unoptimized
-      className={className}
-    />
+    // The frames carry the orb conjuring; this wrapper carries the hover.
+    // Compositing the float in CSS runs it at 60fps for zero bytes, instead of
+    // paying for more frames to make a 14fps drift look continuous.
+    <div className={isAnimating ? 'animate-drift motion-reduce:animate-none' : undefined}>
+      <Image
+        src={src}
+        alt={alt}
+        width={512}
+        height={512}
+        sizes="(min-width: 640px) 256px, 224px"
+        priority
+        // Load-bearing, not an oversight: Next's optimizer re-encodes, which
+        // flattens the animated WebP to a single frame. Do not remove.
+        unoptimized
+        className={className}
+      />
+    </div>
   );
 }

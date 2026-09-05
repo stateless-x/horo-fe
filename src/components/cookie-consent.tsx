@@ -219,6 +219,9 @@ export function CookieConsent() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              // data-cookie-banner lets ScrollToTop lift itself clear of the
+              // banner while consent is still pending.
+              data-cookie-banner=""
               className="fixed bottom-0 left-0 right-0 z-50"
             >
               <div

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Providers } from "./providers";
 import { Footer } from "@/components/layout/footer";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AdSenseScript } from "@/components/ads/adsense-script";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
@@ -126,6 +127,7 @@ export default function RootLayout({
         <Providers>
           {children}
           <Footer />
+          <ScrollToTop />
         </Providers>
       </body>
     </html>

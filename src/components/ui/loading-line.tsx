@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import { useLoadingLines } from '@/features/fortune/hooks/use-loading-lines';
 import { useIsIOS } from '@/hooks/use-is-ios';
 import type { LoadingSurface, SponsoredLine } from '@/lib-packages/shared';
@@ -10,11 +11,17 @@ import type { LoadingSurface, SponsoredLine } from '@/lib-packages/shared';
 const REGULAR_MS = 8_000;
 /** A sponsored card holds longer, since it carries a link worth noticing. */
 const SPONSORED_MS = 12_000;
-/** Every 6th slot is sponsored. Slot 0 never is, so the oracle speaks first. */
-const SPONSORED_EVERY = 6;
+/**
+ * One sponsored card per loading session, never in slot 0 so the oracle speaks
+ * first, and always within the first few slots so a typical wait actually
+ * reaches it. Which sponsor shows is random too.
+ */
+const SPONSORED_WITHIN_SLOTS = 5;
 
-function isSponsoredSlot(slot: number): boolean {
-  return slot > 0 && slot % SPONSORED_EVERY === 0;
+function pickAdSlot(regularCount: number): number {
+  // Slot 1..min(5, regularCount). With one regular line the ad lands at slot 1.
+  const span = Math.max(1, Math.min(SPONSORED_WITHIN_SLOTS, regularCount));
+  return 1 + Math.floor(Math.random() * span);
 }
 
 /** Fisher-Yates. Called once per mount so lines never repeat back to back. */
@@ -34,33 +41,34 @@ export function SponsoredCard({ line }: { line: SponsoredLine }) {
   const href = isIOS && line.iosUrl ? line.iosUrl : line.url;
 
   return (
+    // .glass-card is DESIGN.md's card recipe (135deg wash, blur, 1px edge,
+    // purple-tinted shadow in light). In the dark room the lift is a glow from
+    // the accent hue, never gray (Glow-Not-Shadow Rule).
     <div
       data-sponsor={line.sponsor}
-      className="relative overflow-hidden rounded-2xl border border-edge bg-surface px-5 py-4 shadow-lg shadow-accent/10 dark:shadow-accent/25"
+      className="glass-card relative overflow-hidden px-6 py-5 dark:shadow-lg dark:shadow-accentBright/20"
     >
-      {/* Faint wash plus a hairline of accent along the top edge. The lift is
-          colored, never gray (DESIGN.md Glow-Not-Shadow Rule). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent/[0.06] to-transparent"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accentBright/40 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accentBright/50 to-transparent"
       />
 
-      <div className="relative flex flex-col items-center gap-2 text-center">
-        <span className="text-[10px] uppercase tracking-[0.18em] text-inkMuted">
-          สนับสนุนโดย
-        </span>
-        <p className="font-thai text-sm text-ink">{line.text}</p>
+      <div className="relative flex flex-col items-center gap-3 text-center">
+        {/* Thai has no case, so no uppercase or wide tracking here; a small
+            muted line is the whole label. */}
+        <span className="font-thai text-xs text-inkMuted">สนับสนุนโดย</span>
+        <p className="max-w-[28ch] font-thai text-[15px] leading-relaxed text-ink">{line.text}</p>
         <a
           href={href}
           target="_blank"
           rel="noopener noreferrer sponsored"
-          className="rounded-full border border-accentBright/30 bg-accentBright/10 px-3 py-1 font-english text-sm text-accentBright transition-colors hover:bg-accentBright/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+          // text-accent in light (7.5:1 on the tinted pill) since accentBright
+          // sits at the AA edge there; accentSoft carries the dark room. The
+          // arrow is the new-tab cue: the link leaves, this page stays.
+          className="mt-1 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-accentBright/30 bg-accentBright/10 px-4 font-english text-sm font-medium text-accent transition-colors hover:bg-accentBright/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:text-accentSoft"
         >
           {line.label}
+          <ArrowUpRight className="size-3.5" aria-hidden="true" />
         </a>
       </div>
     </div>
@@ -91,15 +99,26 @@ export function LoadingLine({ surface, fallback }: LoadingLineProps) {
 
   const hasLines = shuffled.length > 0;
 
+  // One ad per session: which sponsor and which slot are both drawn once, when
+  // the pool arrives, and never again. After its slot passes it does not return.
+  const ad = useMemo(() => {
+    if (!hasLines || sponsored.length === 0) return null;
+    return {
+      slot: pickAdSlot(shuffled.length),
+      line: sponsored[Math.floor(Math.random() * sponsored.length)]!,
+    };
+  }, [shuffled, sponsored, hasLines]);
+
+  const showSponsored = ad !== null && slot === ad.slot;
+
   useEffect(() => {
     if (!hasLines) return;
-    const isSponsored = isSponsoredSlot(slot) && sponsored.length > 0;
     const timer = setTimeout(
       () => setSlot((prev) => prev + 1),
-      isSponsored ? SPONSORED_MS : REGULAR_MS
+      showSponsored ? SPONSORED_MS : REGULAR_MS
     );
     return () => clearTimeout(timer);
-  }, [slot, hasLines, sponsored.length]);
+  }, [slot, hasLines, showSponsored]);
 
   // Restart the walk whenever a new pool arrives.
   useEffect(() => {
@@ -114,14 +133,11 @@ export function LoadingLine({ surface, fallback }: LoadingLineProps) {
     );
   }
 
-  const showSponsored = isSponsoredSlot(slot) && sponsored.length > 0;
-  // Count how many sponsored slots have already passed, so the sponsors cycle
-  // in order instead of repeating the first one.
-  const sponsoredIndex = (Math.floor(slot / SPONSORED_EVERY) - 1) % sponsored.length;
-  const regularIndex = (slot - Math.floor(slot / SPONSORED_EVERY)) % shuffled.length;
+  // Slots after the ad shift back by one so no regular line is skipped.
+  const regularIndex = (ad && slot > ad.slot ? slot - 1 : slot) % shuffled.length;
 
   const content = showSponsored ? (
-    <SponsoredCard line={sponsored[sponsoredIndex]!} />
+    <SponsoredCard line={ad.line} />
   ) : (
     <p className="text-accentFaint font-oracle text-base md:text-lg text-center">
       {shuffled[regularIndex]}

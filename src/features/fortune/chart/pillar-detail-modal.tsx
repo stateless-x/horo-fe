@@ -61,7 +61,6 @@ export function PillarDetailModal({
             dragElastic={0.2}
             onDragEnd={handleDragEnd}
             role="dialog"
-            aria-modal="true"
             aria-labelledby="pillar-modal-title"
             className="fixed bottom-0 left-0 right-0 md:bottom-auto md:top-0 md:right-0 md:left-auto md:w-[400px] md:h-full z-50 overflow-hidden"
           >

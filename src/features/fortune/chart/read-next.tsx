@@ -44,8 +44,8 @@ export function ReadNext({ items, onTabChange }: ReadNextProps) {
   if (items.length === 0) return null;
 
   return (
-    <section aria-label="อ่านต่อ" className="border-t border-edge pt-8">
-      <h2 className="font-heading text-lg font-semibold text-ink">อ่านต่อจากนี้</h2>
+    <section aria-labelledby="read-next-title" className="border-t border-edge pt-8">
+      <h2 id="read-next-title" className="font-heading text-lg font-semibold text-ink">อ่านต่อจากนี้</h2>
       <div className={`mt-4 grid gap-4 ${items.length > 1 ? 'sm:grid-cols-2' : ''}`}>
         {items.map((item) => {
           const Icon = item.icon;

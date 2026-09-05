@@ -34,7 +34,7 @@ interface ReadNextProps {
 
 /**
  * A small, restrained "read next" block at the end of a fortune tab panel.
- * Never more than two items and never a menu — each item ties directly to
+ * Never more than two items and never a menu. Each item ties directly to
  * what was just read, with its own one-line reason in the oracle's เจ้า
  * voice. Tab items call back into the page's own handleTabChange so the
  * scroll-to-top behavior on switch stays in one place; link items are plain

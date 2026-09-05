@@ -105,7 +105,7 @@ export function PillarDetailModal({
                     <InfoTooltip text="เทียนกาน (天干) หรือ Heavenly Stem มี 10 ตัว แทนพลังงานจากสวรรค์ บอกถึงลักษณะภายนอก บุคลิก และการแสดงออก" />
                   </h4>
                   <p className="text-ink font-oracle text-base">
-                    {pillar.stemChinese} ({pillar.stemPinyin}) — ธาตุ
+                    {pillar.stemChinese} ({pillar.stemPinyin}), ธาตุ
                     {pillar.stemElement}{' '}
                     {pillar.stemYinYang === 'yang' ? 'Yang' : 'Yin'}
                   </p>
@@ -118,7 +118,7 @@ export function PillarDetailModal({
                     <InfoTooltip text="ตี้จือ (地支) หรือ Earthly Branch มี 12 ตัว (นักษัตร) แทนพลังงานจากโลก บอกถึงลักษณะภายใน อารมณ์ และพฤติกรรมที่ซ่อนอยู่" />
                   </h4>
                   <p className="text-ink font-oracle text-base">
-                    {pillar.branchChinese} ({pillar.branchPinyin}) —{' '}
+                    {pillar.branchChinese} ({pillar.branchPinyin}) ,{' '}
                     {pillar.branchAnimal}
                   </p>
                 </div>

@@ -19,7 +19,7 @@ const SCORE_LABELS = ['ค่อยเป็นค่อยไป', 'ต้อ�
 
 /**
  * Scores are 0-100 (computed in horo-be/lib/astrology/chart-scores.ts). Bucket
- * them into the five qualitative labels — the word is what belongs on a reading,
+ * them into the five qualitative labels. The word is what belongs on a reading;
  * while the precise number lives on the overview tab's energy bars.
  */
 function scoreLabel(score: number): string {
@@ -31,7 +31,7 @@ function scoreLabel(score: number): string {
  * One short line under the label when the backend has no tips yet: the
  * first sentence of the reading, cut at the first space at or after 60
  * chars. Thai running text has no spaces around most word breaks, so a
- * plain indexOf can return -1 on real copy — fall back to a hard cut at
+ * plain indexOf can return -1 on real copy, so fall back to a hard cut at
  * 60 rather than yielding the whole paragraph.
  */
 function readingPreview(reading: string, tips: string[]): string {

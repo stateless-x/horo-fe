@@ -20,12 +20,12 @@ function byScoreDesc(a: FortuneReadingCategory, b: FortuneReadingCategory) {
  *
  * Scores are computed deterministically by the backend
  * (lib/astrology/chart-scores.ts) rather than chosen by the LLM, so a bar is
- * reproducible for a given birth chart and a percentage is honest here — unlike
- * the daily reading, whose 1-5 score can only ever render as 20/40/60/80/100.
+ * reproducible for a given birth chart, so a percentage is honest here. The
+ * daily reading is scored the same way now (0 to 100, in code).
  *
  * Deliberately distinct from the daily page's bars: this is the enduring
  * birth-chart reading, not today's weather, and the two should not be mistaken
- * for each other. life_overview is excluded — it is the mean of the rest and
+ * for each other. life_overview is excluded, it is the mean of the rest and
  * would read as a seventh, contradictory area.
  */
 export function FortuneEnergySection({ fortuneReadings, onOpenReadings }: FortuneEnergySectionProps) {
@@ -97,7 +97,7 @@ export function FortuneEnergySection({ fortuneReadings, onOpenReadings }: Fortun
 
       {/* Scope, not expiry: naming the month makes the reading feel authored and
           complete rather than something counting down to nothing. Says คำทำนาย
-          because only the narrative regenerates — the chart itself never does. */}
+          because only the narrative regenerates, the chart itself never does. */}
       <p className="mt-6 font-thai text-sm text-inkMuted">
         คำทำนายเดือน{currentMonth} · อ่านใหม่ได้อีกครั้ง {renewsOn}
       </p>

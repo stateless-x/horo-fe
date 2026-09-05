@@ -7,12 +7,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
+  // /calendar itself is a redirect to the current month, so it is not
+  // submitted — only the real month pages are.
   const calendarMonthUrls: MetadataRoute.Sitemap = [];
   for (let year = CALENDAR_MIN_YEAR; year <= CALENDAR_MAX_YEAR; year++) {
     for (let month = 1; month <= 12; month++) {
       const yearMonth = `${year}-${String(month).padStart(2, '0')}`;
       calendarMonthUrls.push({
-        url: `${BASE_URL}/calendar?m=${yearMonth}`,
+        url: `${BASE_URL}/calendar/${yearMonth}`,
         lastModified: now,
         changeFrequency: 'monthly',
         priority: yearMonth === currentYearMonth ? 0.9 : 0.5,
@@ -26,12 +28,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'daily',
       priority: 1.0,
-    },
-    {
-      url: `${BASE_URL}/calendar`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
     },
     {
       // Entry point for the whole funnel — the page every "ดูดวงฟรี" query

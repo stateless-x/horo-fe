@@ -17,8 +17,8 @@ interface MonthTabsProps {
 /**
  * Horizontal scrollable month tabs for the calendar page.
  * Shows 12 months (current month ± some range).
- * Navigates via ?m=YYYY-MM URL param so the server re-renders with the
- * correct month (stays SEO-friendly and no client data fetching needed).
+ * Navigates to /calendar/YYYY-MM, which is a statically prerendered page —
+ * SEO-friendly and no client data fetching needed.
  */
 export function MonthTabs({ selectedYearMonth, currentYearMonth }: MonthTabsProps) {
   const router = useRouter();
@@ -44,10 +44,7 @@ export function MonthTabs({ selectedYearMonth, currentYearMonth }: MonthTabsProp
           return (
             <button
               key={yearMonth}
-              onClick={() => {
-                const params = yearMonth === currentYearMonth ? '' : `?m=${yearMonth}`;
-                router.push(`/calendar${params}`);
-              }}
+              onClick={() => router.push(`/calendar/${yearMonth}`)}
               className={`
                 relative flex flex-col items-center px-3 py-2 rounded-xl border transition-all text-center min-w-[52px]
                 ${isSelected

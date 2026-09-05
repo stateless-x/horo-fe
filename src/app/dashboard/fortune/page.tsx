@@ -23,6 +23,7 @@ import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, fortuneTabId, type FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
 import { ReadNext, READ_NEXT_OVERVIEW, READ_NEXT_READINGS, READ_NEXT_DETAILS } from '@/features/fortune/chart/read-next';
+import { resolveChartReadingPeriod } from '@/lib/date-utils';
 
 const ELEMENT_NAMES = {
   earth: 'ธาตุดิน',
@@ -161,6 +162,9 @@ export default function FortuneChartPage() {
 
   const userName = (session.user as any).displayName || session.user.name;
   const element = chartData.elementProfile.primaryElement;
+  // Prefer the month the backend stamped on the narrative; fall back to the
+  // Bangkok clock only for charts generated before readingPeriod existed.
+  const readingPeriod = resolveChartReadingPeriod(chartData.readingPeriod);
 
   return (
     <div className="relative min-h-[calc(100vh-3.5rem)] pb-12">
@@ -224,6 +228,16 @@ export default function FortuneChartPage() {
             corePersonality={chartData.elementProfile.corePersonality}
             onShare={handleShare}
           />
+
+          {/* Which month this narrative was written for. Stated outright rather
+              than left to the reader's clock: the chart regenerates at the
+              Bangkok month boundary, and a legacy row can predate its own
+              period stamp, so the two must never be guessed at. */}
+          <p className="mt-4 flex justify-center sm:justify-start">
+            <span className="rounded-full border border-edge bg-surface2 px-4 py-1.5 font-thai text-sm text-inkMuted">
+              คำทำนายประจำเดือน{readingPeriod.monthTh} พ.ศ. {readingPeriod.yearBe}
+            </span>
+          </p>
         </motion.div>
       </div>
 
@@ -246,6 +260,7 @@ export default function FortuneChartPage() {
               fortuneReadings={chartData.fortuneReadings}
               recommendations={chartData.recommendations}
               birthStar={chartData.birthStar}
+              readingPeriod={readingPeriod}
               onOpenReadings={() => handleTabChange('readings')}
             />
             <div className="mt-12">

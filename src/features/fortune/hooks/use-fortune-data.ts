@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
+import { getMsUntilBangkokMonthEnd } from '@/lib/date-utils';
 import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
 
 /**
@@ -23,7 +24,14 @@ export function useFortuneData(enabled: boolean = true) {
     // rather than aborting work that is still running.
     queryFn: () => api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 240_000 }),
     enabled: enabled && !!userId,
-    staleTime: Infinity, // Fortune data doesn't change frequently
+    // A chart is current until the Bangkok month rolls over, which is exactly
+    // when the backend regenerates it. Infinity meant a tab left open across
+    // the boundary kept last month's reading until a manual reload.
+    staleTime: getMsUntilBangkokMonthEnd(),
+    // React Query only refetches on focus once the query is stale, so this
+    // costs nothing within the month and picks up the new chart on the first
+    // focus after the boundary.
+    refetchOnWindowFocus: true,
     gcTime: 30 * 60 * 1000, // Cache for 30 minutes
   });
 }

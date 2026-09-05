@@ -28,6 +28,10 @@ function scoreLabel(score: number): string {
 }
 
 /**
+ * Fallback preview for a chart generated before the backend wrote a per
+ * category hook. A hook is a purpose-written 40 character line; this is the
+ * best that can be salvaged from a narrative that has none.
+ *
  * One short line under the label when the backend has no tips yet: the
  * first sentence of the reading, cut at the first space at or after 60
  * chars. Thai running text has no spaces around most word breaks, so a
@@ -96,7 +100,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                 <div className="min-w-0">
                   <p className="font-heading text-lg font-semibold text-ink">{label}</p>
                   <p className="mt-0.5 line-clamp-1 text-sm leading-relaxed text-inkMuted md:text-base">
-                    {readingPreview(category.reading, category.tips)}
+                    {category.hook ?? readingPreview(category.reading, category.tips)}
                   </p>
                 </div>
                 <div className="hidden md:block">

@@ -13,6 +13,9 @@ interface FortuneOverviewSectionProps {
   fortuneReadings: FortuneReadingCategory[];
   recommendations: Recommendations;
   birthStar: BirthStarDetail;
+  /** Resolved by the page (data first, clock as fallback) so the renewal note
+      names the same month as the header. */
+  readingPeriod: { monthTh: string; yearBe: number; renewsOn: string };
   onOpenReadings: () => void;
 }
 
@@ -32,6 +35,7 @@ export function FortuneOverviewSection({
   fortuneReadings,
   recommendations,
   birthStar,
+  readingPeriod,
   onOpenReadings,
 }: FortuneOverviewSectionProps) {
   const lifeReading = fortuneReadings.find((reading) => reading.key === 'life_overview') ?? fortuneReadings[0];
@@ -66,7 +70,11 @@ export function FortuneOverviewSection({
         </div>
       )}
 
-      <FortuneEnergySection fortuneReadings={fortuneReadings} onOpenReadings={onOpenReadings} />
+      <FortuneEnergySection
+        fortuneReadings={fortuneReadings}
+        readingPeriod={readingPeriod}
+        onOpenReadings={onOpenReadings}
+      />
 
       {monthHighlight && (
         <div className="border-b border-edge py-8">

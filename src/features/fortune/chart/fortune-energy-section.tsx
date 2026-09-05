@@ -3,10 +3,13 @@
 import { ArrowRight } from 'lucide-react';
 import type { FortuneReadingCategory } from '@/lib-packages/shared/types/astrology';
 import { FORTUNE_CATEGORY_CONFIG, type FortuneCategoryKey } from '@/lib/fortune-category-config';
-import { getChartReadingPeriod } from '@/lib/date-utils';
 
 interface FortuneEnergySectionProps {
   fortuneReadings: FortuneReadingCategory[];
+  /** Resolved by the page from the chart's own readingPeriod, with the clock
+      as fallback. Taking it as a prop keeps this note and the page header
+      from naming two different months for the same narrative. */
+  readingPeriod: { monthTh: string; renewsOn: string };
   onOpenReadings: () => void;
 }
 
@@ -28,15 +31,13 @@ function byScoreDesc(a: FortuneReadingCategory, b: FortuneReadingCategory) {
  * for each other. life_overview is excluded, it is the mean of the rest and
  * would read as a seventh, contradictory area.
  */
-export function FortuneEnergySection({ fortuneReadings, onOpenReadings }: FortuneEnergySectionProps) {
+export function FortuneEnergySection({ fortuneReadings, readingPeriod, onOpenReadings }: FortuneEnergySectionProps) {
   const areas = fortuneReadings
     .filter((reading) => reading.key !== 'life_overview')
     .slice()
     .sort(byScoreDesc);
 
   if (areas.length === 0) return null;
-
-  const { currentMonth, renewsOn } = getChartReadingPeriod();
 
   return (
     <section className="border-b border-edge py-8" aria-labelledby="fortune-energy-title">
@@ -99,7 +100,7 @@ export function FortuneEnergySection({ fortuneReadings, onOpenReadings }: Fortun
           complete rather than something counting down to nothing. Says คำทำนาย
           because only the narrative regenerates, the chart itself never does. */}
       <p className="mt-6 font-thai text-sm text-inkMuted">
-        คำทำนายเดือน{currentMonth} · อ่านใหม่ได้อีกครั้ง {renewsOn}
+        คำทำนายเดือน{readingPeriod.monthTh} · อ่านใหม่ได้อีกครั้ง {readingPeriod.renewsOn}
       </p>
     </section>
   );

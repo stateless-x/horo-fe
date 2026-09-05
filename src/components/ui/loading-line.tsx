@@ -18,6 +18,14 @@ const SPONSORED_MS = 12_000;
  */
 const SPONSORED_WITHIN_SLOTS = 5;
 
+/**
+ * Surfaces that have already shown their ad during this page load. Module
+ * scope on purpose: it survives React remounts (a generation retry leaves and
+ * re-enters the loading state, which would otherwise draw a fresh ad) and
+ * resets on a real reload, which is a new wait and may show one again.
+ */
+const adShownThisLoad = new Set<LoadingSurface>();
+
 function pickAdSlot(regularCount: number): number {
   // Slot 1..min(5, regularCount). With one regular line the ad lands at slot 1.
   const span = Math.max(1, Math.min(SPONSORED_WITHIN_SLOTS, regularCount));
@@ -102,14 +110,20 @@ export function LoadingLine({ surface, fallback }: LoadingLineProps) {
   // One ad per session: which sponsor and which slot are both drawn once, when
   // the pool arrives, and never again. After its slot passes it does not return.
   const ad = useMemo(() => {
-    if (!hasLines || sponsored.length === 0) return null;
+    if (!hasLines || sponsored.length === 0 || adShownThisLoad.has(surface)) return null;
     return {
       slot: pickAdSlot(shuffled.length),
       line: sponsored[Math.floor(Math.random() * sponsored.length)]!,
     };
-  }, [shuffled, sponsored, hasLines]);
+  }, [shuffled, sponsored, hasLines, surface]);
 
   const showSponsored = ad !== null && slot === ad.slot;
+
+  // Mark the surface only once the card is actually on screen, so a remount
+  // that happens before the ad's slot still gets to show it once.
+  useEffect(() => {
+    if (showSponsored) adShownThisLoad.add(surface);
+  }, [showSponsored, surface]);
 
   useEffect(() => {
     if (!hasLines) return;

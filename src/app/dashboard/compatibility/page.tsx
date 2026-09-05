@@ -38,6 +38,8 @@ export default function CompatibilityPage() {
   // Calculation state
   const [calculating, setCalculating] = useState(false);
   const [calculationStep, setCalculationStep] = useState('');
+  // Set once the scripted steps run out, which is when the real LLM wait starts.
+  const [stepsExhausted, setStepsExhausted] = useState(false);
   const [error, setError] = useState('');
 
   // Result state
@@ -122,6 +124,7 @@ export default function CompatibilityPage() {
     setError('');
     setResult(null);
     setViewingHistoryId(null);
+    setStepsExhausted(false);
 
     let resetAt = '';
 
@@ -132,6 +135,7 @@ export default function CompatibilityPage() {
         await new Promise(resolve => setTimeout(resolve, 800));
       }
       setCalculationStep(steps[steps.length - 1]);
+      setStepsExhausted(true);
 
       const birthDate = createUTCDateFromBE(dayNum, monthNum, yearNum);
 
@@ -168,6 +172,7 @@ export default function CompatibilityPage() {
     } finally {
       setCalculating(false);
       setCalculationStep('');
+      setStepsExhausted(false);
     }
   }, [partnerName, day, month, year, partnerMbti, relationshipType, config.loadingSteps, queryClient]);
 
@@ -195,7 +200,12 @@ export default function CompatibilityPage() {
 
   // --- Calculating screen ---
   if (calculating) {
-    return <CompatibilityLoading calculationStep={calculationStep} />;
+    return (
+      <CompatibilityLoading
+        calculationStep={calculationStep}
+        stepsExhausted={stepsExhausted}
+      />
+    );
   }
 
   // --- Result view ---

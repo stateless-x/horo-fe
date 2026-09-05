@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { LoadingLine } from '@/components/ui/loading-line';
 
 const PARTICLES = [
   [8, 16, 0.2, 0], [18, 72, 0.35, 0.3], [29, 32, 0.25, 0.9], [39, 84, 0.4, 1.3],
@@ -9,9 +10,15 @@ const PARTICLES = [
 
 interface CompatibilityLoadingProps {
   calculationStep: string;
+  /**
+   * True once the scripted steps have run out. The last step used to sit
+   * frozen on screen for the whole LLM wait, so from here the rotating line
+   * pool takes over and the screen keeps moving.
+   */
+  stepsExhausted?: boolean;
 }
 
-export function CompatibilityLoading({ calculationStep }: CompatibilityLoadingProps) {
+export function CompatibilityLoading({ calculationStep, stepsExhausted }: CompatibilityLoadingProps) {
   return (
     <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
@@ -56,17 +63,23 @@ export function CompatibilityLoading({ calculationStep }: CompatibilityLoadingPr
             กำลังคำนวณ...
           </motion.h2>
 
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={calculationStep}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="text-lg md:text-xl text-inkMuted font-oracle min-h-[28px]"
-            >
-              {calculationStep}
-            </motion.p>
-          </AnimatePresence>
+          {stepsExhausted ? (
+            <div className="min-h-[28px]">
+              <LoadingLine surface="compatibility" fallback={calculationStep} />
+            </div>
+          ) : (
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={calculationStep}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="text-lg md:text-xl text-inkMuted font-oracle min-h-[28px]"
+              >
+                {calculationStep}
+              </motion.p>
+            </AnimatePresence>
+          )}
 
           <div className="flex justify-center gap-2 mt-4">
             {[...Array(3)].map((_, i) => (

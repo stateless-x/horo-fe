@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import type { LoadingState } from '@/stores/fortune';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { LoadingLine } from '@/components/ui/loading-line';
 
 interface LoadingSkeletonProps {
   /** Loading state from the fortune store (chart flow) */
@@ -86,6 +87,11 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
     ? isLoading
     : loadingState === 'generating-chart' || loadingState === 'generating-narrative';
 
+  // The states that previously rotated MYSTICAL_MESSAGES / DAILY_MESSAGES.
+  // Only these hand off to LoadingLine; saving-profile and initializing keep
+  // their fixed status text, which reports real progress rather than filling time.
+  const isRotating = isGenerating;
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6">
       <div className="max-w-md w-full mx-auto flex flex-col items-center text-center space-y-8">
@@ -111,6 +117,13 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             >
               ดูเหมือนจะใช้เวลานานกว่าปกติ...
             </motion.p>
+          ) : isRotating ? (
+            // The rotating branch hands off to the shared line pool. The
+            // scripted states below it keep their fixed status text.
+            <LoadingLine
+              surface={isDailyMode ? 'today' : 'fortune'}
+              fallback={getLoadingMessage()}
+            />
           ) : (
             <AnimatePresence mode="wait">
               <motion.p

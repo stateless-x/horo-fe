@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useReducedMotion } from 'framer-motion';
 import type {
   EnrichedPillar,
   PillarInterpretation,
@@ -42,7 +41,6 @@ export function FourPillarsSection({
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const reduceMotion = useReducedMotion();
 
   const openPillarModal = (pillarKey: string) => {
     setSelectedPillar(pillarKey);
@@ -116,14 +114,19 @@ export function FourPillarsSection({
     const track = trackRef.current;
     const target = slideRefs.current[index];
     if (!track || !target) return;
-    // Track-local scrollTo, same as the initial centering above. scrollIntoView
-    // on a child of a snap-mandatory track is unreliable in Chromium: the snap
-    // logic can cancel the programmatic scroll or snap back, and in testing
-    // arrow taps were silently dropped about half the time.
-    track.scrollTo({
-      left: target.offsetLeft - (track.clientWidth - target.offsetWidth) / 2,
-      behavior: reduceMotion ? 'auto' : 'smooth',
-    });
+    // Instant scroll on purpose. On this snap-mandatory track Chromium cancels
+    // programmatic smooth scrolls outright (measured: scrollTo with
+    // behavior 'smooth' left scrollLeft at 0 every time, while 'auto' landed
+    // every time), so a smooth request meant arrow taps did nothing. Snap
+    // still aligns the slide, so the jump reads as a page turn.
+    // The target comes from rects relative to the track: the slides'
+    // offsetParent is an ancestor, not the track, so offsetLeft only works
+    // by coincidence of layout.
+    const trackRect = track.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const left =
+      track.scrollLeft + (targetRect.left - trackRect.left) - (track.clientWidth - targetRect.width) / 2;
+    track.scrollTo({ left, behavior: 'auto' });
     setActiveIndex(index);
   };
 

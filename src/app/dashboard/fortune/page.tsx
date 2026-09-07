@@ -10,6 +10,7 @@ import { useFortuneData } from '@/features/fortune/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
 import { useMinLoading } from '@/hooks/use-min-loading';
+import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ElementProfileSection } from '@/features/fortune/chart/element-profile-section';
 import { FourPillarsSection } from '@/features/fortune/chart/four-pillars-section';
@@ -79,6 +80,7 @@ export default function FortuneChartPage() {
 
   // Session validation and fortune generation
   const { session, sessionLoading } = useFortuneGeneration();
+  useTrackSurfaceView('fortune');
 
   // Fortune data fetching
   const { data: chartData, isFetching: isChartFetching } = useFortuneData(loadingState === 'complete');

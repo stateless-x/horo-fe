@@ -8,3 +8,4 @@ export { useSessionRetry } from './use-session-retry';
 export { useAmbientAudio } from './use-ambient-audio';
 export { useIsIOS } from './use-is-ios';
 export { useMinLoading, MIN_LOADING_MS } from './use-min-loading';
+export { useTrackSurfaceView } from './use-track-surface-view';

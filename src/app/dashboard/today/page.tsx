@@ -19,6 +19,7 @@ import {
 import { useDailyFortune, useUserProfile, getDailyHookLine } from '@/features/fortune/hooks/use-daily-fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
 import { useMinLoading } from '@/hooks/use-min-loading';
+import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ClientDate } from '@/components/client-date';
 import { ShareSheet } from '@/components/share/share-sheet';
@@ -58,6 +59,7 @@ function clampScore(score: number): number {
  */
 export default function TodayPage() {
   const { data: session, isPending: sessionLoading } = useSession();
+  useTrackSurfaceView('today');
   const router = useRouter();
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<CategoryKey | null>(null);

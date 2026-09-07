@@ -2,29 +2,22 @@
 
 import { useEffect, useRef } from 'react';
 import { useSession } from '@/lib/auth-client';
-import { api } from '@/lib/api';
-import { getTodayBangkokString, type TrackedSurface } from '@/lib-packages/shared';
-
-/** localStorage key holding the last Bangkok date this surface was reported. */
-function storageKey(surface: TrackedSurface, userId: string): string {
-  return `horo-surface-view:${surface}:${userId}`;
-}
+import { trackEvent } from '@/lib/analytics';
+import type { TrackedEventSurface } from '@/lib-packages/shared';
 
 /**
  * Reports, at most once per Bangkok day, that the signed-in user opened this
  * dashboard surface. Answers "which tab do people actually open" without any
  * third-party analytics.
  *
- * Two layers of dedup keep this off the hot path: localStorage stops a repeat
- * request on this device, and a unique index on (user, surface, day) makes a
- * request that slips through a no-op insert. So the ceiling is one write per
- * user per surface per day no matter how often the page is opened.
+ * A thin wrapper over trackEvent, which owns the dedup rule and the
+ * fire-and-forget error handling. Kept as its own hook because "on mount, once"
+ * is the pattern every page needs and a bare useEffect would repeat the
+ * StrictMode guard below at every call site.
  *
  * Purely a side effect — it renders nothing, returns nothing, and never throws.
- * A failure here must never break a fortune page, so errors are swallowed after
- * a console.warn and simply retried on the next mount.
  */
-export function useTrackSurfaceView(surface: TrackedSurface): void {
+export function useTrackSurfaceView(surface: TrackedEventSurface): void {
   const { data: session } = useSession();
   const userId = session?.user?.id;
   // Guards against React StrictMode's double-invoked effect firing two requests
@@ -34,33 +27,7 @@ export function useTrackSurfaceView(surface: TrackedSurface): void {
   useEffect(() => {
     if (!userId || sentRef.current) return;
 
-    const key = storageKey(surface, userId);
-    const today = getTodayBangkokString();
-
-    try {
-      if (localStorage.getItem(key) === today) return;
-    } catch {
-      // Private mode / storage disabled: fall through and let the DB dedup.
-    }
-
     sentRef.current = true;
-
-    api
-      .post('/api/analytics/view', { surface })
-      .then(() => {
-        // Written on any success, including `{ recorded: false }` — the server
-        // already had today's row, so this device should stop asking too.
-        try {
-          localStorage.setItem(key, today);
-        } catch {
-          // Nothing to do; the DB stays the source of truth.
-        }
-      })
-      .catch((error) => {
-        // Not marked as sent-today, so a later mount retries. Deliberately not
-        // surfaced to the user: analytics must never interrupt a reading.
-        console.warn('[Analytics] Failed to record surface view:', error);
-        sentRef.current = false;
-      });
+    trackEvent(userId, { event: 'surface_viewed', surface });
   }, [surface, userId]);
 }

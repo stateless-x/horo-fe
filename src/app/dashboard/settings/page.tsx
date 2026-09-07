@@ -11,6 +11,7 @@ import { Button, Input, Card } from '@/lib-packages/ui';
 import { THAI_TIME_PERIODS, THAI_MONTHS, BE_OFFSET, toGregorianYear, toBuddhistYear, MBTI_GROUPS, getMbtiInfo } from '@/lib-packages/shared';
 import type { Gender } from '@/lib-packages/shared';
 import { MBTI_HINT_SETTINGS } from '@/lib/mbti-copy';
+import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 
 /**
  * Settings Page - Redesigned with View/Edit Mode
@@ -27,6 +28,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: session, isPending: sessionLoading } = useSession();
+  useTrackSurfaceView('settings');
 
   // Edit mode state
   const [isEditMode, setIsEditMode] = useState(false);

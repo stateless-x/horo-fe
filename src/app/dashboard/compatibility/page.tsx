@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { BE_OFFSET, createUTCDateFromBE, type RelationshipType } from '@/lib-packages/shared';
 import { useInfiniteQuery, useQueryClient, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
+import { useTrackEvent } from '@/lib/analytics';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import {
   RELATIONSHIP_CONFIG,
@@ -27,6 +29,9 @@ export default function CompatibilityPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  useTrackSurfaceView('compatibility');
+  const track = useTrackEvent();
 
   // Form state
   const [partnerName, setPartnerName] = useState('');
@@ -161,6 +166,8 @@ export default function CompatibilityPage() {
       );
 
       setResult(data);
+      // After the call resolves, so a failed or rate-limited check is not counted.
+      track({ event: 'compatibility_checked', relationshipType });
 
       // Invalidate history so new item appears
       queryClient.invalidateQueries({ queryKey: ['compatibility', 'history'] });
@@ -178,7 +185,7 @@ export default function CompatibilityPage() {
       setCalculationStep('');
       setStepsExhausted(false);
     }
-  }, [partnerName, day, month, year, partnerMbti, relationshipType, config.loadingSteps, queryClient]);
+  }, [partnerName, day, month, year, partnerMbti, relationshipType, config.loadingSteps, queryClient, track]);
 
   const handleBackToForm = () => {
     setResult(null);

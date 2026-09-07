@@ -20,6 +20,7 @@ import { useDailyFortune, useUserProfile, getDailyHookLine } from '@/features/fo
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
 import { useMinLoading } from '@/hooks/use-min-loading';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
+import { useTrackEvent } from '@/lib/analytics';
 import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ClientDate } from '@/components/client-date';
 import { ShareSheet } from '@/components/share/share-sheet';
@@ -60,6 +61,7 @@ function clampScore(score: number): number {
 export default function TodayPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   useTrackSurfaceView('today');
+  const track = useTrackEvent();
   const router = useRouter();
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<CategoryKey | null>(null);
@@ -259,7 +261,11 @@ export default function TodayPage() {
                   <div key={key} className={index > 0 ? 'border-t border-edge' : ''}>
                     <button
                       type="button"
-                      onClick={() => setExpandedCategory(isExpanded ? null : key)}
+                      onClick={() => {
+                        // Only the open counts — a collapse is not an interest signal.
+                        if (!isExpanded) track({ event: 'category_opened', surface: 'today', category: key });
+                        setExpandedCategory(isExpanded ? null : key);
+                      }}
                       aria-expanded={isExpanded}
                       aria-controls={panelId}
                       className="grid w-full grid-cols-[3.5rem_1fr_auto] items-center gap-3 p-4 text-left transition-colors hover:bg-surface2/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright md:grid-cols-[4.5rem_1fr_12rem_auto] md:gap-5 md:p-5"
@@ -346,7 +352,10 @@ export default function TodayPage() {
 
         <button
           type="button"
-          onClick={() => setShowShareSheet(true)}
+          onClick={() => {
+            track({ event: 'reading_shared', surface: 'today' });
+            setShowShareSheet(true);
+          }}
           className="mt-10 flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 font-heading text-lg text-accentInk shadow-lg shadow-accent/30 transition-all hover:bg-accentBright active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-ground"
         >
           <Share2 className="size-5" aria-hidden="true" />

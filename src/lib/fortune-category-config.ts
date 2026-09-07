@@ -1,3 +1,4 @@
+import type { FortuneCategoryKey } from '@/lib-packages/shared';
 import {
   Activity,
   Briefcase,
@@ -63,9 +64,14 @@ export const FORTUNE_CATEGORY_CONFIG = {
     clayAsset: '/assets/clay/categories/family.webp',
     icon: Home,
   },
-} as const satisfies Record<string, FortuneCategoryConfig>;
+// Keyed by the shared FortuneCategoryKey rather than `string`, so a key added
+// to lib/shared but missing here is a compile error instead of an `undefined`
+// lookup at every FORTUNE_CATEGORY_CONFIG[key] call site.
+} as const satisfies Record<FortuneCategoryKey, FortuneCategoryConfig>;
 
-export type FortuneCategoryKey = keyof typeof FORTUNE_CATEGORY_CONFIG;
+// Re-exported so the many components importing it from here keep working; the
+// list itself is owned by lib/shared (the backend's analytics vocabulary).
+export type { FortuneCategoryKey };
 
 /** The four categories the daily reading covers, in display order. */
 export const DAILY_CATEGORY_KEYS = ['career', 'love', 'finance', 'health'] as const satisfies readonly FortuneCategoryKey[];

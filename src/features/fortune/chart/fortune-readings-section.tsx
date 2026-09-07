@@ -9,6 +9,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { FortuneReadingCategory } from '@/lib-packages/shared/types/astrology';
 import { CategoryClayImage } from '@/components/ui/category-clay-image';
 import { FORTUNE_CATEGORY_CONFIG, type FortuneCategoryKey } from '@/lib/fortune-category-config';
+import { useTrackEvent } from '@/lib/analytics';
 import { FortuneGuidance } from '@/features/fortune/chart/fortune-guidance';
 
 interface FortuneReadingsSectionProps {
@@ -48,11 +49,17 @@ function readingPreview(reading: string, tips: string[]): string {
 
 export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSectionProps) {
   const shouldReduceMotion = useReducedMotion();
+  const track = useTrackEvent();
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     () => new Set(fortuneReadings[0] ? [fortuneReadings[0].key] : []),
   );
 
   const toggleCategory = (key: string) => {
+    // Read the current set here rather than inside the updater: React may run
+    // the updater twice (StrictMode), which would double-fire the event.
+    if (!expandedCategories.has(key)) {
+      track({ event: 'category_opened', surface: 'fortune', category: key as FortuneCategoryKey });
+    }
     setExpandedCategories((previous) => {
       const next = new Set(previous);
       if (next.has(key)) next.delete(key);

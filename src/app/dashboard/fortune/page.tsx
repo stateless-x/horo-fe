@@ -11,6 +11,7 @@ import { useFortuneStore } from '@/stores/fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
 import { useMinLoading } from '@/hooks/use-min-loading';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
+import { useTrackEvent } from '@/lib/analytics';
 import { ErrorDisplay } from '@/features/fortune/error-display';
 import { ElementProfileSection } from '@/features/fortune/chart/element-profile-section';
 import { FourPillarsSection } from '@/features/fortune/chart/four-pillars-section';
@@ -81,6 +82,7 @@ export default function FortuneChartPage() {
   // Session validation and fortune generation
   const { session, sessionLoading } = useFortuneGeneration();
   useTrackSurfaceView('fortune');
+  const track = useTrackEvent();
 
   // Fortune data fetching
   const { data: chartData, isFetching: isChartFetching } = useFortuneData(loadingState === 'complete');
@@ -94,10 +96,12 @@ export default function FortuneChartPage() {
 
   // Handle share action - open ShareSheet
   const handleShare = () => {
+    track({ event: 'reading_shared', surface: 'fortune' });
     setShowShareSheet(true);
   };
 
   const handleTabChange = (tab: FortuneTab) => {
+    track({ event: 'tab_opened', surface: 'fortune', tab });
     setActiveTab(tab);
     window.requestAnimationFrame(() => {
       document.getElementById('fortune-content')?.scrollIntoView({ block: 'start' });

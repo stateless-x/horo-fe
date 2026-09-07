@@ -10,6 +10,7 @@ import { api } from '@/lib/api';
 import { Button, Input, Card } from '@/lib-packages/ui';
 import { THAI_TIME_PERIODS, THAI_MONTHS, BE_OFFSET, toGregorianYear, toBuddhistYear, MBTI_GROUPS, getMbtiInfo } from '@/lib-packages/shared';
 import type { Gender } from '@/lib-packages/shared';
+import { MBTI_HINT_SETTINGS } from '@/lib/mbti-copy';
 
 /**
  * Settings Page - Redesigned with View/Edit Mode
@@ -570,6 +571,9 @@ export default function SettingsPage() {
               </div>
               {isEditMode ? (
                 <div className="space-y-4">
+                  {/* Accuracy hint */}
+                  <p className="text-xs text-inkMuted pl-6">{MBTI_HINT_SETTINGS}</p>
+
                   {/* Clear MBTI button */}
                   {mbtiType && (
                     <button
@@ -603,10 +607,15 @@ export default function SettingsPage() {
                     </div>
                   ))}
                 </div>
-              ) : (
+              ) : mbtiType ? (
                 <p className="text-base text-ink pl-6">
-                  {mbtiType ? `${mbtiType} (${getMbtiInfo(mbtiType)?.nameTh || ''})` : 'ไม่ได้ระบุ'}
+                  {`${mbtiType} (${getMbtiInfo(mbtiType)?.nameTh || ''})`}
                 </p>
+              ) : (
+                <div className="pl-6">
+                  <p className="text-base text-ink">ไม่ได้ระบุ</p>
+                  <p className="text-xs text-inkMuted mt-1">{MBTI_HINT_SETTINGS}</p>
+                </div>
               )}
             </div>
           </Card>

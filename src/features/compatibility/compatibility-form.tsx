@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent, Button, Input } from '@/lib-p
 import { THAI_MONTHS, MBTI_TYPES, type RelationshipType, RELATIONSHIP_TYPES, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
 import { Loader2, Moon } from 'lucide-react';
 import { RELATIONSHIP_CONFIG, type RelationshipConfig } from '@/features/compatibility/relationship-config';
+import { MBTI_HINT_COMPATIBILITY } from '@/lib/mbti-copy';
 
 interface CompatibilityFormProps {
   config: RelationshipConfig;
@@ -230,6 +231,7 @@ export function CompatibilityForm({
                   <option key={m.code} value={m.code}>{m.code} — {m.nameTh}</option>
                 ))}
               </select>
+              <p className="text-xs md:text-sm text-inkMuted/60 mt-2 text-center">{MBTI_HINT_COMPATIBILITY}</p>
             </div>
 
             <div className="space-y-2">

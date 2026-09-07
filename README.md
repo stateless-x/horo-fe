@@ -1,14 +1,12 @@
 # horo-fe
 
-The web app for สายมู, a Thai fortune-telling product. People arrive knowing
-their birth date and leave with a reading: their element, their four pillars,
-what today looks like, and how they match with someone else.
+The web app for สายมู. Someone arrives knowing only their birth date and
+leaves with a reading: their element, their four pillars, what today holds, and
+how they match with someone else.
 
-Part of the [horo](https://github.com/stateless-x/horo) system. It talks to
-[horo-be](https://github.com/stateless-x/horo-be) over HTTP and holds no
-database connection or model API key of its own.
-
-## Stack
+Part of the [horo](https://github.com/stateless-x/horo) system. It speaks only
+to [horo-be](https://github.com/stateless-x/horo-be) over HTTP, and holds no
+database connection and no model key of its own.
 
 Next.js 15 (App Router) · React 19 · Tailwind v4 · Framer Motion · Zustand ·
 TanStack Query · Better Auth · Bun.
@@ -21,8 +19,8 @@ cp .env.example .env.local   # then fill it in
 bun run dev                  # http://localhost:3000
 ```
 
-Start horo-be first on port 3001. Without it the app loads but every reading
-fails, because all astrology and generation happens server side.
+Start horo-be on port 3001 first. Without it the app loads and every reading
+fails, because all the astrology and generation happens server side.
 
 | Variable | What it is |
 |---|---|
@@ -34,31 +32,29 @@ fails, because all astrology and generation happens server side.
 
 ## The routes that matter
 
-`/fortune` is the onboarding flow and the most delicate part of the product.
-Seven steps collect a name, birth date, gender, birth time and optional MBTI,
-then show a short teaser reading before asking anyone to sign up. Value comes
-first, the account second. Everything about that order is deliberate.
+`/fortune` is onboarding, and the most delicate thing in the product. Seven
+steps collect a name, birth date, gender, birth time and optional MBTI, then
+show a short teaser reading before anyone is asked to sign up. Value first,
+account second. That order is deliberate, and it is what the whole funnel rests
+on.
 
-`/dashboard/today` is the daily reading and the surface people return to.
-`/dashboard/fortune` is the full birth chart. `/dashboard/compatibility` scores
-two people against each other. `/login` and the marketing pages sit at the root.
+`/dashboard/today` is the daily reading and the reason people come back.
+`/dashboard/fortune` is the full birth chart, `/dashboard/compatibility` scores
+two people against each other, and the marketing pages sit at the root.
 
-## Two things to know before editing
+## Before you edit
 
-**The voice.** Readings and interface copy address the reader as คุณ, in warm,
-natural Thai, with no scare tactics and no pressure to sign up. An older version
-used the archaic เจ้า and ข้า; that was deliberately removed. Do not reintroduce
-it.
+**The voice is คุณ.** Readings and interface copy speak warm, natural Thai,
+with no scare tactics and no pressure to sign up. An earlier version used the
+archaic เจ้า and ข้า, and that was removed on purpose. Do not bring it back.
 
-**The design system.** `DESIGN.md` at the repository root is authoritative for
-colour, type, spacing and motion. It names the element colours, the MBTI group
-hues, and the rules for using them. Read it before adding a colour.
+**DESIGN.md decides the visuals.** It sits at the repository root and is
+authoritative for colour, type, spacing and motion, including the element
+colours and the MBTI group hues. Read it before you invent a colour.
 
-## Shared types
-
-`src/lib-packages/shared` is generated. Its source lives in
-`horo-be/lib/shared/types` and it is copied here by `bun run sync:types` in
-horo-be. Edits made here are lost on the next sync.
+**`src/lib-packages/shared` is generated.** Its source is
+`horo-be/lib/shared/types`, copied here by `bun run sync:types` run from
+horo-be. Edits made here vanish at the next sync.
 
 ## Commands
 
@@ -68,9 +64,7 @@ bun run build        # production build
 bun run type-check   # tsc --noEmit
 ```
 
-There is no ESLint configuration in this repository, so `bun run lint` fails.
-Type checking is the gate that matters.
-
-## Deployment
+This repository has no ESLint configuration, so `bun run lint` fails. Type
+checking is the gate that matters.
 
 Railway builds and deploys on push to `master`.

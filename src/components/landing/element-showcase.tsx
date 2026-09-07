@@ -5,11 +5,11 @@ import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 
 const elements = [
-  { key: 'wood', name: 'ธาตุไม้', trait: 'เติบโต', colors: ELEMENT_COLORS.wood },
-  { key: 'fire', name: 'ธาตุไฟ', trait: 'หลงใหล', colors: ELEMENT_COLORS.fire },
+  { key: 'wood', name: 'ธาตุไม้', trait: 'ชอบเติบโต', colors: ELEMENT_COLORS.wood },
+  { key: 'fire', name: 'ธาตุไฟ', trait: 'ใจมีไฟ', colors: ELEMENT_COLORS.fire },
   { key: 'earth', name: 'ธาตุดิน', trait: 'มั่นคง', colors: ELEMENT_COLORS.earth },
-  { key: 'metal', name: 'ธาตุทอง', trait: 'ระเบียบ', colors: ELEMENT_COLORS.metal },
-  { key: 'water', name: 'ธาตุน้ำ', trait: 'ปัญญา', colors: ELEMENT_COLORS.water },
+  { key: 'metal', name: 'ธาตุทอง', trait: 'ชัดเจน', colors: ELEMENT_COLORS.metal },
+  { key: 'water', name: 'ธาตุน้ำ', trait: 'คิดลึก', colors: ELEMENT_COLORS.water },
 ] as const;
 
 export function ElementShowcase() {
@@ -26,10 +26,10 @@ export function ElementShowcase() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-heading text-ink mb-4">
-            ธาตุทั้งห้าเผยชะตา
+            คุณเป็นคนธาตุไหนกันนะ
           </h2>
           <p className="text-inkMuted font-oracle">
-            แค่วันเกิดของคุณ ก็บอกธาตุประจำตัวได้
+            ไม้ ไฟ ดิน ทอง หรือน้ำ ลองดูว่าธาตุไหนเล่าเรื่องคุณ
           </p>
         </motion.div>
 

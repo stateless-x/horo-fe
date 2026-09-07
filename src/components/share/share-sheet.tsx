@@ -130,7 +130,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
       const textWithUrl = compatibilityData
         ? `${generateCompatibilityShareText(platform, compatibilityData, selectedPhrase)}\n${shareUrl}`
         : shareData
-          ? `${generateShareText(platform, shareData, selectedPhrase)}\n\nดูดวงของเจ้าได้ที่ ${shareUrl}`
+          ? `${generateShareText(platform, shareData, selectedPhrase)}\n\nดูดวงของคุณได้ที่ ${shareUrl}`
           : '';
 
       const deepLink = getLineDeepLink(textWithUrl);
@@ -179,7 +179,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-heading text-lg font-medium text-ink">
-                  {title || (compatibilityData ? 'แชร์ผลดวงความสัมพันธ์' : 'แชร์ดวงชะตาของเจ้า')}
+                  {title || (compatibilityData ? 'แชร์ผลดวงความสัมพันธ์' : 'แชร์ดวงชะตาของคุณ')}
                 </h3>
                 <button
                   onClick={onClose}

@@ -10,7 +10,7 @@ import { StepHeading } from './step-heading';
 /**
  * Step 2: Name Input
  *
- * "บอกชื่อของเจ้ามาสิ" (Tell me thy name)
+ * "ให้เราเรียกคุณว่าอะไรดี" (Tell me thy name)
  * - Single centered input, auto-focus; the heading is the field's label
  * - Dark field with purple glow on focus
  */
@@ -42,8 +42,8 @@ export function StepName() {
       <div className="w-full max-w-md space-y-8">
         <StepHeading
           id="step-name-heading"
-          title="บอกชื่อของเจ้ามาสิ"
-          description="ข้าจะเรียกเจ้าด้วยชื่อนี้ในคำทำนาย"
+          title="ให้เราเรียกคุณว่าอะไรดี"
+          description="ชื่อเล่นก็ได้ เราจะใช้ชื่อนี้ในคำทำนาย"
         />
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -52,7 +52,7 @@ export function StepName() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="เช่น ปลา, มิ้นท์"
+            placeholder="เช่น ปลา หรือมิ้นท์"
             aria-labelledby="step-name-heading"
             autoComplete="given-name"
             enterKeyHint="next"

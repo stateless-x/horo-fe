@@ -12,7 +12,7 @@ import { StepHeading } from "./step-heading";
 /**
  * Step 5.5: MBTI Type (Optional)
  *
- * "เจ้ารู้จัก MBTI ของตัวเองไหม"
+ * "รู้ MBTI ของตัวเองไหม"
  * - 4 groups x 4 types grid of tappable cards (2 columns on phones)
  * - "ไม่รู้" option with link to 16personalities.com/th
  * - Skip sets mbtiType to undefined (excluded from LLM prompt)
@@ -46,7 +46,7 @@ export function StepMbti() {
     >
       <div className="w-full max-w-lg space-y-5">
         <StepHeading
-          title="เจ้ารู้จัก MBTI ของตัวเองไหม"
+          title="รู้ MBTI ของตัวเองไหม"
           description={MBTI_HINT_ONBOARDING}
         />
 

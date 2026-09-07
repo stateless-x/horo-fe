@@ -65,7 +65,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
     <section aria-labelledby="fortune-readings-title">
       <div className="mb-8">
         <h2 id="fortune-readings-title" className="font-heading text-2xl font-semibold text-ink sm:text-3xl">
-          โชค 6 ด้านของชีวิต
+          เรื่องของคุณทั้ง 6 ด้าน
         </h2>
         <p className="mt-2 font-thai text-inkMuted">อ่านภาพรวมก่อน แล้วเลือกเปิดเฉพาะเรื่องที่อยากรู้</p>
       </div>

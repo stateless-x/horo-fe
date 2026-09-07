@@ -52,8 +52,8 @@ export function ElementProfileSection({
       {/* Element name and description */}
       <div className="text-center mb-8">
         <p className="font-thai text-ink text-base mb-2">
-          ธาตุประจำตัวของเจ้าคือ
-          <InfoTooltip text="ธาตุหลักที่กำหนดบุคลิกและชะตาของเจ้า คำนวณจากวันเดือนปีเกิดตามหลัก Bazi (ซื่อจู๋)" />
+          ธาตุประจำตัวของคุณคือ
+          <InfoTooltip text="ธาตุประจำตัวจากข้อมูลวันเกิด ใช้ตีความบุคลิกและจังหวะชีวิตตามหลักปาจื้อ" />
         </p>
         <h2
           className="font-heading text-3xl font-bold mb-3"
@@ -117,7 +117,7 @@ export function ElementProfileSection({
         <div>
           <p className="text-inkMuted font-thai text-base">
             <span className="text-warn font-medium">ระวังธาตุ:</span>{" "}
-            {elementNames[elementProfile.conflictingElement]} (ข่มธาตุของเจ้า)
+            {elementNames[elementProfile.conflictingElement]} (ข่มธาตุของคุณ)
           </p>
         </div>
       </div>

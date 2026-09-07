@@ -33,7 +33,7 @@ export function CompatibilityHistory({
         <div className="flex items-center justify-between">
           <h2 className="text-lg md:text-xl font-heading text-ink flex items-center gap-2">
             <Stars className="w-5 h-5 text-accentBright" />
-            ดวงที่เจ้าเคยส่อง
+            ดวงคู่ที่เคยดู
             {totalHistory > 0 && (
               <span className="text-xs md:text-sm text-inkMuted bg-surface px-2 py-0.5 rounded-full">
                 {totalHistory} ครั้ง
@@ -53,8 +53,8 @@ export function CompatibilityHistory({
               <Stars className="w-8 h-8" />
               <Users className="w-8 h-8" />
             </div>
-            <p className="text-inkMuted text-base md:text-lg">ยังไม่มีประวัติการส่องดวง</p>
-            <p className="text-inkMuted/60 text-sm md:text-base">ลองส่องดวงความสัมพันธ์กับคนรอบข้างเจ้าดูสิ</p>
+            <p className="text-inkMuted text-base md:text-lg">ดวงคู่ครั้งแรก เริ่มที่ใครดี</p>
+            <p className="text-inkMuted/60 text-sm md:text-base">ลองดูดวงคู่กับคนที่อยากรู้จักให้มากขึ้น</p>
           </div>
         ) : (
           <div className="space-y-2">

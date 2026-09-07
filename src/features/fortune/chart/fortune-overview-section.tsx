@@ -49,7 +49,7 @@ export function FortuneOverviewSection({
         <h2 id="result-overview-title" className="font-heading text-2xl font-semibold text-ink sm:text-3xl">
           เริ่มจากตรงนี้
         </h2>
-        <p className="mt-2 font-thai text-inkMuted">สรุปสิ่งสำคัญที่ควรรู้ก่อน ใช้เวลาอ่านประมาณ 1 นาที</p>
+        <p className="mt-2 font-thai text-inkMuted">อ่านภาพรวมสั้น ๆ แล้วค่อยเลือกเรื่องที่อยากรู้เพิ่ม</p>
       </div>
 
       {lifeReading && (
@@ -116,7 +116,7 @@ export function FortuneOverviewSection({
       </div>
 
       <div className="py-8">
-        <h3 className="font-heading text-lg font-semibold text-ink">ตัวช่วยเล็ก ๆ ของเจ้า</h3>
+        <h3 className="font-heading text-lg font-semibold text-ink">ตัวช่วยเล็ก ๆ ของคุณ</h3>
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
           <div><dt className="text-sm text-inkMuted">สีมงคล</dt><dd className="mt-1 font-heading text-ink">{localizeColorName(birthStar.luckyColor)}</dd></div>
           <div><dt className="text-sm text-inkMuted">เลขมงคล</dt><dd className="mt-1 font-heading text-ink">{birthStar.luckyNumber}</dd></div>
@@ -130,7 +130,7 @@ export function FortuneOverviewSection({
         onClick={onOpenReadings}
         className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-accent px-6 py-3 font-heading font-semibold text-accentInk transition-colors hover:bg-accentBright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-ground sm:w-auto"
       >
-        ดูโชค 6 ด้าน
+        ดูดวง 6 ด้าน
         <ArrowRight className="size-5" aria-hidden="true" />
       </button>
     </section>

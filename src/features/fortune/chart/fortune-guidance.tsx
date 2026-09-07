@@ -80,7 +80,7 @@ export function FortuneGuidance({ category, tips, warnings }: FortuneGuidancePro
         aria-controls={panelId}
         className="flex min-h-11 w-full items-center justify-between gap-4 rounded-lg px-2 text-left font-heading text-sm font-semibold text-accentBright transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
       >
-        <span>{isOpen ? 'ซ่อนแนวทางประกอบ' : 'เปิดแนวทางประกอบ'}</span>
+        <span>{isOpen ? 'ย่อคำแนะนำ' : 'ดูคำแนะนำเพิ่ม'}</span>
         <ChevronDown className={`size-5 shrink-0 transition-transform motion-reduce:transition-none ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
       <AnimatePresence initial={false}>

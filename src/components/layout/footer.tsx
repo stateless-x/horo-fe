@@ -19,11 +19,11 @@ interface FooterContext {
 
 const FOOTER_CONTEXT: Record<string, FooterContext> = {
   "/dashboard/fortune": {
-    shareCta: "ชอบดวงชะตาของเจ้าหรือเปล่า? แชร์ให้เพื่อนได้เลย!",
+    shareCta: "ชอบดวงชะตาของคุณหรือเปล่า? แชร์ให้เพื่อนได้เลย!",
     shareEnabled: true,
     crossLinks: [
       {
-        label: "ส่องดวงความสัมพันธ์",
+        label: "ดูดวงคู่",
         href: "/dashboard/compatibility",
         icon: Heart,
       },
@@ -36,7 +36,7 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     crossLinks: [
       { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
       {
-        label: "ส่องดวงความสัมพันธ์",
+        label: "ดูดวงคู่",
         href: "/dashboard/compatibility",
         icon: Heart,
       },
@@ -48,7 +48,7 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     crossLinks: [
       { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
       {
-        label: "ส่องดวงความสัมพันธ์",
+        label: "ดูดวงคู่",
         href: "/dashboard/compatibility",
         icon: Heart,
       },
@@ -140,7 +140,7 @@ export function Footer() {
               <button
                 onClick={() => {
                   const url = window.location.href;
-                  const text = encodeURIComponent("มาดูดวงชะตาของฉันกันเถอะ!");
+                  const text = encodeURIComponent("ดวงเราออกมาแบบนี้ ลองอ่านดู");
                   const encodedUrl = encodeURIComponent(url);
                   window.open(
                     `https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${text}`,
@@ -156,7 +156,7 @@ export function Footer() {
               <button
                 onClick={() => {
                   const url = window.location.href;
-                  const text = encodeURIComponent("มาดูดวงของเจ้ากันเถอะ!");
+                  const text = encodeURIComponent("ลองมาเปิดดวงของคุณกัน");
                   const encodedUrl = encodeURIComponent(url);
                   window.open(
                     `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${text}`,
@@ -173,7 +173,7 @@ export function Footer() {
                 onClick={() => {
                   const url = window.location.href;
                   const text = encodeURIComponent(
-                    `มาดูดวงของเจ้ากันเถอะ! ${url}`,
+                    `ลองมาเปิดดวงของคุณกัน ${url}`,
                   );
                   window.open(
                     `https://twitter.com/intent/tweet?text=${text}`,
@@ -217,7 +217,7 @@ export function Footer() {
         {/* {context.crossLinks.length > 0 && (
           <div className="mb-6">
             <h4 className="font-heading text-base text-ink font-medium text-center mb-4">
-              ลองฟีเจอร์อื่น
+              อยากดูเรื่องไหนต่อ
             </h4>
             <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
               {context.crossLinks.map((link) => {

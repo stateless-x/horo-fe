@@ -66,7 +66,7 @@ export function RecommendationsSection({
       <div className="flex items-center justify-center gap-2 mb-6">
         <Sparkles className="text-accentSoft w-6 h-6" />
         <h2 className="font-heading text-xl font-medium text-ink">
-          คำแนะนำ & ฤกษ์มงคล
+          คำแนะนำและจังหวะดี
           <InfoTooltip text="ฤกษ์มงคล คือช่วงเวลาที่ดวงดาวเรียงตัวเป็นมงคล เหมาะสำหรับเริ่มต้นสิ่งใหม่ เช่น ลงทุน แต่งงาน หรือขึ้นบ้านใหม่" />
         </h2>
       </div>
@@ -108,7 +108,7 @@ export function RecommendationsSection({
       {recommendations.monthlyHighlights.length > 0 && (
         <div className="bg-surface border border-surface2/50 rounded-xl p-6 mb-6">
           <h3 className="text-accentSoft font-heading font-medium text-base mb-4">
-            เดือนเด่นของเจ้า
+            เดือนเด่นของคุณ
           </h3>
 
           {/* Month pills - horizontal scroll */}
@@ -229,7 +229,7 @@ export function RecommendationsSection({
       {/* Do's and Don'ts */}
       <div className="bg-surface border border-surface2/50 rounded-xl p-6">
         <h3 className="text-accentSoft font-heading font-medium text-base mb-4">
-          สิ่งที่ควรทำ & หลีกเลี่ยงปีนี้
+          ปีนี้ลองทำอะไร พักอะไรไว้ก่อน
         </h3>
 
         <div className="space-y-4">

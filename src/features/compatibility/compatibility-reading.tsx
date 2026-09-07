@@ -10,8 +10,8 @@ interface CompatibilityReadingProps {
 
 const SECTIONS = [
   { key: 'chemistry', label: 'เคมีของคู่นี้', icon: Sparkles },
-  { key: 'caution', label: 'จุดที่ควรค่อย ๆ ดู', icon: ShieldAlert },
-  { key: 'advice', label: 'จังหวะที่ไปต่อได้', icon: Lightbulb },
+  { key: 'caution', label: 'เรื่องที่ต้องคุยกัน', icon: ShieldAlert },
+  { key: 'advice', label: 'ลองปรับเข้าหากัน', icon: Lightbulb },
 ] as const;
 
 export function CompatibilityReading({ score, analysis, structuredContent }: CompatibilityReadingProps) {
@@ -20,8 +20,8 @@ export function CompatibilityReading({ score, analysis, structuredContent }: Com
       <section aria-labelledby="legacy-reading-title" className="rounded-2xl border border-edge bg-surface p-5 md:p-7">
         <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3 border-b border-edge pb-5">
           <div>
-            <h2 id="legacy-reading-title" className="font-heading text-xl text-ink">คำวิเคราะห์จากดวงดาว</h2>
-            <p className="mt-1 text-sm text-inkMuted">ผลรูปแบบเดิม รายละเอียดจึงยาวกว่าผลรุ่นใหม่</p>
+            <h2 id="legacy-reading-title" className="font-heading text-xl text-ink">เรื่องราวของคู่นี้</h2>
+            <p className="mt-1 text-sm text-inkMuted">ค่อย ๆ อ่าน แล้วเลือกเก็บมุมที่ช่วยให้เข้าใจกันมากขึ้น</p>
           </div>
           <p className="font-heading text-ink tabular-nums" aria-label={`คะแนนจากผลรูปแบบเดิม ${score} เต็ม 100`}>
             <span className="text-3xl font-semibold">{score}</span>

@@ -160,10 +160,10 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
                     ซื้อกาแฟให้พี่ภูสักแก้ว
                   </h2>
                   <p className="font-thai text-sm text-inkMuted mt-2 leading-relaxed">
-                    ดูดวงฟรีไม่อั้น ไม่มีกั๊ก
+                    ชอบสายมู ฝากค่ากาแฟให้คนทำได้นะ
                   </p>
                   <p className="font-thai text-sm text-lavender mt-1 leading-relaxed">
-                    หากชอบใจ ฝากสนับสนุนค่ากาแฟได้เลยนะครับ <Heart className="inline w-3.5 h-3.5 text-pink-600 dark:text-pink-400" aria-hidden="true" />
+                    ขอบคุณที่ช่วยให้สายมูมีคำทำนายมาให้อ่านต่อ <Heart className="inline w-3.5 h-3.5 text-pink-600 dark:text-pink-400" aria-hidden="true" />
                   </p>
                 </div>
 

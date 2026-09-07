@@ -94,13 +94,13 @@ export function LandingNarrative() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl md:text-7xl font-heading mb-6 tracking-tight bg-gradient-to-br from-ink via-accentFaint to-accentSoft bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(192,132,252,0.3)]">
-              ดูดวงที่เข้าใจตัวตนของคุณ
+              ดูดวงฟรี เผื่อวันนี้จะเข้าใจตัวเองขึ้น
             </h1>
 
             <p className="text-lg md:text-2xl text-accentFaint/80 mb-6 font-oracle font-light leading-relaxed">
-              ผสานโหราศาสตร์ไทย ดวงจีนปาจื้อ (Bazi) และจิตวิทยา MBTI
+              เรื่องงาน เรื่องรัก หรือเรื่องที่ยังคิดไม่ตก
               <br />
-              ถอดรหัสทั้งดวงชะตาและนิสัยจริง ไม่ใช่แค่ดวง แต่คือ<span className="text-accentSoft/90 font-normal">แก่นแท้ของคุณ</span>
+              ลองให้ดวงเป็นอีกมุม แล้วเลือกทางที่<span className="text-accentSoft/90 font-normal">สบายใจในแบบคุณ</span>
             </p>
 
             {/* Decorative line */}
@@ -135,7 +135,7 @@ export function LandingNarrative() {
             </div>
 
             <p className="text-inkMuted/70 text-sm font-oracle mt-6">
-              ฟรี · ใช้เวลาไม่ถึง 2 นาที · เห็นผลก่อนสมัครสมาชิก
+              ดูผลเบื้องต้นฟรี แล้วค่อยเข้าสู่ระบบเพื่ออ่านต่อ
             </p>
           </motion.div>
         </div>
@@ -147,6 +147,100 @@ export function LandingNarrative() {
       {/* ===== SECTION 2: Five Elements ===== */}
       <ElementShowcase />
 
+      {/* ===== SECTION 5: Six Readings ===== */}
+      <ReadingCategories />
+
+      {/* ===== SECTION 5.5: Proof — a real reading, shown ===== */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-heading text-ink text-center mb-6"
+          >
+            ลองอ่านสักนิด ก่อนเปิดดวงของคุณ
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-inkMuted font-oracle text-center mb-12 max-w-2xl mx-auto"
+          >
+            มีทั้งภาพรวมและคำแนะนำแยกเป็นเรื่อง
+            อยากรู้เรื่องไหน ก็เลือกอ่านเรื่องนั้น
+          </motion.p>
+
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <FortuneProofPreview />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="space-y-6"
+            >
+              <div className="glass-card p-6 md:p-8">
+                <p className="font-mono text-xs tracking-wider text-inkMuted/60 mb-3">ตัวอย่างคำทำนาย · ธาตุไม้ · INFP</p>
+                <p className="font-oracle text-accentFaint/90 leading-relaxed">
+                  &ldquo;ใจดีได้ แต่อย่าลืมเผื่อใจไว้ให้ตัวเองด้วย
+                  ถ้าช่วงนี้มีงานฝากมาเรื่อย ๆ ลองเช็กงานในมือก่อนรับเพิ่ม
+                  คำว่าไม่สะดวกครั้งนี้ ไม่ได้แปลว่าคุณเป็นเพื่อนร่วมงานที่ไม่ดี&rdquo;
+                </p>
+              </div>
+              <p className="text-inkMuted text-sm leading-relaxed">
+                นี่คือตัวอย่างน้ำเสียงของคำทำนาย
+                อ่านแล้วลองเก็บส่วนที่เข้ากับชีวิตคุณไปใช้ ไม่ต้องทำตามทุกข้อ
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 6: Final CTA — "The Invitation" ===== */}
+      <section className="py-24 px-6 text-center relative">
+        {/* Top divider */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-3xl mx-auto"
+        >
+          <h2 className="text-3xl md:text-5xl font-heading text-ink mb-4">
+            มีเรื่องไหนอยู่ในใจ ลองเปิดดวงดู
+          </h2>
+          <p className="text-inkMuted font-oracle mb-10">
+            บอกวันเกิด ดูผลเบื้องต้น แล้วค่อยตัดสินใจอ่านต่อ
+          </p>
+
+          <Link href="/fortune">
+            <div className="relative inline-block">
+              {/* Glow pulse behind button */}
+              <div className="absolute inset-0 bg-accent rounded-lg blur-xl animate-ctaGlow" />
+              <motion.button
+                whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative px-14 py-5 bg-accent hover:bg-accentBright text-accentInk font-heading text-xl font-semibold rounded-lg transition-all shadow-md shadow-accent/20 dark:shadow-accent/30 hover:shadow-lg hover:shadow-accentBright/20 dark:hover:shadow-accentBright/30 touch-manipulation"
+              >
+                เริ่มดูดวงฟรี
+              </motion.button>
+            </div>
+          </Link>
+
+          <p className="text-inkMuted/60 text-sm font-oracle mt-6">
+            อ่านไว้เป็นมุมมอง ทางเดินต่อจากนี้คุณเลือกเอง
+          </p>
+        </motion.div>
+      </section>
       {/* ===== SECTION 4: Three Systems ===== */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
@@ -156,7 +250,7 @@ export function LandingNarrative() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-heading text-ink text-center mb-6"
           >
-            ทำไมสายมูถึงทายได้ตรง
+            ดวงเล่าเรื่องคุณจากอะไรบ้าง
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -165,7 +259,7 @@ export function LandingNarrative() {
             transition={{ delay: 0.1 }}
             className="text-inkMuted font-oracle text-center mb-16 max-w-2xl mx-auto"
           >
-            เพราะเราไม่ได้ดูแค่ดวง — เราอ่านทั้งชะตาและนิสัยของคุณ ผสาน 3 ศาสตร์ไว้ในคำทำนายเดียว
+            สายมูเป็นเว็บดูดวงออนไลน์ฟรี ใช้ AI เรียบเรียงคำทำนายจากดวงไทย ปาจื้อ และ MBTI ที่คุณเลือกบอก
           </motion.p>
 
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 relative max-w-md lg:max-w-none mx-auto">
@@ -199,11 +293,11 @@ export function LandingNarrative() {
                     ดวงจีนปาจื้อ (Bazi)
                   </h3>
                   <p className="text-ink font-oracle text-sm md:text-base leading-relaxed mb-4">
-                    ศาสตร์โหราจีนโบราณที่วิเคราะห์ชะตาชีวิตจากสี่เสาชะตา (ปี เดือน วัน
-                    ชั่วโมงเกิด) และธาตุทั้งห้า
+                    เริ่มจากปี เดือน วัน และเวลาเกิด
+                    เพื่ออ่านธาตุประจำตัวและจังหวะชีวิตตามศาสตร์จีน
                   </p>
                   <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
-                    จุดเด่น: วิเคราะห์วงจรชีวิต 10 ปี และพลังธาตุในชาติ
+                    ชวนรู้จักธาตุของตัวเองให้มากขึ้น
                   </p>
                 </div>
               </div>
@@ -239,11 +333,11 @@ export function LandingNarrative() {
                     โหราศาสตร์ไทย
                   </h3>
                   <p className="text-ink font-oracle text-sm md:text-base leading-relaxed mb-4">
-                    ภูมิปัญญาไทยที่ดูดวงจากวันเกิด นพเคราะห์ และจักรนพคุณ
-                    เพื่อดูความสัมพันธ์และโชคลาภ
+                    อ่านวันเกิดผ่านดาวประจำวัน
+                    พร้อมสี เลข และทิศมงคลที่คุ้นเคย
                   </p>
                   <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
-                    จุดเด่น: วิเคราะห์ความสัมพันธ์ โชคลาภ และจังหวะเวลา
+                    เติมไอเดียเล็ก ๆ ให้วันธรรมดา
                   </p>
                 </div>
               </div>
@@ -276,14 +370,14 @@ export function LandingNarrative() {
                   </span>
 
                   <h3 className="text-xl md:text-2xl font-heading text-accentBright mb-4">
-                    จิตวิทยา MBTI
+                    บุคลิกภาพ MBTI
                   </h3>
                   <p className="text-ink font-oracle text-sm md:text-base leading-relaxed mb-4">
-                    จิตวิทยาบุคลิกภาพ 16 แบบ ที่ทำให้คำทำนายรู้จักนิสัยจริง
-                    และเตือนจุดอ่อนของคนแบบคุณ
+                    ถ้ารู้ MBTI ลองบอกเราเพิ่ม
+                    เพื่อให้คำแนะนำมีมุมของนิสัยที่คุณคุ้นกับตัวเอง
                   </p>
                   <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
-                    จุดเด่น: เตือนตามบุคลิกภาพ ปรับคำแนะนำให้เหมาะกับตัวคุณ
+                    ไม่รู้ก็ข้ามได้ ดูดวงต่อได้เหมือนเดิม
                   </p>
                 </div>
               </div>
@@ -292,101 +386,6 @@ export function LandingNarrative() {
         </div>
       </section>
 
-      {/* ===== SECTION 5: Six Readings ===== */}
-      <ReadingCategories />
-
-      {/* ===== SECTION 5.5: Proof — a real reading, shown ===== */}
-      <section className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-heading text-ink text-center mb-6"
-          >
-            คำทำนายหน้าตาเป็นแบบนี้
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-inkMuted font-oracle text-center mb-12 max-w-2xl mx-auto"
-          >
-            ไม่ใช่คำทำนายกว้าง ๆ ที่ใครอ่านก็ตรง —
-            ทุกบรรทัดคำนวณจากวันเกิด เวลาเกิด และบุคลิกภาพของคุณคนเดียว
-          </motion.p>
-
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <FortuneProofPreview />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="space-y-6"
-            >
-              <div className="glass-card p-6 md:p-8">
-                <p className="font-mono text-xs tracking-wider text-inkMuted/60 mb-3">ตัวอย่างคำทำนาย · ธาตุไม้ · INFP</p>
-                <p className="font-oracle text-accentFaint/90 leading-relaxed">
-                  &ldquo;เจ้าเป็นไม้ที่โตท่ามกลางลมแรง — ใจอ่อนโยนแต่รากลึก
-                  ช่วงนี้การงานของเจ้ากำลังเข้าเดือนที่ธาตุทองกดทับ
-                  คนบุคลิกแบบเจ้ามักยอมรับงานเกินตัวเพราะไม่กล้าปฏิเสธ
-                  จงระวังสัปดาห์ที่สามของเดือน&rdquo;
-                </p>
-              </div>
-              <p className="text-inkMuted text-sm leading-relaxed">
-                สังเกตบรรทัดสุดท้าย — คำเตือนอิงจากจุดอ่อนของบุคลิกภาพแบบคุณโดยตรง
-                นี่คือสิ่งที่โหราศาสตร์อย่างเดียวให้ไม่ได้ และแบบทดสอบบุคลิกภาพอย่างเดียวก็ให้ไม่ได้
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SECTION 6: Final CTA — "The Invitation" ===== */}
-      <section className="py-24 px-6 text-center relative">
-        {/* Top divider */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto"
-        >
-          <h2 className="text-3xl md:text-5xl font-heading text-ink mb-4">
-            พร้อมรู้จักตัวเองลึกกว่าเดิมหรือยัง
-          </h2>
-          <p className="text-inkMuted font-oracle mb-10">
-            ฟรี ไม่เสียค่าใช้จ่าย · ใช้เวลาไม่ถึง 2 นาที · เห็นผลก่อนสมัครสมาชิก
-          </p>
-
-          <Link href="/fortune">
-            <div className="relative inline-block">
-              {/* Glow pulse behind button */}
-              <div className="absolute inset-0 bg-accent rounded-lg blur-xl animate-ctaGlow" />
-              <motion.button
-                whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative px-14 py-5 bg-accent hover:bg-accentBright text-accentInk font-heading text-xl font-semibold rounded-lg transition-all shadow-md shadow-accent/20 dark:shadow-accent/30 hover:shadow-lg hover:shadow-accentBright/20 dark:hover:shadow-accentBright/30 touch-manipulation"
-              >
-                เริ่มดูดวงฟรี
-              </motion.button>
-            </div>
-          </Link>
-
-          <p className="text-inkMuted/60 text-sm font-oracle mt-6">
-            ดูดวงด้วย โหราศาสตร์ไทย × ดวงจีนปาจื้อ (Bazi) × จิตวิทยา MBTI
-          </p>
-        </motion.div>
-      </section>
     </>
   );
 }

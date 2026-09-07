@@ -15,7 +15,7 @@ const OPTIONS: { value: Gender; label: string; Icon: typeof Mars }[] = [
 /**
  * Step 4: Gender
  *
- * "เพศกำเนิดของเจ้า"
+ * "เพศกำเนิดของคุณ"
  * - Two large tappable cards (male/female); tapping advances immediately
  * - Cards glow purple on hover
  * - Needed for Bazi 大運 calculation, and the why-line says so
@@ -37,8 +37,8 @@ export function StepGender() {
     >
       <div className="w-full max-w-md space-y-8">
         <StepHeading
-          title="เพศกำเนิดของเจ้า"
-          description="ปาจื้อคำนวณจังหวะชีวิตต่างกันตามเพศกำเนิด ข้าใช้เพื่อการคำนวณเท่านั้น"
+          title="เพศกำเนิดของคุณ"
+          description="ใช้คำนวณจังหวะชีวิตตามหลักปาจื้อ"
         />
 
         <div className="grid grid-cols-2 gap-4" role="group" aria-label="เพศกำเนิด">

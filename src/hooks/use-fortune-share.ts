@@ -21,7 +21,7 @@ export function useFortuneShare() {
 เลขมงคล: ${chartData.birthStar.luckyNumber}
 ดาวประจำวัน: ${chartData.birthStar.planet}
 
-มาดูดวงของเจ้ากันเถอะ!`;
+ลองมาเปิดดวงของคุณกัน`;
 
       const shareUrl = `${SITE_URL}/fortune`;
 
@@ -29,7 +29,7 @@ export function useFortuneShare() {
         // Try Web Share API (mobile)
         if (typeof navigator !== "undefined" && navigator.share) {
           await navigator.share({
-            title: "Horo - ดวงชะตาของฉัน",
+            title: "Horo ดวงชะตาของฉัน",
             text: shareText,
             url: shareUrl,
           });

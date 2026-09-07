@@ -217,11 +217,11 @@ export function FourPillarsSection({
     <div>
       <div className="text-center mb-6">
         <h2 className="font-heading text-2xl font-medium text-ink mb-2">
-          เสาชะตาทั้งสี่ของเจ้า
+          เสาชะตาทั้งสี่ของคุณ
           <InfoTooltip text="เสาสี่ต้น (四柱) คือหัวใจของ Bazi คำนวณจากปี เดือน วัน และเวลาเกิด แต่ละเสาบอกถึงด้านต่างๆ ของชีวิต" />
         </h2>
         <p className="font-thai text-inkMuted text-sm">
-          แต่ละเสาเผยถึงอิทธิพลที่หล่อหลอมชีวิตของเจ้า
+          แต่ละเสาเผยถึงอิทธิพลที่หล่อหลอมชีวิตของคุณ
         </p>
       </div>
 

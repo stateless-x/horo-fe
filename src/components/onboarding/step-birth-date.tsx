@@ -37,7 +37,7 @@ function DateSelect({ id, value, onChange, children }: {
 /**
  * Step 3: Birth Date
  *
- * "เจ้าเกิดวันไหน"
+ * "วันเกิดของคุณคือวันไหน"
  * - Three native selects (day, month, พ.ศ. year); the OS picker does the
  *   scrolling, which is the one thing a fake wheel kept getting wrong
  * - Store as ISO internally, show Buddhist Era to users
@@ -82,8 +82,8 @@ export function StepBirthDate() {
     >
       <div className="w-full max-w-md space-y-8">
         <StepHeading
-          title="เจ้าเกิดวันไหน"
-          description="วันเกิดคือหัวใจของดวงชะตา ทั้งดวงไทยและปาจื้อเริ่มจากตรงนี้"
+          title="วันเกิดของคุณคือวันไหน"
+          description="เลือกวัน เดือน และปี พ.ศ. ที่เกิด แล้วมาดูว่าดวงเล่าอะไรบ้าง"
         />
 
         <fieldset className="space-y-6">

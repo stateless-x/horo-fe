@@ -116,7 +116,7 @@ export default function CompatibilityPage() {
 
   const handleCalculate = useCallback(async () => {
     if (!partnerName.trim()) {
-      setError('กรุณากรอกชื่อ');
+      setError('ใส่ชื่ออีกฝ่ายก่อนนะ');
       return;
     }
 
@@ -169,10 +169,10 @@ export default function CompatibilityPage() {
         const retryAfter = err.body?.retryAfter || 3600;
         setRateLimitInfo({ remaining: 0, resetAt, retryAfter });
         setRateLimitCountdown(retryAfter);
-        setError(err.body?.error || 'พลังดวงดาวต้องการเวลาฟื้นฟู');
+        setError(err.body?.error || 'ครบจำนวนครั้งที่ดูได้แล้ว รอสักพักแล้วลองใหม่');
         return;
       }
-      setError(err?.body?.error || (err instanceof Error ? err.message : 'เกิดข้อผิดพลาด กรุณาลองใหม่'));
+      setError(err?.body?.error || (err instanceof Error ? err.message : 'ตอนนี้โหลดข้อมูลไม่ได้ ลองอีกครั้งนะ'));
     } finally {
       setCalculating(false);
       setCalculationStep('');
@@ -247,9 +247,9 @@ export default function CompatibilityPage() {
               className="size-24 shrink-0 object-contain sm:size-28"
             />
             <div>
-              <h1 className="font-heading text-3xl font-semibold text-ink md:text-4xl">ส่องดวงความสัมพันธ์</h1>
+              <h1 className="font-heading text-3xl font-semibold text-ink md:text-4xl">ดูดวงคู่</h1>
               <p className="mt-2 max-w-[44ch] font-thai leading-relaxed text-inkMuted">
-                เลือกความสัมพันธ์ แล้วบอกชื่อกับวันเกิดของอีกฝ่าย เหลือให้ดวงดาวอ่านจังหวะของทั้งคู่
+                คนคุย คนรัก หรือคนที่เจอทุกวัน ลองดูว่าเข้ากันตรงไหน แล้วค่อย ๆ เข้าใจกันมากขึ้น
               </p>
             </div>
           </div>

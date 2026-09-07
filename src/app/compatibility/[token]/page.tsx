@@ -84,7 +84,7 @@ export default function CompatibilitySharePage() {
         const data = await response.json();
         setResult(data);
       } catch {
-        setError('เกิดข้อผิดพลาด กรุณาลองใหม่');
+        setError('ตอนนี้โหลดข้อมูลไม่ได้ ลองอีกครั้งนะ');
       } finally {
         setLoading(false);
       }
@@ -114,7 +114,7 @@ export default function CompatibilitySharePage() {
           <h1 className="text-2xl font-heading text-ink">{error || 'ไม่พบผลดวง'}</h1>
           <p className="text-inkMuted">ลิงก์อาจหมดอายุหรือไม่ถูกต้อง</p>
           <Button onClick={() => router.push('/dashboard/compatibility')} className="w-full max-w-xs mx-auto">
-            ส่องดวงของเจ้าเลย
+            ลองดูดวงของคุณ
           </Button>
         </div>
       </div>
@@ -206,14 +206,14 @@ export default function CompatibilitySharePage() {
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
                 <Sparkles className="w-8 h-8 text-accentBright mx-auto" />
-                <h3 className="text-lg font-heading text-ink">อยากรู้ดวงความสัมพันธ์ของเจ้าบ้างไหม?</h3>
-                <p className="text-inkMuted text-sm">ส่องดวงกับคนรอบข้างของเจ้าได้ฟรี! วิเคราะห์ด้วย AI ผสานโหราศาสตร์</p>
+                <h3 className="text-lg font-heading text-ink">แล้วคุณกับคนในใจ เข้ากันแค่ไหน</h3>
+                <p className="text-inkMuted text-sm">ลองดูดวงคู่ฟรี มีทั้งคนคุย คนรัก เพื่อน และครอบครัว</p>
                 <Button
                   size="lg"
                   className="w-full max-w-xs mx-auto"
                   onClick={() => router.push('/dashboard/compatibility')}
                 >
-                  ส่องดวงของเจ้าเลย
+                  ลองดูดวงของคุณ
                 </Button>
               </div>
             </CardContent>

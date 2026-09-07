@@ -56,7 +56,7 @@ export function HeroSection({
             }}
           >
             <Sparkles className="w-4 h-4" style={{ color: elementAccent || 'var(--accent-bright)' }} />
-            <span>คำทำนายของเจ้าพร้อมแล้ว</span>
+            <span>คำทำนายของคุณพร้อมแล้ว</span>
           </div>
         </div>
       </motion.div>

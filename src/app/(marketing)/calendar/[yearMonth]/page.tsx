@@ -61,8 +61,8 @@ export async function generateMetadata(
     // No "| สายมู" suffix here: the root layout's title.template already
     // appends "| สายมู - ดูดวงออนไลน์", and having both produced an 87-char
     // title with the brand twice, well past Google's ~60-char display limit.
-    title: `ปฏิทินไทย ${monthName} ${beYear} วันพระ วันโกน ฤกษ์ดี`,
-    description: `ปฏิทินไทยพุทธศักราช ${beYear} เดือน${monthName}วันพระ วันโกน ทำบุญ ตัดผม ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน เปิดกิจการ สีประจำวัน เลขมงคล ดาวประจำวัน และวันหยุดราชการ ตามหลักโหราศาสตร์ไทยสำหรับสายมูและสายบุญ`,
+    title: `ปฏิทินไทย ${monthName} ${beYear} วันพระ วันโกน วันหยุด`,
+    description: `ปฏิทินไทย ${monthName} ${beYear} เช็กวันพระ วันโกน วันหยุดราชการ และสีประจำวัน ดูวันสำคัญของเดือนนี้ให้ครบ ก่อนนัดทำบุญหรือวางแผนวันพักผ่อนกับสายมู`,
     keywords: [
       'ปฏิทินไทย', `ปฏิทิน ${beYear}`, `ปฏิทิน ${monthName} ${beYear}`,
       'วันพระ', `วันพระ ${monthName} ${beYear}`, `วันพระ ${beYear}`,
@@ -84,15 +84,15 @@ export async function generateMetadata(
       canonical: `/calendar/${yearMonth}`,
     },
     openGraph: {
-      title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ วันโกน ฤกษ์ดี สายมู`,
-      description: `วันพระ วันโกน ตัดผมมงคล ฤกษ์ดี ขึ้นบ้านใหม่ แต่งงาน สีประจำวัน เลขมงคล และวันหยุดราชการ เดือน${monthName} ${beYear}ปฏิทินไทยสำหรับสายมูและสายบุญ`,
+      title: `ปฏิทินไทย ${monthName} ${beYear} | วันพระ วันโกน วันหยุด สายมู`,
+      description: `เดือน${monthName} ${beYear} มีวันไหนให้ปักหมุดบ้าง เช็กวันพระ วันโกน วันหยุด และสีประจำวันได้ในปฏิทินไทยของสายมู`,
       type: 'website',
       images: [
         {
           url: '/og-image.jpg',
           width: 1200,
           height: 630,
-          alt: 'สายมู - ปฏิทินไทย ดูดวงออนไลน์ฟรี',
+          alt: 'สายมู ปฏิทินไทย ดูดวงออนไลน์ฟรี',
           type: 'image/jpeg',
         },
       ],
@@ -144,15 +144,15 @@ export default async function CalendarMonthPage(
 
         {/* ── Hero ── */}
         <section className="text-center space-y-3">
-          <p className="text-inkMuted font-oracle text-sm tracking-widest uppercase">โหราศาสตร์ไทย · สายมู · สายบุญ</p>
+          <p className="text-inkMuted font-oracle text-sm tracking-widest uppercase">วางแผนเดือนนี้ มีวันไหนให้ปักหมุดบ้าง</p>
           <h1 className="text-3xl md:text-5xl font-heading bg-gradient-to-br from-ink via-accentFaint to-accentSoft bg-clip-text text-transparent">
             ปฏิทินไทย {monthName} {beYear}
           </h1>
           <p className="text-accentFaint/90 font-oracle text-sm md:text-base">
-            วันพระ · วันโกน · สีประจำวัน · ฤกษ์ดี · วันหยุดราชการ
+            เช็กวันพระ วันโกน และวันหยุด ก่อนนัดวันสำคัญ
           </p>
           <div className="flex flex-wrap justify-center gap-2 pt-1">
-            {['ตัดผมมงคล','ทำบุญ','ขึ้นบ้านใหม่','แต่งงาน','เปิดกิจการ','เสริมดวง'].map(tag => (
+            {['วันพระ','วันโกน','วันหยุด','สีประจำวัน'].map(tag => (
               <span key={tag} className="text-xs font-oracle text-inkMuted/70 bg-edgeSoft border border-edge rounded-full px-3 py-1">
                 {tag}
               </span>
@@ -187,12 +187,12 @@ export default async function CalendarMonthPage(
                 <div className="flex flex-col gap-1.5 items-end shrink-0">
                   {WAN_PHRA_DATES.has(todayIso) && (
                     <span className="px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-700 dark:text-amber-300 font-oracle text-xs text-center font-medium">
-                      วันพระทำบุญ ตักบาตร
+                      วันพระ แวะทำบุญตามสะดวก
                     </span>
                   )}
                   {WAN_KHON_DATES.has(todayIso) && (
                     <span className="px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-700 dark:text-emerald-400 font-oracle text-xs text-center font-medium">
-                      วันโกนตัดผมมงคล
+                      วันโกน ก่อนวันพระหนึ่งวัน
                     </span>
                   )}
                 </div>
@@ -380,7 +380,7 @@ export default async function CalendarMonthPage(
             {/* วันโกน */}
             <div className="border-t border-edge pt-4">
               <h2 className="font-heading text-emerald-700 dark:text-emerald-400 text-lg mb-1">วันโกน {monthName}</h2>
-              <p className="text-inkMuted/70 font-oracle text-xs mb-3">ตัดผม · ตัดเล็บ · โกนหัว</p>
+              <p className="text-inkMuted/70 font-oracle text-xs mb-3">เตรียมตัวก่อนวันพระ</p>
               <div className="flex flex-wrap gap-2">
                 {monthWanKhon.map(d => (
                   <div
@@ -396,7 +396,7 @@ export default async function CalendarMonthPage(
                 )}
               </div>
               <p className="mt-3 text-inkMuted/60 font-oracle text-xs">
-                วันโกน คือวันก่อนวันพระ ๑ วันนิยมตัดผม ตัดเล็บ และโกนหัวเพื่อเสริมสิริมงคล
+                วันโกนคือวันก่อนวันพระหนึ่งวัน ใช้เตรียมตัวก่อนวันทำบุญได้
               </p>
             </div>
 
@@ -410,13 +410,11 @@ export default async function CalendarMonthPage(
           <div className="relative z-10 space-y-4 max-w-lg mx-auto">
             <p className="text-accentBright font-oracle text-sm">✦ ดูดวงเฉพาะบุคคล ✦</p>
             <h2 className="font-heading text-ink text-2xl md:text-3xl">
-              รู้สีประจำวัน ยังไม่พอ<br/>
-              <span className="text-accentSoft">รู้ดวงชะตาของตัวเองด้วย</span>
+              เช็กวันสำคัญแล้ว<br/>
+              <span className="text-accentSoft">แวะดูดวงของคุณต่อไหม</span>
             </h2>
             <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-              สายมูผสาน Bazi (สี่เสาชะตา) × โหราศาสตร์ไทย × MBTI
-              วิเคราะห์ดวงประจำวัน ดวงความรัก การเงิน และอาชีพ
-              เฉพาะสำหรับวันเกิดและบุคลิกภาพของเจ้าโดยเฉพาะ
+              เรื่องงาน เรื่องรัก หรือภาพรวมช่วงนี้ ลองอ่านคำทำนายจากวันเกิด แล้วเก็บมุมที่ชอบไปใช้
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
               <Link href="/fortune">
@@ -433,7 +431,7 @@ export default async function CalendarMonthPage(
                 </button>
               </Link>
             </div>
-            <p className="text-inkMuted/50 font-oracle text-xs">ฟรี ไม่ต้องสมัครสมาชิกก่อน</p>
+            <p className="text-inkMuted/50 font-oracle text-xs">ดูผลเบื้องต้นฟรีก่อนสมัคร</p>
           </div>
         </section>
 
@@ -441,115 +439,31 @@ export default async function CalendarMonthPage(
         <AdUnit slot="REPLACE_WITH_SLOT_2" format="auto" />
 
         {/* ── SEO article ── */}
-        <article className="border-t border-edge pt-10 space-y-8">
-          <h2 className="font-heading text-ink text-2xl">
-            วันพระ วันโกน และความเชื่อไทยที่สืบทอดมาพันปี
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-8">
-
-            {/* วันพระ */}
-            <div className="space-y-3">
-              <h3 className="font-heading text-amber-700 dark:text-amber-300 text-lg">วันพระวันที่บุญหนักที่สุด</h3>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                วันพระ ตรงกับวันขึ้นและแรม ๘ ค่ำ และ ๑๕ ค่ำ ของทุกเดือนตามจันทรคติ
-                ความเชื่อไทยโบราณระบุชัดว่า <strong className="text-ink/90">บุญที่ทำในวันพระ มีน้ำหนักกว่าวันธรรมดาหลายเท่า</strong>
-                เพราะพลังงานศักดิ์สิทธิ์ของจักรวาลเปิดรับเต็มที่
-              </p>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                ชาวพุทธสายบุญไม่พลาดวันนี้ตักบาตร ไปวัด ถวายสังฆทาน สมาทานศีล
-                เชื่อว่าบุญที่สะสมในวันพระจะ<strong className="text-ink/90">เสริมดวงชะตา ต่ออายุ และส่งผลดีถึงชาติหน้า</strong>
-                รวมถึงช่วยอุทิศส่วนกุศลไปยัง<strong className="text-ink/90">ดวงวิญญาณบรรพบุรุษ</strong>
-                ที่คอยดูแลลูกหลานอยู่อีกด้านหนึ่ง
-              </p>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                คนดวงตก เคราะห์หนัก หรือต้องการ<strong className="text-ink/90">แก้เคราะห์กรรม</strong>
-                โหรและอาจารย์มักแนะนำให้ถือศีลและทำบุญวันพระติดต่อกันหลายครั้ง
-                เพื่อสะสางกรรมเก่าและเปิดทางให้โชคลาภเข้ามา
-              </p>
-            </div>
-
-            {/* วันโกน */}
-            <div className="space-y-3">
-              <h3 className="font-heading text-emerald-700 dark:text-emerald-400 text-lg">วันโกนคืนที่วิญญาณพลัดหลง</h3>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                วันโกน คือวันก่อนวันพระ ๑ วัน ชื่อมาจากธรรมเนียมที่<strong className="text-ink/90">พระภิกษุสงฆ์โกนผม โกนคิ้ว</strong>เตรียมตัวก่อนวันพระ
-                ในคืนนั้น ความเชื่อไทยโบราณกล่าวว่า
-                <strong className="text-ink/90"> วิญญาณและสิ่งที่ล่องลอยในอากาศยังไม่ได้รับบุญ</strong>
-                พลังงานยังขุ่นมัว ไม่นิ่งไม่เหมาะทำกิจมงคล แต่เหมาะกับการ "ตัด"
-              </p>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                <strong className="text-ink/90">ตัดผม ตัดเล็บ หรือโกนหัวในวันโกน</strong>
-                คือการตัดเคราะห์ ตัดทุกข์ ตัดสิ่งไม่ดีที่สะสมออกจากร่างกายและดวงชะตา
-                พลังงานวันโกนเหมาะกับการชำระล้าง ทิ้งสิ่งเก่า เปิดรับสิ่งใหม่
-              </p>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                ตรงกันข้าม<strong className="text-ink/90">ห้ามตัดผมในวันพระ</strong>
-                เชื่อว่าจะตัดบุญตัดโชค ตัดสายสัมพันธ์กับสิ่งดีที่กำลังจะเข้ามา
-                นี่คือเหตุผลที่สายมูทุกคนดูปฏิทินก่อนนัดตัดผมทุกครั้ง
-              </p>
-            </div>
-
-            {/* ฤกษ์ดี */}
-            <div className="space-y-3">
-              <h3 className="font-heading text-ink text-lg">ฤกษ์ดีเลือกวันให้ชีวิตเดินหน้า</h3>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                ฤกษ์ดีคือการเลือกวันเวลาที่พลังงานของจักรวาลเปิดรับ
-                สอดคล้องกับ<strong className="text-ink/90">ดวงชะตาของเจ้าของงาน</strong>
-                สำหรับกิจการสำคัญ เช่น <strong className="text-ink/90">แต่งงาน ขึ้นบ้านใหม่ เปิดกิจการ ออกเดินทาง</strong>
-              </p>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                ความเชื่อไทยโบราณบอกว่า วันที่เลือกถูก สิ่งที่ทำจะราบรื่น
-                แม้จะเจอุปสรรค ก็ผ่านได้ง่าย
-                วันที่เลือกผิด แม้ความพร้อมจะครบ ก็มักพบสะดุดโดยไม่รู้สาเหตุ
-              </p>
-            </div>
-
-            {/* บรรพบุรุษ */}
-            <div className="space-y-3">
-              <h3 className="font-heading text-ink text-lg">บรรพบุรุษ วิญญาณ และบุญที่ส่งถึงกัน</h3>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                คนไทยเชื่อมั่นว่า<strong className="text-ink/90">วิญญาณบรรพบุรุษยังอยู่ใกล้ลูกหลาน</strong>
-                คอยดูแล คอยปกป้อง และคอยรับบุญที่ลูกหลานอุทิศให้
-                การทำบุญในวันพระ สวดมนต์ และกรวดน้ำอุทิศส่วนกุศล
-                ไม่ใช่แค่เรื่องศาสนาแต่คือการ<strong className="text-ink/90">ส่งพลังงานกลับไปให้ผู้ที่จากไป</strong>
-              </p>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                ผีบรรพบุรุษที่ได้รับบุญ จะเสริมดวงลูกหลาน ป้องกันภัยพิบัติ
-                และเปิดทางให้โชคลาภไหลเข้ามา
-                นี่คือรากฐานความเชื่อที่ทำให้<strong className="text-ink/90">สายบุญไม่เคยขาดวันพระ</strong>
-              </p>
-            </div>
-
-            {/* สีประจำวัน */}
-            <div className="space-y-3">
-              <h3 className="font-heading text-ink text-lg">สีประจำวันพลังนพเคราะห์ที่สวมใส่ได้</h3>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                ระบบ<strong className="text-ink/90">นพเคราะห์</strong>ในโหราศาสตร์ไทยผูกดาวแต่ละดวงไว้กับแต่ละวัน
-                ดาวแต่ละดวงมีสี พลังงาน และอิทธิพลต่อดวงชะตาต่างกัน
-                การสวมสีมงคลของวันเกิด หรือสีของวันนั้นๆ
-                ช่วย<strong className="text-ink/90">ดึงพลังงานดาวมาเสริมบารมี</strong> ป้องกันเคราะห์กรรม
-                และทำให้การงานในวันนั้นราบรื่นขึ้น
-              </p>
-            </div>
-
-            {/* วันพระดูยังไง */}
-            <div className="space-y-3">
-              <h3 className="font-heading text-ink text-lg">วันพระดูยังไงอ่านปฏิทินให้เป็น</h3>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                วันพระในปฏิทินไทยจะระบุ "๘ ค่ำ" หรือ "๑๕ ค่ำ" ใต้วันที่
-                ปฏิทินสากลทั่วไปไม่มีข้อมูลนี้ ต้องใช้<strong className="text-ink/90">ปฏิทินจันทรคติ</strong>โดยเฉพาะ
-                ในปฏิทินนี้ วันพระจะแสดงสีเหลืองอำพัน วันโกนสีเขียว
-                ให้เห็นชัดทุกเดือน ไม่ต้องนับเองให้ปวดหัว
-              </p>
-              <p className="text-inkMuted font-oracle text-sm leading-relaxed">
-                <strong className="text-ink/90">หลักง่ายๆ</strong>ก่อนนัดตัดผม ดูวันโกน
-                ก่อนทำบุญใหญ่ ดูวันพระ
-                ก่อนเริ่มกิจการ ดูฤกษ์ดีและสีมงคลของวันนั้น
-              </p>
-            </div>
-
+        <article className="border-t border-edge pt-10 space-y-6">
+          <h2 className="font-heading text-ink text-2xl">เรื่องน่ารู้ก่อนปักหมุดวัน</h2>
+          <div className="space-y-3">
+            <details className="rounded-xl border border-edge px-5 py-4">
+              <summary className="cursor-pointer font-heading text-ink">ดูวันพระในปฏิทินนี้ยังไง</summary>
+              <p className="mt-3 text-inkMuted font-oracle text-sm leading-relaxed">มองหาป้ายวันพระสีเหลืองอำพันในตาราง หรือดูรายการวันพระใต้ปฏิทินได้เลย ส่วนวันโกนใช้ป้ายสีเขียว แยกไว้ให้ดูง่ายโดยไม่ต้องนับวันเอง</p>
+            </details>
+            <details className="rounded-xl border border-edge px-5 py-4">
+              <summary className="cursor-pointer font-heading text-ink">วันพระกับวันโกนต่างกันยังไง</summary>
+              <p className="mt-3 text-inkMuted font-oracle text-sm leading-relaxed">วันพระเป็นวันธรรมสวนะตามปฏิทินจันทรคติ ส่วนวันโกนคือวันก่อนวันพระหนึ่งวัน หลายคนใช้วันพระไปวัด ฟังธรรม หรือถือศีล โดยเลือกทำตามความสะดวกของตัวเอง</p>
+            </details>
+            <details className="rounded-xl border border-edge px-5 py-4">
+              <summary className="cursor-pointer font-heading text-ink">ตัดผมวันไหนดี ต้องดูวันโกนไหม</summary>
+              <p className="mt-3 text-inkMuted font-oracle text-sm leading-relaxed">การเลือกวันตัดผมเป็นความเชื่อส่วนบุคคลและอาจต่างกันในแต่ละบ้าน ถ้าคุณมีธรรมเนียมที่ยึดถือ ใช้ปฏิทินช่วยเช็กวันได้ แล้วเลือกเวลาที่สะดวกกับตัวเองและร้านด้วย</p>
+            </details>
+            <details className="rounded-xl border border-edge px-5 py-4">
+              <summary className="cursor-pointer font-heading text-ink">สีประจำวันกับสีมงคลส่วนตัวเหมือนกันไหม</summary>
+              <p className="mt-3 text-inkMuted font-oracle text-sm leading-relaxed">สีในปฏิทินนี้อิงวันในสัปดาห์ จึงเป็นข้อมูลทั่วไปของวันนั้น ส่วนสีมงคลในหน้าดวงส่วนตัวใช้ข้อมูลวันเกิดประกอบ ลองเลือกสีที่ชอบมาเพิ่มความสนุกในการแต่งตัวได้</p>
+            </details>
+            <details className="rounded-xl border border-edge px-5 py-4">
+              <summary className="cursor-pointer font-heading text-ink">ใช้ปฏิทินนี้เลือกฤกษ์ได้ไหม</summary>
+              <p className="mt-3 text-inkMuted font-oracle text-sm leading-relaxed">ปฏิทินไทยของสายมูช่วยเช็กวันพระ วันโกน วันหยุด และข้อมูลประจำวัน หากต้องการฤกษ์เฉพาะงาน เช่น แต่งงานหรือขึ้นบ้านใหม่ ควรดูรายละเอียดของงานและความพร้อมของคนที่เกี่ยวข้องเพิ่มเติม</p>
+            </details>
           </div>
+          <p className="text-sm text-inkMuted">อ่านความเป็นมาของ <a href="https://pkt.onab.go.th/th/content/category/detail/id/73/iid/465" className="underline underline-offset-4">วันโกนและวันพระจากสำนักงานพระพุทธศาสนาจังหวัดภูเก็ต</a></p>
         </article>
 
       </main>

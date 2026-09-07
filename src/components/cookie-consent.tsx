@@ -126,7 +126,7 @@ export function CookieConsent() {
                           คุกกี้วิเคราะห์
                         </p>
                         <p className="text-xs text-inkMuted font-oracle mt-0.5 leading-relaxed">
-                          ช่วยให้เราเข้าใจการใช้งานเว็บไซต์และปรับปรุงประสบการณ์
+                          ช่วยให้รู้ว่าส่วนไหนใช้สะดวก และส่วนไหนควรปรับปรุง
                         </p>
                       </div>
                       <div className="flex-shrink-0 pt-0.5">
@@ -239,7 +239,7 @@ export function CookieConsent() {
 
                   {/* Text */}
                   <p className="text-sm text-inkMuted font-oracle leading-relaxed flex-1 pr-8 md:pr-0">
-                    เราใช้คุกกี้เพื่อพัฒนาประสบการณ์การใช้งานของคุณ{' '}
+                    เราใช้คุกกี้เพื่อให้เว็บทำงานและปรับปรุงบริการ คุณเลือกได้ว่าจะอนุญาตแบบไหน{' '}
                     <Link
                       href="/privacy"
                       target="_blank"

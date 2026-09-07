@@ -86,13 +86,13 @@ export default function TodayPage() {
 
   if (sessionLoading || !session) return <LoadingSkeleton isLoading />;
   if (showLoader) return <LoadingSkeleton isLoading />;
-  if (dailyError) return <ErrorDisplay error="ไม่สามารถโหลดดวงชะตาวันนี้ได้" showRetry />;
+  if (dailyError) return <ErrorDisplay error="โหลดดวงวันนี้ไม่สำเร็จ ลองอีกครั้งนะ" showRetry />;
 
   const displayName =
     userProfile?.user?.displayName ||
     (session.user as any)?.displayName ||
     session.user.name ||
-    'เจ้า';
+    'คุณ';
   // Daily element energy (changes each day)
   const dailyElement = dailyReading?.elementEnergy || null;
   const normalizedElement = dailyElement?.toLowerCase();
@@ -179,7 +179,7 @@ export default function TodayPage() {
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 id="lucky-moments-title" className="font-heading text-xl font-semibold text-ink">จังหวะดีของวันนี้</h2>
-              <p className="mt-0.5 text-sm text-inkMuted">หยิบไปใช้เมื่อเจ้าต้องตัดสินใจเล็ก ๆ</p>
+              <p className="mt-0.5 text-sm text-inkMuted">สี เลข และเวลาที่ลองหยิบไปเติมความมั่นใจได้</p>
             </div>
             {dailyElementNameThai && dailyElementKey && (
               <div className="flex items-center gap-2 rounded-full border border-edge bg-surface px-3 py-2">
@@ -193,10 +193,10 @@ export default function TodayPage() {
           </div>
           <dl className="grid grid-cols-2 overflow-hidden rounded-2xl border border-edge bg-surface sm:grid-cols-4">
             {[
-              { label: 'เลขมงคล', value: structured?.luckyNumbers?.join(', ') || dailyReading?.luckyNumber || '-', icon: Hash },
-              { label: 'สีมงคล', value: localizeColorName(structured?.luckyColor || dailyReading?.luckyColor || '-'), icon: Palette },
-              { label: 'ทิศมงคล', value: structured?.luckyDirection || dailyReading?.luckyDirection || '-', icon: Compass },
-              { label: 'เวลามงคล', value: structured?.luckyMoment || '-', icon: Clock },
+              { label: 'เลขมงคล', value: structured?.luckyNumbers?.join(', ') || dailyReading?.luckyNumber || 'ยังไม่มีข้อมูล', icon: Hash },
+              { label: 'สีมงคล', value: localizeColorName(structured?.luckyColor || dailyReading?.luckyColor || 'ยังไม่มีข้อมูล'), icon: Palette },
+              { label: 'ทิศมงคล', value: structured?.luckyDirection || dailyReading?.luckyDirection || 'ยังไม่มีข้อมูล', icon: Compass },
+              { label: 'เวลามงคล', value: structured?.luckyMoment || 'ยังไม่มีข้อมูล', icon: Clock },
             ].map(({ label, value, icon: Icon }, index) => (
               <div
                 key={label}

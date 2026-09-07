@@ -14,7 +14,7 @@ interface Tab {
 
 const TABS: Tab[] = [
   { key: 'overview', label: 'สรุป' },
-  { key: 'readings', label: 'โชค 6 ด้าน' },
+  { key: 'readings', label: 'ดวง 6 ด้าน' },
   { key: 'details', label: 'แผนผังชีวิต' },
 ];
 

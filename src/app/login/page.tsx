@@ -98,10 +98,10 @@ export default function LoginPage() {
           className="text-center space-y-4"
         >
           <h1 className="text-3xl md:text-4xl text-ink font-heading">
-            ยินดีต้อนรับกลับมา
+            กลับมาแล้ว ไปดูดวงกัน
           </h1>
           <p className="text-inkMuted font-oracle">
-            เข้าสู่ระบบเพื่อดูดวงชะตาของเจ้า
+            ใช้บัญชีเดิมเพื่อกลับไปอ่านดวงของคุณ
           </p>
         </motion.div>
 
@@ -187,7 +187,7 @@ export default function LoginPage() {
           transition={{ delay: 0.8 }}
           className="text-xs text-inkMuted/70 text-center font-oracle"
         >
-          เมื่อเข้าสู่ระบบ เจ้ายอมรับ
+          เมื่อเข้าสู่ระบบ คุณยอมรับ
           <br />
           เงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัวของเรา
         </motion.p>

@@ -52,7 +52,7 @@ export function MediaPlaceholder({
     <div
       role="img"
       aria-label={label}
-      title={`${label} — ${spec}`}
+      title={`${label} · ${spec}`}
       className={`relative overflow-hidden ${flush ? '' : 'rounded-2xl border border-edge'} bg-surface ${className}`}
       style={{ aspectRatio: aspect }}
     >

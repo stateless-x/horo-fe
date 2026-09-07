@@ -80,8 +80,8 @@ export function BirthStarSection({ birthStar }: BirthStarSectionProps) {
       <div className="flex items-center justify-center gap-2 mb-4">
         <Moon className="text-accentSoft w-6 h-6" />
         <h2 className="font-heading text-xl font-medium text-ink">
-          ดาวประจำวันเกิดของเจ้า
-          <InfoTooltip text="ดาวประจำวันเกิด (Day Master) คือดาวที่ครองวันเกิดของเจ้า บอกถึงพลังงานหลักที่กำกับชีวิตและบุคลิกภาพ" />
+          ดาวประจำวันเกิดของคุณ
+          <InfoTooltip text="ดาวประจำวันเกิดตามโหราศาสตร์ไทย ใช้ประกอบการอ่านนิสัยและพื้นดวง" />
         </h2>
       </div>
 

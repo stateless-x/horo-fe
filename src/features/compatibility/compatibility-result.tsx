@@ -44,7 +44,7 @@ export function CompatibilityResultView({
             className="text-inkMuted hover:text-ink -ml-2"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            ส่องดวงอีกครั้ง
+            ดูดวงคู่อีกครั้ง
           </Button>
 
           <div className="text-center space-y-3">
@@ -84,7 +84,7 @@ export function CompatibilityResultView({
                     sizes="80px"
                     className="mx-auto size-20"
                   />
-                  <p className="mt-2 font-heading text-ink">เจ้า</p>
+                  <p className="mt-2 font-heading text-ink">คุณ</p>
                   <p className="mt-0.5 text-sm text-inkMuted">ธาตุ{toThaiElement(result.userElement)}</p>
                   {result.userDayMaster && <p className="mt-1 text-xs text-inkMuted">{result.userDayMaster}</p>}
                 </div>
@@ -134,7 +134,7 @@ export function CompatibilityResultView({
             แชร์ผลดวง
           </Button>
           <Button size="lg" variant="outline" className="w-full" onClick={onBackToForm}>
-            ส่องดวงอีกครั้ง
+            ดูดวงคู่อีกครั้ง
           </Button>
         </motion.div>
 

@@ -26,7 +26,7 @@ export function StepReturning() {
       className="min-h-screen flex flex-col items-center justify-center px-6 bg-ground"
     >
       <div className="w-full max-w-xs space-y-10">
-        <StepHeading title="เจ้าเคยมาที่นี่แล้วหรือยัง" />
+        <StepHeading title="เคยเปิดดวงกับเราแล้วไหม" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -35,7 +35,7 @@ export function StepReturning() {
           className="flex flex-col gap-3"
         >
           <Button size="lg" className="w-full" onClick={nextStep}>
-            ยังไม่เคย เริ่มดูดวงเลย
+            ครั้งแรก ลองดูดวงเลย
           </Button>
           <Button variant="soft" size="lg" className="w-full" onClick={() => router.push('/login')}>
             เคยมาแล้ว เข้าสู่ระบบ

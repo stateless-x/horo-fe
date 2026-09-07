@@ -32,19 +32,19 @@ const CHART_REASSURANCE_STAGE_MS = 30_000;
 
 /** Rotating mystical messages shown while generating */
 const MYSTICAL_MESSAGES = [
-  'จงภาวนาเพื่อให้มีโชคดีตลอดทั้งปี...',
+  'กำลังเตรียมคำทำนายให้คุณ...',
   'ดาวกำลังเรียงตัว...',
-  'กำลังอ่านพลังธาตุของเจ้า...',
-  'เสาสี่ที่กำลังเผยความลับ...',
+  'กำลังอ่านพลังธาตุของคุณ...',
+  'กำลังอ่านเสาชะตาทั้งสี่...',
   'ดวงชะตากำลังปรากฏ...',
-  'พลังจักรวาลกำลังส่องนำทาง...',
+  'กำลังเรียบเรียงคำแนะนำ...',
 ];
 
 const DAILY_MESSAGES = [
-  'กำลังเปิดดวงวันนี้ของเจ้า...',
+  'กำลังเปิดดวงวันนี้ของคุณ...',
   'ดาวกำลังเรียงตัว...',
-  'พลังจักรวาลกำลังส่องนำทาง...',
-  'กำลังอ่านพลังธาตุของเจ้า...',
+  'กำลังเรียบเรียงคำแนะนำ...',
+  'กำลังอ่านพลังธาตุของคุณ...',
 ];
 
 const MESSAGE_INTERVAL_MS = 4_000; // Rotate every 4 seconds
@@ -99,7 +99,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
     }
     switch (loadingState) {
       case 'saving-profile':
-        return 'กำลังบันทึกข้อมูลของเจ้า...';
+        return 'กำลังบันทึกข้อมูลของคุณ...';
       case 'generating-chart':
       case 'generating-narrative':
         return messages[messageIndex];
@@ -183,8 +183,8 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             {isDailyMode
               ? 'อาจใช้เวลาสักครู่ในการวิเคราะห์ดวงชะตา'
               : isReassuring
-                ? 'หมอดูยังเขียนคำทำนายของเจ้าอยู่ ไม่ต้องรีเฟรชหน้านะ ใกล้เสร็จแล้ว'
-                : 'เพื่อให้ดวงชะตาของเจ้าสมบูรณ์ที่สุด อาจต้องใช้เวลาสักนิด'}
+                ? 'ยังเรียบเรียงคำทำนายอยู่ รอที่หน้านี้ได้เลย'
+                : 'คำทำนายอาจใช้เวลาสักครู่ รอที่หน้านี้ได้เลย'}
           </motion.p>
         )}
 

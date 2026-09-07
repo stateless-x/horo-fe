@@ -145,7 +145,7 @@ export function StepTeaser() {
             <ClayOracleLoader />
           </div>
           <p className="text-inkMuted font-oracle text-lg">
-            กำลังมองดูดวงชะตาของเจ้า...
+            กำลังเปิดดวงให้คุณ...
           </p>
         </div>
       </motion.div>
@@ -164,11 +164,11 @@ export function StepTeaser() {
         <div className="w-full max-w-lg space-y-6 text-center">
           <Sparkles className="w-12 h-12 mx-auto text-accentBright" />
           <h2 className="text-2xl font-heading text-ink">
-            เจ้ากลับมาบ่อยนะ
+            วันนี้เปิดดวงครบแล้ว
           </h2>
           <p className="text-inkMuted font-oracle text-lg leading-relaxed">
-            ข้าเห็นว่าเจ้าสนใจดวงชะตามาก ลองกลับมาใหม่พรุ่งนี้สิ
-            แล้วข้าจะเปิดเผยดวงของเจ้าให้
+            วันนี้ใช้สิทธิ์ดูดวงเบื้องต้นครบแล้ว
+            กลับมาเปิดดวงใหม่ได้พรุ่งนี้
           </p>
           <Button variant="outline" size="lg" onClick={prevStep}>
             ย้อนกลับ
@@ -190,10 +190,10 @@ export function StepTeaser() {
         <div className="w-full max-w-lg space-y-6 text-center">
           <Sparkles className="w-12 h-12 mx-auto text-inkMuted" />
           <h2 className="text-2xl font-heading text-ink">
-            ดวงชะตายังไม่พร้อมเปิดเผย
+            เปิดดวงไม่สำเร็จ
           </h2>
           <p className="text-inkMuted font-oracle text-lg leading-relaxed">
-            ข้าไม่สามารถอ่านดวงของเจ้าได้ในตอนนี้ ลองอีกครั้งสิ
+            ตอนนี้โหลดคำทำนายไม่ได้ ลองอีกครั้งได้เลย
           </p>
           <div className="flex gap-3 justify-center">
             <Button variant="outline" size="lg" onClick={prevStep}>
@@ -282,7 +282,7 @@ export function StepTeaser() {
           className="space-y-3"
         >
           <p className="text-sm text-inkMuted text-center">
-            ดวงชะตาของเจ้ายังมีอีกมาก
+            ยังมีเรื่องให้รู้จักตัวเองอีก
           </p>
 
           <div className="grid grid-cols-2 gap-2">
@@ -325,11 +325,11 @@ export function StepTeaser() {
               ย้อนกลับ
             </Button>
             <Button onClick={nextStep} size="lg" className="flex-1">
-              เปิดดวงทั้งหมดของเจ้า
+              อ่านดวงเต็ม
             </Button>
           </div>
           <p className="text-xs text-inkMuted/50 text-center">
-            ดูดวงชะตาครบ 6 ด้าน + ทำนายรายวัน
+            เข้าสู่ระบบเพื่ออ่านครบ 6 ด้านและดวงรายวัน
           </p>
         </motion.div>
       </div>

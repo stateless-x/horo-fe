@@ -4,12 +4,12 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 
 const categories = [
-  { label: 'ภาพรวมชีวิต', desc: 'ทิศทางและเส้นทางชะตา', image: 'life-overview' },
-  { label: 'ความรัก & เนื้อคู่', desc: 'ดวงรักและความสัมพันธ์', image: 'love' },
-  { label: 'การงาน & อาชีพ', desc: 'เส้นทางอาชีพและโอกาส', image: 'career' },
-  { label: 'การเงิน & โชคลาภ', desc: 'โชคทรัพย์และการลงทุน', image: 'finance' },
-  { label: 'สุขภาพ & พลังงาน', desc: 'สมดุลกายและจิต', image: 'health' },
-  { label: 'ครอบครัว & ความสัมพันธ์', desc: 'สายสัมพันธ์คนรอบข้าง', image: 'family' },
+  { label: 'ภาพรวมชีวิต', desc: 'ช่วงนี้ชีวิตเป็นยังไงบ้าง', image: 'life-overview' },
+  { label: 'ความรัก', desc: 'ใจเรา ใจเขา ไปทางไหน', image: 'love' },
+  { label: 'การงาน', desc: 'งานที่ทำกับทางที่อยากไป', image: 'career' },
+  { label: 'การเงิน', desc: 'เงินเข้า เงินออก เรื่องให้วางแผน', image: 'finance' },
+  { label: 'สุขภาพ', desc: 'อย่าลืมเผื่อเวลาให้ตัวเอง', image: 'health' },
+  { label: 'ครอบครัว', desc: 'ใกล้กันแล้ว เข้าใจกันแค่ไหน', image: 'family' },
 ] as const;
 
 export function ReadingCategories() {
@@ -26,10 +26,10 @@ export function ReadingCategories() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-heading text-ink mb-4">
-            ครอบคลุมทุกมิติชีวิต
+            ช่วงนี้อยากรู้เรื่องไหนเป็นพิเศษ
           </h2>
           <p className="text-inkMuted font-oracle">
-            รับคำทำนายเฉพาะบุคคลใน 6 ด้าน
+            เรื่องรักก็มี เรื่องงานก็มา เลือกอ่านได้ครบ 6 ด้าน
           </p>
         </motion.div>
 

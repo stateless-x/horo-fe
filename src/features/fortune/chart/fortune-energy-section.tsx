@@ -44,10 +44,10 @@ export function FortuneEnergySection({ fortuneReadings, readingPeriod, onOpenRea
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div>
           <h3 id="fortune-energy-title" className="font-heading text-xl font-semibold text-ink">
-            พลังแต่ละด้านของเจ้า
+            พลังแต่ละด้านของคุณ
           </h3>
           <p className="mt-1 font-thai text-sm text-inkMuted">
-            อ่านจากธาตุและเสาชะตาของเจ้า ไม่เปลี่ยนไปตามวัน
+            อ่านจากธาตุและเสาชะตาของคุณ ไม่เปลี่ยนไปตามวัน
           </p>
         </div>
       </div>

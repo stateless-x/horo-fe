@@ -152,7 +152,7 @@ export default function SettingsPage() {
         setSavedValues(profileData);
       } catch (error) {
         console.error('[Settings] Failed to fetch profile:', error);
-        setSaveMessage({ type: 'error', text: 'ไม่สามารถโหลดข้อมูลโปรไฟล์ได้' });
+        setSaveMessage({ type: 'error', text: 'โหลดโปรไฟล์ไม่สำเร็จ ลองเปิดหน้านี้ใหม่' });
       } finally {
         setIsLoading(false);
       }
@@ -201,7 +201,7 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     if (!displayName.trim()) {
-      setSaveMessage({ type: 'error', text: 'กรุณากรอกชื่อของคุณ' });
+      setSaveMessage({ type: 'error', text: 'ใส่ชื่อที่อยากให้เราเรียกก่อนนะ' });
       return;
     }
 
@@ -266,7 +266,7 @@ export default function SettingsPage() {
       setTimeout(() => setSaveMessage(null), 3000);
     } catch (error) {
       console.error('[Settings] Failed to save:', error);
-      setSaveMessage({ type: 'error', text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
+      setSaveMessage({ type: 'error', text: 'บันทึกไม่สำเร็จ ลองกดบันทึกอีกครั้ง' });
     } finally {
       setIsSaving(false);
     }
@@ -304,7 +304,7 @@ export default function SettingsPage() {
     }
     if (selectedTimePeriod !== null) {
       const period = THAI_TIME_PERIODS[selectedTimePeriod];
-      return `${period.displayName} (${period.timeRange})`;
+      return `${period.displayName} (${period.timeRange.replace('-', ' ถึง ')})`;
     }
     return '-';
   };
@@ -315,7 +315,7 @@ export default function SettingsPage() {
         <div className="max-w-2xl mx-auto px-4 py-5 flex items-center justify-between gap-4">
           <div>
             <h1 className="font-heading text-2xl font-semibold text-ink">โปรไฟล์ของ {displayName}</h1>
-            <p className="mt-1 text-sm text-inkMuted">ข้อมูลนี้ช่วยให้คำทำนายตรงกับเจ้ามากขึ้น</p>
+            <p className="mt-1 text-sm text-inkMuted">ชื่อ วันเกิด และข้อมูลที่ใช้เปิดดวง แก้ไขได้ตรงนี้</p>
           </div>
 
           {/* Edit button in header when in view mode */}
@@ -385,7 +385,7 @@ export default function SettingsPage() {
                   maxLength={50}
                 />
               ) : (
-                <p className="text-base text-ink pl-6">{displayName || '-'}</p>
+                <p className="text-base text-ink pl-6">{displayName || 'ยังไม่มีข้อมูล'}</p>
               )}
             </div>
 
@@ -552,7 +552,7 @@ export default function SettingsPage() {
                           }`}
                         >
                           <p className="text-sm font-heading text-ink">{period.displayName}</p>
-                          <p className="text-xs text-inkMuted">{period.timeRange}</p>
+                          <p className="text-xs text-inkMuted">{period.timeRange.replace('-', ' ถึง ')}</p>
                         </button>
                       ))}
                     </div>

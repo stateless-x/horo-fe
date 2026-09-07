@@ -113,16 +113,16 @@ export function CompatibilityForm({
                   >
                     <Moon className="w-10 h-10 text-accentBright mx-auto" />
                   </motion.div>
-                  <p className="text-ink font-medium text-base md:text-lg">พลังดวงดาวต้องการเวลาฟื้นฟู</p>
+                  <p className="text-ink font-medium text-base md:text-lg">ครบจำนวนครั้งที่ดูได้แล้ว รอสักพักแล้วลองใหม่</p>
                   <p className="text-inkMuted text-sm md:text-base">
                     {rateLimitCountdown > 3600
-                      ? 'เจ้าส่องดวงครบ 5 ครั้งในวันนี้แล้ว'
-                      : 'เจ้าได้ส่องดวงครบ 5 ครั้งในชั่วโมงนี้แล้ว'}
+                      ? 'คุณดูดวงครบ 5 ครั้งในวันนี้แล้ว'
+                      : 'วันนี้ดูดวงครบ 5 ครั้งในชั่วโมงนี้แล้ว'}
                   </p>
                   <p className="text-accentBright text-sm md:text-base">
                     {rateLimitCountdown > 3600
                       ? `กลับมาใหม่พรุ่งนี้นะ`
-                      : `ดวงดาวจะพร้อมอีกครั้งใน ${Math.ceil(rateLimitCountdown / 60)} นาที`}
+                      : `ดูดวงได้อีกครั้งใน ${Math.ceil(rateLimitCountdown / 60)} นาที`}
                   </p>
                   <div className="w-full bg-surface rounded-full h-1 overflow-hidden" role="progressbar" aria-label="เวลาที่เหลือก่อนส่องดวงได้อีกครั้ง">
                     <motion.div
@@ -228,7 +228,7 @@ export function CompatibilityForm({
               >
                 <option value="">ไม่ระบุ</option>
                 {MBTI_TYPES.map((m) => (
-                  <option key={m.code} value={m.code}>{m.code} — {m.nameTh}</option>
+                  <option key={m.code} value={m.code}>{m.code} · {m.nameTh}</option>
                 ))}
               </select>
               <p className="text-xs md:text-sm text-inkMuted/60 mt-2 text-center">{MBTI_HINT_COMPATIBILITY}</p>
@@ -252,7 +252,7 @@ export function CompatibilityForm({
                     {isRateLimited ? (
                       <>
                         <Moon className="w-5 h-5 mr-2" />
-                        ดวงดาวกำลังฟื้นฟู...
+                        รอสักครู่ก่อนดูอีกครั้ง
                       </>
                     ) : calculating ? (
                       <>

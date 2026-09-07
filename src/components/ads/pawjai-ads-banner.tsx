@@ -49,7 +49,7 @@ export function PawjaiAdsBanner() {
         >
           <img
             src={BANNER_IMAGE_CDN}
-            alt="Pawjai.co - บริการลงโฆษณา"
+            alt="Pawjai.co บริการลงโฆษณา"
             width={1336}
             height={611}
             className="w-full h-full object-cover"

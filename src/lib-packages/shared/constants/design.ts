@@ -36,9 +36,9 @@ export const ELEMENT_COLORS = {
 
 export const FORTUNE_CATEGORIES = {
   life_overview: { label: 'ภาพรวมชีวิต', icon: 'Orbit' },
-  love:          { label: 'ความรัก & เนื้อคู่', icon: 'Heart' },
-  career:        { label: 'การงาน & อาชีพ', icon: 'Briefcase' },
-  finance:       { label: 'การเงิน & โชคลาภ', icon: 'Coins' },
-  health:        { label: 'สุขภาพ & พลังงาน', icon: 'Activity' },
-  family:        { label: 'ครอบครัว & ความสัมพันธ์', icon: 'Home' },
+  love:          { label: 'ความรัก', icon: 'Heart' },
+  career:        { label: 'การงาน', icon: 'Briefcase' },
+  finance:       { label: 'การเงิน', icon: 'Coins' },
+  health:        { label: 'สุขภาพ', icon: 'Activity' },
+  family:        { label: 'ครอบครัว', icon: 'Home' },
 } as const;

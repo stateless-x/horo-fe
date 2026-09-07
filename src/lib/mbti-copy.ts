@@ -4,6 +4,6 @@
  * Centralized here so wording stays consistent across onboarding, settings,
  * and the compatibility form.
  */
-export const MBTI_HINT_ONBOARDING = 'ยิ่งบอก ยิ่งทายตรงกับตัวเจ้า';
-export const MBTI_HINT_SETTINGS = 'ระบุ MBTI เพื่อให้คำทำนายแม่นยำและตรงกับตัวเจ้ามากขึ้น';
-export const MBTI_HINT_COMPATIBILITY = 'ถ้ารู้ MBTI ของอีกฝ่าย ดวงคู่จะแม่นขึ้นอีกมาก';
+export const MBTI_HINT_ONBOARDING = 'บอกเพิ่มได้ คำแนะนำจะมีมุมของนิสัยคุณด้วย';
+export const MBTI_HINT_SETTINGS = 'เลือก MBTI เพื่อใช้ประกอบคำแนะนำ ไม่รู้ก็เว้นไว้ได้';
+export const MBTI_HINT_COMPATIBILITY = 'ถ้ารู้ MBTI ของอีกฝ่าย ใส่เพิ่มเพื่ออ่านมุมของนิสัยทั้งคู่';

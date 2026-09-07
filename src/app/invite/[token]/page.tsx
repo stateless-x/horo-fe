@@ -166,10 +166,10 @@ export default function InvitePage() {
         {/* Heading */}
         <div className="space-y-4">
           <h1 className="text-3xl md:text-4xl text-ink font-heading">
-            {inviteData?.inviterName} เชิญเจ้ามาดูดวงคู่
+            {inviteData?.inviterName} ชวนคุณมาดูดวงคู่
           </h1>
           <p className="text-xl text-accentFaint font-oracle">
-            มาดูกันว่าดวงของเจ้าและ {inviteData?.inviterName} จะเข้ากันหรือไม่
+            มาดูกันว่าดวงของคุณและ {inviteData?.inviterName} จะเข้ากันหรือไม่
           </p>
         </div>
 
@@ -181,12 +181,12 @@ export default function InvitePage() {
           className="bg-surface border border-surface2 rounded-xl p-6 space-y-3"
         >
           <p className="text-ink font-oracle leading-relaxed">
-            เจ้าจะต้องกรอกข้อมูลวันเกิดของเจ้าเพื่อคำนวณดวงคู่
+            ใช้วันเกิดของคุณเพื่ออ่านดวงคู่กับคนที่ชวนมา
             <br />
-            ระบบจะวิเคราะห์ความเข้ากันของเจ้าทั้งสองด้วยศาสตร์โหราจีนและไทย
+            มาดูทั้งมุมที่เข้ากันและเรื่องที่อาจต้องค่อย ๆ ปรับ
           </p>
           <p className="text-inkMuted text-sm font-oracle">
-            ข้อมูลของเจ้าจะถูกเก็บไว้เพื่อดูดวงในอนาคต
+            เราจะเก็บข้อมูลนี้ไว้ให้กลับมาดูดวงครั้งต่อไป
           </p>
         </motion.div>
 

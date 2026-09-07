@@ -11,7 +11,7 @@ import { StepHeading } from "./step-heading";
 /**
  * Step 5: Birth Time
  *
- * "เจ้าเกิดช่วงเวลาไหน"
+ * "พอจำเวลาเกิดได้ไหม"
  * - Period selector with Thai time names + 24h time ranges
  * - Map to Chinese 2-hour periods (時辰): 12 periods
  * - Include "ไม่รู้" (don't know) option → skips the hour pillar, keeps the rest
@@ -58,8 +58,8 @@ export function StepBirthTime() {
     >
       <div className="w-full max-w-lg space-y-6">
         <StepHeading
-          title="เจ้าเกิดช่วงเวลาไหน"
-          description="เสาชั่วโมงทำให้ดวงละเอียดขึ้น"
+          title="พอจำเวลาเกิดได้ไหม"
+          description="ใช้ดูเสาชั่วโมงในปาจื้อ ถ้าไม่รู้ก็ข้ามได้"
         />
 
         {/* Skip option — above grid so it's immediately visible */}
@@ -103,7 +103,7 @@ export function StepBirthTime() {
                 <p className="text-base font-heading text-ink">
                   {period.displayName}
                 </p>
-                <p className="text-xs text-inkMuted tabular-nums">{period.timeRange}</p>
+                <p className="text-xs text-inkMuted tabular-nums">{period.timeRange.replace('-', ' ถึง ')}</p>
               </Card>
             </motion.button>
           ))}

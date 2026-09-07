@@ -133,7 +133,7 @@ export default function FortuneChartPage() {
             <AlertCircle className="w-8 h-8 text-warn" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-lg font-heading text-ink">แก้ไขข้อมูลบ่อยเกินไป</h2>
+            <h2 className="text-lg font-heading text-ink">รออีกนิด แล้วค่อยอัปเดตดวง</h2>
             <p className="text-sm text-inkMuted">
               ดวงจะอัปเดตใหม่ได้{timeText}
             </p>
@@ -311,12 +311,12 @@ export default function FortuneChartPage() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             <div className="mb-6">
-              <h2 className="font-heading text-2xl font-semibold text-ink sm:text-3xl">แผนผังชีวิตของเจ้า</h2>
-              <p className="mt-2 font-thai text-inkMuted">รายละเอียดทั้งหมดอยู่ตรงนี้ แต่ไม่จำเป็นต้องอ่านรวดเดียว</p>
+              <h2 className="font-heading text-2xl font-semibold text-ink sm:text-3xl">เบื้องหลังดวงของคุณ</h2>
+              <p className="mt-2 font-thai text-inkMuted">อยากรู้ว่าคำทำนายมาจากไหน ค่อย ๆ เปิดดูทีละส่วนได้เลย</p>
             </div>
             <div className="border-t border-edge">
               <ResultDisclosure
-                title="รู้จักธาตุของเจ้า"
+                title="รู้จักธาตุของคุณ"
                 description="จุดแข็ง จุดอ่อน และธาตุที่เข้ากัน"
                 image={{ src: `/assets/clay/elements/${chartData.elementProfile.primaryElement}.webp` }}
               >

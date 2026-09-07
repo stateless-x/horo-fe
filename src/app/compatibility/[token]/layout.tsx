@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'ผลดวงความสัมพันธ์ | สายมู.com',
+  title: 'ผลดวงความสัมพันธ์',
   description: 'ดูผลดวงความสัมพันธ์ วิเคราะห์ความเข้ากันด้วย AI ผสานโหราศาสตร์ไทยและ Bazi | สายมู.com',
 
   openGraph: {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'สายมู.com - ดูดวงความสัมพันธ์',
+        alt: 'สายมู.com ดูดวงความสัมพันธ์',
         type: 'image/jpeg',
       },
     ],

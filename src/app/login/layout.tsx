@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'เข้าสู่ระบบ | สายมู',
+  title: 'เข้าสู่ระบบ',
   description: 'เข้าสู่ระบบสายมูเพื่อดูดวงชะตาของคุณ วิเคราะห์ด้วย AI ผสานโหราศาสตร์ไทย Bazi และ MBTI',
   alternates: {
     canonical: '/login',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'สายมู - ดูดวงออนไลน์ฟรี',
+        alt: 'สายมู ดูดวงออนไลน์ฟรี',
         type: 'image/jpeg',
       },
     ],

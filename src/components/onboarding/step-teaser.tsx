@@ -7,6 +7,19 @@ import { Button, OracleText } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { api } from '@/lib/api';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
+
+const ELEMENT_NAMES_THAI: Record<ClayElement, string> = {
+  wood: 'ธาตุไม้',
+  fire: 'ธาตุไฟ',
+  earth: 'ธาตุดิน',
+  metal: 'ธาตุทอง',
+  water: 'ธาตุน้ำ',
+};
+
+function isClayElement(value: string | undefined): value is ClayElement {
+  return value !== undefined && value in ELEMENT_NAMES_THAI;
+}
 
 const LOCKED_CATEGORIES = [
   { icon: Heart, label: 'ความรัก' },
@@ -212,11 +225,23 @@ export function StepTeaser() {
         >
           {/* Element + Lucky Info Row */}
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-inkMuted mb-1">องค์ประกอบหลัก</p>
-              <p className="text-2xl font-heading text-accentBright capitalize">
-                {result?.elementType}
-              </p>
+            <div className="flex items-center gap-3">
+              {isClayElement(result?.elementType) && (
+                <ElementClayImage
+                  element={result.elementType}
+                  alt=""
+                  sizes="56px"
+                  className="size-14 shrink-0"
+                />
+              )}
+              <div>
+                <p className="text-xs text-inkMuted mb-1">ธาตุประจำตัว</p>
+                <p className="text-2xl font-heading text-accentBright">
+                  {isClayElement(result?.elementType)
+                    ? ELEMENT_NAMES_THAI[result.elementType]
+                    : result?.elementType}
+                </p>
+              </div>
             </div>
             {(result?.luckyColor || result?.luckyNumber) && (
               <div className="flex gap-4">
@@ -280,7 +305,7 @@ export function StepTeaser() {
 
           <div className="text-center space-y-0.5">
             <p className="text-xs text-inkMuted/60">
-              + ทำนายรายปี รายวัน
+              + ดวงรายเดือน รายวัน
             </p>
             <p className="text-xs text-inkMuted/60">
               + ดูดวงคู่ความเข้ากัน

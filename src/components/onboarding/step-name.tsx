@@ -5,12 +5,13 @@ import { motion } from 'framer-motion';
 import { Input } from '@/lib-packages/ui';
 import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
+import { StepHeading } from './step-heading';
 
 /**
  * Step 2: Name Input
  *
  * "บอกชื่อของเจ้ามาสิ" (Tell me thy name)
- * - Single centered input, auto-focus
+ * - Single centered input, auto-focus; the heading is the field's label
  * - Dark field with purple glow on focus
  */
 export function StepName() {
@@ -39,14 +40,11 @@ export function StepName() {
       className="min-h-screen flex items-center justify-center p-6"
     >
       <div className="w-full max-w-md space-y-8">
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-3xl md:text-4xl text-center text-ink font-heading"
-        >
-          บอกชื่อของเจ้ามาสิ
-        </motion.h1>
+        <StepHeading
+          id="step-name-heading"
+          title="บอกชื่อของเจ้ามาสิ"
+          description="ข้าจะเรียกเจ้าด้วยชื่อนี้ในคำทำนาย"
+        />
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input
@@ -54,28 +52,20 @@ export function StepName() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="ชื่อของเจ้า"
+            placeholder="เช่น ปลา, มิ้นท์"
+            aria-labelledby="step-name-heading"
+            autoComplete="given-name"
+            enterKeyHint="next"
             className="text-center text-lg h-14"
             maxLength={50}
             required
           />
 
           <div className="flex gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              onClick={prevStep}
-              className="w-full"
-            >
+            <Button type="button" variant="soft" size="lg" onClick={prevStep} className="shrink-0 px-5">
               ย้อนกลับ
             </Button>
-            <Button
-              type="submit"
-              size="lg"
-              className="w-full"
-              disabled={!name.trim()}
-            >
+            <Button type="submit" size="lg" className="flex-1" disabled={!name.trim()}>
               ถัดไป
             </Button>
           </div>

@@ -5,13 +5,13 @@ import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
 import { useEffect } from 'react';
+import Link from 'next/link';
 
 /**
  * Step 7: Auth Prompt
  *
- * "เพื่อเก็บดวงชะตาของเจ้าไว้ เชื่อมบัญชีของเจ้า"
+ * "ดวงเต็มของเจ้าพร้อมแล้ว เชื่อมบัญชีเพื่อเปิดอ่าน"
  * - Google OAuth + Twitter/X OAuth buttons (via Better Auth)
- * - Also show "ข้าม" (Skip) link for guests
  * - User has ALREADY seen value
  * - **CRITICAL: Auth MUST come AFTER teaser result (Step 6)**
  * - If user is already authenticated, automatically skip this step
@@ -84,10 +84,12 @@ export function StepAuth() {
           transition={{ delay: 0.2 }}
           className="text-center space-y-4"
         >
-          <h1 className="text-2xl md:text-3xl text-ink font-heading">
-            เพื่อเก็บดวงชะตาของเจ้าไว้
+          <h1 className="text-2xl md:text-3xl text-ink font-heading text-balance">
+            ดวงเต็มของเจ้าพร้อมแล้ว
           </h1>
-          <p className="text-inkMuted">เชื่อมบัญชีของเจ้า</p>
+          <p className="mx-auto max-w-sm font-oracle text-base leading-relaxed text-inkMuted text-balance">
+            เชื่อมบัญชีเพื่อเปิดอ่าน และกลับมาดูได้ทุกวัน
+          </p>
         </motion.div>
 
         <motion.div
@@ -122,7 +124,7 @@ export function StepAuth() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            เข้าสู่ระบบด้วย Google
+            ดำเนินการต่อด้วย Google
           </Button>
 
           {/* X OAuth */}
@@ -136,7 +138,7 @@ export function StepAuth() {
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
             </svg>
-            เข้าสู่ระบบด้วย X
+            ดำเนินการต่อด้วย X
           </Button>
         </motion.div>
 
@@ -144,9 +146,13 @@ export function StepAuth() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-xs text-inkMuted/70 text-center"
+          className="text-xs text-inkMuted/70 text-center font-oracle"
         >
-          เมื่อเชื่อมบัญชี เจ้าจะสามารถบันทึกและดูดวงชะตาของเจ้าได้ทุกเมื่อ
+          เมื่อดำเนินการต่อ เจ้ายอมรับเงื่อนไขการใช้งานและ
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-ink">
+            นโยบายความเป็นส่วนตัว
+          </Link>
+          ของเรา
         </motion.p>
 
         <motion.div

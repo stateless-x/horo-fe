@@ -1,6 +1,6 @@
 'use client';
 
-import { useOnboardingStore } from '@/stores/onboarding';
+import { useOnboardingStore, type OnboardingStep } from '@/stores/onboarding';
 import { StepWelcome } from './step-welcome';
 import { StepReturning } from './step-returning';
 import { StepName } from './step-name';
@@ -15,6 +15,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAmbientAudio } from '@/hooks/use-ambient-audio';
+
+// The steps the visitor sees counted; welcome and the returning check are a
+// prologue, so the counter starts at the first question.
+const PROGRESS_STEPS: OnboardingStep[] = ['name', 'birthDate', 'gender', 'birthTime', 'mbti', 'teaser', 'auth'];
 
 /**
  * Main onboarding flow component
@@ -58,11 +62,13 @@ export function OnboardingFlow() {
           animate={{ y: 0, opacity: 1 }}
           className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50"
         >
-          <div className="bg-overlay/80 backdrop-blur-md rounded-full px-6 py-3 border border-surface2/50">
-            <div className="flex items-center gap-3">
-              {['name', 'birthDate', 'gender', 'birthTime', 'mbti', 'teaser', 'auth'].map((step, index) => {
-                const stepOrder = ['name', 'birthDate', 'gender', 'birthTime', 'mbti', 'teaser', 'auth'];
-                const currentIndex = stepOrder.indexOf(currentStep);
+          <div className="flex items-center gap-4 bg-overlay/80 backdrop-blur-md rounded-full pl-5 pr-6 py-3 border border-surface2/50">
+            <p className="text-xs text-inkMuted whitespace-nowrap tabular-nums" aria-live="polite">
+              ขั้นที่ {PROGRESS_STEPS.indexOf(currentStep) + 1} จาก {PROGRESS_STEPS.length}
+            </p>
+            <div className="flex items-center gap-3" aria-hidden="true">
+              {PROGRESS_STEPS.map((step, index) => {
+                const currentIndex = PROGRESS_STEPS.indexOf(currentStep);
                 const isActive = step === currentStep;
                 const isCompleted = index < currentIndex;
 

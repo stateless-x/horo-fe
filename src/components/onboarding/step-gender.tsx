@@ -1,18 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { User } from "lucide-react";
+import { Mars, Venus } from "lucide-react";
 import { Card, Button } from "@/lib-packages/ui";
 import { useOnboardingStore } from "@/stores/onboarding";
 import type { Gender } from "@/lib-packages/shared";
+import { StepHeading } from "./step-heading";
+
+const OPTIONS: { value: Gender; label: string; Icon: typeof Mars }[] = [
+  { value: "male", label: "ผู้ชาย", Icon: Mars },
+  { value: "female", label: "ผู้หญิง", Icon: Venus },
+];
 
 /**
  * Step 4: Gender
  *
- * "แล้วเจ้าเป็นผู้ชาย หรือ ผู้หญิงหล่ะ"
- * - Two large tappable cards (male/female)
- * - Cards glow purple on select
- * - Needed for Bazi 大運 calculation
+ * "เพศกำเนิดของเจ้า"
+ * - Two large tappable cards (male/female); tapping advances immediately
+ * - Cards glow purple on hover
+ * - Needed for Bazi 大運 calculation, and the why-line says so
  */
 export function StepGender() {
   const { updateProfile, nextStep, prevStep } = useOnboardingStore();
@@ -30,59 +36,35 @@ export function StepGender() {
       className="min-h-screen flex items-center justify-center p-6"
     >
       <div className="w-full max-w-md space-y-8">
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-2xl md:text-3xl text-center text-ink font-heading"
-        >
-          แล้วเพศกำเนิดของเจ้าเป็นผู้ชาย หรือ ผู้หญิงล่ะ
-        </motion.h1>
+        <StepHeading
+          title="เพศกำเนิดของเจ้า"
+          description="ปาจื้อคำนวณจังหวะชีวิตต่างกันตามเพศกำเนิด ข้าใช้เพื่อการคำนวณเท่านั้น"
+        />
 
-        <div className="grid grid-cols-2 gap-4">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => handleSelect("male")}
-            className="group"
-          >
-            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/30 dark:hover:shadow-accent/40">
-              <div className="relative">
-                <User
-                  size={64}
-                  className="text-accent stroke-[1.5] transition-colors group-hover:text-accentBright"
+        <div className="grid grid-cols-2 gap-4" role="group" aria-label="เพศกำเนิด">
+          {OPTIONS.map(({ value, label, Icon }) => (
+            <motion.button
+              key={value}
+              type="button"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleSelect(value)}
+              className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+            >
+              <Card className="p-6 h-44 flex flex-col items-center justify-center gap-4 border-accent/20 transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/30 dark:hover:shadow-accent/40">
+                <Icon
+                  size={56}
                   strokeWidth={1.5}
+                  aria-hidden="true"
+                  className="text-accentBright transition-colors group-hover:text-accent"
                 />
-              </div>
-              <p className="text-xl font-heading text-ink">ผู้ชาย</p>
-            </Card>
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => handleSelect("female")}
-            className="group"
-          >
-            <Card className="p-8 h-48 flex flex-col items-center justify-center gap-4 transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/30 dark:hover:shadow-accent/40">
-              <div className="relative">
-                <User
-                  size={64}
-                  className="text-accentBright stroke-[1.5] transition-colors group-hover:text-accent"
-                  strokeWidth={1.5}
-                />
-              </div>
-              <p className="text-xl font-heading text-ink">ผู้หญิง</p>
-            </Card>
-          </motion.button>
+                <p className="text-xl font-heading text-ink">{label}</p>
+              </Card>
+            </motion.button>
+          ))}
         </div>
 
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={prevStep}
-          className="w-full mt-6"
-        >
+        <Button variant="soft" size="lg" onClick={prevStep} className="w-full">
           ย้อนกลับ
         </Button>
       </div>

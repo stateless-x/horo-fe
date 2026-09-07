@@ -1,17 +1,45 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { THAI_MONTHS, BE_OFFSET, toGregorianYear } from '@/lib-packages/shared';
+import { StepHeading } from './step-heading';
+
+// Same select recipe as the compatibility form and settings, so a date is
+// entered the same way everywhere in the product.
+// appearance-none so the chevron can sit inside the field with real
+// right-hand room; the native arrow ignores padding and hugs the border.
+const SELECT_CLASS =
+  'w-full h-12 appearance-none bg-overlay border border-inkMuted/30 rounded-lg pl-7 pr-7 text-center text-base text-ink focus:outline-none focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50';
+
+function DateSelect({ id, value, onChange, children }: {
+  id: string;
+  value: number;
+  onChange: (value: number) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative">
+      <select id={id} value={value} onChange={(e) => onChange(parseInt(e.target.value))} className={SELECT_CLASS}>
+        {children}
+      </select>
+      <ChevronDown
+        className="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-inkMuted"
+        aria-hidden="true"
+      />
+    </div>
+  );
+}
 
 /**
  * Step 3: Birth Date
  *
- * "อยากรู้ดวงชะตาของเจ้างั้นรึ บอกวันเกิดของเจ้ามาสิ"
- * - Custom date picker (3 scroll wheels: day 1-31, month ม.ค.-ธ.ค., year 2500-2569 BE)
- * - NOT native HTML date picker
+ * "เจ้าเกิดวันไหน"
+ * - Three native selects (day, month, พ.ศ. year); the OS picker does the
+ *   scrolling, which is the one thing a fake wheel kept getting wrong
  * - Store as ISO internally, show Buddhist Era to users
  */
 export function StepBirthDate() {
@@ -22,10 +50,6 @@ export function StepBirthDate() {
   const [month, setMonth] = useState(0);
   const [year, setYear] = useState(currentYear - 25); // Default to 25 years old
 
-  const dayRef = useRef<HTMLSelectElement>(null);
-  const monthRef = useRef<HTMLSelectElement>(null);
-  const yearRef = useRef<HTMLSelectElement>(null);
-
   // Number of days in the selected month/year (BE -> Gregorian for leap-year math)
   const daysInMonth = new Date(Date.UTC(toGregorianYear(year), month + 1, 0)).getUTCDate();
 
@@ -35,28 +59,6 @@ export function StepBirthDate() {
       setDay(daysInMonth);
     }
   }, [daysInMonth, day]);
-
-  // Center the selected option in the viewport
-  const centerSelectedOption = (selectElement: HTMLSelectElement | null) => {
-    if (!selectElement) return;
-
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    if (!selectedOption) return;
-
-    // Calculate the scroll position to center the selected option
-    const optionHeight = selectedOption.offsetHeight;
-    const selectHeight = selectElement.clientHeight;
-    const scrollTo = selectedOption.offsetTop - (selectHeight / 2) + (optionHeight / 2);
-
-    selectElement.scrollTop = scrollTo;
-  };
-
-  // Center options on mount and when values change
-  useEffect(() => {
-    centerSelectedOption(dayRef.current);
-    centerSelectedOption(monthRef.current);
-    centerSelectedOption(yearRef.current);
-  }, [day, month, year]);
 
   const handleSubmit = () => {
     // Convert Buddhist Era to Gregorian
@@ -79,107 +81,70 @@ export function StepBirthDate() {
       className="min-h-screen flex items-center justify-center p-6"
     >
       <div className="w-full max-w-md space-y-8">
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-2xl md:text-3xl text-center text-ink font-heading leading-relaxed"
-        >
-          อยากรู้ดวงชะตาของเจ้างั้นรึ
-          <br />
-          บอกวันเกิดของเจ้ามาสิ
-        </motion.h1>
+        <StepHeading
+          title="เจ้าเกิดวันไหน"
+          description="วันเกิดคือหัวใจของดวงชะตา ทั้งดวงไทยและปาจื้อเริ่มจากตรงนี้"
+        />
 
-        <div className="space-y-6">
-          {/* Date Picker Wheels */}
-          <div className="flex gap-4 justify-center">
-            {/* Day */}
-            <div className="flex-1 relative">
-              <label className="block text-sm text-inkMuted mb-2 text-center">
+        <fieldset className="space-y-6">
+          <legend className="sr-only">วันเกิด (พุทธศักราช)</legend>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label htmlFor="birth-day" className="block text-sm text-inkMuted mb-2 text-center">
                 วัน
               </label>
-              <div className="relative">
-                {/* Center highlight overlay */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
-                <select
-                  ref={dayRef}
-                  value={day}
-                  onChange={(e) => setDay(parseInt(e.target.value))}
-                  className="w-full h-48 bg-surface border border-surface2 rounded-lg text-center text-lg text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                  size={7}
-                >
-                  {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((d) => (
-                    <option key={d} value={d} className="py-2">
-                      {d}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <DateSelect id="birth-day" value={day} onChange={setDay}>
+                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </DateSelect>
             </div>
 
-            {/* Month */}
-            <div className="flex-1 relative">
-              <label className="block text-sm text-inkMuted mb-2 text-center">
+            <div>
+              <label htmlFor="birth-month" className="block text-sm text-inkMuted mb-2 text-center">
                 เดือน
               </label>
-              <div className="relative">
-                {/* Center highlight overlay */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
-                <select
-                  ref={monthRef}
-                  value={month}
-                  onChange={(e) => setMonth(parseInt(e.target.value))}
-                  className="w-full h-48 bg-surface border border-surface2 rounded-lg text-center text-lg text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                  size={7}
-                >
-                  {THAI_MONTHS.map((m, i) => (
-                    <option key={i} value={i} className="py-2">
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <DateSelect id="birth-month" value={month} onChange={setMonth}>
+                {THAI_MONTHS.map((m, i) => (
+                  <option key={i} value={i}>
+                    {m}
+                  </option>
+                ))}
+              </DateSelect>
             </div>
 
-            {/* Year (Buddhist Era) */}
-            <div className="flex-1 relative">
-              <label className="block text-sm text-inkMuted mb-2 text-center">
+            <div>
+              <label htmlFor="birth-year" className="block text-sm text-inkMuted mb-2 text-center">
                 พ.ศ.
               </label>
-              <div className="relative">
-                {/* Center highlight overlay */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
-                <select
-                  ref={yearRef}
-                  value={year}
-                  onChange={(e) => setYear(parseInt(e.target.value))}
-                  className="w-full h-48 bg-surface border border-surface2 rounded-lg text-center text-lg text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                  size={7}
-                >
-                  {Array.from({ length: 70 }, (_, i) => currentYear - i).map((y) => (
-                    <option key={y} value={y} className="py-2">
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <DateSelect id="birth-year" value={year} onChange={setYear}>
+                {Array.from({ length: 70 }, (_, i) => currentYear - i).map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </DateSelect>
             </div>
           </div>
 
+          {/* Read the choice back in full so a slip in one column is caught here,
+              not on the reading. */}
+          <p className="text-center text-sm text-inkMuted" aria-live="polite">
+            เกิดวันที่ {day} {THAI_MONTHS[month]} {year}
+          </p>
+
           <div className="flex gap-3">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={prevStep}
-              className="w-full"
-            >
+            <Button type="button" variant="soft" size="lg" onClick={prevStep} className="shrink-0 px-5">
               ย้อนกลับ
             </Button>
-            <Button onClick={handleSubmit} size="lg" className="w-full">
+            <Button type="button" onClick={handleSubmit} size="lg" className="flex-1">
               ถัดไป
             </Button>
           </div>
-        </div>
+        </fieldset>
       </div>
     </motion.div>
   );

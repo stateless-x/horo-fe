@@ -40,6 +40,15 @@
   --success: #047857;
   --warn: #b45309;
   --danger: #b91c1c;
+  /* MBTI group hues (16personalities). Fills keep the hue; text uses a step that passes 4.5:1. */
+  --mbti-analysts: #88619a;
+  --mbti-analysts-text: #88619a;
+  --mbti-diplomats: #33a474;
+  --mbti-diplomats-text: #28815b;
+  --mbti-sentinels: #4298b4;
+  --mbti-sentinels-text: #367c92;
+  --mbti-explorers: #e4ae3a;
+  --mbti-explorers-text: #946c14;
 }
 
 [data-theme='dark'] {
@@ -69,6 +78,14 @@
   --success: #34d399;
   --warn: #fbbf24;
   --danger: #f87171;
+  --mbti-analysts: #88619a;
+  --mbti-analysts-text: #9470a5;
+  --mbti-diplomats: #33a474;
+  --mbti-diplomats-text: #33a474;
+  --mbti-sentinels: #4298b4;
+  --mbti-sentinels-text: #4298b4;
+  --mbti-explorers: #e4ae3a;
+  --mbti-explorers-text: #e4ae3a;
 }
 
 /* Theme-aware color utilities (bg-ground, text-ink, border-edge, ...) */
@@ -222,3 +239,25 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   background-repeat: repeat;
 }
+
+/* MBTI pickers (onboarding step, settings). A group wrapper sets the hue once;
+   cards and labels read it, so the four groups stay visually distinct without
+   per-card color classes. Unlayered on purpose so it wins over Card utilities. */
+.mbti-group-analysts { --mbti: var(--mbti-analysts); --mbti-text: var(--mbti-analysts-text); }
+.mbti-group-diplomats { --mbti: var(--mbti-diplomats); --mbti-text: var(--mbti-diplomats-text); }
+.mbti-group-sentinels { --mbti: var(--mbti-sentinels); --mbti-text: var(--mbti-sentinels-text); }
+.mbti-group-explorers { --mbti: var(--mbti-explorers); --mbti-text: var(--mbti-explorers-text); }
+.mbti-dot { background-color: var(--mbti); }
+.mbti-label { color: var(--mbti-text); }
+.mbti-card {
+  border-color: color-mix(in srgb, var(--mbti) 35%, transparent);
+  background-color: color-mix(in srgb, var(--mbti) 5%, var(--surface));
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+.mbti-card:hover { border-color: var(--mbti); }
+.mbti-card[aria-pressed='true'] {
+  border-color: var(--mbti);
+  background-color: color-mix(in srgb, var(--mbti) 16%, var(--surface));
+  box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--mbti) 55%, transparent);
+}
+.mbti-card[aria-pressed='true'] .mbti-code { color: var(--mbti-text); }

@@ -588,20 +588,22 @@ export default function SettingsPage() {
 
                   {/* MBTI groups grid */}
                   {MBTI_GROUPS.map((group) => (
-                    <div key={group.key} className="space-y-2">
-                      <p className="text-xs text-inkMuted pl-6">{group.nameTh} ({group.nameEn})</p>
+                    <div key={group.key} className={`mbti-group-${group.key} space-y-2`} role="group" aria-label={group.nameTh}>
+                      <p className="flex items-center gap-2 pl-6 text-sm">
+                        <span className="mbti-dot size-2.5 rounded-full" aria-hidden="true" />
+                        <span className="mbti-label font-heading font-semibold">{group.nameTh}</span>
+                        <span className="text-xs text-inkMuted">{group.nameEn}</span>
+                      </p>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {group.types.map((type) => (
                           <button
                             key={type.code}
+                            type="button"
+                            aria-pressed={mbtiType === type.code}
                             onClick={() => setMbtiType(type.code)}
-                            className={`p-3 rounded-lg border transition-all ${
-                              mbtiType === type.code
-                                ? 'border-accent bg-accent/10 text-accentInk'
-                                : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
-                            }`}
+                            className="mbti-card p-3 rounded-lg border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
                           >
-                            <p className="text-sm font-heading text-ink">{type.code}</p>
+                            <p className="mbti-code text-sm font-english font-bold text-ink">{type.code}</p>
                             <p className="text-xs text-inkMuted">{type.nameTh}</p>
                           </button>
                         ))}

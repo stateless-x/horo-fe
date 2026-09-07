@@ -88,11 +88,13 @@ export function StepMbti() {
               transition={{ delay: 0.3 + groupIndex * 0.05 }}
               role="group"
               aria-label={group.nameTh}
+              className={`mbti-group-${group.key}`}
             >
-              {/* Group header */}
-              <p className="text-xs text-inkMuted mb-2 pl-1">
-                {group.nameTh}{" "}
-                <span className="text-inkMuted/50">({group.nameEn})</span>
+              {/* Group header: the group's hue as a dot and on its name */}
+              <p className="mb-2 flex items-center gap-2 pl-1 text-sm">
+                <span className="mbti-dot size-2.5 rounded-full" aria-hidden="true" />
+                <span className="mbti-label font-heading font-semibold">{group.nameTh}</span>
+                <span className="text-xs text-inkMuted">{group.nameEn}</span>
               </p>
 
               {/* 4 types per group; two per row on phones so the Thai name stays legible */}
@@ -108,13 +110,10 @@ export function StepMbti() {
                     className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
                   >
                     <Card
-                      className={`p-2.5 min-h-14 flex flex-col items-center justify-center gap-0.5 transition-all ${
-                        selectedType === type.code
-                          ? "border-accent bg-accent/10 shadow-lg shadow-accent/30 dark:shadow-accent/40"
-                          : "border-accent/20 hover:border-accent/50 hover:shadow-md hover:shadow-accent/15 dark:hover:shadow-accent/20"
-                      }`}
+                      aria-pressed={selectedType === type.code}
+                      className="mbti-card p-2.5 min-h-14 flex flex-col items-center justify-center gap-0.5 shadow-none"
                     >
-                      <p className="text-sm font-english font-bold text-ink">
+                      <p className="mbti-code text-sm font-english font-bold text-ink">
                         {type.code}
                       </p>
                       <p className="text-xs text-inkMuted leading-tight">

@@ -165,6 +165,13 @@ ramp) marks love/relationship content only — the love category on daily readin
 the compatibility (ดวงคู่) surfaces, and their CTAs. Fills and glows may stay fixed
 pink; pink TEXT must be theme-legible (`text-pink-600 dark:text-pink-400`).
 
+MBTI group hues are payload colors too: **Analysts** #88619A, **Diplomats**
+#33A474, **Sentinels** #4298B4, **Explorers** #E4AE3A (the 16personalities
+convention users already know). They appear only where MBTI groups are being
+picked or labelled (onboarding MBTI step, settings, MBTI-labelled data), never as
+chrome. Fills and dots keep the hue; TEXT uses the theme's `--mbti-*-text` step,
+which is darkened or lightened until it passes 4.5:1 on that theme's surface.
+
 **The Grain Rule.** The 3% film-grain overlay is global and non-negotiable. New
 full-screen surfaces inherit it automatically via `body::before`; never stack a
 second grain layer.

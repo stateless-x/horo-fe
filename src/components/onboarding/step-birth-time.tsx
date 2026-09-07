@@ -54,7 +54,7 @@ export function StepBirthTime() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-screen flex items-center justify-center px-4 pt-20 pb-36 sm:px-6 sm:pb-32"
     >
       <div className="w-full max-w-lg space-y-6">
         <StepHeading

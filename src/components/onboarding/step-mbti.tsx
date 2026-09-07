@@ -42,7 +42,7 @@ export function StepMbti() {
       exit={{ opacity: 0, y: -20 }}
       // Taller than a phone viewport: clear the fixed audio toggle above and
       // the progress pill below instead of letting them cover the grid.
-      className="min-h-screen flex items-center justify-center px-6 pt-20 pb-28"
+      className="min-h-screen flex items-center justify-center px-6 pt-20 pb-36 sm:pb-32"
     >
       <div className="w-full max-w-lg space-y-5">
         <StepHeading

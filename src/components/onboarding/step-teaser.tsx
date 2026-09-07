@@ -213,30 +213,30 @@ export function StepTeaser() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-screen flex items-start justify-center px-4 pt-20 pb-36 sm:items-center sm:px-6 sm:pb-32"
     >
-      <div className="w-full max-w-lg space-y-6">
+      <div className="w-full max-w-lg space-y-4 sm:space-y-6">
         {/* Main Reading Card */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-surface border border-surface2 rounded-lg p-6 space-y-5"
+          className="bg-surface border border-surface2 rounded-lg p-4 space-y-3 sm:p-6 sm:space-y-5"
         >
           {/* Element + Lucky Info Row */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+            <div className="flex min-w-0 shrink-0 items-center gap-3">
               {isClayElement(result?.elementType) && (
                 <ElementClayImage
                   element={result.elementType}
                   alt=""
                   sizes="56px"
-                  className="size-14 shrink-0"
+                  className="size-11 shrink-0 sm:size-14"
                 />
               )}
-              <div>
-                <p className="text-xs text-inkMuted mb-1">ธาตุประจำตัว</p>
-                <p className="text-2xl font-heading text-accentBright">
+              <div className="min-w-0">
+                <p className="text-xs text-inkMuted mb-1 whitespace-nowrap">ธาตุประจำตัว</p>
+                <p className="text-xl font-heading text-accentBright whitespace-nowrap sm:text-2xl">
                   {isClayElement(result?.elementType)
                     ? ELEMENT_NAMES_THAI[result.elementType]
                     : result?.elementType}
@@ -244,10 +244,10 @@ export function StepTeaser() {
               </div>
             </div>
             {(result?.luckyColor || result?.luckyNumber) && (
-              <div className="flex gap-4">
+              <div className="flex shrink-0 gap-4">
                 {result?.luckyColor && (
                   <div className="text-right">
-                    <p className="text-xs text-inkMuted mb-0.5">สีมงคล</p>
+                    <p className="text-xs text-inkMuted mb-0.5 whitespace-nowrap">สีมงคล</p>
                     <p className="text-sm text-ink">
                       {result.luckyColor}
                     </p>
@@ -255,7 +255,7 @@ export function StepTeaser() {
                 )}
                 {result?.luckyNumber && (
                   <div className="text-right">
-                    <p className="text-xs text-inkMuted mb-0.5">เลขมงคล</p>
+                    <p className="text-xs text-inkMuted mb-0.5 whitespace-nowrap">เลขมงคล</p>
                     <p className="text-sm text-ink">
                       {result.luckyNumber}
                     </p>
@@ -275,7 +275,7 @@ export function StepTeaser() {
           <OracleText
             text={result?.todaySnippet || ''}
             speed={Math.max(4, Math.round(1200 / Math.max(1, (result?.todaySnippet || '').length)))}
-            className="text-base leading-relaxed"
+            className="text-[15px] leading-relaxed sm:text-base"
           />
         </motion.div>
 
@@ -284,17 +284,17 @@ export function StepTeaser() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="space-y-3"
+          className="space-y-2 sm:space-y-3"
         >
           <p className="text-sm text-inkMuted text-center">
             ยังมีเรื่องให้รู้จักตัวเองอีก
           </p>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
             {PREVIEW_CATEGORIES.map(({ icon: Icon, label }) => (
               <div
                 key={label}
-                className="flex items-center justify-center gap-2 rounded-full border border-accentBright/40 bg-accentBright/5 px-4 py-2"
+                className="flex items-center justify-center gap-1.5 rounded-full border border-accentBright/40 bg-accentBright/5 px-3 py-1.5 sm:gap-2 sm:px-4 sm:py-2"
               >
                 <Icon className="w-4 h-4 text-accentBright" />
                 <span className="text-sm text-accentBright">{label}</span>

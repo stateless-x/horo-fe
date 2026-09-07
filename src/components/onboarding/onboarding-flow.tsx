@@ -60,7 +60,7 @@ export function OnboardingFlow() {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50"
+          className="absolute inset-x-0 bottom-0 z-50 flex justify-center bg-gradient-to-t from-ground via-ground/90 to-transparent pb-6 pt-8 [@media(min-height:640px)]:fixed"
         >
           <div className="flex items-center gap-4 bg-overlay/80 backdrop-blur-md rounded-full pl-5 pr-6 py-3 border border-surface2/50">
             <p className="text-xs text-inkMuted whitespace-nowrap tabular-nums" aria-live="polite">

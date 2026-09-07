@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
 import { useSession } from '@/lib/auth-client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useOnboardingStore } from '@/stores/onboarding';
 
 /**
@@ -27,13 +27,19 @@ import { useOnboardingStore } from '@/stores/onboarding';
  * - Only non-logged-in users can access onboarding
  * - Auto-clears expired onboarding data
  * - MBTI is optional and enhances fortune accuracy when provided
+ * - `?new=true` skips welcome/returning and starts straight at the name step
  */
 function FortunePageContent() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const isSetupMode = searchParams.get('setup') === 'true';
+  const isNewUserMode = searchParams.get('new') === 'true';
   const { isExpired, reset, setStep, currentStep } = useOnboardingStore();
+  // One-shot guard: only auto-advance once. Without this, pressing "back" from
+  // the name step (which returns to 'returning') would re-trigger this effect
+  // and bounce the user right back to 'name', trapping them.
+  const hasAppliedNewUserMode = useRef(false);
 
   // Check for expired data and clear it
   useEffect(() => {
@@ -53,6 +59,23 @@ function FortunePageContent() {
     }
   }, [isSetupMode, currentStep, reset, setStep]);
 
+  // New user mode: link from login's "ยังไม่มีบัญชี?" lands here.
+  // Skip welcome + returning-user check and go straight to name input —
+  // asking "have you been here before?" is redundant for someone who just
+  // said they have no account. Keep any name/birth data already entered
+  // (no reset) — the expiry effect above already resets if it's stale.
+  useEffect(() => {
+    if (
+      isNewUserMode &&
+      !hasAppliedNewUserMode.current &&
+      (currentStep === 'welcome' || currentStep === 'returning')
+    ) {
+      console.log('[Fortune] New user mode: skipping welcome/returning, starting from name');
+      hasAppliedNewUserMode.current = true;
+      setStep('name');
+    }
+  }, [isNewUserMode, currentStep, setStep]);
+
   // Redirect logged-in users to dashboard (unless in setup mode)
   useEffect(() => {
     if (!isPending && session && !isSetupMode) {
@@ -61,8 +84,16 @@ function FortunePageContent() {
     }
   }, [session, isPending, router, isSetupMode]);
 
-  // Block render until session is resolved — prevents onboarding flash for logged-in users
-  if (isPending || (session && !isSetupMode)) {
+  // Block render until session is resolved — prevents onboarding flash for logged-in users.
+  // Also hold while new-user mode is about to skip ahead, so the welcome
+  // animation never paints for a frame before the effect above moves to 'name'.
+  // Reads the one-shot ref so that pressing back to 'returning' later renders
+  // normally instead of re-tripping this gate.
+  const isSkippingToName =
+    isNewUserMode &&
+    !hasAppliedNewUserMode.current &&
+    (currentStep === 'welcome' || currentStep === 'returning');
+  if (isPending || (session && !isSetupMode) || isSkippingToName) {
     return (
       <div className="min-h-screen bg-ground flex items-center justify-center">
         <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>

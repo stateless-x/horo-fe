@@ -166,7 +166,7 @@ export default function LoginPage() {
           <p className="text-sm text-inkMuted font-oracle">
             ยังไม่มีบัญชี?{' '}
             <Link
-              href="/fortune"
+              href="/fortune?new=true"
               className="text-accentBright hover:text-accentSoft underline"
             >
               เริ่มดูดวงฟรีก่อนได้เลย

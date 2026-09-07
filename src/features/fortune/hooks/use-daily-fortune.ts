@@ -54,7 +54,10 @@ export function useDailyFortune(enabled: boolean = true) {
 
   return useQuery<DailyReadingResponse>({
     queryKey: ['fortune', 'daily', userId],
-    queryFn: () => api.get<DailyReadingResponse>('/api/fortune/daily'),
+    // Normally a cache hit, but a cold daily generation can take up to the
+    // backend's 120s budget, so allow that much rather than aborting at the
+    // default GET timeout.
+    queryFn: () => api.get<DailyReadingResponse>('/api/fortune/daily', { timeout: 130_000 }),
     enabled: enabled && !!userId,
     staleTime: getMsUntilThaiMidnight(),
     gcTime: 24 * 60 * 60 * 1000, // 24 hours

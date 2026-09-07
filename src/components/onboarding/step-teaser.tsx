@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Briefcase, Wallet, Activity, Lock, Sparkles } from 'lucide-react';
+import { Heart, Briefcase, Wallet, Activity, Sparkles } from 'lucide-react';
 import { Button, OracleText } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { api } from '@/lib/api';
@@ -21,7 +21,7 @@ function isClayElement(value: string | undefined): value is ClayElement {
   return value !== undefined && value in ELEMENT_NAMES_THAI;
 }
 
-const LOCKED_CATEGORIES = [
+const PREVIEW_CATEGORIES = [
   { icon: Heart, label: 'ความรัก' },
   { icon: Briefcase, label: 'การงาน' },
   { icon: Wallet, label: 'การเงิน' },
@@ -33,7 +33,7 @@ const LOCKED_CATEGORIES = [
  *
  * IMMEDIATE wow moment:
  * - Personalized LLM reading with personality reveal + fortune hints + cliffhanger
- * - Locked fortune category previews to create FOMO
+ * - Warm previews of the fortune categories that open right after signup
  * - Strong CTA to drive signup
  * - THIS MUST HAPPEN BEFORE AUTH!
  */
@@ -265,16 +265,21 @@ export function StepTeaser() {
             )}
           </div>
 
+          {result?.personality && (
+            <p className="text-sm text-inkMuted">{result.personality}</p>
+          )}
+
           <hr className="border-surface2" />
 
           {/* Oracle Reading */}
           <OracleText
             text={result?.todaySnippet || ''}
+            speed={Math.max(4, Math.round(1200 / Math.max(1, (result?.todaySnippet || '').length)))}
             className="text-base leading-relaxed"
           />
         </motion.div>
 
-        {/* Locked Fortune Previews */}
+        {/* Fortune Category Previews */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -286,31 +291,17 @@ export function StepTeaser() {
           </p>
 
           <div className="grid grid-cols-2 gap-2">
-            {LOCKED_CATEGORIES.map(({ icon: Icon, label }) => (
+            {PREVIEW_CATEGORIES.map(({ icon: Icon, label }) => (
               <div
                 key={label}
-                className="flex items-center justify-between rounded-lg border border-accent/10 bg-surface/50 px-4 py-3"
+                className="flex items-center justify-center gap-2 rounded-full border border-accentBright/40 bg-accentBright/5 px-4 py-2"
               >
-                <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-accent/40" />
-                  <span className="text-sm text-inkMuted">{label}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-inkMuted/50">?%</span>
-                  <Lock className="w-3 h-3 text-inkMuted/30" />
-                </div>
+                <Icon className="w-4 h-4 text-accentBright" />
+                <span className="text-sm text-accentBright">{label}</span>
               </div>
             ))}
           </div>
 
-          <div className="text-center space-y-0.5">
-            <p className="text-xs text-inkMuted/60">
-              + ดวงรายเดือน รายวัน
-            </p>
-            <p className="text-xs text-inkMuted/60">
-              + ดูดวงคู่ความเข้ากัน
-            </p>
-          </div>
         </motion.div>
 
         {/* CTA Buttons */}
@@ -328,9 +319,6 @@ export function StepTeaser() {
               อ่านดวงเต็ม
             </Button>
           </div>
-          <p className="text-xs text-inkMuted/50 text-center">
-            เข้าสู่ระบบเพื่ออ่านครบ 6 ด้านและดวงรายวัน
-          </p>
         </motion.div>
       </div>
     </motion.div>

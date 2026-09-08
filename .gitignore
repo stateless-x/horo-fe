@@ -25,3 +25,6 @@ bun.lockb
 
 # Impeccable review artifacts (local tooling screenshots)
 .impeccable/review/
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo

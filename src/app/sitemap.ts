@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { CALENDAR_MIN_YEAR, CALENDAR_MAX_YEAR } from '@/lib/calendar-range';
+import { LEARN_ARTICLES } from '@/lib/learn-articles';
 
 const BASE_URL = 'https://xn--y3cbx6azb.com';
 
@@ -22,6 +23,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
+  const learnUrls: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/learn`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    ...LEARN_ARTICLES.map((article) => ({
+      url: `${BASE_URL}/learn/${article.slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.75,
+    })),
+  ];
+
   return [
     {
       url: BASE_URL,
@@ -43,6 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    ...learnUrls,
     ...calendarMonthUrls,
   ];
 }

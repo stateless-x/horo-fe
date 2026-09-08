@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ClientDate } from '@/components/client-date';
-import { ScrollIndicator } from '@/components/ui/scroll-indicator';
 import { ElementShowcase } from '@/components/landing/element-showcase';
 import { ReadingCategories } from '@/components/landing/reading-categories';
 import { FortuneProofPreview } from '@/components/landing/fortune-proof-preview';
@@ -18,7 +17,7 @@ import { FortuneProofPreview } from '@/components/landing/fortune-proof-preview'
  */
 export function LandingNarrative() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   // useReducedMotion() is null on the server but resolved on the client's
   // first render, so gating the <video> on it alone renders different trees
@@ -26,6 +25,7 @@ export function LandingNarrative() {
   // decide — same pattern as components/ui/clay-oracle-loader.tsx.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  const activeVideo = mounted && shouldReduceMotion === false && videoPlaying;
 
   return (
     <>
@@ -46,7 +46,9 @@ export function LandingNarrative() {
             src="/horo-hero-poster.webp"
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover opacity-20"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+              activeVideo ? 'opacity-0' : 'opacity-20'
+            }`}
           />
           {/* `=== false`, not `!`: useReducedMotion() returns null on the
               server, and `!null` is true — which would put a 597 kB webm /
@@ -63,9 +65,13 @@ export function LandingNarrative() {
               playsInline
               poster="/horo-hero-poster.webp"
               preload="metadata"
-              onCanPlay={() => setVideoLoaded(true)}
+              onPlaying={() => setVideoPlaying(true)}
+              onPause={() => setVideoPlaying(false)}
+              onWaiting={() => setVideoPlaying(false)}
+              onStalled={() => setVideoPlaying(false)}
+              onError={() => setVideoPlaying(false)}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-                videoLoaded ? 'opacity-20' : 'opacity-0'
+                activeVideo ? 'opacity-20' : 'opacity-0'
               }`}
             >
               <source src="/horo-hero.webm" type="video/webm" />
@@ -75,24 +81,9 @@ export function LandingNarrative() {
           <div className="absolute inset-0 bg-gradient-to-b from-ground/80 via-ground/60 to-ground" />
         </div>
 
-        {/* Floating Particles */}
-        {!shouldReduceMotion && (
-          <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-accentBright/40 animate-float-1" />
-            <div className="absolute top-1/3 right-1/4 w-1 h-1 rounded-full bg-accentSoft/30 animate-float-2" />
-            <div className="absolute bottom-1/3 left-1/3 w-2 h-2 rounded-full bg-accentBright/20 animate-float-3" />
-            <div className="absolute top-2/3 right-1/3 w-1 h-1 rounded-full bg-accentSoft/25 animate-float-1 [animation-delay:2s]" />
-            <div className="absolute top-1/2 left-2/3 w-1.5 h-1.5 rounded-full bg-accentBright/30 animate-float-2 [animation-delay:3s]" />
-          </div>
-        )}
-
         {/* Hero Content */}
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+          <div>
             <h1 className="text-4xl md:text-7xl font-heading mb-6 tracking-tight bg-gradient-to-br from-ink via-accentFaint to-accentSoft bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(192,132,252,0.3)]">
               ดูดวงฟรี เผื่อวันนี้จะเข้าใจตัวเองขึ้น
             </h1>
@@ -104,12 +95,7 @@ export function LandingNarrative() {
             </p>
 
             {/* Decorative line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mx-auto mb-10 h-px w-48 bg-gradient-to-r from-transparent via-accentSoft/40 to-transparent origin-center"
-            />
+            <div className="mx-auto mb-10 h-px w-48 bg-gradient-to-r from-transparent via-accentSoft/40 to-transparent" />
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -137,11 +123,8 @@ export function LandingNarrative() {
             <p className="text-inkMuted/70 text-sm font-oracle mt-6">
               ดูผลเบื้องต้นฟรี แล้วค่อยเข้าสู่ระบบเพื่ออ่านต่อ
             </p>
-          </motion.div>
+          </div>
         </div>
-
-        {/* Scroll Indicator */}
-        <ScrollIndicator showDelay={1500} />
       </section>
 
       {/* ===== SECTION 2: Five Elements ===== */}
@@ -299,6 +282,12 @@ export function LandingNarrative() {
                   <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
                     ชวนรู้จักธาตุของตัวเองให้มากขึ้น
                   </p>
+                  <Link
+                    href="/learn/bazi"
+                    className="mt-5 min-h-11 inline-flex w-fit items-center text-sm font-heading text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
+                  >
+                    อ่านพื้นฐานปาจื้อ
+                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -339,6 +328,12 @@ export function LandingNarrative() {
                   <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
                     เติมไอเดียเล็ก ๆ ให้วันธรรมดา
                   </p>
+                  <Link
+                    href="/learn/thai-astrology"
+                    className="mt-5 min-h-11 inline-flex w-fit items-center text-sm font-heading text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
+                  >
+                    อ่านพื้นฐานโหราศาสตร์ไทย
+                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -379,10 +374,22 @@ export function LandingNarrative() {
                   <p className="text-inkMuted text-xs md:text-sm font-oracle mt-auto">
                     ไม่รู้ก็ข้ามได้ ดูดวงต่อได้เหมือนเดิม
                   </p>
+                  <Link
+                    href="/learn/mbti"
+                    className="mt-5 min-h-11 inline-flex w-fit items-center text-sm font-heading text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
+                  >
+                    อ่านวิธีใช้ MBTI
+                  </Link>
                 </div>
               </div>
             </motion.div>
           </div>
+          <p className="mt-8 text-center font-oracle text-sm text-inkMuted">
+            อยากรู้ที่มาของคำว่าสายมูไหม{' '}
+            <Link href="/learn/mutelu" className="min-h-11 inline-flex items-center text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft">
+              อ่านเรื่องมูเตลู
+            </Link>
+          </p>
         </div>
       </section>
 

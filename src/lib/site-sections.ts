@@ -1,4 +1,4 @@
-import { Calendar, type LucideIcon } from 'lucide-react';
+import { BookOpen, Calendar, type LucideIcon } from 'lucide-react';
 
 /**
  * Registry of public site sections.
@@ -19,6 +19,7 @@ export interface SiteSection {
 
 export const SITE_SECTIONS: SiteSection[] = [
   { href: '/calendar', label: 'ปฏิทินไทย', icon: Calendar },
+  { href: '/learn', label: 'คลังความรู้', icon: BookOpen },
   // Future sections slot in here, e.g.:
   // { href: '/tarot', label: 'ไพ่ทาโรต์', icon: Sparkles },
   // { href: '/shop', label: 'ร้านมงคล', icon: Gem },

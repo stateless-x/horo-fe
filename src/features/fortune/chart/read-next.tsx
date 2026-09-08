@@ -1,8 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { ArrowRight, Heart, Map, Sparkles, Sun } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { TrackedCtaLink } from '@/components/tracked-cta-link';
+import type { TrackedCta } from '@/lib-packages/shared';
 import type { FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
 
 interface ReadNextTabItem {
@@ -18,6 +19,10 @@ interface ReadNextTabItem {
 interface ReadNextLinkItem {
   type: 'link';
   href: string;
+  /** Analytics id, distinct from `cta` below, which is the visible label.
+      Required rather than optional: a link that leaves the surface untracked is
+      the exact gap that made this block invisible in the numbers. */
+  ctaId: TrackedCta;
   icon: LucideIcon;
   isLove?: boolean;
   heading: string;
@@ -68,9 +73,15 @@ export function ReadNext({ items, onTabChange }: ReadNextProps) {
 
           if (item.type === 'link') {
             return (
-              <Link key={item.href} href={item.href} className={cardClass}>
+              <TrackedCtaLink
+                key={item.href}
+                cta={item.ctaId}
+                surface="fortune"
+                href={item.href}
+                className={cardClass}
+              >
                 {content}
-              </Link>
+              </TrackedCtaLink>
             );
           }
 
@@ -108,6 +119,7 @@ export const READ_NEXT_READINGS: ReadNextItem[] = [
   {
     type: 'link',
     href: '/dashboard/compatibility',
+    ctaId: 'fortune_compatibility',
     icon: Heart,
     isLove: true,
     heading: 'ดูดวงคู่',
@@ -128,6 +140,7 @@ export const READ_NEXT_DETAILS: ReadNextItem[] = [
   {
     type: 'link',
     href: '/dashboard/today',
+    ctaId: 'fortune_today',
     icon: Sun,
     heading: 'ดวงวันนี้',
     reason: 'รู้จักเสาชะตาแล้ว มาดูว่าพลังของวันนี้เป็นยังไงบ้าง',
@@ -136,6 +149,7 @@ export const READ_NEXT_DETAILS: ReadNextItem[] = [
   {
     type: 'link',
     href: '/dashboard/compatibility',
+    ctaId: 'fortune_compatibility',
     icon: Heart,
     isLove: true,
     heading: 'ดูดวงคู่',

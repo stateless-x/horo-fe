@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useSession } from '@/lib/auth-client';
+import { useSession, type HoroSessionUser } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import {
   ChevronDown,
@@ -18,6 +18,7 @@ import {
 
 import { useDailyFortune, useUserProfile, getDailyHookLine } from '@/features/fortune/hooks/use-daily-fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
+import { MonthlyChartPromo } from '@/features/fortune/monthly-chart-promo';
 import { useMinLoading } from '@/hooks/use-min-loading';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { useTrackEvent } from '@/lib/analytics';
@@ -92,7 +93,7 @@ export default function TodayPage() {
 
   const displayName =
     userProfile?.user?.displayName ||
-    (session.user as any)?.displayName ||
+    (session.user as HoroSessionUser)?.displayName ||
     session.user.name ||
     'คุณ';
   // Daily element energy (changes each day)
@@ -300,6 +301,12 @@ export default function TodayPage() {
             </div>
           </section>
         )}
+
+        {/* Placed here, not at the page foot: the reader has just opened a
+            daily category and got two lines about today, so "แล้วทั้งเดือนล่ะ"
+            is live. Below the ทำ/เลี่ยง block it would sit under the share
+            button, where the session usually ends. */}
+        <MonthlyChartPromo />
 
         {(doItems.length > 0 || avoidItems.length > 0) && (
           <section className="mt-12 overflow-hidden rounded-2xl border border-edge bg-surface2/55" aria-label="สิ่งที่ควรทำและควรเลี่ยง">

@@ -16,9 +16,23 @@ function createTimeoutSignal(timeoutMs: number): { signal: AbortSignal; clear: (
   };
 }
 
-function handleFetchError(error: any): never {
-  if (error.name === 'AbortError') {
-    const timeoutError: any = new Error('Request timed out');
+/**
+ * An Error carrying the response fields callers branch on — the shape
+ * `classifyCompatibilityFailure` and every retry path already assume. Named
+ * rather than `any` so renaming a field here breaks those call sites instead of
+ * silently making their checks dead.
+ */
+export interface ApiError extends Error {
+  status?: number;
+  statusText?: string;
+  code?: string;
+  /** Parsed JSON error body. `retryAfter`/`resetAt` come from the rate limiter. */
+  body?: { code?: string; error?: string; retryAfter?: number; resetAt?: string };
+}
+
+function handleFetchError(error: unknown): never {
+  if (error instanceof Error && error.name === 'AbortError') {
+    const timeoutError = new Error('Request timed out') as ApiError;
     timeoutError.status = 408;
     timeoutError.code = 'TIMEOUT';
     throw timeoutError;
@@ -27,14 +41,13 @@ function handleFetchError(error: any): never {
 }
 
 async function parseErrorResponse(res: Response): Promise<never> {
-  const error: any = new Error(`API error: ${res.statusText}`);
+  const error = new Error(`API error: ${res.statusText}`) as ApiError;
   error.status = res.status;
   error.statusText = res.statusText;
 
   try {
-    const body = await res.json();
-    error.body = body;
-  } catch (e) {
+    error.body = await res.json();
+  } catch {
     // Response body is not JSON
   }
 
@@ -60,15 +73,26 @@ export const api = {
       }
 
       return res.json();
-    } catch (error: any) {
+    } catch (error) {
       return handleFetchError(error);
     } finally {
       clear();
     }
   },
 
-  async post<T>(path: string, body?: unknown, options?: { onHeaders?: (headers: Headers) => void }): Promise<T> {
-    const { signal, clear } = createTimeoutSignal(TIMEOUTS.POST);
+  /**
+   * `keepalive` hands the request to the browser to finish on its own, so it
+   * survives the page unloading. Analytics fired from a link click needs it:
+   * without it a CTA click races its own navigation and the event is dropped
+   * on the ~10% of clicks that leave the SPA. Browsers cap in-flight keepalive
+   * bodies at 64KB, so it belongs on small beacons only, never on a reading.
+   */
+  async post<T>(
+    path: string,
+    body?: unknown,
+    options?: { timeout?: number; onHeaders?: (headers: Headers) => void; keepalive?: boolean },
+  ): Promise<T> {
+    const { signal, clear } = createTimeoutSignal(options?.timeout ?? TIMEOUTS.POST);
     try {
       const res = await fetch(`${API_URL}${path}`, {
         method: 'POST',
@@ -77,6 +101,7 @@ export const api = {
         },
         credentials: 'include',
         body: body ? JSON.stringify(body) : undefined,
+        keepalive: options?.keepalive,
         signal,
       });
 
@@ -86,8 +111,8 @@ export const api = {
         await parseErrorResponse(res);
       }
 
-      return res.json();
-    } catch (error: any) {
+      return await res.json();
+    } catch (error) {
       return handleFetchError(error);
     } finally {
       clear();
@@ -108,7 +133,7 @@ export const api = {
       }
 
       return res.json();
-    } catch (error: any) {
+    } catch (error) {
       return handleFetchError(error);
     } finally {
       clear();

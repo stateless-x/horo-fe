@@ -3,7 +3,34 @@
 import { useCallback } from 'react';
 import { useSession } from '@/lib/auth-client';
 import { api } from '@/lib/api';
-import { dedupKeyFor, getTodayBangkokString, type TrackedEvent } from '@/lib-packages/shared';
+import {
+  dedupKeyFor,
+  getTodayBangkokString,
+  type CompatibilityFailureClass,
+  type TrackedEvent,
+} from '@/lib-packages/shared';
+
+type ApiFailure = {
+  status?: number;
+  code?: string;
+  body?: { code?: string };
+};
+
+/** Reduces request failures to a bounded analytics value; no server prose is sent. */
+export function classifyCompatibilityFailure(error: unknown): CompatibilityFailureClass {
+  const failure = error as ApiFailure | null;
+  const status = failure?.status;
+  const code = failure?.body?.code ?? failure?.code;
+
+  if (status === 429 || code === 'RATE_LIMIT_EXCEEDED') return 'rate_limited';
+  if (status === 408 || code === 'TIMEOUT') return 'timeout';
+  if (status === 400 || status === 422) return 'validation';
+  if (status === 401 || status === 403 || code === 'UNAUTHORIZED') return 'authentication';
+  if (status === 404) return 'profile_missing';
+  if (typeof status === 'number' && status >= 500) return 'server';
+  if (error instanceof TypeError) return 'network';
+  return 'unknown';
+}
 
 /**
  * localStorage key holding the last Bangkok date this event was reported.
@@ -45,7 +72,11 @@ export function trackEvent(userId: string, event: TrackedEvent): void {
   }
 
   api
-    .post('/api/analytics/event', event)
+    // keepalive: a CTA click starts a navigation, and without it the request is
+    // cancelled mid-flight whenever that navigation leaves the SPA.
+    // timeout: 5s, not the 45s POST default — nothing here is worth a hanging
+    // socket, and an analytics ping that slow is already lost.
+    .post('/api/analytics/event', event, { keepalive: true, timeout: 5_000 })
     .then(() => {
       if (!key) return;
       // Written on any success, including `{ recorded: false }` — the server

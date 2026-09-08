@@ -42,3 +42,15 @@ export function getCallbackUrl(path: string): string {
   return `${appUrl}${path}`;
 }
 
+
+/**
+ * The extra columns horo puts on the auth user, which Better Auth's own
+ * `session.user` type does not know about.
+ *
+ * Declared once here so call sites narrow with a named type instead of `as any`:
+ * an `any` cast silently swallows a rename of these fields, this one does not.
+ */
+export interface HoroSessionUser {
+  displayName?: string | null;
+  onboardingCompleted?: boolean | null;
+}

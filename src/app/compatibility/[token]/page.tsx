@@ -1,26 +1,21 @@
 'use client';
 
+import { RelationshipClayImage } from '@/features/compatibility/relationship-clay-image';
+import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
+
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/lib-packages/ui';
-import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib-packages/shared';
+import { RELATIONSHIP_LABELS, RelationshipTypeSchema, type RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
 import {
-  Loader2, Heart, MessageCircleHeart, Crown, Users, Laugh, Home, Sparkles, Stars, ArrowLeftRight,
+  Sparkles, Stars, ArrowLeftRight,
 } from 'lucide-react';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
 
-// Relationship type icon mapping (reuse from dashboard page)
-const RELATIONSHIP_ICONS: Record<string, typeof Heart> = {
-  romantic: Heart,
-  talking: MessageCircleHeart,
-  boss: Crown,
-  coworker: Users,
-  friend: Laugh,
-  family: Home,
-};
 
 const ELEMENT_NAMES_THAI: Record<string, string> = {
   wood: 'ไม้',
@@ -121,19 +116,19 @@ export default function CompatibilitySharePage() {
     );
   }
 
-  const Icon = RELATIONSHIP_ICONS[result.relationshipType] || Heart;
   const accents = RELATIONSHIP_ACCENTS[result.relationshipType] || RELATIONSHIP_ACCENTS.romantic;
   const label = RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType;
+  const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
 
   return (
     <div className="min-h-screen p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-4">
-          {/* Relationship type badge */}
+<RelationshipClayImage relationshipType={result.relationshipType} className="mx-auto size-24" sizes="96px" />
+          {/* Relationship type label */}
           <div className="flex justify-center">
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm ${accents.accentBg} ${accents.accentBorder} border ${accents.accent}`}>
-              <Icon className="w-3.5 h-3.5" />
               {label}
             </span>
           </div>
@@ -162,9 +157,7 @@ export default function CompatibilitySharePage() {
               <CardContent>
                 <div className="flex items-center justify-center gap-4 py-6">
                   <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ink">{toThaiElement(result.userElement)}</span>
-                    </div>
+                    <ElementClayImage element={result.userElement as ClayElement} alt={`ธาตุ${toThaiElement(result.userElement)}`} sizes="80px" className="mx-auto mb-2 size-20" />
                     <p className="text-sm text-ink">เจ้าของดวง</p>
                     {result.userDayMaster && <p className="text-xs text-inkMuted">{result.userDayMaster}</p>}
                   </div>
@@ -179,9 +172,7 @@ export default function CompatibilitySharePage() {
                   </motion.div>
 
                   <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-accentBright/20 border-2 border-accentBright flex items-center justify-center mb-2">
-                      <span className="text-2xl font-bold text-ink">{toThaiElement(result.partnerElement)}</span>
-                    </div>
+                    <ElementClayImage element={result.partnerElement as ClayElement} alt={`ธาตุ${toThaiElement(result.partnerElement)}`} sizes="80px" className="mx-auto mb-2 size-20" />
                     <p className="text-sm text-ink">{result.partnerName}</p>
                     {result.partnerDayMaster && <p className="text-xs text-inkMuted">{result.partnerDayMaster}</p>}
                   </div>
@@ -197,6 +188,7 @@ export default function CompatibilitySharePage() {
             score={result.score}
             analysis={result.analysis}
             structuredContent={result.structuredContent}
+            relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
           />
         </motion.div>
 
@@ -223,7 +215,7 @@ export default function CompatibilitySharePage() {
         {/* Footer */}
         <div className="text-center py-4">
           <p className="text-inkMuted/60 text-xs">
-            <a href="/" className="hover:text-inkMuted transition-colors">สายมู.com</a> ดูดวงออนไลน์ฟรี ด้วย AI
+            <Link href="/" className="hover:text-inkMuted transition-colors">สายมู.com</Link> ดูดวงออนไลน์ฟรี ด้วย AI
           </p>
         </div>
       </div>

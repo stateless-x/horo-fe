@@ -1,3 +1,4 @@
+import { RelationshipClayImage } from '@/features/compatibility/relationship-clay-image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, Button, Input } from '@/lib-packages/ui';
 import { THAI_MONTHS, MBTI_TYPES, type RelationshipType, RELATIONSHIP_TYPES, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
@@ -55,10 +56,9 @@ export function CompatibilityForm({
       {/* Relationship Type Selector */}
       <motion.fieldset initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
         <legend className="mb-3 block font-heading text-lg font-semibold text-ink">ความสัมพันธ์แบบไหน</legend>
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {RELATIONSHIP_TYPES.map((type) => {
             const typeConfig = RELATIONSHIP_CONFIG[type];
-            const Icon = typeConfig.icon;
             const isSelected = relationshipType === type;
 
             return (
@@ -67,14 +67,14 @@ export function CompatibilityForm({
                 type="button"
                 onClick={() => onRelationshipTypeChange(type)}
                 aria-pressed={isSelected}
-                className={`inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border px-3 text-sm font-medium transition-colors sm:px-4 md:text-base ${
+                className={`inline-flex min-h-20 items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-ground md:text-base ${
                   isSelected
                     ? `${typeConfig.accentBg} ${typeConfig.accentBorder} ${typeConfig.accent}`
                     : 'bg-surface border-edge text-inkMuted hover:border-accent/50 hover:text-ink'
                 }`}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon className="w-4 h-4" />
+                <RelationshipClayImage relationshipType={type} />
                 {RELATIONSHIP_LABELS[type]}
               </motion.button>
             );

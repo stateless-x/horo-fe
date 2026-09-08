@@ -2,16 +2,23 @@
 
 import { useMinLoading } from '@/hooks/use-min-loading';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { BE_OFFSET, createUTCDateFromBE, type RelationshipType } from '@/lib-packages/shared';
+import {
+  BE_OFFSET,
+  createUTCDateFromBE,
+  RelationshipTypeSchema,
+  type CompatibilityResultOrigin,
+  type CompatibilitySharePlatform,
+  type RelationshipType,
+} from '@/lib-packages/shared';
 import { useInfiniteQuery, useQueryClient, useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { api, type ApiError } from '@/lib/api';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
-import { useTrackEvent } from '@/lib/analytics';
+import { classifyCompatibilityFailure, useTrackEvent } from '@/lib/analytics';
 import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import {
   RELATIONSHIP_CONFIG,
@@ -44,6 +51,7 @@ export default function CompatibilityPage() {
 
   // Calculation state
   const [calculating, setCalculating] = useState(false);
+  const calculationInFlight = useRef(false);
   const [calculationStep, setCalculationStep] = useState('');
   // Set once the scripted steps run out, which is when the real LLM wait starts.
   const [stepsExhausted, setStepsExhausted] = useState(false);
@@ -53,6 +61,7 @@ export default function CompatibilityPage() {
 
   // Result state
   const [result, setResult] = useState<CompatibilityResult | null>(null);
+  const [resultOrigin, setResultOrigin] = useState<CompatibilityResultOrigin>('fresh');
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
 
   // Share state
@@ -116,10 +125,23 @@ export default function CompatibilityPage() {
   useEffect(() => {
     if (historyDetailQuery.data) {
       setResult(historyDetailQuery.data);
+      setResultOrigin('history');
     }
   }, [historyDetailQuery.data]);
 
+  const handleResultOpen = () => {
+    if (!result) return;
+    const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
+    if (!parsedRelationshipType.success) return;
+    track({
+      event: 'result_opened',
+      relationshipType: parsedRelationshipType.data,
+      origin: resultOrigin,
+    });
+  };
+
   const handleCalculate = useCallback(async () => {
+    if (calculationInFlight.current) return;
     if (!partnerName.trim()) {
       setError('ใส่ชื่ออีกฝ่ายก่อนนะ');
       return;
@@ -129,6 +151,8 @@ export default function CompatibilityPage() {
     const monthNum = parseInt(month);
     const yearNum = parseInt(year);
 
+    calculationInFlight.current = true;
+    track({ event: 'calculation_started', relationshipType });
     setCalculating(true);
     setError('');
     setResult(null);
@@ -157,6 +181,9 @@ export default function CompatibilityPage() {
           ...(partnerMbti ? { partnerMbti } : {}),
         },
         {
+          // Backend allows up to four 60s attempts plus retry backoff.
+          // Wait beyond its 255s socket budget instead of aborting at 45s.
+          timeout: 270_000,
           onHeaders: (headers) => {
             const remaining = parseInt(headers.get('X-RateLimit-Remaining') || '5');
             resetAt = headers.get('X-RateLimit-Reset') || '';
@@ -166,12 +193,21 @@ export default function CompatibilityPage() {
       );
 
       setResult(data);
+      setResultOrigin(data.cached ? 'cache' : 'fresh');
       // After the call resolves, so a failed or rate-limited check is not counted.
       track({ event: 'compatibility_checked', relationshipType });
 
       // Invalidate history so new item appears
       queryClient.invalidateQueries({ queryKey: ['compatibility', 'history'] });
-    } catch (err: any) {
+    } catch (raw) {
+      // Narrowed here because a catch binding may only be typed `any` or
+      // `unknown`; the handler below reads status/body/code off it.
+      const err = raw as ApiError;
+      track({
+        event: 'calculation_failed',
+        relationshipType,
+        failureClass: classifyCompatibilityFailure(err),
+      });
       if (err?.status === 429) {
         const retryAfter = err.body?.retryAfter || 3600;
         setRateLimitInfo({ remaining: 0, resetAt, retryAfter });
@@ -179,8 +215,11 @@ export default function CompatibilityPage() {
         setError(err.body?.error || 'ครบจำนวนครั้งที่ดูได้แล้ว รอสักพักแล้วลองใหม่');
         return;
       }
-      setError(err?.body?.error || (err instanceof Error ? err.message : 'ตอนนี้โหลดข้อมูลไม่ได้ ลองอีกครั้งนะ'));
+      setError(err?.code === 'TIMEOUT'
+        ? 'รอผลนานกว่าปกติ ลองเปิดประวัติดวงคู่ก่อน หากยังไม่มีผลค่อยลองอีกครั้งนะ'
+        : err?.body?.error || (err instanceof Error ? err.message : 'ตอนนี้โหลดข้อมูลไม่ได้ ลองอีกครั้งนะ'));
     } finally {
+      calculationInFlight.current = false;
       setCalculating(false);
       setCalculationStep('');
       setStepsExhausted(false);
@@ -194,6 +233,23 @@ export default function CompatibilityPage() {
 
   const handleViewHistory = (id: string) => {
     setViewingHistoryId(id);
+  };
+
+  const handleRelationshipTypeChange = (nextRelationshipType: RelationshipType) => {
+    setRelationshipType(nextRelationshipType);
+    track({ event: 'relationship_selected', relationshipType: nextRelationshipType });
+  };
+
+  const handleGuidanceOpen = () => {
+    const parsedRelationshipType = RelationshipTypeSchema.safeParse(result?.relationshipType);
+    if (!parsedRelationshipType.success) return;
+    track({ event: 'guidance_opened', relationshipType: parsedRelationshipType.data });
+  };
+
+  const handleShareInitiated = (platform: CompatibilitySharePlatform) => {
+    const parsedRelationshipType = RelationshipTypeSchema.safeParse(result?.relationshipType);
+    if (!parsedRelationshipType.success) return;
+    track({ event: 'compatibility_share_initiated', relationshipType: parsedRelationshipType.data, platform });
   };
 
   // --- Loading screen ---
@@ -229,6 +285,9 @@ export default function CompatibilityPage() {
         onOpenShareSheet={() => setShowShareSheet(true)}
         onCloseShareSheet={() => setShowShareSheet(false)}
         onBackToForm={handleBackToForm}
+        onGuidanceOpen={handleGuidanceOpen}
+        onShareInitiated={handleShareInitiated}
+        onResultOpen={handleResultOpen}
       />
     );
   }
@@ -265,7 +324,7 @@ export default function CompatibilityPage() {
         <CompatibilityForm
           config={config}
           relationshipType={relationshipType}
-          onRelationshipTypeChange={setRelationshipType}
+          onRelationshipTypeChange={handleRelationshipTypeChange}
           partnerName={partnerName}
           onPartnerNameChange={setPartnerName}
           day={day}

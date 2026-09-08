@@ -1,6 +1,8 @@
+import { RelationshipClayImage } from '@/features/compatibility/relationship-clay-image';
 import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/lib-packages/ui';
-import { type RelationshipType, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
+import { type RelationshipType, RelationshipTypeSchema, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
 import { ArrowLeft, ArrowLeftRight, Share2, Stars } from 'lucide-react';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
@@ -12,6 +14,8 @@ import {
   type CompatibilityResult,
   type RelationshipConfig,
 } from '@/features/compatibility/relationship-config';
+import type { CompatibilitySharePlatform } from '@/lib-packages/shared';
+import { trackMountedResultOnce } from './compatibility-result-tracking';
 
 interface CompatibilityResultViewProps {
   result: CompatibilityResult;
@@ -20,6 +24,9 @@ interface CompatibilityResultViewProps {
   onOpenShareSheet: () => void;
   onCloseShareSheet: () => void;
   onBackToForm: () => void;
+  onGuidanceOpen: () => void;
+  onShareInitiated: (platform: CompatibilitySharePlatform) => void;
+  onResultOpen: () => void;
 }
 
 export function CompatibilityResultView({
@@ -29,9 +36,17 @@ export function CompatibilityResultView({
   onOpenShareSheet,
   onCloseShareSheet,
   onBackToForm,
+  onGuidanceOpen,
+  onShareInitiated,
+  onResultOpen,
 }: CompatibilityResultViewProps) {
   const resultConfig = RELATIONSHIP_CONFIG[result.relationshipType as RelationshipType] || fallbackConfig;
-  const ResultIcon = resultConfig.icon;
+  const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
+  const resultOpenTracked = useRef(false);
+
+  useEffect(() => {
+    trackMountedResultOnce(resultOpenTracked, onResultOpen);
+  }, [onResultOpen]);
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] p-4 md:p-6">
@@ -48,10 +63,10 @@ export function CompatibilityResultView({
           </Button>
 
           <div className="text-center space-y-3">
-            {/* Relationship type badge */}
+<RelationshipClayImage relationshipType={result.relationshipType} className="mx-auto size-24" sizes="96px" />
+            {/* Relationship type label */}
             <div className="flex justify-center">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm ${resultConfig.accentBg} ${resultConfig.accentBorder} border ${resultConfig.accent}`}>
-                <ResultIcon className="w-3.5 h-3.5" />
                 {RELATIONSHIP_LABELS[result.relationshipType as RelationshipType]}
               </span>
             </div>
@@ -120,6 +135,8 @@ export function CompatibilityResultView({
             score={result.score}
             analysis={result.analysis}
             structuredContent={result.structuredContent}
+            relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
+            onGuidanceOpen={onGuidanceOpen}
           />
         </motion.div>
 
@@ -149,6 +166,7 @@ export function CompatibilityResultView({
             userElement: toThaiElement(result.userElement) || '',
             partnerElement: toThaiElement(result.partnerElement) || '',
           }}
+          onShareInitiated={onShareInitiated}
         />
       </div>
     </div>

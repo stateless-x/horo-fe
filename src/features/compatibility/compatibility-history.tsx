@@ -1,7 +1,9 @@
+import Image from 'next/image';
+import { RelationshipClayImage } from '@/features/compatibility/relationship-clay-image';
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
 import { type RelationshipType, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
-import { Loader2, ChevronRight, Users, Stars } from 'lucide-react';
+import { Loader2, ChevronRight, Stars } from 'lucide-react';
 import {
   RELATIONSHIP_CONFIG,
   toThaiElement,
@@ -49,10 +51,7 @@ export function CompatibilityHistory({
         ) : items.length === 0 ? (
           // Empty state
           <div className="text-center py-8 space-y-3">
-            <div className="flex justify-center gap-2 text-inkMuted/40">
-              <Stars className="w-8 h-8" />
-              <Users className="w-8 h-8" />
-            </div>
+            <Image src="/assets/clay/little-oracle-mark-v1.webp" alt="" width={480} height={480} sizes="80px" className="mx-auto size-20 object-contain" />
             <p className="text-inkMuted text-base md:text-lg">ดวงคู่ครั้งแรก เริ่มที่ใครดี</p>
             <p className="text-inkMuted/60 text-sm md:text-base">ลองดูดวงคู่กับคนที่อยากรู้จักให้มากขึ้น</p>
           </div>
@@ -61,7 +60,6 @@ export function CompatibilityHistory({
             {items.map((item, index) => {
               const itemConfig = RELATIONSHIP_CONFIG[item.relationshipType as RelationshipType];
               if (!itemConfig) return null;
-              const ItemIcon = itemConfig.icon;
 
               return (
                 <motion.button
@@ -72,9 +70,7 @@ export function CompatibilityHistory({
                   onClick={() => onViewHistory(item.id)}
                   className="w-full bg-surface/50 border border-surface2/30 rounded-xl p-4 hover:border-accent/30 transition-all text-left flex items-center gap-3"
                 >
-                  <div className={`w-10 h-10 rounded-full ${itemConfig.accentBg} flex items-center justify-center flex-shrink-0`}>
-                    <ItemIcon className={`w-5 h-5 ${itemConfig.accent}`} />
-                  </div>
+                  <RelationshipClayImage relationshipType={item.relationshipType} />
 
                   <div className="flex-1 min-w-0">
                     <p className="text-ink font-medium truncate text-base md:text-lg">{item.partnerName}</p>

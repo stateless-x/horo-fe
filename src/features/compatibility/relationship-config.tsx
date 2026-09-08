@@ -1,13 +1,9 @@
 import { type RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
-import {
-  Heart, MessageCircleHeart, Crown, Users, Laugh, Home,
-} from 'lucide-react';
 
 // --- Constants ---
 
 export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
-  icon: typeof Heart;
   accent: string;
   accentBg: string;
   accentBorder: string;
@@ -18,7 +14,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   loadingSteps: string[];
 }> = {
   talking: {
-    icon: MessageCircleHeart,
     accent: 'text-pink-600 dark:text-pink-400',
     accentBg: 'bg-pink-500/15',
     accentBorder: 'border-pink-400/50',
@@ -29,7 +24,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     loadingSteps: ['กำลังดูเคมีของทั้งคู่...', 'อ่านสัญญาณดวงดาว...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   romantic: {
-    icon: Heart,
     accent: 'text-pink-600 dark:text-pink-400',
     accentBg: 'bg-pink-500/15',
     accentBorder: 'border-pink-400/50',
@@ -40,7 +34,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     loadingSteps: ['วิเคราะห์ธาตุของทั้งสองคน...', 'เปรียบเทียบดาวประจำวัน...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   boss: {
-    icon: Crown,
     accent: 'text-accentBright',
     accentBg: 'bg-accent/15',
     accentBorder: 'border-accentBright/50',
@@ -51,7 +44,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     loadingSteps: ['วิเคราะห์สไตล์การทำงาน...', 'เปรียบเทียบพลังงานการงาน...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   coworker: {
-    icon: Users,
     accent: 'text-accentBright',
     accentBg: 'bg-accent/15',
     accentBorder: 'border-accentBright/50',
@@ -62,7 +54,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     loadingSteps: ['วิเคราะห์สไตล์การทำงาน...', 'เปรียบเทียบจุดแข็งของทีม...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   friend: {
-    icon: Laugh,
     accent: 'text-accentBright',
     accentBg: 'bg-accent/15',
     accentBorder: 'border-accentBright/50',
@@ -73,7 +64,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     loadingSteps: ['วิเคราะห์พลังงานมิตรภาพ...', 'เปรียบเทียบธาตุของสองคน...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   family: {
-    icon: Home,
     accent: 'text-accentBright',
     accentBg: 'bg-accent/15',
     accentBorder: 'border-accentBright/50',

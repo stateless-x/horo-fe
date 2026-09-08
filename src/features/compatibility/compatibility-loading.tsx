@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 import { LoadingLine } from '@/components/ui/loading-line';
 
@@ -19,6 +20,15 @@ interface CompatibilityLoadingProps {
 }
 
 export function CompatibilityLoading({ calculationStep, stepsExhausted }: CompatibilityLoadingProps) {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    // The calculate button sits below the fold, especially on phones.
+    // Run after the loading view mounts so the new layout determines scroll.
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    headingRef.current?.focus({ preventScroll: true });
+  }, []);
+
   return (
     <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
@@ -56,6 +66,8 @@ export function CompatibilityLoading({ calculationStep, stepsExhausted }: Compat
 
         <div className="space-y-3">
           <motion.h2
+            ref={headingRef}
+            tabIndex={-1}
             className="text-3xl font-heading text-ink"
             animate={{ opacity: [0.8, 1, 0.8] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}

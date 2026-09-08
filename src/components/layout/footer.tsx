@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Heart, Calendar, Orbit } from "lucide-react";
+import { TOPIC_PAGES } from "@/lib/topic-pages";
 import { DonationButton } from "@/components/ads/donation-button";
 import { DonationModal } from "@/components/ads/donation-modal";
 
@@ -248,6 +249,39 @@ export function Footer() {
             สนับสนุน
           </DonationButton>
         </div>
+
+        {/* Reference links.
+            Quiet by design — a small row a reader can ignore, but a real
+            site-wide <a href> on every page, which is how a crawler finds the
+            topic hubs and /llms.txt at all. Nothing here is hidden text: it
+            renders, it is readable, it just is not shouting. Hidden or
+            off-screen link farms are cloaking; this is a footer.
+            The list is generated, so a new topic links itself. */}
+        <nav
+          aria-label="ข้อมูลอ้างอิง"
+          className="mb-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-inkMuted/70"
+        >
+          {TOPIC_PAGES.filter((topic) => topic.status === "live").map((topic) => (
+            <Link
+              key={topic.slug}
+              href={`/${topic.slug}`}
+              className="hover:text-inkMuted transition-colors duration-200"
+            >
+              {topic.navLabel}
+            </Link>
+          ))}
+          <Link href="/learn" className="hover:text-inkMuted transition-colors duration-200">
+            คลังความรู้
+          </Link>
+          <Link href="/ai" className="hover:text-inkMuted transition-colors duration-200">
+            ข้อมูลอ้างอิง
+          </Link>
+          {/* Plain <a>: these are generated text/plain responses, not app
+              routes, so the client router must not try to soft-navigate them. */}
+          <a href="/llms.txt" className="hover:text-inkMuted transition-colors duration-200">
+            llms.txt
+          </a>
+        </nav>
 
         {/* Attribution */}
         <div className="flex flex-col items-center justify-center gap-1.5 text-sm text-inkMuted">

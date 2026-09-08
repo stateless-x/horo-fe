@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Heart, Briefcase, Wallet, Activity, Sparkles } from 'lucide-react';
 import { Button, OracleText } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
-import { api } from '@/lib/api';
+import { api, type ApiError } from '@/lib/api';
 import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
 import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
 
@@ -71,7 +71,10 @@ export function StepTeaser() {
         setTeaserResult(data);
         setIsLoading(false);
         return; // Success
-      } catch (error: any) {
+      } catch (raw) {
+        // Narrowed here because a catch binding may only be typed `any` or
+        // `unknown`; the handler below reads status/body/code off it.
+        const error = raw as ApiError;
         console.error(`Teaser attempt ${attempt + 1}/${MAX_RETRIES + 1} failed:`, error);
 
         // Rate limit — don't retry, show rate limit screen immediately
@@ -85,7 +88,8 @@ export function StepTeaser() {
         // Other 4xx client errors (e.g. 422 validation) are not transient — retrying can't
         // succeed, so fail immediately instead of burning retries. 408 is a timeout, not a
         // client error, so it still falls through to the retry/backoff below.
-        if (error?.status >= 400 && error?.status < 500 && error?.status !== 408) {
+        const status = error.status ?? 0;
+        if (status >= 400 && status < 500 && status !== 408) {
           setHasFailed(true);
           setResult(null);
           setIsLoading(false);

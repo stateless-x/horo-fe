@@ -23,6 +23,8 @@ interface ShareSheetProps {
   shareData?: ShareData;
   compatibilityData?: CompatibilityShareData;
   title?: string;
+  /** Called after copy succeeds or the user selects an external share destination. */
+  onShareInitiated?: (platform: SharePlatform) => void;
 }
 
 interface PlatformButtonProps {
@@ -61,7 +63,7 @@ function PlatformButton({
   );
 }
 
-export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title }: ShareSheetProps) {
+export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title, onShareInitiated }: ShareSheetProps) {
   const [copied, setCopied] = useState(false);
   const [selectedPhraseIndex, setSelectedPhraseIndex] = useState(0);
 
@@ -119,6 +121,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
       navigator.clipboard.writeText(shareUrl).then(() => {
         setCopied(true);
         trackShareEvent('copy', shareType);
+        onShareInitiated?.('copy');
         setTimeout(() => setCopied(false), 2000);
       });
       return;
@@ -136,6 +139,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
       const deepLink = getLineDeepLink(textWithUrl);
       window.location.href = deepLink;
       trackShareEvent('line', shareType);
+      onShareInitiated?.('line');
       onClose();
       return;
     }
@@ -150,6 +154,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
     const platformShareUrl = getShareUrl(platform, text, shareUrl);
     window.open(platformShareUrl, '_blank', 'width=600,height=400');
     trackShareEvent(platform, shareType);
+    onShareInitiated?.(platform);
     onClose();
   };
 
@@ -198,7 +203,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
                 >
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-sm text-ink leading-relaxed flex-1">
-                      "{selectedPhrase}"
+                      &ldquo;{selectedPhrase}&rdquo;
                     </p>
                     <div className="flex-shrink-0 text-inkMuted group-hover:text-accentBright transition-colors">
                       <RefreshCw className="w-4 h-4" />

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSession } from '@/lib/auth-client';
-import { api } from '@/lib/api';
+import { api, type ApiError } from '@/lib/api';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { useFortuneStore } from '@/stores/fortune';
 import { useSessionRetry } from '@/hooks/use-session-retry';
@@ -114,7 +114,10 @@ export function useFortuneGeneration() {
         resetRetryCount();
 
         return reading;
-      } catch (err: any) {
+      } catch (raw) {
+        // Narrowed here because a catch binding may only be typed `any` or
+        // `unknown`; the handler below reads status/body/code off it.
+        const err = raw as ApiError;
         console.error('[FortuneGeneration] Error:', err);
 
         // Increment retry count (persists across page reloads)

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { HoroSessionUser } from '@/lib/auth-client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -179,7 +180,7 @@ export default function FortuneChartPage() {
     return <LoadingSkeleton loadingState="generating-narrative" />;
   }
 
-  const userName = (session.user as any).displayName || session.user.name;
+  const userName = (session.user as HoroSessionUser).displayName || session.user.name;
   const element = chartData.elementProfile.primaryElement;
   // Prefer the month the backend stamped on the narrative; fall back to the
   // Bangkok clock only for charts generated before readingPeriod existed.

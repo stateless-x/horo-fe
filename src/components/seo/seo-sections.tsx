@@ -1,3 +1,4 @@
+import Link from 'next/link';
 /**
  * Same 7 Q&As rendered both as the visible FAQ section below and as the
  * FAQPage JSON-LD in structuredData — keep these in sync when editing either.
@@ -106,7 +107,7 @@ export function SEOSections() {
           <h2 className="font-heading text-ink text-2xl md:text-3xl mb-8 text-center">
             อยากรู้อีกนิดก่อนดูดวง
           </h2>
-          <p className="mb-6 text-sm text-inkMuted text-center">อ่านเรื่องข้อมูลของคุณได้ที่ <a href="/privacy" className="underline underline-offset-4">นโยบายความเป็นส่วนตัว</a> หรือแวะดู <a href="/calendar" className="underline underline-offset-4">ปฏิทินไทย</a></p>
+          <p className="mb-6 text-sm text-inkMuted text-center">อ่านเรื่องข้อมูลของคุณได้ที่ <Link href="/privacy" className="underline underline-offset-4">นโยบายความเป็นส่วนตัว</Link> หรือแวะดู <Link href="/calendar" className="underline underline-offset-4">ปฏิทินไทย</Link></p>
           <div className="space-y-3">
             {FAQ_ITEMS.map((item) => (
               <details

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
-import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
+import { useSession, signIn, getCallbackUrl, type HoroSessionUser } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (session && !isPending) {
       // Check if user has completed onboarding
-      const onboardingCompleted = (session.user as any)?.onboardingCompleted;
+      const onboardingCompleted = (session.user as HoroSessionUser)?.onboardingCompleted;
 
       if (onboardingCompleted) {
         router.push('/dashboard/today');

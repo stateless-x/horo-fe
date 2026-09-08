@@ -195,8 +195,6 @@ export function AiReferencePage() {
           <p className="mt-3">
             ฉบับข้อความล้วนสำหรับเครื่องอ่านอยู่ที่{' '}
             <a href="/llms.txt" className="text-accentBright underline decoration-accentBright/40 underline-offset-4">/llms.txt</a>
-            {' '}และฉบับเต็มอยู่ที่{' '}
-            <a href="/llms-full.txt" className="text-accentBright underline decoration-accentBright/40 underline-offset-4">/llms-full.txt</a>
           </p>
         </div>
 
@@ -247,12 +245,12 @@ export function AiReferencePage() {
                   <div><dt className="inline font-medium text-ink/70">ข้อจำกัด: </dt><dd className="inline">{system.limit}</dd></div>
                   <div><dt className="inline font-medium text-ink/70">สถานะบนสายมู: </dt><dd className="inline">{system.statusNote}</dd></div>
                 </dl>
-                {system.learnHref ? (
+                {system.hubHref ? (
                   <Link
-                    href={system.learnHref}
+                    href={system.hubHref}
                     className="mt-4 inline-block font-oracle text-sm text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
                   >
-                    อ่านบทความเรื่อง{system.name}
+                    อ่านคู่มือ{system.name}
                   </Link>
                 ) : null}
               </Card>

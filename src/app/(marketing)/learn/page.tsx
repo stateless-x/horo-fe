@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
-import { LearnIndexPage } from '@/components/learn/learn-content';
-import { LEARN_ARTICLES } from '@/lib/learn-articles';
+import { LearnIndexPage } from '@/components/learn/learn-index';
 
 export const metadata: Metadata = {
   title: 'คลังความรู้เรื่องดวงและการรู้จักตัวเอง',
   description:
-    'อ่านบทความภาษาไทยเรื่องปาจื้อ โหราศาสตร์ไทย MBTI และมูเตลู พร้อมแนวทางใช้ความเชื่อเป็นมุมมองประกอบการใช้ชีวิต',
+    'รวมคู่มือภาษาไทยของศาสตร์ที่สายมูใช้ ทั้งโหราศาสตร์ไทย ปาจื้อ MBTI และมูเตลู พร้อมตารางอ้างอิงและข้อจำกัดของแต่ละศาสตร์',
   alternates: { canonical: '/learn' },
   openGraph: {
     title: 'คลังความรู้เรื่องดวงและการรู้จักตัวเอง | สายมู',
-    description: 'บทความภาษาไทยเรื่องดวง ความเชื่อ และการรู้จักตัวเองจากสายมู',
+    description: 'คู่มือภาษาไทยของแต่ละศาสตร์ที่สายมูใช้ พร้อมตารางอ้างอิงและข้อจำกัด',
     url: '/learn',
     type: 'website',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'คลังความรู้สายมู' }],
@@ -17,11 +16,11 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'คลังความรู้เรื่องดวงและการรู้จักตัวเอง | สายมู',
-    description: 'บทความภาษาไทยเรื่องดวง ความเชื่อ และการรู้จักตัวเองจากสายมู',
+    description: 'คู่มือภาษาไทยของแต่ละศาสตร์ที่สายมูใช้ พร้อมตารางอ้างอิงและข้อจำกัด',
     images: ['/og-image.jpg'],
   },
 };
 
 export default function LearnIndexRoute() {
-  return <LearnIndexPage articles={LEARN_ARTICLES} />;
+  return <LearnIndexPage />;
 }

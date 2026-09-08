@@ -283,7 +283,7 @@ export function LandingNarrative() {
                     ชวนรู้จักธาตุของตัวเองให้มากขึ้น
                   </p>
                   <Link
-                    href="/learn/bazi"
+                    href="/bazi"
                     className="mt-5 min-h-11 inline-flex w-fit items-center text-sm font-heading text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
                   >
                     อ่านพื้นฐานปาจื้อ
@@ -329,7 +329,7 @@ export function LandingNarrative() {
                     เติมไอเดียเล็ก ๆ ให้วันธรรมดา
                   </p>
                   <Link
-                    href="/learn/thai-astrology"
+                    href="/thai-astrology"
                     className="mt-5 min-h-11 inline-flex w-fit items-center text-sm font-heading text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
                   >
                     อ่านพื้นฐานโหราศาสตร์ไทย
@@ -375,7 +375,7 @@ export function LandingNarrative() {
                     ไม่รู้ก็ข้ามได้ ดูดวงต่อได้เหมือนเดิม
                   </p>
                   <Link
-                    href="/learn/mbti"
+                    href="/mbti"
                     className="mt-5 min-h-11 inline-flex w-fit items-center text-sm font-heading text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
                   >
                     อ่านวิธีใช้ MBTI
@@ -386,7 +386,7 @@ export function LandingNarrative() {
           </div>
           <p className="mt-8 text-center font-oracle text-sm text-inkMuted">
             อยากรู้ที่มาของคำว่าสายมูไหม{' '}
-            <Link href="/learn/mutelu" className="min-h-11 inline-flex items-center text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft">
+            <Link href="/mutelu" className="min-h-11 inline-flex items-center text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft">
               อ่านเรื่องมูเตลู
             </Link>
           </p>

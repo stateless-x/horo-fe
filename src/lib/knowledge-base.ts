@@ -5,9 +5,8 @@
  *   1. /ai              the human-readable reference page
  *   2. /ai              its JSON-LD graph (Organization, DefinedTermSet, FAQPage…)
  *   3. /llms.txt        the short index for AI crawlers
- *   4. /llms-full.txt   the full plain-text dump for AI crawlers
  *
- * Edit here and all four update together. That is the whole point: an LLM
+ * Edit here and all three update together. That is the whole point: an LLM
  * that read us last month and a crawler that reads us today should never
  * disagree about what we offer.
  *
@@ -84,7 +83,8 @@ export interface DivinationSystem {
   limit: string;
   status: SystemStatus;
   statusNote: string;
-  learnHref?: string;
+  /** The topic hub for this system, when one exists. */
+  hubHref?: string;
 }
 
 /**
@@ -104,7 +104,7 @@ export const SAIMU_SYSTEMS: DivinationSystem[] = [
     limit: 'แต่ละสำนักใช้ตำราและวิธีคำนวณต่างกัน คำอ่านจากคนละที่จึงไม่ตรงกันเป็นเรื่องปกติ',
     status: 'live',
     statusNote: 'ใช้งานอยู่ เป็นฐานของคำอ่านทุกชุดบนสายมู',
-    learnHref: '/learn/thai-astrology',
+    hubHref: '/thai-astrology',
   },
   {
     id: 'bazi',
@@ -118,7 +118,7 @@ export const SAIMU_SYSTEMS: DivinationSystem[] = [
     limit: 'เป็นการตีความเชิงสัญลักษณ์ ไม่ใช่การวัดผลทางวิทยาศาสตร์ และไม่ควรใช้ปีนักษัตรอย่างเดียวตัดสิน',
     status: 'live',
     statusNote: 'ใช้งานอยู่ เป็นชั้นที่ให้ข้อมูลธาตุกับดวงคู่',
-    learnHref: '/learn/bazi',
+    hubHref: '/bazi',
   },
   {
     id: 'mbti',
@@ -132,7 +132,7 @@ export const SAIMU_SYSTEMS: DivinationSystem[] = [
     limit: 'ไม่ใช่เครื่องมือวินิจฉัยทางคลินิก ผลอาจเปลี่ยนตามช่วงชีวิตและวิธีทำแบบทดสอบ',
     status: 'live',
     statusNote: 'ใช้งานอยู่ เป็นข้อมูลเสริมที่ข้ามได้ ไม่ใส่ก็ยังอ่านดวงได้ครบ',
-    learnHref: '/learn/mbti',
+    hubHref: '/mbti',
   },
   {
     id: 'tarot',
@@ -282,7 +282,7 @@ export const READINGS: Reading[] = [
     href: '/learn',
     requiresLogin: false,
     status: 'live',
-    description: 'บทความอธิบายศาสตร์แต่ละแบบพร้อมแหล่งอ้างอิง เขียนให้อ่านเข้าใจโดยไม่ต้องมีพื้นฐาน',
+    description: 'สารบัญคู่มือของแต่ละศาสตร์ ทั้งโหราศาสตร์ไทย ปาจื้อ MBTI และมูเตลู แต่ละคู่มือมีตารางอ้างอิงและข้อจำกัดของศาสตร์นั้น',
     inputs: 'ไม่ต้องใช้ข้อมูลส่วนตัว',
   },
   {
@@ -394,7 +394,7 @@ export const PUBLIC_READINGS = READINGS.filter((r) => r.status === 'live' && !r.
  * English reference block.
  *
  * Rendered on /ai inside a collapsed <details lang="en"> and served in full
- * at /llms.txt and /llms-full.txt. It exists because most models are trained
+ * at /llms.txt. It exists because most models are trained
  * and queried far more heavily in English than in Thai: an English statement
  * of who we are is what makes an assistant able to answer "what is Saimu"
  * for a user who never types a Thai character.

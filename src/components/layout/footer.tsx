@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Heart, Calendar, Orbit } from "lucide-react";
 import { TOPIC_PAGES } from "@/lib/topic-pages";
+import { LAST_VERIFIED_TH } from "@/lib/knowledge-base";
 import { DonationButton } from "@/components/ads/donation-button";
 import { DonationModal } from "@/components/ads/donation-modal";
 
@@ -250,37 +251,65 @@ export function Footer() {
           </DonationButton>
         </div>
 
-        {/* Reference links.
-            Quiet by design — a small row a reader can ignore, but a real
-            site-wide <a href> on every page, which is how a crawler finds the
-            topic hubs and /llms.txt at all. Nothing here is hidden text: it
-            renders, it is readable, it just is not shouting. Hidden or
-            off-screen link farms are cloaking; this is a footer.
-            The list is generated, so a new topic links itself. */}
+        {/* Footer nav — crucial links only.
+            What was cut and why: the three /dashboard readings (login-gated,
+            noindex, useless to a logged-out visitor or a crawler),
+            /sitemap.xml (robots.txt already declares it — a footer link adds
+            nothing) and /learn (an index of the same four hubs listed
+            directly above it).
+
+            What is left is what a footer is actually for: the head pages, the
+            way in, and the pages people go looking for by name. Generated
+            from the registry, so a new topic still links itself. */}
         <nav
-          aria-label="ข้อมูลอ้างอิง"
-          className="mb-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-inkMuted/70"
+          aria-label="ลิงก์หลักของเว็บไซต์"
+          className="mb-8 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-edge/60 pt-8"
         >
-          {TOPIC_PAGES.filter((topic) => topic.status === "live").map((topic) => (
-            <Link
-              key={topic.slug}
-              href={`/${topic.slug}`}
-              className="hover:text-inkMuted transition-colors duration-200"
-            >
-              {topic.navLabel}
-            </Link>
-          ))}
-          <Link href="/learn" className="hover:text-inkMuted transition-colors duration-200">
-            คลังความรู้
-          </Link>
-          <Link href="/ai" className="hover:text-inkMuted transition-colors duration-200">
-            ข้อมูลอ้างอิง
-          </Link>
-          {/* Plain <a>: these are generated text/plain responses, not app
-              routes, so the client router must not try to soft-navigate them. */}
-          <a href="/llms.txt" className="hover:text-inkMuted transition-colors duration-200">
-            llms.txt
-          </a>
+          <div>
+            <h3 className="mb-3 font-heading text-sm font-medium text-ink">
+              ศาสตร์ที่สายมูใช้
+            </h3>
+            <ul className="space-y-2 text-sm text-inkMuted">
+              {TOPIC_PAGES.filter((topic) => topic.status === "live").map((topic) => (
+                <li key={topic.slug}>
+                  <Link
+                    href={`/${topic.slug}`}
+                    className="transition-colors duration-200 hover:text-accentBright"
+                  >
+                    {topic.navLabel}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="mb-3 font-heading text-sm font-medium text-ink">
+              เกี่ยวกับสายมู
+            </h3>
+            <ul className="space-y-2 text-sm text-inkMuted">
+              <li>
+                <Link href="/fortune" className="transition-colors duration-200 hover:text-accentBright">
+                  ดูดวงฟรี
+                </Link>
+              </li>
+              <li>
+                <Link href="/calendar" className="transition-colors duration-200 hover:text-accentBright">
+                  ปฏิทินไทย
+                </Link>
+              </li>
+              <li>
+                <Link href="/ai" className="transition-colors duration-200 hover:text-accentBright">
+                  ข้อมูลอ้างอิงสายมู
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="transition-colors duration-200 hover:text-accentBright">
+                  นโยบายความเป็นส่วนตัว
+                </Link>
+              </li>
+            </ul>
+          </div>
         </nav>
 
         {/* Attribution */}
@@ -296,16 +325,26 @@ export function Footer() {
               @Askpurin
             </a>
           </div>
+          {/* Privacy moved into the reference column above, so it is not
+              repeated here. What replaces it is the verification date: one
+              constant, the same one /ai, llms.txt and every JSON-LD
+              dateModified read, so a reader and a crawler are told the same
+              thing about how current this is. */}
+          <p className="text-center text-xs text-inkMuted/50">
+            สายมู · ดูดวงออนไลน์ภาษาไทยด้วยศาสตร์ผสาน · ตรวจสอบข้อมูลล่าสุด {LAST_VERIFIED_TH}
+          </p>
+          <p className="max-w-md text-center text-xs text-inkMuted/40">
+            คำอ่านทั้งหมดเป็นการตีความตามความเชื่อ ไม่ใช่ผลวัดทางวิทยาศาสตร์
+            และใช้แทนคำแนะนำทางการแพทย์ กฎหมาย หรือการเงินไม่ได้
+          </p>
           <div className="flex items-center gap-3 text-xs text-inkMuted/40">
             <span>v 0.0.1</span>
-            <span>·</span>
-            <Link
-              href="/privacy"
-              target="_blank"
-              className="hover:text-inkMuted transition-colors duration-200"
-            >
-              นโยบายความเป็นส่วนตัว
-            </Link>
+            <span aria-hidden="true">·</span>
+            {/* Plain <a>: a generated text/plain response, not an app route,
+                so the client router must not soft-navigate it. */}
+            <a href="/llms.txt" className="transition-colors duration-200 hover:text-inkMuted">
+              llms.txt
+            </a>
           </div>
         </div>
       </div>

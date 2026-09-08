@@ -6,17 +6,45 @@ and described accurately — including the parts we don't do.
 
 ## The content model
 
-Three layers, three jobs. Keep them apart or they compete for the same query.
+One page per concept. There is no second, thinner page for any topic.
 
 | Layer | URL | Wins the query | Shape |
 | --- | --- | --- | --- |
-| Explainer | `/learn/<slug>` | `<หัวข้อ>คืออะไร` | Prose, sources, no tables |
-| Topic hub | `/<slug>` | `ดูดวง<หัวข้อ>`, lookup queries | Tables, direct answers, CTA |
+| Topic hub | `/<slug>` | `<หัวข้อ>คืออะไร`, `ดูดวง<หัวข้อ>`, lookup queries | Tables, direct answers, CTA |
+| MBTI type | `/mbti/<type>` | `<TYPE> นิสัย`, `<TYPE> คือ`, `<TYPE> ดวง` | One type per page, ×16 |
+| Index | `/learn` | browse intent only | Lists the hubs, owns no topic content |
 | Reference | `/ai` | `สายมูคืออะไร` | Facts, boundaries, citation block |
-| Machine | `/llms.txt`, `/llms-full.txt` | — | Generated plain text |
+| Machine | `/llms.txt` | — | Generated plain text index |
 
-Each hub links down to its explainer; each explainer should link back up. That
-gives Google one obvious head per topic instead of two pages splitting signal.
+### Why `/mbti/<type>` is allowed and `/learn/<slug>` was not
+
+They look like the same move and are the opposite one. `/learn/bazi` was a
+second page for a concept `/bazi` already owned — one concept, two pages,
+split signal. The sixteen type pages are sixteen *different* concepts:
+"INFJ นิสัย" and "ESTP คือ" are distinct head queries, and a hub whose table
+lists sixteen types cannot outrank a page about one of them.
+
+The test before adding any child layer: **does the child target a query the
+parent could win?** If yes, it is cannibalisation — deepen the parent. If no,
+it is a real page.
+
+Type content lives in `src/lib/mbti-types.ts`; the slug order is duplicated in
+`src/lib/mbti-type-slugs.ts` so the hub table can link its rows without the
+two files importing each other. They are checked against each other at module
+load, so a reorder fails the build rather than silently mislinking a row.
+
+### Why there is no `/learn/<slug>` layer
+
+There was one, for about an hour on 2026-09-08. Each explainer targeted the
+same concept as its own hub while carrying strictly less: no tables, no
+English brief and no `status` field. `/mutelu` and `/learn/mutelu` had drifted
+into two verbatim-identical FAQ questions, both emitting `FAQPage` JSON-LD —
+two pages arguing over one query.
+
+The four explainers were folded into their hubs and `/learn/<slug>` now 301s
+to `/<slug>` (`next.config.ts`). **Do not reintroduce the layer.** If a topic
+needs more beginner material, deepen its hub: add a section whose `answer`
+stands alone, and put the basics above the tables.
 
 ## Where the content lives
 
@@ -31,13 +59,18 @@ These feed, in both directions automatically:
 
 ```
 knowledge-base.ts ──┬──> /ai                (components/seo/ai-reference.tsx)
-                    ├──> /llms.txt          (app/llms.txt/route.ts)
-                    └──> /llms-full.txt     (app/llms-full.txt/route.ts)
+                    └──> /llms.txt          (app/llms.txt/route.ts)
 
 topic-pages.ts ─────┬──> /<slug>            (app/(marketing)/[topic])
                     ├──> sitemap.xml        (app/sitemap.ts)
-                    ├──> footer link row    (components/layout/footer.tsx)
-                    └──> /llms.txt + full
+                    ├──> footer nav         (components/layout/footer.tsx)
+                    ├──> /learn index       (components/learn/learn-index.tsx)
+                    └──> /llms.txt
+
+mbti-types.ts ──────┬──> /mbti/<type>       (app/(marketing)/mbti/[type])
+                    ├──> sitemap.xml
+                    ├──> the hub's 16-row table (via mbti-type-slugs.ts)
+                    └──> /llms.txt
 ```
 
 ## Adding a topic hub
@@ -45,13 +78,17 @@ topic-pages.ts ─────┬──> /<slug>            (app/(marketing)/[to
 1. Append a `TopicPage` to `TOPIC_PAGES` in `src/lib/topic-pages.ts`.
 2. That's it. Route, sitemap entry, footer link and llms.txt entry all follow.
 
-The only manual step is a `/learn` explainer if the topic deserves one, plus a
-link from the explainer back up to the hub.
+There is no second page to write. `/learn` picks the new hub up automatically
+because it renders `TOPIC_PAGES.filter(status === 'live')`.
+
+A hub earns its place when the topic has **both** lookup-shaped queries (facts
+people re-open a page to check) and a connection to what the product does. A
+topic with neither belongs in `/ai`, not in its own page.
 
 ## Launching tarot (the worked example)
 
 Tarot is already written up everywhere as `status: 'planned'`, which is why
-`/ai` and `/llms-full.txt` can answer "does สายมู do tarot?" honestly today.
+`/ai` and `/llms.txt` can answer "does สายมู do tarot?" honestly today.
 When it ships:
 
 1. `src/lib/knowledge-base.ts` — flip the tarot entry in `SAIMU_SYSTEMS` and

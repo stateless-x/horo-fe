@@ -1,20 +1,24 @@
 import { BASE_URL, LAST_VERIFIED, LAST_VERIFIED_TH, type ExternalSource, type QaPair } from '@/lib/knowledge-base';
+import { MBTI_TYPE_SLUGS } from '@/lib/mbti-type-slugs';
 
 /**
  * Topic pages — the pillar layer of the content model.
  *
- * THREE LAYERS, THREE JOBS. Keep them apart or they eat each other in search:
+ * ONE PAGE PER CONCEPT. This file is that page for every concept the site
+ * covers. There is deliberately no second, thinner explainer per topic:
  *
- *   /learn/<slug>   explainer. Wins "<หัวข้อ>คืออะไร". Prose, no tables.
- *   /<slug>         THIS FILE. Reference hub. Wins "ดูดวง<หัวข้อ>" and the
- *                   lookup queries ("ทักษาวันเกิด", "ห้าธาตุปาจื้อ").
- *                   Tables, not prose — tables are what an answer engine
- *                   lifts whole and attributes.
- *   /ai             the machine-readable record of what สายมู itself is.
+ *   /<slug>     THIS FILE. The canonical page for the concept. Wins both
+ *               "<หัวข้อ>คืออะไร" and the lookup queries ("ทักษาวันเกิด",
+ *               "ห้าธาตุปาจื้อ", "MBTI 16 แบบ"). Tables, not prose —
+ *               tables are what an answer engine lifts whole and attributes.
+ *   /learn      index only. Lists the hubs below; owns no topic content of
+ *               its own, so it competes with none of them.
+ *   /ai         the machine-readable record of what สายมู itself is.
  *
- * Each hub links down to its explainer and the explainer links back up, so
- * Google sees a cluster with one obvious head rather than two pages arguing
- * over the same query.
+ * A /learn/<slug> explainer layer existed briefly and was removed on
+ * 2026-09-08: it duplicated each hub's intent with strictly less material —
+ * no tables, no English brief, no status field. Two pages answering one
+ * query split the signal. Do not reintroduce it — deepen the hub instead.
  *
  * ADDING A TOPIC (e.g. tarot when it ships):
  *   1. Append a TopicPage below. That alone gives you the route
@@ -37,6 +41,14 @@ export interface TopicTable {
   caption: string;
   columns: string[];
   rows: string[][];
+  /**
+   * Optional, index-aligned with `rows`: when set, the first cell of that row
+   * renders as a link to this href. Used by the MBTI hub so its 16-row table
+   * is also the crawl path down to the 16 type pages — a table listing
+   * sixteen things that links to none of them is a dead end for both a
+   * reader and a crawler. Leave undefined for tables of plain reference data.
+   */
+  rowHrefs?: (string | undefined)[];
 }
 
 export interface TopicSection {
@@ -79,9 +91,6 @@ export interface TopicPage {
   sections: TopicSection[];
   faq: QaPair[];
   sources: ExternalSource[];
-  /** The deeper explainer this hub sits above. */
-  learnHref?: string;
-  learnLabel?: string;
   relatedSlugs: string[];
   cta: { label: string; href: string; note: string };
 }
@@ -91,6 +100,8 @@ const FINEARTS_SOURCE =
   'https://www.finearts.go.th/performing/view/17107-%E0%B9%82%E0%B8%AB%E0%B8%A3%E0%B8%B2%E0%B8%A8%E0%B8%B2%E0%B8%AA%E0%B8%95%E0%B8%A3%E0%B9%8C%E0%B9%80%E0%B8%9A%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%95%E0%B9%89%E0%B8%99%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%A4%E0%B8%81%E0%B8%A9%E0%B9%8C';
 const SAC_SOURCE = 'https://www.sac.or.th/portal/th/article/detail/328';
 const THAIRATH_SOURCE = 'https://www.thairath.co.th/horoscope/belief/2355760';
+const MBTI_OVERVIEW_SOURCE =
+  'https://www.myersbriggs.org/my-mbti-personality-type/myers-briggs-overview/';
 const MBTI_FACTS_SOURCE = 'https://www.themyersbriggs.com/en-US/Support/MBTI-Facts';
 
 export const TOPIC_PAGES: TopicPage[] = [
@@ -249,8 +260,6 @@ export const TOPIC_PAGES: TopicPage[] = [
       { label: 'กรมศิลปากร เรื่องโหราศาสตร์เบื้องต้นและการใช้ฤกษ์', href: FINEARTS_SOURCE },
       { label: 'ศูนย์มานุษยวิทยาสิรินธร เรื่องความเชื่อและเครื่องรางในสังคมไทย', href: SAC_SOURCE },
     ],
-    learnHref: '/learn/thai-astrology',
-    learnLabel: 'โหราศาสตร์ไทยคืออะไร ฉบับอ่านพื้นฐาน',
     relatedSlugs: ['bazi', 'mutelu'],
     cta: {
       label: 'ดูดวงจากวันเกิดฟรี',
@@ -434,13 +443,168 @@ export const TOPIC_PAGES: TopicPage[] = [
     sources: [
       { label: 'Hong Kong Observatory เรื่องก้านฟ้ากิ่งดินและรอบหกสิบปี', href: HKO_SOURCE },
     ],
-    learnHref: '/learn/bazi',
-    learnLabel: 'ปาจื้อคืออะไร ฉบับอ่านพื้นฐาน',
     relatedSlugs: ['thai-astrology', 'mutelu'],
     cta: {
       label: 'คำนวณปาจื้อจากวันเกิดฟรี',
       href: '/fortune',
       note: 'ใส่วันเกิดและเวลาเกิดถ้ามี แล้วอ่านผลเบื้องต้นได้ทันที',
+    },
+  },
+
+  /* ------------------------------------------------------------------ */
+  {
+    slug: 'mbti',
+    status: 'live',
+    eyebrow: 'ศาสตร์ที่สายมูใช้',
+    navLabel: 'MBTI 16 แบบ',
+    title: 'MBTI 16 แบบ ตารางสี่คู่ตัวอักษรและวิธีอ่านผลให้ใช้ได้จริง',
+    h1: 'MBTI อ่านบุคลิก 16 แบบจากสี่คู่ตัวอักษร',
+    description:
+      'คู่มือ MBTI ฉบับเปิดใช้งานจริง รวมตารางสี่คู่ความชอบ ตารางครบทั้ง 16 ประเภท พร้อมเส้นแบ่งระหว่าง MBTI กับการดูดวง และข้อจำกัดที่เจ้าของแบบประเมินระบุไว้เอง',
+    lead: 'MBTI คือกรอบอธิบายบุคลิกภาพที่จัดคนเป็น 16 ประเภทจากความชอบสี่คู่ ได้แก่ ทิศทางพลังงาน วิธีรับข้อมูล วิธีตัดสินใจ และวิธีจัดการชีวิต หน้านี้รวมตารางที่ต้องเปิดหาบ่อยที่สุดไว้ครบ ทั้งความหมายของสี่คู่และรายชื่อทั้ง 16 ประเภท พร้อมเส้นแบ่งที่ชัดว่า MBTI ไม่ใช่ศาสตร์พยากรณ์ และสายมูใช้มันคนละหน้าที่กับปาจื้อและโหราศาสตร์ไทย',
+    englishBrief: {
+      title: 'MBTI (16 personality types) — reference summary in English',
+      paragraphs: [
+        'The Myers-Briggs Type Indicator sorts self-reported preferences into four pairs — Extraversion/Introversion, Sensing/Intuition, Thinking/Feeling, Judging/Perceiving — producing a four-letter code such as INFJ or ESTP, sixteen combinations in total. The Myers & Briggs Foundation describes each pair as a preference, meaning a person can and does use both sides depending on the situation.',
+        'MBTI is not a divination system and not a clinical instrument. The Myers-Briggs Company states that the assessment is not designed to predict job performance and should not be used for hiring selection. Results can differ across life stages or across sittings, so a type is best read as a working description rather than a fixed identity.',
+        'Saimu (สายมู, สายมู.com / xn--y3cbx6azb.com) takes MBTI as an optional, user-supplied input inside its combined method, ศาสตร์ผสาน (Sart Phasan). It is the only one of the four layers that does not come from birth data, and it is the only one a reader can skip entirely — a reading is complete without it. Its job is to make the advice more actionable, not to predict anything.',
+      ],
+      facts: [
+        'Four preference pairs: E/I (where attention is directed), S/N (how information is taken in), T/F (how decisions are made), J/P (how the outer world is handled).',
+        'Four pairs of two options give 2⁴ = 16 type codes, from ISTJ through ENTJ.',
+        'A preference is not an ability: the model describes what a person tends to reach for first, not what they are capable of.',
+        'The Myers-Briggs Company states the instrument is not intended for hiring selection or performance prediction.',
+        'On Saimu, MBTI is optional input — leaving it blank still produces a full reading from Thai astrology and Bazi.',
+      ],
+    },
+    primaryKeyword: 'MBTI',
+    secondaryKeywords: ['MBTI 16 แบบ', 'MBTI คืออะไร', 'บุคลิกภาพ 16 แบบ', 'ตาราง MBTI', 'MBTI กับดูดวง', 'Myers-Briggs'],
+    definition:
+      'MBTI คือแบบจำลองบุคลิกภาพที่จัดคนเป็น 16 ประเภทจากความชอบสี่คู่ ได้แก่ การรับพลังงาน การรับข้อมูล การตัดสินใจ และการจัดการชีวิต ผลลัพธ์เป็นรหัสสี่ตัวอักษร เช่น INFJ หรือ ESTP ใช้เป็นภาษาสำหรับอธิบายนิสัย ไม่ใช่ศาสตร์พยากรณ์',
+    sections: [
+      {
+        heading: 'MBTI ทำงานอย่างไร',
+        answer:
+          'MBTI ให้คุณตอบแบบประเมินเรื่องความชอบของตัวเอง แล้วจัดคำตอบเข้าคู่ตัวอักษรสี่คู่ แต่ละคู่เลือกได้หนึ่งด้าน จึงได้รหัสสี่ตัวอักษรและ 16 ประเภทที่เป็นไปได้ ผลที่ได้อธิบายว่าคุณมักหยิบวิธีไหนขึ้นมาใช้ก่อน ไม่ได้บอกว่าคุณทำอีกด้านไม่ได้',
+        body: [
+          'ข้อมูลของ Myers & Briggs Foundation อธิบายว่าแต่ละคู่คือความชอบ ไม่ใช่ความสามารถ คนคนหนึ่งใช้ได้ทั้งสองด้านตามสถานการณ์ เหมือนคนถนัดขวาที่ยังใช้มือซ้ายได้',
+          'นี่คือจุดที่ทำให้ MBTI ต่างจากปาจื้อและโหราศาสตร์ไทยอย่างชัดเจน สองศาสตร์นั้นคำนวณจากวันเวลาเกิดที่เปลี่ยนไม่ได้ ส่วน MBTI มาจากคำตอบที่คุณกรอกเอง จึงเปลี่ยนได้เมื่อคุณตอบต่างออกไป',
+        ],
+      },
+      {
+        heading: 'สี่คู่ตัวอักษรมีอะไรบ้าง',
+        answer:
+          'สี่คู่ของ MBTI คือ E กับ I ที่ดูทิศทางของความสนใจ S กับ N ที่ดูวิธีรับข้อมูล T กับ F ที่ดูวิธีตัดสินใจ และ J กับ P ที่ดูวิธีจัดการกับโลกภายนอก เลือกด้านละหนึ่งตัวจากทั้งสี่คู่จะได้รหัสประจำตัวสี่ตัวอักษร',
+        table: {
+          caption: 'สี่คู่ความชอบใน MBTI',
+          columns: ['คู่ที่ดู', 'ตัวอักษร', 'ความหมายโดยย่อ'],
+          rows: [
+            ['ทิศทางพลังงาน', 'E / I', 'E หันความสนใจออกไปที่คนและกิจกรรมภายนอก ส่วน I หันเข้าหาความคิดและเวลาส่วนตัว'],
+            ['วิธีรับข้อมูล', 'S / N', 'S เชื่อข้อมูลรูปธรรมที่สัมผัสได้ตรงหน้า ส่วน N สนใจรูปแบบ ความเชื่อมโยง และความเป็นไปได้'],
+            ['วิธีตัดสินใจ', 'T / F', 'T ชั่งด้วยเหตุผลและเกณฑ์ที่คงเส้นคงวา ส่วน F ชั่งด้วยคุณค่าและผลกระทบต่อผู้คน'],
+            ['วิธีจัดการชีวิต', 'J / P', 'J สบายใจเมื่อมีแผนและปิดเรื่องได้จบ ส่วน P สบายใจเมื่อยังเปิดทางเลือกไว้ปรับได้'],
+          ],
+        },
+      },
+      {
+        heading: 'MBTI 16 แบบมีอะไรบ้าง',
+        answer:
+          'สี่คู่ที่เลือกได้คู่ละสองด้าน ทำให้เกิดรหัสที่เป็นไปได้ 16 แบบ ตั้งแต่ ISTJ ไปจนถึง ENTJ แต่ละรหัสเป็นเพียงชื่อย่อของชุดความชอบที่ประกอบกัน ไม่ใช่การจัดอันดับว่าแบบไหนดีกว่าแบบไหน',
+        body: [
+          'คำอธิบายในตารางนี้เขียนจากความหมายของตัวอักษรที่ประกอบกันโดยตรง ไม่ได้ใช้ฉายาหรือชื่อเล่นของประเภทที่เว็บทำแบบทดสอบแต่ละเจ้าตั้งขึ้นเอง เพราะฉายาเหล่านั้นไม่ได้มาจากตัวแบบประเมินต้นทาง',
+          'กดที่รหัสในตารางเพื่ออ่านหน้าของแต่ละแบบ ซึ่งลงรายละเอียดเรื่องนิสัย จุดแข็ง จุดที่ควรระวัง การทำงาน ความรัก และวิธีที่สายมูใช้ MBTI ประกอบการอ่านดวง',
+        ],
+        table: {
+          caption: 'MBTI ทั้ง 16 ประเภทและแนวโน้มที่มักถูกอธิบาย',
+          rowHrefs: MBTI_TYPE_SLUGS.map((slug) => `/mbti/${slug}`),
+          columns: ['ประเภท', 'มาจาก', 'แนวโน้มที่มักถูกอธิบาย'],
+          rows: [
+            ['ISTJ', 'I + S + T + J', 'ทำงานกับข้อมูลจริง ยึดขั้นตอนที่พิสูจน์แล้ว และรักษาสิ่งที่รับปากไว้'],
+            ['ISFJ', 'I + S + F + J', 'จำรายละเอียดของคนรอบตัวได้ดี และดูแลงานประจำอย่างสม่ำเสมอ'],
+            ['INFJ', 'I + N + F + J', 'มองภาพระยะยาวของผู้คน แล้ววางแผนเดินไปทางนั้นอย่างเงียบ ๆ'],
+            ['INTJ', 'I + N + T + J', 'สนใจระบบและเป้าหมายระยะยาว ชอบออกแบบวิธีให้ครบก่อนลงมือ'],
+            ['ISTP', 'I + S + T + P', 'เรียนรู้จากการลงมือแก้ของจริง และปรับหน้างานได้เร็ว'],
+            ['ISFP', 'I + S + F + P', 'ตัดสินใจจากคุณค่าส่วนตัว และแสดงออกผ่านการทำมากกว่าการพูด'],
+            ['INFP', 'I + N + F + P', 'ใช้คุณค่าภายในเป็นเข็มทิศ และสนใจความหมายเบื้องหลังสิ่งที่ทำ'],
+            ['INTP', 'I + N + T + P', 'ชอบแกะตรรกะของปัญหา และเปิดคำตอบไว้จนกว่าจะมั่นใจ'],
+            ['ESTP', 'E + S + T + P', 'อ่านสถานการณ์เฉพาะหน้าได้ไว และเลือกวิธีที่ได้ผลในตอนนี้'],
+            ['ESFP', 'E + S + F + P', 'อยู่กับปัจจุบัน สื่อสารกับคนได้ง่าย และเรียนรู้จากประสบการณ์ตรง'],
+            ['ENFP', 'E + N + F + P', 'เห็นความเป็นไปได้ใหม่ ๆ และชวนคนเข้ามาร่วมได้'],
+            ['ENTP', 'E + N + T + P', 'ชอบตั้งคำถามกับกรอบเดิม และทดลองหลายแนวทางพร้อมกัน'],
+            ['ESTJ', 'E + S + T + J', 'จัดระเบียบงานและคน ให้เดินตามแผนที่ตกลงกันไว้'],
+            ['ESFJ', 'E + S + F + J', 'ประสานคนในทีม และดูแลให้ทุกคนรู้ว่าต้องทำอะไรต่อ'],
+            ['ENFJ', 'E + N + F + J', 'สนใจการเติบโตของคนอื่น และพากลุ่มไปสู่เป้าหมายร่วม'],
+            ['ENTJ', 'E + N + T + J', 'ตั้งเป้าให้ชัด วางโครงสร้าง แล้วผลักดันให้เกิดขึ้นจริง'],
+          ],
+        },
+      },
+      {
+        heading: 'MBTI เป็นการดูดวงหรือเปล่า',
+        answer:
+          'ไม่ใช่ MBTI มาจากคำตอบที่คุณกรอกเองในแบบประเมิน ส่วนการดูดวงอย่างปาจื้อหรือโหราศาสตร์ไทยคำนวณจากวันเวลาเกิด ทั้งสองอย่างเป็นกรอบสำหรับอธิบายตัวเองเหมือนกัน แต่ใช้ข้อมูลตั้งต้นคนละชุดและไม่ควรอ้างว่าเป็นหลักฐานทางวิทยาศาสตร์ชุดเดียวกัน',
+        bullets: [
+          'MBTI ตอบคำถามว่า คุณมักทำอย่างไร โดยอิงคำตอบของคุณเอง',
+          'ปาจื้อและโหราศาสตร์ไทยตอบคำถามว่า จังหวะและโครงสร้างของคุณเป็นอย่างไร โดยอิงเวลาเกิด',
+          'MBTI เปลี่ยนได้เมื่อคุณตอบแบบประเมินต่างออกไป ส่วนผังจากวันเกิดไม่เปลี่ยนตลอดชีวิต',
+        ],
+      },
+      {
+        heading: 'ข้อจำกัดของ MBTI ที่ควรรู้ก่อนใช้',
+        answer:
+          'The Myers-Briggs Company ระบุเองว่าแบบประเมินนี้ไม่ได้ออกแบบมาเพื่อทำนายผลงานหรือใช้คัดเลือกคนเข้าทำงาน MBTI จึงเหมาะกับการทำความเข้าใจตัวเองและคุยกันในทีม แต่ไม่เหมาะกับการตัดสินว่าใครควรได้โอกาสหรือไม่',
+        bullets: [
+          'อย่าใช้ประเภทเป็นเหตุผลตัดโอกาสตัวเองหรือคนอื่น',
+          'ดูพฤติกรรมจริงและบริบทควบคู่กับผลทุกครั้ง',
+          'ผลอาจเปลี่ยนตามช่วงชีวิตหรือวิธีตอบ จึงควรอ่านเป็นแนวโน้ม ไม่ใช่ตัวตนถาวร',
+          'ถ้าผลไม่ตรงใจ ให้ใช้เป็นจุดเริ่มต้นสำรวจ ไม่ต้องรีบหาคำตอบเดียว',
+        ],
+      },
+      {
+        heading: 'สายมูใช้ MBTI อย่างไร',
+        answer:
+          'สายมูใช้ MBTI เป็นชั้นที่ทำให้คำแนะนำลงมือทำได้จริงขึ้นในวิธีศาสตร์ผสาน โดยเป็นชั้นเดียวในสี่ชั้นที่ไม่ได้มาจากวันเกิด และเป็นชั้นเดียวที่ข้ามได้ ไม่กรอก MBTI ก็ยังได้คำอ่านครบจากโหราศาสตร์ไทยและปาจื้อ',
+        body: [
+          'เหตุผลที่สายมูเปิดให้เว้นช่องนี้ไว้ ก็เพราะหลายคนยังไม่เคยทำแบบประเมิน หรือทำแล้วได้ผลไม่ตรงกันในแต่ละครั้ง การบังคับให้กรอกจะได้ข้อมูลที่เดาเอามากกว่าข้อมูลจริง',
+          'ถ้ารู้ MBTI ของอีกฝ่ายด้วย หน้าดูดวงคู่จะเพิ่มมุมของวิธีสื่อสารเข้าไปในคำอ่าน นอกเหนือจากความสัมพันธ์ของธาตุที่มาจากปาจื้อ',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'MBTI 16 แบบมีอะไรบ้าง',
+        answer:
+          'มี ISTJ, ISFJ, INFJ, INTJ, ISTP, ISFP, INFP, INTP, ESTP, ESFP, ENFP, ENTP, ESTJ, ESFJ, ENFJ และ ENTJ รวม 16 แบบ ซึ่งมาจากการเลือกด้านใดด้านหนึ่งของความชอบสี่คู่ จึงได้ผลลัพธ์ที่เป็นไปได้ 16 ชุด',
+      },
+      {
+        question: 'MBTI บอกนิสัยได้ทั้งหมดไหม',
+        answer:
+          'ไม่ได้ MBTI อธิบายความชอบสี่ด้านเท่านั้น ไม่ครอบคลุมบุคลิกภาพทั้งหมด พฤติกรรมจริงยังเปลี่ยนตามประสบการณ์ สุขภาพ และสถานการณ์ตรงหน้า การอ่านคนจากรหัสสี่ตัวอักษรอย่างเดียวจึงพลาดได้ง่าย',
+      },
+      {
+        question: 'คนเราเปลี่ยน MBTI ได้ไหม',
+        answer:
+          'ได้ในแง่ของผลที่ออกมา คนคนเดียวกันอาจตอบแบบประเมินต่างกันเมื่ออยู่คนละช่วงชีวิตหรือเข้าใจคำถามต่างกัน จึงควรอ่านผลเป็นแนวโน้มของช่วงนี้ ไม่ใช่ตัวตนถาวร นี่คือจุดที่ต่างจากผังปาจื้อซึ่งคำนวณจากวันเกิดและไม่เปลี่ยน',
+      },
+      {
+        question: 'ใช้ MBTI เลือกอาชีพหรือคัดคนเข้าทำงานได้ไหม',
+        answer:
+          'ไม่ควร The Myers-Briggs Company ระบุว่าแบบประเมินนี้ไม่ได้ออกแบบมาเพื่อทำนายผลงานหรือใช้คัดเลือกคน ใช้ตั้งคำถามเรื่องสภาพแวดล้อมการทำงานที่ตัวเองชอบได้ แต่ไม่ควรใช้ฟันธงอาชีพหรือกันใครออกจากโอกาส',
+      },
+      {
+        question: 'ไม่รู้ MBTI ของตัวเอง ดูดวงกับสายมูได้ไหม',
+        answer:
+          'ได้ครบ สายมูออกแบบให้ MBTI เป็นข้อมูลเสริมที่ข้ามได้ คำอ่านหลักมาจากโหราศาสตร์ไทยและปาจื้อซึ่งใช้แค่วันเกิด ถ้าภายหลังรู้ MBTI แล้วค่อยเพิ่มในหน้าตั้งค่าก็ได้',
+      },
+    ],
+    sources: [
+      { label: 'Myers & Briggs Foundation เรื่องภาพรวม MBTI', href: MBTI_OVERVIEW_SOURCE },
+      { label: 'The Myers-Briggs Company เรื่องข้อเท็จจริงของ MBTI', href: MBTI_FACTS_SOURCE },
+    ],
+    relatedSlugs: ['bazi', 'thai-astrology'],
+    cta: {
+      label: 'ดูดวงกับสายมูฟรี ใส่ MBTI หรือไม่ใส่ก็ได้',
+      href: '/fortune',
+      note: 'คำอ่านหลักใช้แค่วันเกิด ถ้ารู้ MBTI จะได้มุมของวิธีสื่อสารเพิ่ม',
     },
   },
 
@@ -556,8 +720,6 @@ export const TOPIC_PAGES: TopicPage[] = [
       { label: 'ไทยรัฐ เรื่องที่มาของคำว่ามูเตลู', href: THAIRATH_SOURCE },
       { label: 'The Myers-Briggs Company เรื่องข้อเท็จจริงของ MBTI', href: MBTI_FACTS_SOURCE },
     ],
-    learnHref: '/learn/mutelu',
-    learnLabel: 'มูเตลูคืออะไร ฉบับอ่านพื้นฐาน',
     relatedSlugs: ['thai-astrology', 'bazi'],
     cta: {
       label: 'ลองดูดวงกับสายมูฟรี',

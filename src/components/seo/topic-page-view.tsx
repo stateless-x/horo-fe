@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { BASE_URL, LAST_VERIFIED, LAST_VERIFIED_TH } from '@/lib/knowledge-base';
 import { getTopicPage, topicUrl, type TopicPage, type TopicTable } from '@/lib/topic-pages';
 import { EnglishBrief } from '@/components/seo/english-brief';
@@ -97,18 +97,30 @@ function DataTable({ table }: { table: TopicTable }) {
             </tr>
           </thead>
           <tbody>
-            {table.rows.map((row) => (
-              <tr key={row.join('|')} className="border-t border-edge/70 align-top">
-                {row.map((cell, index) => (
-                  <td
-                    key={`${row[0]}-${index}`}
-                    className={index === 0 ? 'px-4 py-3 font-medium text-ink whitespace-nowrap' : 'px-4 py-3 text-ink/80'}
-                  >
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {table.rows.map((row, rowIndex) => {
+              const href = table.rowHrefs?.[rowIndex];
+              return (
+                <tr key={row.join('|')} className="border-t border-edge/70 align-top">
+                  {row.map((cell, index) => (
+                    <td
+                      key={`${row[0]}-${index}`}
+                      className={index === 0 ? 'px-4 py-3 font-medium text-ink whitespace-nowrap' : 'px-4 py-3 text-ink/80'}
+                    >
+                      {index === 0 && href ? (
+                        <Link
+                          href={href}
+                          className="text-accentBright underline decoration-accentBright/40 underline-offset-4 hover:text-accentSoft"
+                        >
+                          {cell}
+                        </Link>
+                      ) : (
+                        cell
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -191,19 +203,6 @@ export function TopicPageView({ topic }: { topic: TopicPage }) {
             ))}
           </div>
         </section>
-
-        {topic.learnHref ? (
-          <section className="mt-16 pt-10 border-t border-edge" aria-labelledby="topic-learn">
-            <h2 id="topic-learn" className="text-xl md:text-2xl font-heading text-ink mb-4">อยากอ่านพื้นฐานแบบไม่มีตาราง</h2>
-            <Link
-              href={topic.learnHref}
-              className="inline-flex items-center gap-2 font-oracle text-accentBright hover:text-accentSoft"
-            >
-              <BookOpen className="w-4 h-4" />
-              {topic.learnLabel ?? 'อ่านบทความในคลังความรู้'}
-            </Link>
-          </section>
-        ) : null}
 
         {topic.sources.length > 0 ? (
           <section className="mt-12" aria-labelledby="topic-sources">

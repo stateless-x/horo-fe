@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { CALENDAR_MIN_YEAR, CALENDAR_MAX_YEAR } from '@/lib/calendar-range';
-import { LEARN_ARTICLES } from '@/lib/learn-articles';
 import { TOPIC_PAGES } from '@/lib/topic-pages';
+import { MBTI_TYPES } from '@/lib/mbti-types';
 
 const BASE_URL = 'https://xn--y3cbx6azb.com';
 
@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
+  // /learn is an index of the topic hubs and has no children of its own.
   const learnUrls: MetadataRoute.Sitemap = [
     {
       url: `${BASE_URL}/learn`,
@@ -31,12 +32,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
-    ...LEARN_ARTICLES.map((article) => ({
-      url: `${BASE_URL}/learn/${article.slug}`,
-      lastModified: now,
-      changeFrequency: 'monthly' as const,
-      priority: 0.75,
-    })),
   ];
 
   // Topic hubs (/bazi, /thai-astrology, /mutelu, …). Generated from the
@@ -48,9 +43,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${BASE_URL}/${topic.slug}`,
     lastModified: now,
     changeFrequency: 'monthly' as const,
-    // Above the learn articles: these are the head-term pages, and the
-    // articles are the cluster that supports them.
-    priority: 0.85,
+    // The canonical page for each concept, and the highest-priority pages
+    // on the site after the homepage.
+    priority: 0.9,
+  }));
+
+  // The 16 MBTI type pages. Generated from the registry, so the set stays
+  // complete without anyone maintaining a list here.
+  const mbtiTypeUrls: MetadataRoute.Sitemap = MBTI_TYPES.map((type) => ({
+    url: `${BASE_URL}/mbti/${type.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    // Below the hubs: each answers one narrow query rather than a head term.
+    priority: 0.7,
   }));
 
   return [
@@ -83,6 +88,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     ...topicUrls,
+    ...mbtiTypeUrls,
     ...learnUrls,
     ...calendarMonthUrls,
   ];

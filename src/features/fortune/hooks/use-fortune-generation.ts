@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/stores/onboarding';
 import { useFortuneStore } from '@/stores/fortune';
 import { useSessionRetry } from '@/hooks/use-session-retry';
 import { getValidProfileWithFallback } from '@/lib/profile-utils';
+import { getSignupSource, clearSignupSource } from '@/lib/signup-source';
 import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
 
 /**
@@ -79,7 +80,9 @@ export function useFortuneGeneration() {
         if (hasStoreData) {
           setLoadingState('saving-profile');
           console.log('[FortuneGeneration] Saving profile to backend:', profileData);
-          await api.post('/api/fortune/profile', profileData);
+          const signupSource = getSignupSource();
+          await api.post('/api/fortune/profile', { ...profileData, ...(signupSource && { signupSource }) });
+          clearSignupSource();
         }
 
         // Step 2: Fetch chart data (this will return cached data if it exists, not regenerate)

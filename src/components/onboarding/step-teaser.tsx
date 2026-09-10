@@ -172,7 +172,7 @@ export function StepTeaser() {
             กลับมาเปิดดวงใหม่ได้พรุ่งนี้
           </p>
           <Button variant="outline" size="lg" onClick={prevStep}>
-            ย้อนกลับ
+            กลับ
           </Button>
         </div>
       </motion.div>
@@ -198,7 +198,7 @@ export function StepTeaser() {
           </p>
           <div className="flex gap-3 justify-center">
             <Button variant="outline" size="lg" onClick={prevStep}>
-              ย้อนกลับ
+              กลับ
             </Button>
             <Button size="lg" onClick={generateTeaser}>
               ลองอีกครั้ง
@@ -314,7 +314,7 @@ export function StepTeaser() {
         >
           <div className="flex gap-3">
             <Button variant="outline" size="lg" onClick={prevStep}>
-              ย้อนกลับ
+              กลับ
             </Button>
             <Button onClick={nextStep} size="lg" className="flex-1">
               อ่านดวงเต็ม

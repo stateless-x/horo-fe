@@ -40,7 +40,7 @@ export function StepReturning({
           className="flex flex-col gap-3"
         >
           <Button size="lg" className="w-full" onClick={nextStep}>
-            ครั้งแรก ลองดูดวงเลย
+            ยังไม่เคย
           </Button>
           <Button
             variant="soft"
@@ -48,7 +48,7 @@ export function StepReturning({
             className="w-full"
             onClick={() => router.push(withReturnTo('/login', returnTo))}
           >
-            เคยมาแล้ว เข้าสู่ระบบ
+            เคยแล้ว
           </Button>
         </motion.div>
       </div>

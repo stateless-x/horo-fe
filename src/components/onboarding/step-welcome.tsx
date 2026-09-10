@@ -65,7 +65,7 @@ export function StepWelcome() {
         className="absolute bottom-6 right-4 z-10 inline-flex min-h-11 items-center gap-2 rounded-lg border border-edge bg-ground/80 px-4 font-heading text-sm text-inkMuted backdrop-blur transition-colors hover:border-accent/50 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright sm:bottom-8 sm:right-8"
       >
         <SkipForward className="size-4" aria-hidden="true" />
-        ข้ามแอนิเมชัน
+        ข้าม
       </button>
     </motion.div>
   );

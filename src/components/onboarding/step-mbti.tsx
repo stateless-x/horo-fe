@@ -65,7 +65,7 @@ export function StepMbti() {
             className="min-h-11 gap-1.5 text-inkMuted hover:text-accentBright"
           >
             <HelpCircle className="size-4" aria-hidden="true" />
-            ข้ามขั้นตอนนี้
+            ไม่รู้ MBTI
           </Button>
           <a
             href="https://www.16personalities.com/th"
@@ -130,7 +130,7 @@ export function StepMbti() {
         {/* Submit Buttons */}
         <div className="flex gap-3">
           <Button type="button" variant="soft" size="lg" onClick={prevStep} className="shrink-0 px-5">
-            ย้อนกลับ
+            กลับ
           </Button>
           <Button
             type="button"

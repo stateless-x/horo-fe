@@ -65,7 +65,7 @@ export function StepGender() {
         </div>
 
         <Button variant="soft" size="lg" onClick={prevStep} className="w-full">
-          ย้อนกลับ
+          กลับ
         </Button>
       </div>
     </motion.div>

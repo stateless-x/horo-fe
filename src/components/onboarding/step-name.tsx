@@ -63,7 +63,7 @@ export function StepName() {
 
           <div className="flex gap-3">
             <Button type="button" variant="soft" size="lg" onClick={prevStep} className="shrink-0 px-5">
-              ย้อนกลับ
+              กลับ
             </Button>
             <Button type="submit" size="lg" className="flex-1" disabled={!name.trim()}>
               ถัดไป

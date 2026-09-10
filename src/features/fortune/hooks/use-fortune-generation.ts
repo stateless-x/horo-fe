@@ -9,6 +9,7 @@ import { useSessionRetry } from '@/hooks/use-session-retry';
 import { getValidProfileWithFallback } from '@/lib/profile-utils';
 import { getSignupSource, clearSignupSource } from '@/lib/signup-source';
 import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
+import { CHART_BUDGET } from '@/lib-packages/shared';
 
 /**
  * Fortune Generation Hook
@@ -94,7 +95,7 @@ export function useFortuneGeneration() {
         // a 90s client timeout aborted a generation that was still healthy — the
         // user saw an error, then a refresh succeeded because the server-side work
         // had finished into cache meanwhile. Sit above the backend's own budget.
-        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 240_000 });
+        const reading = await api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: CHART_BUDGET.clientTimeoutMs });
 
         console.log('[FortuneGeneration] Fortune chart received:', !!reading);
 

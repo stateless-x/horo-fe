@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { api, isRetriableApiError } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
 import { getMsUntilThaiMidnight } from '@/lib/date-utils';
 
@@ -11,6 +11,7 @@ export {
   type StructuredDailyContent,
 } from '../daily-content';
 import type { StructuredDailyContent } from '../daily-content';
+import { DAILY_BUDGET } from '@/lib-packages/shared';
 
 export interface DailyReadingResponse {
   id: string;
@@ -54,13 +55,13 @@ export function useDailyFortune(enabled: boolean = true) {
 
   return useQuery<DailyReadingResponse>({
     queryKey: ['fortune', 'daily', userId],
-    // Normally a cache hit. A cold generation runs a retry ladder on the
-    // backend that is bounded by Bun's 255s socket ceiling, not by this number
-    // — so the client waits slightly past that ceiling and lets the server be
-    // the thing that gives up. Aborting earlier (this was 130s) killed requests
-    // the server was still legitimately working on, surfacing a timeout for a
-    // reading that would have arrived.
-    queryFn: () => api.get<DailyReadingResponse>('/api/fortune/daily', { timeout: 260_000 }),
+    // Derived from the shared budget, which sits just past the socket ceiling
+    // so the server is always what gives up. Restating the number here is what
+    // let it drift from the loading screen's escape hatch.
+    queryFn: () =>
+      api.get<DailyReadingResponse>('/api/fortune/daily', {
+        timeout: DAILY_BUDGET.clientTimeoutMs,
+      }),
     enabled: enabled && !!userId,
     staleTime: getMsUntilThaiMidnight(),
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
@@ -70,10 +71,7 @@ export function useDailyFortune(enabled: boolean = true) {
     // any error surfaced — which is what "does not load" looked like. Retry
     // once, and never on a timeout: if the server burned its whole socket
     // budget, asking again produces the same wait, not a different answer.
-    retry: (failureCount, error) => {
-      if ((error as { code?: string })?.code === 'TIMEOUT') return false;
-      return failureCount < 1;
-    },
+    retry: (failureCount, error) => isRetriableApiError(error) && failureCount < 1,
     retryDelay: (attemptIndex) =>
       Math.min(1000 * Math.pow(2, attemptIndex), 30000),
   });

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { LoadingState } from '@/stores/fortune';
 import { MainLoader } from '@/components/ui/main-loader';
 import { LoadingLine } from '@/components/ui/loading-line';
+import { CHART_BUDGET, DAILY_BUDGET } from '@/lib-packages/shared';
 
 interface LoadingSkeletonProps {
   /** Loading state from the fortune store (chart flow) */
@@ -14,21 +15,22 @@ interface LoadingSkeletonProps {
   isLoading?: boolean;
 }
 
-// Escape-hatch delay before showing the "taking longer than usual" retry UI.
-// These are tied to the backend's per-attempt LLM budgets, not arbitrary UX
-// values: chart generation gets up to 180s (horo-be llm.ts chart flow) and
-// daily generation up to 120s (horo-be llm.ts "Enhanced daily generation"),
-// and the daily GET itself waits 130s (use-daily-fortune.ts), so the hatch
-// sits just past that.
-// Client fetch timeouts (use-fortune-data.ts, use-daily-fortune.ts) already
-// allow that long, so the hatch must not fire before a healthy request could
-// still succeed.
-const CHART_TIMEOUT_MS = 150_000;
-const DAILY_TIMEOUT_MS = 140_000;
+// When the "taking longer than usual" escape hatch may appear.
+//
+// It offers to start over, and starting over is destructive: it throws away an
+// in-flight generation and spends another rate-limit token. So it must never
+// appear while the request could still succeed. Both values come from the
+// shared budget, which places the hatch strictly after the client has actually
+// given up — the previous hand-written constants drifted behind a backend
+// change and put the daily hatch 120s inside a healthy request.
+const CHART_TIMEOUT_MS = CHART_BUDGET.escapeHatchMs;
+const DAILY_TIMEOUT_MS = DAILY_BUDGET.escapeHatchMs;
 
-// When the second-stage reassurance text kicks in for chart mode, ahead of
-// the 150s hatch above.
-const CHART_REASSURANCE_STAGE_MS = 30_000;
+// When the second-stage reassurance text kicks in, ahead of the hatch above.
+// Both flows escalate the same way: a first-cold generation runs about a
+// minute, so at 30s the wait is normal but long enough that silence reads as
+// broken, and saying the request is still healthy is the honest thing to show.
+const REASSURANCE_STAGE_MS = 30_000;
 
 /** Rotating mystical messages shown while generating */
 const MYSTICAL_MESSAGES = [
@@ -67,12 +69,12 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
     return () => clearTimeout(timer);
   }, [isActive, timeoutMs]);
 
-  // Chart mode only: second-stage reassurance text before the escape hatch.
+  // Second-stage reassurance before the escape hatch, in both flows.
   useEffect(() => {
-    if (isDailyMode || !isActive) return;
-    const timer = setTimeout(() => setIsReassuring(true), CHART_REASSURANCE_STAGE_MS);
+    if (!isActive) return;
+    const timer = setTimeout(() => setIsReassuring(true), REASSURANCE_STAGE_MS);
     return () => clearTimeout(timer);
-  }, [isDailyMode, isActive]);
+  }, [isActive]);
 
   // Reset timeout when loading finishes
   useEffect(() => {
@@ -176,16 +178,16 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             request is still healthy, ahead of the 150s escape hatch. */}
         {isGenerating && !isTimedOut && (
           <motion.p
-            key={isDailyMode || !isReassuring ? 'hint' : 'reassurance'}
+            key={isReassuring ? 'reassurance' : 'hint'}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: isDailyMode || !isReassuring ? 3 : 0 }}
+            transition={{ delay: isReassuring ? 0 : 3 }}
             className="mt-6 text-inkMuted/60 text-xs md:text-sm"
           >
-            {isDailyMode
-              ? 'อาจใช้เวลาสักครู่ในการวิเคราะห์ดวงชะตา'
-              : isReassuring
-                ? 'ยังเรียบเรียงคำทำนายอยู่ รอที่หน้านี้ได้เลย'
+            {isReassuring
+              ? 'ยังเรียบเรียงคำทำนายอยู่ รอที่หน้านี้ได้เลย'
+              : isDailyMode
+                ? 'อาจใช้เวลาสักครู่ในการวิเคราะห์ดวงชะตา'
                 : 'คำทำนายอาจใช้เวลาสักครู่ รอที่หน้านี้ได้เลย'}
           </motion.p>
         )}

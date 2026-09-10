@@ -3,6 +3,7 @@ import { api } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
 import { getMsUntilBangkokMonthEnd } from '@/lib/date-utils';
 import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
+import { CHART_BUDGET } from '@/lib-packages/shared';
 
 /**
  * Fortune Data Hook
@@ -22,7 +23,7 @@ export function useFortuneData(enabled: boolean = true) {
     // Normally a cache hit, but it can land on a cold generation (e.g. the
     // month-boundary regeneration), so allow the same budget the backend does
     // rather than aborting work that is still running.
-    queryFn: () => api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: 240_000 }),
+    queryFn: () => api.get<StructuredChartResponse>('/api/fortune/chart', { timeout: CHART_BUDGET.clientTimeoutMs }),
     enabled: enabled && !!userId,
     // A chart is current until the Bangkok month rolls over, which is exactly
     // when the backend regenerates it. Infinity meant a tab left open across

@@ -90,7 +90,7 @@ export default function TodayPage() {
 
   if (sessionLoading || !session) return <LoadingSkeleton isLoading />;
   if (showLoader) return <LoadingSkeleton isLoading />;
-  if (dailyError) return <ErrorDisplay error="โหลดดวงวันนี้ไม่สำเร็จ ลองอีกครั้งนะ" showRetry />;
+  if (dailyError) return <ErrorDisplay error="โหลดดวงวันนี้ไม่สำเร็จ ลองอีกครั้งนะ" cause={dailyError} showRetry />;
 
   const displayName =
     userProfile?.user?.displayName ||

@@ -30,6 +30,53 @@ export interface ApiError extends Error {
   body?: { code?: string; error?: string; retryAfter?: number; resetAt?: string };
 }
 
+/** The error code a server sends with a 429, wherever it ends up on the error. */
+const RATE_LIMITED = 'RATE_LIMIT_EXCEEDED';
+
+/**
+ * Whether asking again could plausibly produce a different answer.
+ *
+ * Shared by every generation query, because the wrong answer here is expensive
+ * in both directions: a reading that costs a minute of LLM time should not be
+ * re-run on a failure that will repeat, and a rate-limited request must not be
+ * retried at all — each attempt spends another token and pushes the reset
+ * further away, so retrying is what keeps the user locked out.
+ */
+export function isRetriableApiError(error: unknown): boolean {
+  const failure = error as ApiError | null;
+  const code = failure?.body?.code ?? failure?.code;
+
+  // The client gave up on a request the server may still have been serving.
+  // Asking again just starts the same long wait over.
+  if (code === 'TIMEOUT' || failure?.status === 408) return false;
+  if (code === RATE_LIMITED || failure?.status === 429) return false;
+  // Any other 4xx is a problem with the request, not a transient fault.
+  if (typeof failure?.status === 'number' && failure.status >= 400 && failure.status < 500) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Seconds the caller must wait before a rate-limited request can succeed, or
+ * null when the error is not a rate limit. Read from the body the limiter
+ * sends, falling back to the reset timestamp when `retryAfter` is absent.
+ */
+export function rateLimitRetryAfterSeconds(error: unknown): number | null {
+  const failure = error as ApiError | null;
+  const code = failure?.body?.code ?? failure?.code;
+  if (code !== RATE_LIMITED && failure?.status !== 429) return null;
+
+  if (typeof failure?.body?.retryAfter === 'number') {
+    return Math.max(0, Math.ceil(failure.body.retryAfter));
+  }
+  if (failure?.body?.resetAt) {
+    const resetMs = new Date(failure.body.resetAt).getTime() - Date.now();
+    if (Number.isFinite(resetMs)) return Math.max(0, Math.ceil(resetMs / 1000));
+  }
+  return null;
+}
+
 function handleFetchError(error: unknown): never {
   if (error instanceof Error && error.name === 'AbortError') {
     const timeoutError = new Error('Request timed out') as ApiError;

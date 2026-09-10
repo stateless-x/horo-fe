@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AppHeader } from '@/components/layout/app-header';
+import { DashboardProfileGate } from '@/components/dashboard/dashboard-profile-gate';
 
 export const metadata: Metadata = {
   title: 'ดวงชะตาของคุณ',
@@ -42,10 +42,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <AppHeader />
-      {children}
-    </>
-  );
+  return <DashboardProfileGate>{children}</DashboardProfileGate>;
 }

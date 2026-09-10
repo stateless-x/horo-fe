@@ -3,11 +3,8 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSession } from '@/lib/auth-client';
 import { api, type ApiError } from '@/lib/api';
-import { useOnboardingStore } from '@/stores/onboarding';
 import { useFortuneStore } from '@/stores/fortune';
 import { useSessionRetry } from '@/hooks/use-session-retry';
-import { getValidProfileWithFallback } from '@/lib/profile-utils';
-import { getSignupSource, clearSignupSource } from '@/lib/signup-source';
 import type { StructuredChartResponse } from '@/lib-packages/shared/types/astrology';
 import { CHART_BUDGET } from '@/lib-packages/shared';
 
@@ -16,7 +13,6 @@ import { CHART_BUDGET } from '@/lib-packages/shared';
  *
  * Orchestrates the entire fortune generation flow:
  * - Session validation with retry logic
- * - Profile data validation and recovery
  * - Fortune chart generation
  * - Narrative streaming simulation
  * - Error handling with appropriate redirects
@@ -25,7 +21,6 @@ export function useFortuneGeneration() {
   const { data: session, isPending: sessionLoading } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { profile } = useOnboardingStore();
   const {
     loadingState,
     hasAttemptedGeneration,
@@ -74,19 +69,8 @@ export function useFortuneGeneration() {
       setHasAttemptedGeneration(true);
 
       try {
-        // Get valid profile data with sessionStorage fallback
-        const { profileData, isValid: hasStoreData } = getValidProfileWithFallback(profile);
-
-        // Step 1: Save birth profile (only if coming from onboarding flow)
-        if (hasStoreData) {
-          setLoadingState('saving-profile');
-          console.log('[FortuneGeneration] Saving profile to backend:', profileData);
-          const signupSource = getSignupSource();
-          await api.post('/api/fortune/profile', { ...profileData, ...(signupSource && { signupSource }) });
-          clearSignupSource();
-        }
-
-        // Step 2: Fetch chart data (this will return cached data if it exists, not regenerate)
+        // The shared dashboard gate has already established that the user has
+        // a server-side profile before this page can mount.
         setLoadingState('generating-chart');
         console.log('[FortuneGeneration] Fetching fortune chart (cached or new)');
         // This GET triggers LLM generation on first load (no cache). The backend
@@ -106,13 +90,8 @@ export function useFortuneGeneration() {
           queryClient.setQueryData(['fortune', 'chart', userId], reading);
         }
 
-        // Step 3: Mark complete (no streaming simulation needed)
+        // Mark complete (no streaming simulation needed)
         setLoadingState('complete');
-
-        // Mark onboarding as complete (fire-and-forget, non-blocking)
-        api.post('/api/onboarding/complete', {}).catch((err) => {
-          console.warn('[FortuneGeneration] Onboarding complete failed (non-critical):', err);
-        });
 
         // Success! Reset retry count
         resetRetryCount();

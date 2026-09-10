@@ -69,9 +69,6 @@ export function getValidProfileWithFallback(
       profileData = sessionProfile;
       isValid = isValidProfile(sessionProfile);
       console.log('[ProfileUtils] Restored profile from sessionStorage:', isValid);
-
-      // Clear sessionStorage after reading
-      clearProfileFromSessionStorage();
     }
   }
 

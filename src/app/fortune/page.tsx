@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
-import { useSession } from '@/lib/auth-client';
+import { useSession, type HoroSessionUser } from '@/lib/auth-client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useOnboardingStore } from '@/stores/onboarding';
@@ -50,9 +50,11 @@ function FortunePageContent() {
   }, [isExpired, reset]);
 
   // Setup mode: logged-in user needs to fill birth profile
-  // Skip welcome animation and start from name input
+  // Skip welcome/returning and start from name input. `returning` matters for
+  // users who chose "I already have an account", signed in, then turned out
+  // not to have a profile yet; leaving them there would create a login loop.
   useEffect(() => {
-    if (isSetupMode && currentStep === 'welcome') {
+    if (isSetupMode && (currentStep === 'welcome' || currentStep === 'returning')) {
       console.log('[Fortune] Setup mode: skipping welcome, starting from name');
       reset();
       setStep('name');
@@ -76,11 +78,15 @@ function FortunePageContent() {
     }
   }, [isNewUserMode, currentStep, setStep]);
 
-  // Redirect logged-in users to dashboard (unless in setup mode)
+  // Completed users go to the dashboard. An authenticated account without a
+  // completed profile stays in the onboarding recovery path instead of landing
+  // on a dashboard API that cannot serve it yet.
   useEffect(() => {
     if (!isPending && session && !isSetupMode) {
-      console.log('[Fortune] User is logged in, redirecting to dashboard');
-      router.replace('/dashboard/today');
+      const onboardingCompleted = (session.user as HoroSessionUser).onboardingCompleted === true;
+      const destination = onboardingCompleted ? '/dashboard/today' : '/fortune?setup=true';
+      console.log('[Fortune] User is logged in, redirecting to:', destination);
+      router.replace(destination);
     }
   }, [session, isPending, router, isSetupMode]);
 

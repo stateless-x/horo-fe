@@ -304,6 +304,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/contact" className="transition-colors duration-200 hover:text-accentBright">
+                  ร่วมงานกับเรา
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="transition-colors duration-200 hover:text-accentBright">
                   นโยบายความเป็นส่วนตัว
                 </Link>
@@ -322,7 +327,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="font-medium text-accentBright hover:text-accentSoft transition-colors duration-200"
             >
-              @Askpurin
+              @Pooh.fyi
             </a>
           </div>
           {/* Privacy moved into the reference column above, so it is not

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { AdUnit } from '@/components/ads/ad-unit';
 import { MonthTabs } from '@/components/calendar/month-tabs';
 import { CALENDAR_MIN_YEAR, CALENDAR_MAX_YEAR, isValidMonthParam } from '@/lib/calendar-range';
 import {
@@ -322,9 +321,6 @@ export default async function CalendarMonthPage(
           </div>
         </section>
 
-        {/* ── Ad unit: after calendar grid, before holiday/วันพระ info ── */}
-        <AdUnit slot="REPLACE_WITH_SLOT_1" format="auto" />
-
         {/* ── Two-column: วันหยุด + วันพระ ── */}
         <div className="grid md:grid-cols-2 gap-6">
 
@@ -434,9 +430,6 @@ export default async function CalendarMonthPage(
             <p className="text-inkMuted/50 font-oracle text-xs">ดูผลเบื้องต้นฟรีก่อนสมัคร</p>
           </div>
         </section>
-
-        {/* ── Ad unit: after CTA, before SEO article ── */}
-        <AdUnit slot="REPLACE_WITH_SLOT_2" format="auto" />
 
         {/* ── SEO article ── */}
         <article className="border-t border-edge pt-10 space-y-6">

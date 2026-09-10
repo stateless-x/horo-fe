@@ -1,27 +1,12 @@
 'use client';
 
-import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, Check, ExternalLink } from 'lucide-react';
 
 const PAWJAI_URL = 'https://pawjai.co';
 const BANNER_IMAGE_CDN = 'https://pawjai.b-cdn.net/ads/pawjai-ads/pawjai-banner.webp';
 const BANNER_IMAGE_FALLBACK = '/pawjai-banner.webp';
-const PROMO_CODE = 'PAWJAI35';
 
 export function PawjaiAdsBanner() {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyCode = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(PROMO_CODE);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback for older browsers
-    }
-  }, []);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -35,7 +20,7 @@ export function PawjaiAdsBanner() {
       className="max-w-4xl mx-auto px-4 mt-8 mb-4"
     >
       <p className="font-thai text-xs text-inkMuted/60 text-center mb-2">
-        โฆษณา
+        ผู้สนับสนุน
       </p>
 
       <div className="bg-surface border border-surface2/50 rounded-2xl p-4 space-y-3">

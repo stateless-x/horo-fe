@@ -3,7 +3,6 @@ import { Noto_Sans_Thai, Anuphan, Sarabun, Space_Grotesk, JetBrains_Mono } from 
 import { Providers } from "./providers";
 import { Footer } from "@/components/layout/footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { AdSenseScript } from "@/components/ads/adsense-script";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -180,15 +179,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th" className={fontVariables} suppressHydrationWarning>
-      <head>
-        {/* Fonts are self-hosted via next/font, so the only third-party origin
-            left on the critical path is AdSense. Warming the connection saves
-            a DNS + TLS round trip before the afterInteractive script fires. */}
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
-        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-      </head>
+      <head />
       <body>
-        <AdSenseScript />
         <Analytics />
         <Providers>
           {children}

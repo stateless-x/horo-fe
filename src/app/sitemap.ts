@@ -74,6 +74,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      // Business-inquiry page: ad sales and contract work. Low crawl
+      // priority, but it is the page a brand searching for us should find.
+      url: `${BASE_URL}/contact`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.4,
+    },
+    {
       url: `${BASE_URL}/privacy`,
       lastModified: now,
       changeFrequency: 'yearly',

@@ -49,6 +49,16 @@
   --mbti-sentinels-text: #367c92;
   --mbti-explorers: #e4ae3a;
   --mbti-explorers-text: #946c14;
+
+  /* Loader backdrop — the dark stage the Little Oracle sits on. Deliberately
+     identical in both themes: it is the mascot's lit surface, not a themed
+     page surface, and the clay render is authored against this ground. Kept
+     here (rather than hardcoded in the component) so the pair stays editable
+     in one place. Used by components/ui/main-loader.tsx. */
+  --loader-stage-center: #2b1742;
+  --loader-stage-mid: #281540;
+  --loader-stage-fade: #1f1130;
+  --loader-stage-edge: #160d24;
 }
 
 [data-theme='dark'] {

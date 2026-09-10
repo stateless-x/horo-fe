@@ -6,7 +6,7 @@ import { Heart, Briefcase, Wallet, Activity, Sparkles } from 'lucide-react';
 import { Button, OracleText } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { api, type ApiError } from '@/lib/api';
-import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { MainLoader } from '@/components/ui/main-loader';
 import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
 
 const ELEMENT_NAMES_THAI: Record<ClayElement, string> = {
@@ -143,11 +143,8 @@ export function StepTeaser() {
         animate={{ opacity: 1 }}
         className="min-h-screen flex items-center justify-center p-6"
       >
-        <div className="text-center space-y-4">
-          <div className="relative flex min-h-56 items-center justify-center sm:min-h-64">
-            <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
-            <ClayOracleLoader />
-          </div>
+        <div className="text-center flex flex-col gap-6">
+          <MainLoader label="กำลังเปิดดวงให้คุณ" />
           <p className="text-inkMuted font-oracle text-lg">
             กำลังเปิดดวงให้คุณ...
           </p>

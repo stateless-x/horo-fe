@@ -46,6 +46,10 @@ export function CompatibilityHistory({
 
         {isLoading ? (
           <div className="flex justify-center py-8">
+            {/* Stays a plain spinner, not MainLoader: this is a fast paginated
+                fetch, and the mascot holds each pose for 500ms — a sub-second
+                load would show one arbitrary pose (sleeping, "LOADING...",
+                a Saturn flourish) that differs on every refresh. */}
             <Loader2 className="w-6 h-6 text-inkMuted animate-spin" />
           </div>
         ) : items.length === 0 ? (

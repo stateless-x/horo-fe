@@ -101,7 +101,7 @@ export function LoadingLine({ surface, fallback }: LoadingLineProps) {
   // Never render shuffled copy during hydration. The order comes from
   // Math.random, so any pool the server happens to hold (Providers uses a
   // module-level QueryClient, shared across SSR requests on one process) would
-  // hydrate against a different order. Same guard as clay-oracle-loader.
+  // hydrate against a different order. Same guard as main-loader.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 

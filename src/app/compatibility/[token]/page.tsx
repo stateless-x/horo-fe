@@ -13,7 +13,7 @@ import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types
 import {
   Sparkles, Stars, ArrowLeftRight,
 } from 'lucide-react';
-import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { MainLoader } from '@/components/ui/main-loader';
 import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
 
 
@@ -93,10 +93,7 @@ export default function CompatibilitySharePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-ground flex items-center justify-center">
-        <div className="relative flex min-h-64 items-center justify-center">
-          <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
-          <ClayOracleLoader alt="กำลังเปิดผลดวงความสัมพันธ์" />
-        </div>
+        <MainLoader label="กำลังเปิดผลดวงความสัมพันธ์" />
       </div>
     );
   }

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import type { LoadingState } from '@/stores/fortune';
-import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { MainLoader } from '@/components/ui/main-loader';
 import { LoadingLine } from '@/components/ui/loading-line';
 
 interface LoadingSkeletonProps {
@@ -123,17 +123,19 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6">
-      <div className="max-w-md w-full mx-auto flex flex-col items-center text-center space-y-8">
+      {/* Spacing rhythm (DESIGN.md scale): the mascot and its status message
+          are one unit at 24px, and the ancillary hint/escape-hatch sits 48px
+          away so it reads as secondary rather than a third equal tier. A
+          single space-y-8 gave all three the same weight. */}
+      <div className="max-w-md w-full mx-auto flex flex-col items-center text-center gap-6">
         {/* The generated clay sequence is decorative; the live message below
             carries the loading status for assistive technology. */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="relative flex min-h-56 items-center justify-center sm:min-h-64"
         >
-          <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
-          <ClayOracleLoader />
+          <MainLoader decorative />
         </motion.div>
 
         {/* Status message with crossfade */}
@@ -178,7 +180,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: isDailyMode || !isReassuring ? 3 : 0 }}
-            className="text-inkMuted/60 text-xs md:text-sm"
+            className="mt-6 text-inkMuted/60 text-xs md:text-sm"
           >
             {isDailyMode
               ? 'อาจใช้เวลาสักครู่ในการวิเคราะห์ดวงชะตา'
@@ -193,7 +195,7 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
+            className="mt-6 space-y-3"
           >
             <div className="flex gap-3 justify-center">
               <button

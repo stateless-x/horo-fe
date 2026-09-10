@@ -1,0 +1,4 @@
+{
+  "prompt": "Little Oracle loader — 16-pose cycle. The mascot moves through distinct poses: peeking over an edge, blinking, humming, conjuring a moon orb, hugging the crystal ball, hearts, raising the orb overhead, a Saturn ring flourish, a starfield burst, dozing with Zzz, and a final peek with 'LOADING...'. Each pose holds 500ms; 16 frames = 8s per loop, looping forever. Transparent 420x420 canvas. Encoded from the source GIF (assets/clay-masters/loader-v2/loader.gif) with img2webp -lossy -q 78 -m 6, which is visually indistinguishable from source at 29% of the size (724KB GIF -> 209KB WebP).",
+  "createdAt": "2026-09-10T08:16:00.000Z"
+}

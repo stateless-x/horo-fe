@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import { ClayOracleLoader } from '@/components/ui/clay-oracle-loader';
+import { MainLoader } from '@/components/ui/main-loader';
 import { LoadingLine } from '@/components/ui/loading-line';
 
 const PARTICLES = [
@@ -57,23 +57,21 @@ export function CompatibilityLoading({ calculationStep, stepsExhausted }: Compat
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-center space-y-8 max-w-md relative z-10"
+        className="text-center flex flex-col gap-6 max-w-md relative z-10"
       >
-        <div className="relative flex min-h-56 items-center justify-center sm:min-h-64">
-          <div className="absolute inset-1/4 rounded-full bg-accentBright/15 blur-3xl" aria-hidden="true" />
-          <ClayOracleLoader />
-        </div>
+        {/* Decorative: the sr-only h2 below is the announced heading, and the
+            step text carries live progress. */}
+        <MainLoader decorative />
 
         <div className="space-y-3">
-          <motion.h2
-            ref={headingRef}
-            tabIndex={-1}
-            className="text-3xl font-heading text-ink"
-            animate={{ opacity: [0.8, 1, 0.8] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            กำลังคำนวณ...
-          </motion.h2>
+          {/* The visible "กำลังคำนวณ..." heading is gone — the rotating step
+              text below already says what's happening, so it only repeated
+              itself. The h2 stays as an sr-only landmark: the mount effect
+              focuses it, and screen readers still get a heading for the
+              screen. */}
+          <h2 ref={headingRef} tabIndex={-1} className="sr-only">
+            กำลังคำนวณดวงคู่
+          </h2>
 
           {stepsExhausted ? (
             <div className="min-h-[28px]">
@@ -93,7 +91,7 @@ export function CompatibilityLoading({ calculationStep, stepsExhausted }: Compat
             </AnimatePresence>
           )}
 
-          <div className="flex justify-center gap-2 mt-4">
+          <div className="flex justify-center gap-2 mt-6">
             {[...Array(3)].map((_, i) => (
               <motion.div
                 key={i}

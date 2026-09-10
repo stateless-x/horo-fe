@@ -22,7 +22,7 @@ export function LandingNarrative() {
   // useReducedMotion() is null on the server but resolved on the client's
   // first render, so gating the <video> on it alone renders different trees
   // on each side and React reports a hydration mismatch. Mount first, then
-  // decide — same pattern as components/ui/clay-oracle-loader.tsx.
+  // decide — same pattern as components/ui/main-loader.tsx.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const activeVideo = mounted && shouldReduceMotion === false && videoPlaying;
@@ -55,7 +55,7 @@ export function LandingNarrative() {
               678 kB mp4 into the prerendered HTML and start fetching it at
               first paint, competing with the fonts and the poster. Explicit
               `false` keeps the video client-only. Same idiom as
-              components/ui/clay-oracle-loader.tsx. */}
+              components/ui/main-loader.tsx. */}
           {mounted && shouldReduceMotion === false && (
             <video
               ref={videoRef}

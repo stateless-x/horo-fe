@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     siteName: 'สายมู.com',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image-v2.jpg',
         width: 1200,
         height: 630,
         alt: 'สายมู.com ดูดวงความสัมพันธ์',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ผลดวงความสัมพันธ์ | สายมู.com',
     description: 'วิเคราะห์ดวงความเข้ากันด้วย AI ผสานโหราศาสตร์ไทยและ Bazi ดูดวงคู่ฟรี | สายมู.com',
-    images: ['/og-image.jpg'],
+    images: ['/og-image-v2.jpg'],
     site: '@สายมู',
   },
 

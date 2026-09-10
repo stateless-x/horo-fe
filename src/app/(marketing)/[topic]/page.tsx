@@ -44,13 +44,13 @@ export async function generateMetadata({ params }: TopicRouteProps): Promise<Met
       type: 'article',
       locale: 'th_TH',
       siteName: 'สายมู.com',
-      images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: topic.h1 }],
+      images: [{ url: '/og-image-v2.jpg', width: 1200, height: 630, alt: topic.h1 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${topic.title} | สายมู`,
       description: topic.description,
-      images: ['/og-image.jpg'],
+      images: ['/og-image-v2.jpg'],
     },
   };
 }

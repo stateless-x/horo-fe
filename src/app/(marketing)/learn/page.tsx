@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     description: 'คู่มือภาษาไทยของแต่ละศาสตร์ที่สายมูใช้ พร้อมตารางอ้างอิงและข้อจำกัด',
     url: '/learn',
     type: 'website',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'คลังความรู้สายมู' }],
+    images: [{ url: '/og-image-v2.jpg', width: 1200, height: 630, alt: 'คลังความรู้สายมู' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'คลังความรู้เรื่องดวงและการรู้จักตัวเอง | สายมู',
     description: 'คู่มือภาษาไทยของแต่ละศาสตร์ที่สายมูใช้ พร้อมตารางอ้างอิงและข้อจำกัด',
-    images: ['/og-image.jpg'],
+    images: ['/og-image-v2.jpg'],
   },
 };
 

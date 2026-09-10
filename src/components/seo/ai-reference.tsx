@@ -84,7 +84,7 @@ function ReferenceSchema() {
         name: 'สายมู',
         alternateName: ['สายมู.com', 'Saimu', 'Sai Mu', 'saimu'],
         url: BASE_URL,
-        logo: `${BASE_URL}/og-image.jpg`,
+        logo: `${BASE_URL}/icon-512.png`,
         description: ENTITY_SENTENCE,
         knowsLanguage: ['th'],
         areaServed: { '@type': 'Country', name: 'Thailand' },

@@ -38,13 +38,13 @@ export async function generateMetadata({ params }: MbtiTypeRouteProps): Promise<
       description: type.description,
       url: `/mbti/${type.slug}`,
       type: 'article',
-      images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: type.h1 }],
+      images: [{ url: '/og-image-v2.jpg', width: 1200, height: 630, alt: type.h1 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${type.title} | สายมู`,
       description: type.description,
-      images: ['/og-image.jpg'],
+      images: ['/og-image-v2.jpg'],
     },
   };
 }

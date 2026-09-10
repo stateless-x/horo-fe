@@ -83,7 +83,7 @@ export function SEOSections() {
         "name": "สายมู.com",
         "alternateName": "สายมู",
         "url": "https://xn--y3cbx6azb.com",
-        "logo": "https://xn--y3cbx6azb.com/og-image.jpg",
+        "logo": "https://xn--y3cbx6azb.com/icon-512.png",
         "description": "สายมู ดูดวงออนไลน์ฟรีด้วย AI จากโหราศาสตร์ไทย ปาจื้อ และ MBTI ที่คุณระบุ อ่านดวงส่วนตัว ดวงรายวัน และดวงคู่",
         "sameAs": [
           "https://twitter.com/สายมู",

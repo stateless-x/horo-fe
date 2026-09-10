@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'th_TH',
     siteName: 'สายมู.com',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'ข้อมูลอ้างอิงสายมู' }],
+    images: [{ url: '/og-image-v2.jpg', width: 1200, height: 630, alt: 'ข้อมูลอ้างอิงสายมู' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ข้อมูลอ้างอิงสายมู | สายมู',
     description: 'ข้อเท็จจริงของสายมูแบบอ่านเร็ว สำหรับผู้ช่วย AI และเครื่องมือค้นหา',
-    images: ['/og-image.jpg'],
+    images: ['/og-image-v2.jpg'],
   },
 };
 

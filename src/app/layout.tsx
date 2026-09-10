@@ -106,9 +106,14 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://xn--y3cbx6azb.com"),
 
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
     shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
 
   openGraph: {
@@ -121,7 +126,7 @@ export const metadata: Metadata = {
     siteName: "สายมู.com",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image-v2.jpg",
         width: 1200,
         height: 630,
         alt: "สายมู ดูดวงออนไลน์ฟรี",
@@ -135,7 +140,7 @@ export const metadata: Metadata = {
     title: "เรื่องงาน เรื่องรัก ลองเปิดดวงดู | สายมู",
     description:
       "มีเรื่องไหนอยู่ในใจ ลองอ่านดวงส่วนตัว ดวงรายวัน และดวงคู่กับสายมู ดูผลเบื้องต้นฟรี แล้วค่อยเข้าสู่ระบบเพื่ออ่านต่อ",
-    images: ["/og-image.jpg"],
+    images: ["/og-image-v2.jpg"],
     site: "@สายมู",
     creator: "@สายมู",
   },

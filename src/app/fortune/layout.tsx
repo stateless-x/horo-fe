@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: 'สายมู.com',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image-v2.jpg',
         width: 1200,
         height: 630,
         alt: 'สายมู ดูดวงออนไลน์ฟรี',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: 'ดูดวงฟรี เริ่มจากวันเกิดของคุณ | สายมู.com',
     description:
       'เริ่มดูดวงฟรีด้วย AI ผสานโหราศาสตร์ไทย Bazi และ MBTI รับคำทำนายเฉพาะบุคคล ดวงความรัก การเงิน และอาชีพ',
-    images: ['/og-image.jpg'],
+    images: ['/og-image-v2.jpg'],
     site: '@สายมู',
   },
 };

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     siteName: 'สายมู.com',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image-v2.jpg',
         width: 1200,
         height: 630,
         alt: 'สายมู ดูดวงออนไลน์ฟรี',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'เข้าสู่ระบบ | สายมู.com',
     description: 'เข้าสู่ระบบสายมูเพื่อดูดวงชะตาของคุณ วิเคราะห์ด้วย AI ผสานโหราศาสตร์ไทย Bazi และ MBTI',
-    images: ['/og-image.jpg'],
+    images: ['/og-image-v2.jpg'],
     site: '@สายมู',
   },
 };

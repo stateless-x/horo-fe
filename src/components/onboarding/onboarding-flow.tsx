@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAmbientAudio } from '@/hooks/use-ambient-audio';
+import { DEFAULT_AUTHENTICATED_PATH, sanitizeReturnTo } from '@/lib/auth-navigation';
 
 // The steps the visitor sees counted; welcome and the returning check are a
 // prologue, so the counter starts at the first question.
@@ -24,19 +25,22 @@ const PROGRESS_STEPS: OnboardingStep[] = ['name', 'birthDate', 'gender', 'birthT
  * Main onboarding flow component
  * Orchestrates all 8 steps with animations
  */
-export function OnboardingFlow() {
+export function OnboardingFlow({
+  returnTo = DEFAULT_AUTHENTICATED_PATH,
+}: {
+  returnTo?: string;
+}) {
   const { currentStep } = useOnboardingStore();
   const router = useRouter();
   const { isMuted, toggleMute } = useAmbientAudio();
+  const destination = sanitizeReturnTo(returnTo);
 
   // Handle navigation after onboarding completes
   useEffect(() => {
     if (currentStep === 'dashboard') {
-      // Note: Users who authenticate are redirected to /dashboard/today via OAuth callback
-      // This path is for guest users who skip authentication
-      router.push('/dashboard');
+      router.replace(destination);
     }
-  }, [currentStep, router]);
+  }, [currentStep, destination, router]);
 
   return (
     <div className="relative min-h-screen bg-ground text-ink">
@@ -45,14 +49,14 @@ export function OnboardingFlow() {
 
       <AnimatePresence mode="wait">
         {currentStep === 'welcome' && <StepWelcome key="welcome" />}
-        {currentStep === 'returning' && <StepReturning key="returning" />}
+        {currentStep === 'returning' && <StepReturning key="returning" returnTo={destination} />}
         {currentStep === 'name' && <StepName key="name" />}
         {currentStep === 'birthDate' && <StepBirthDate key="birthDate" />}
         {currentStep === 'gender' && <StepGender key="gender" />}
         {currentStep === 'birthTime' && <StepBirthTime key="birthTime" />}
         {currentStep === 'mbti' && <StepMbti key="mbti" />}
         {currentStep === 'teaser' && <StepTeaser key="teaser" />}
-        {currentStep === 'auth' && <StepAuth key="auth" />}
+        {currentStep === 'auth' && <StepAuth key="auth" returnTo={destination} />}
       </AnimatePresence>
 
       {/* Enhanced Progress indicator */}

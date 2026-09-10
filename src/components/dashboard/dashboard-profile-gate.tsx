@@ -6,6 +6,7 @@ import { AppHeader } from '@/components/layout/app-header';
 import { MainLoader } from '@/components/ui/main-loader';
 import { api, type ApiError } from '@/lib/api';
 import { useSession, type HoroSessionUser } from '@/lib/auth-client';
+import { getCurrentReturnTo, withReturnTo } from '@/lib/auth-navigation';
 import { recoverDashboardProfile } from '@/lib/dashboard-profile-recovery';
 import {
   clearProfileFromSessionStorage,
@@ -34,8 +35,10 @@ export function DashboardProfileGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isPending) return;
 
+    const returnTo = getCurrentReturnTo();
+
     if (!session?.user) {
-      router.replace('/login');
+      router.replace(withReturnTo('/login', returnTo));
       return;
     }
 
@@ -78,7 +81,7 @@ export function DashboardProfileGate({ children }: { children: ReactNode }) {
         if (!active) return;
 
         if (result.destination === 'setup') {
-          router.replace('/fortune?setup=true');
+          router.replace(withReturnTo('/fortune?setup=true', returnTo));
           return;
         }
 
@@ -94,11 +97,11 @@ export function DashboardProfileGate({ children }: { children: ReactNode }) {
 
         const error = raw as ApiError;
         if (error.status === 401) {
-          router.replace('/login');
+          router.replace(withReturnTo('/login', returnTo));
           return;
         }
         if (error.status === 400 || error.status === 404 || error.status === 422) {
-          router.replace('/fortune?setup=true');
+          router.replace(withReturnTo('/fortune?setup=true', returnTo));
           return;
         }
 

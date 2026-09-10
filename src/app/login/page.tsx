@@ -3,10 +3,11 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
 import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { sanitizeReturnTo, withReturnTo } from '@/lib/auth-navigation';
 
 /**
  * Login Page
@@ -18,25 +19,27 @@ import Image from 'next/image';
  * - Users who clicked "เข้าสู่ระบบ" from landing page
  * - Returning users who want to access their saved fortune readings
  */
-export default function LoginPage() {
+function LoginPageContent() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = sanitizeReturnTo(searchParams.get('returnTo'));
 
   // The shared dashboard gate owns profile recovery/setup routing. Keeping the
   // authenticated destination fixed here also makes direct visits and OAuth
   // callbacks behave identically.
   useEffect(() => {
     if (session && !isPending) {
-      router.replace('/dashboard/today');
+      router.replace(returnTo);
     }
-  }, [session, isPending, router]);
+  }, [session, isPending, returnTo, router]);
 
   const handleGoogleLogin = async () => {
     console.log('[Login] Google login clicked');
     try {
       await signIn.social({
         provider: 'google',
-        callbackURL: getCallbackUrl('/dashboard/today'),
+        callbackURL: getCallbackUrl(returnTo),
       });
     } catch (error) {
       console.error('[Login] Google login error:', error);
@@ -48,7 +51,7 @@ export default function LoginPage() {
     try {
       await signIn.social({
         provider: 'twitter',
-        callbackURL: getCallbackUrl('/dashboard/today'),
+        callbackURL: getCallbackUrl(returnTo),
       });
     } catch (error) {
       console.error('[Login] X login error:', error);
@@ -160,7 +163,7 @@ export default function LoginPage() {
           <p className="text-sm text-inkMuted font-oracle">
             ยังไม่มีบัญชี?{' '}
             <Link
-              href="/fortune?new=true"
+              href={withReturnTo('/fortune?new=true', returnTo)}
               className="text-accentBright hover:text-accentSoft underline"
             >
               เริ่มดูดวงฟรีก่อนได้เลย
@@ -188,5 +191,19 @@ export default function LoginPage() {
       </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-ground flex items-center justify-center">
+          <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   );
 }

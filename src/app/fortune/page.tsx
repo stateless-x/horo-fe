@@ -6,6 +6,7 @@ import { useSession, type HoroSessionUser } from '@/lib/auth-client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useOnboardingStore } from '@/stores/onboarding';
+import { sanitizeReturnTo, withReturnTo } from '@/lib/auth-navigation';
 
 /**
  * Fortune Telling Onboarding Page
@@ -35,6 +36,7 @@ function FortunePageContent() {
   const searchParams = useSearchParams();
   const isSetupMode = searchParams.get('setup') === 'true';
   const isNewUserMode = searchParams.get('new') === 'true';
+  const returnTo = sanitizeReturnTo(searchParams.get('returnTo'));
   const { isExpired, reset, setStep, currentStep } = useOnboardingStore();
   // One-shot guard: only auto-advance once. Without this, pressing "back" from
   // the name step (which returns to 'returning') would re-trigger this effect
@@ -84,11 +86,13 @@ function FortunePageContent() {
   useEffect(() => {
     if (!isPending && session && !isSetupMode) {
       const onboardingCompleted = (session.user as HoroSessionUser).onboardingCompleted === true;
-      const destination = onboardingCompleted ? '/dashboard/today' : '/fortune?setup=true';
+      const destination = onboardingCompleted
+        ? returnTo
+        : withReturnTo('/fortune?setup=true', returnTo);
       console.log('[Fortune] User is logged in, redirecting to:', destination);
       router.replace(destination);
     }
-  }, [session, isPending, router, isSetupMode]);
+  }, [session, isPending, returnTo, router, isSetupMode]);
 
   // Block render until session is resolved — prevents onboarding flash for logged-in users.
   // Also hold while new-user mode is about to skip ahead, so the welcome
@@ -108,7 +112,7 @@ function FortunePageContent() {
   }
 
   // Only show onboarding flow for non-logged-in users (or setup mode)
-  return <OnboardingFlow />;
+  return <OnboardingFlow returnTo={returnTo} />;
 }
 
 export default function FortunePage() {

@@ -5,6 +5,7 @@ import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { useRouter } from 'next/navigation';
 import { StepHeading } from './step-heading';
+import { DEFAULT_AUTHENTICATED_PATH, withReturnTo } from '@/lib/auth-navigation';
 
 /**
  * Step: Returning User Check
@@ -13,7 +14,11 @@ import { StepHeading } from './step-heading';
  * - "ยังไม่เคย" -> Continue to name step (primary: most arrivals are new)
  * - "เคยมาแล้ว" -> Go to login
  */
-export function StepReturning() {
+export function StepReturning({
+  returnTo = DEFAULT_AUTHENTICATED_PATH,
+}: {
+  returnTo?: string;
+}) {
   const { nextStep } = useOnboardingStore();
   const router = useRouter();
 
@@ -37,7 +42,12 @@ export function StepReturning() {
           <Button size="lg" className="w-full" onClick={nextStep}>
             ครั้งแรก ลองดูดวงเลย
           </Button>
-          <Button variant="soft" size="lg" className="w-full" onClick={() => router.push('/login')}>
+          <Button
+            variant="soft"
+            size="lg"
+            className="w-full"
+            onClick={() => router.push(withReturnTo('/login', returnTo))}
+          >
             เคยมาแล้ว เข้าสู่ระบบ
           </Button>
         </motion.div>

@@ -6,6 +6,7 @@ import { useOnboardingStore } from '@/stores/onboarding';
 import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { DEFAULT_AUTHENTICATED_PATH, sanitizeReturnTo } from '@/lib/auth-navigation';
 
 /**
  * Step 7: Auth Prompt
@@ -16,9 +17,14 @@ import Link from 'next/link';
  * - **CRITICAL: Auth MUST come AFTER teaser result (Step 6)**
  * - If user is already authenticated, automatically skip this step
  */
-export function StepAuth() {
+export function StepAuth({
+  returnTo = DEFAULT_AUTHENTICATED_PATH,
+}: {
+  returnTo?: string;
+}) {
   const { nextStep, prevStep } = useOnboardingStore();
   const { data: session, isPending } = useSession();
+  const destination = sanitizeReturnTo(returnTo);
 
   // Auto-skip if user is already authenticated
   useEffect(() => {
@@ -43,7 +49,7 @@ export function StepAuth() {
       // the birth chart is one tap away from it.
       await signIn.social({
         provider: 'google',
-        callbackURL: getCallbackUrl('/dashboard/today'),
+        callbackURL: getCallbackUrl(destination),
       });
     } catch (error) {
       console.error('[Onboarding] Google login error:', error);
@@ -65,7 +71,7 @@ export function StepAuth() {
       // the birth chart is one tap away from it.
       await signIn.social({
         provider: 'twitter',
-        callbackURL: getCallbackUrl('/dashboard/today'),
+        callbackURL: getCallbackUrl(destination),
       });
     } catch (error) {
       console.error('[Onboarding] X login error:', error);

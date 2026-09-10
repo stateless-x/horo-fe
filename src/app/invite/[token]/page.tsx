@@ -93,9 +93,9 @@ export default function InvitePage() {
         throw new Error(data.error || 'Failed to use invite');
       }
 
-      // Redirect to compatibility results page
-      // TODO: Create a compatibility results page or dashboard section
-      router.push('/dashboard?compatibility=true');
+      // The invite has been consumed; replace this one-time URL with the real
+      // compatibility surface so Back cannot submit the same token again.
+      router.replace('/dashboard/compatibility');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to process invite');
     }
@@ -142,7 +142,7 @@ export default function InvitePage() {
 
   // Show onboarding flow if user clicked "Start"
   if (showOnboarding) {
-    return <OnboardingFlow />;
+    return <OnboardingFlow returnTo={`/invite/${encodeURIComponent(token)}`} />;
   }
 
   // Show invite context page

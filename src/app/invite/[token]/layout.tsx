@@ -1,12 +1,22 @@
 import type { Metadata } from 'next';
 
+/**
+ * Share-preview copy for an invite link — the one path where the sender is
+ * explicitly asking someone to join them, so the preview should read like an
+ * invitation from a person, not a description of a product.
+ *
+ * The old copy repeated the same "วิเคราะห์ด้วย AI ผสานโหราศาสตร์ไทยและ Bazi"
+ * sentence as every other page; a recipient scrolling LINE cannot tell it apart
+ * from an ad. This names the one thing only they can do: complete the pair.
+ */
 export const metadata: Metadata = {
-  title: 'มีคนชวนคุณมาดูดวงคู่',
-  description: 'เพื่อนของคุณเชิญมาดูดวงความสัมพันธ์ร่วมกัน วิเคราะห์ด้วย AI ผสานโหราศาสตร์ไทยและ Bazi | สายมู.com',
+  title: 'เพื่อนชวนคุณมาเช็คดวงคู่',
+  description:
+    'เขาอยากรู้ว่าคุณสองคนเข้ากันแค่ไหน ใส่แค่วันเกิด แล้วดูผลพร้อมกัน ฟรี | สายมู.com',
 
   openGraph: {
-    title: 'มีคนชวนคุณมาดูดวงคู่ | สายมู.com',
-    description: 'เพื่อนของคุณเชิญมาดูดวงความสัมพันธ์ร่วมกัน วิเคราะห์ด้วย AI ผสานโหราศาสตร์ไทยและ Bazi | สายมู.com',
+    title: 'เพื่อนชวนคุณมาเช็คดวงคู่ 💫',
+    description: 'เขาอยากรู้ว่าคุณสองคนเข้ากันแค่ไหน ใส่แค่วันเกิด แล้วดูผลพร้อมกัน ฟรี',
     type: 'website',
     locale: 'th_TH',
     siteName: 'สายมู.com',
@@ -23,8 +33,8 @@ export const metadata: Metadata = {
 
   twitter: {
     card: 'summary_large_image',
-    title: 'มีคนชวนคุณมาดูดวงคู่ | สายมู.com',
-    description: 'เพื่อนของคุณเชิญมาดูดวงความสัมพันธ์ร่วมกัน วิเคราะห์ด้วย AI ผสานโหราศาสตร์ไทยและ Bazi | สายมู.com',
+    title: 'เพื่อนชวนคุณมาเช็คดวงคู่ 💫',
+    description: 'เขาอยากรู้ว่าคุณสองคนเข้ากันแค่ไหน ใส่แค่วันเกิด แล้วดูผลพร้อมกัน ฟรี',
     images: ['/og-image-v2.jpg'],
     site: '@สายมู',
   },

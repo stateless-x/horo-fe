@@ -203,12 +203,3 @@ export function isMobile(): boolean {
   );
 }
 
-/**
- * Track share event (placeholder for analytics)
- */
-export function trackShareEvent(platform: SharePlatform, type: string): void {
-  // TODO: Implement analytics tracking
-  if (typeof window !== 'undefined') {
-    console.log(`[Share] Platform: ${platform}, Type: ${type}`);
-  }
-}

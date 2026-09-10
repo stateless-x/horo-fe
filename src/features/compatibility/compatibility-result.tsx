@@ -157,6 +157,7 @@ export function CompatibilityResultView({
 
         {/* Share Sheet */}
         <ShareSheet
+          surface="compatibility"
           isOpen={showShareSheet}
           onClose={onCloseShareSheet}
           compatibilityData={{

@@ -364,6 +364,7 @@ export default function FortuneChartPage() {
 
       {/* Share Sheet */}
       <ShareSheet
+        surface="fortune"
         isOpen={showShareSheet}
         onClose={() => setShowShareSheet(false)}
         shareData={{

@@ -9,13 +9,13 @@ import {
   getShareUrl,
   getLineDeepLink,
   isMobile,
-  trackShareEvent,
   SHARE_PHRASES,
   COMPATIBILITY_SHARE_PHRASES,
   type ShareData,
   type CompatibilityShareData,
   type SharePlatform,
 } from '@/lib/share-utils';
+import { useTrackEvent } from '@/lib/analytics';
 
 interface ShareSheetProps {
   isOpen: boolean;
@@ -23,6 +23,11 @@ interface ShareSheetProps {
   shareData?: ShareData;
   compatibilityData?: CompatibilityShareData;
   title?: string;
+  /**
+   * Which surface opened the sheet. Recorded with every platform pick so the
+   * admin can tell where sharing actually happens instead of only that it did.
+   */
+  surface: 'today' | 'fortune' | 'compatibility';
   /** Called after copy succeeds or the user selects an external share destination. */
   onShareInitiated?: (platform: SharePlatform) => void;
 }
@@ -63,9 +68,10 @@ function PlatformButton({
   );
 }
 
-export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title, onShareInitiated }: ShareSheetProps) {
+export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title, surface, onShareInitiated }: ShareSheetProps) {
   const [copied, setCopied] = useState(false);
   const [selectedPhraseIndex, setSelectedPhraseIndex] = useState(0);
+  const track = useTrackEvent();
 
   // Get available phrases based on share type
   const phrases = useMemo(() => {
@@ -113,14 +119,13 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
   }, [isOpen, onClose]);
 
   const shareUrl = shareData?.url || compatibilityData?.url || '';
-  const shareType = compatibilityData ? 'compatibility' : 'fortune';
 
   const handleShare = (platform: SharePlatform) => {
     if (platform === 'copy') {
       // Copy to clipboard
       navigator.clipboard.writeText(shareUrl).then(() => {
         setCopied(true);
-        trackShareEvent('copy', shareType);
+        track({ event: 'reading_shared', surface, platform: 'copy' });
         onShareInitiated?.('copy');
         setTimeout(() => setCopied(false), 2000);
       });
@@ -138,7 +143,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
 
       const deepLink = getLineDeepLink(textWithUrl);
       window.location.href = deepLink;
-      trackShareEvent('line', shareType);
+      track({ event: 'reading_shared', surface, platform: 'line' });
       onShareInitiated?.('line');
       onClose();
       return;
@@ -153,7 +158,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
 
     const platformShareUrl = getShareUrl(platform, text, shareUrl);
     window.open(platformShareUrl, '_blank', 'width=600,height=400');
-    trackShareEvent(platform, shareType);
+    track({ event: 'reading_shared', surface, platform });
     onShareInitiated?.(platform);
     onClose();
   };

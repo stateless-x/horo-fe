@@ -373,6 +373,7 @@ export default function TodayPage() {
         <PawjaiAdsBanner />
 
         <ShareSheet
+          surface="today"
           isOpen={showShareSheet}
           onClose={() => setShowShareSheet(false)}
           shareData={{

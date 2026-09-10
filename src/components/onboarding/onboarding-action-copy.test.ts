@@ -29,7 +29,7 @@ describe('onboarding action copy', () => {
     expect(read('step-returning.tsx')).toMatch(/>\s*เคยแล้ว\s*<\/Button>/);
     expect(read('step-birth-time.tsx')).toContain('ไม่ทราบเวลาเกิด');
     expect(read('step-mbti.tsx')).toContain('ไม่รู้ MBTI');
-    expect(read('step-auth.tsx')).toContain('ใช้ Google');
-    expect(read('step-auth.tsx')).toContain('ใช้ X');
+    expect(read('step-auth.tsx')).toContain('เข้าสู่ระบบด้วย Google');
+    expect(read('step-auth.tsx')).toContain('เข้าสู่ระบบด้วย X');
   });
 });

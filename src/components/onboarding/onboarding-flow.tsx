@@ -32,7 +32,7 @@ export function OnboardingFlow() {
   // Handle navigation after onboarding completes
   useEffect(() => {
     if (currentStep === 'dashboard') {
-      // Note: Users who authenticate are redirected to /dashboard/fortune via OAuth callback
+      // Note: Users who authenticate are redirected to /dashboard/today via OAuth callback
       // This path is for guest users who skip authentication
       router.push('/dashboard');
     }

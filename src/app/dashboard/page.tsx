@@ -13,7 +13,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/dashboard/fortune');
+    router.replace('/dashboard/today');
   }, [router]);
 
   return null;

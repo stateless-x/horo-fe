@@ -54,14 +54,26 @@ export function useDailyFortune(enabled: boolean = true) {
 
   return useQuery<DailyReadingResponse>({
     queryKey: ['fortune', 'daily', userId],
-    // Normally a cache hit, but a cold daily generation can take up to the
-    // backend's 120s budget, so allow that much rather than aborting at the
-    // default GET timeout.
-    queryFn: () => api.get<DailyReadingResponse>('/api/fortune/daily', { timeout: 130_000 }),
+    // Normally a cache hit. A cold generation runs a retry ladder on the
+    // backend that is bounded by Bun's 255s socket ceiling, not by this number
+    // — so the client waits slightly past that ceiling and lets the server be
+    // the thing that gives up. Aborting earlier (this was 130s) killed requests
+    // the server was still legitimately working on, surfacing a timeout for a
+    // reading that would have arrived.
+    queryFn: () => api.get<DailyReadingResponse>('/api/fortune/daily', { timeout: 260_000 }),
     enabled: enabled && !!userId,
     staleTime: getMsUntilThaiMidnight(),
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    retry: 3,
+    // The backend already runs its own retry ladder inside one request, so a
+    // client retry re-runs a full cold generation rather than recovering from a
+    // blip. At the old retry:3 that stacked into ~17 minutes of loader before
+    // any error surfaced — which is what "does not load" looked like. Retry
+    // once, and never on a timeout: if the server burned its whole socket
+    // budget, asking again produces the same wait, not a different answer.
+    retry: (failureCount, error) => {
+      if ((error as { code?: string })?.code === 'TIMEOUT') return false;
+      return failureCount < 1;
+    },
     retryDelay: (attemptIndex) =>
       Math.min(1000 * Math.pow(2, attemptIndex), 30000),
   });

@@ -42,6 +42,13 @@ on.
 `/dashboard/fortune` is the full birth chart, `/dashboard/compatibility` scores
 two people against each other, and the marketing pages sit at the root.
 
+**Everything that authenticates lands on `/dashboard/today`.** Sign-up through
+onboarding, sign-in at `/login`, and bare `/dashboard` all resolve there. Those
+four call sites — `components/onboarding/step-auth.tsx` (both providers),
+`app/login/page.tsx`, and `app/dashboard/page.tsx` — have to agree; onboarding
+used to send new users to `/dashboard/fortune` instead, which split new arrivals
+away from the surface built to bring them back.
+
 ## Before you edit
 
 **The voice is คุณ.** Readings and interface copy speak warm, natural Thai,
@@ -55,6 +62,18 @@ colours and the MBTI group hues. Read it before you invent a colour.
 **`src/lib-packages/shared` is generated.** Its source is
 `horo-be/lib/shared/types`, copied here by `bun run sync:types` run from
 horo-be. Edits made here vanish at the next sync.
+
+**A cold reading is bounded by the socket, not by patience.** Bun caps
+`idleTimeout` at 255s (`horo-be/src/lib/http-server-options.ts`), so every
+generation budget on both sides has to fit under that ceiling: the backend runs
+its retry ladder inside one request, and the client simply waits slightly past
+255s and lets the server be the thing that gives up. Two rules follow. Do not
+raise a client timeout past the ceiling — the socket closes first, so a bigger
+number only buys a longer wait before the same failure. And do not add client
+retries on top: the backend already retries internally, so a client retry
+re-runs a whole cold generation rather than recovering from a blip, and they
+multiply into many minutes of loader with no error shown. A first-time cold
+generation still takes one to two minutes; that is DeepSeek's speed, not a bug.
 
 ## Commands
 

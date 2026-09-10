@@ -39,10 +39,11 @@ export function StepAuth() {
         console.log('[Onboarding] Saved profile to sessionStorage before OAuth');
       }
 
-      // Redirect to fortune detail page after auth to show full reading
+      // Land on the daily reading: it is the surface people come back to, and
+      // the birth chart is one tap away from it.
       await signIn.social({
         provider: 'google',
-        callbackURL: getCallbackUrl('/dashboard/fortune'),
+        callbackURL: getCallbackUrl('/dashboard/today'),
       });
     } catch (error) {
       console.error('[Onboarding] Google login error:', error);
@@ -60,10 +61,11 @@ export function StepAuth() {
         console.log('[Onboarding] Saved profile to sessionStorage before OAuth');
       }
 
-      // Redirect to fortune detail page after auth to show full reading
+      // Land on the daily reading: it is the surface people come back to, and
+      // the birth chart is one tap away from it.
       await signIn.social({
         provider: 'twitter',
-        callbackURL: getCallbackUrl('/dashboard/fortune'),
+        callbackURL: getCallbackUrl('/dashboard/today'),
       });
     } catch (error) {
       console.error('[Onboarding] X login error:', error);

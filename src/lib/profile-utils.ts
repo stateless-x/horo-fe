@@ -39,7 +39,11 @@ export function getProfileFromSessionStorage(): Partial<BirthProfile> | null {
  */
 export function clearProfileFromSessionStorage(): void {
   if (typeof window !== 'undefined') {
-    sessionStorage.removeItem(PENDING_PROFILE_KEY);
+    try {
+      sessionStorage.removeItem(PENDING_PROFILE_KEY);
+    } catch {
+      // Storage may be disabled; profile recovery remains best-effort.
+    }
   }
 }
 

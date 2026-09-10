@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
-import { useSession, signIn, getCallbackUrl, type HoroSessionUser } from '@/lib/auth-client';
+import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
@@ -22,18 +22,12 @@ export default function LoginPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
-  // Redirect authenticated users based on onboarding status
+  // The shared dashboard gate owns profile recovery/setup routing. Keeping the
+  // authenticated destination fixed here also makes direct visits and OAuth
+  // callbacks behave identically.
   useEffect(() => {
     if (session && !isPending) {
-      // Check if user has completed onboarding
-      const onboardingCompleted = (session.user as HoroSessionUser)?.onboardingCompleted;
-
-      if (onboardingCompleted) {
-        router.push('/dashboard/today');
-      } else {
-        // Redirect to fortune flow to complete onboarding
-        router.push('/fortune');
-      }
+      router.replace('/dashboard/today');
     }
   }, [session, isPending, router]);
 
@@ -62,7 +56,7 @@ export default function LoginPage() {
   };
 
   // Show loading state while checking session
-  if (isPending) {
+  if (isPending || session) {
     return (
       <div className="min-h-screen bg-ground flex items-center justify-center">
         <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>

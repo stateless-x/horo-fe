@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Menu, X, Settings, Sun, Moon, LogOut } from 'lucide-react';
-import { signOut } from '@/lib/auth-client';
+import { useAppLogout } from '@/hooks/use-app-logout';
 import { SYSTEMS, type DashboardTab } from '@/lib/systems';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
@@ -25,12 +25,12 @@ const LINK_ACTIVE = 'bg-accent/15 text-accentBright';
 
 export function AppHeader() {
   const pathname = usePathname();
-  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { logout, isLoggingOut } = useAppLogout();
 
   useEffect(() => setMounted(true), []);
   const isDark = resolvedTheme !== 'light';
@@ -61,11 +61,6 @@ export function AppHeader() {
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [drawerOpen]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push('/');
-  };
 
   return (
     <header ref={headerRef} className="border-b border-edge sticky top-0 z-40 h-14 backdrop-blur bg-ground/80">
@@ -168,11 +163,12 @@ export function AppHeader() {
           {/* Sign out row */}
           <button
             type="button"
-            onClick={handleSignOut}
+            onClick={logout}
+            disabled={isLoggingOut}
             className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${LINK_REST}`}
           >
             <LogOut className="w-4 h-4" />
-            ออกจากระบบ
+            {isLoggingOut ? 'กำลังออกจากระบบ...' : 'ออกจากระบบ'}
           </button>
         </nav>
       </motion.div>

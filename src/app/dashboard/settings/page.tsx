@@ -4,14 +4,14 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Calendar, Clock, LogOut, Save, Edit2, X, Brain } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSession, signOut } from '@/lib/auth-client';
+import { useSession } from '@/lib/auth-client';
 import { api } from '@/lib/api';
 import { Button, Input, Card } from '@/lib-packages/ui';
 import { THAI_TIME_PERIODS, THAI_MONTHS, BE_OFFSET, toGregorianYear, toBuddhistYear, MBTI_GROUPS, getMbtiInfo } from '@/lib-packages/shared';
 import type { Gender } from '@/lib-packages/shared';
 import { MBTI_HINT_SETTINGS } from '@/lib/mbti-copy';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
+import { useAppLogout } from '@/hooks/use-app-logout';
 
 /**
  * Settings Page - Redesigned with View/Edit Mode
@@ -26,8 +26,8 @@ import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
  */
 export default function SettingsPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { data: session, isPending: sessionLoading } = useSession();
+  const { logout, isLoggingOut } = useAppLogout();
   useTrackSurfaceView('settings');
 
   // Edit mode state
@@ -271,17 +271,6 @@ export default function SettingsPage() {
       setSaveMessage({ type: 'error', text: 'บันทึกไม่สำเร็จ ลองกดบันทึกอีกครั้ง' });
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      // Clear all React Query cache to prevent cross-account data leakage
-      queryClient.clear();
-      await signOut();
-      router.push('/login');
-    } catch (error) {
-      console.error('[Settings] Logout failed:', error);
     }
   };
 
@@ -662,13 +651,14 @@ export default function SettingsPage() {
             <Card className="rounded-2xl p-6 space-y-4 shadow-[0_18px_50px_rgba(107,33,168,0.08)]">
               <h2 className="text-lg font-heading text-ink">บัญชี</h2>
               <Button
-                onClick={handleLogout}
+                onClick={logout}
                 variant="outline"
                 size="lg"
+                disabled={isLoggingOut}
                 className="w-full flex items-center justify-center gap-2 text-danger border-danger/30 hover:bg-danger/10 hover:border-danger/50"
               >
                 <LogOut size={20} />
-                ออกจากระบบ
+                {isLoggingOut ? 'กำลังออกจากระบบ...' : 'ออกจากระบบ'}
               </Button>
             </Card>
           </motion.div>

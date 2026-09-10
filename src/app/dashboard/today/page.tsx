@@ -387,7 +387,7 @@ export default function TodayPage() {
 
         {/* Auto-open donation modal, gated on the reading actually
             being present so it never fires over an empty page. */}
-        {structured && <AutoDonationModal />}
+        {structured && <AutoDonationModal affiliateSurface="today" />}
 
       </div>
     </div>

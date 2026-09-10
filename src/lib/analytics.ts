@@ -42,8 +42,9 @@ function storageKey(userId: string, event: TrackedEvent, dedupKey: string): stri
 }
 
 /**
- * Reports a product event: which page, category, or tab the signed-in user
- * opened. Answers "what do people actually use" without third-party analytics.
+ * Reports a bounded product event such as a page, category, CTA, or outbound
+ * affiliate trigger. Answers "what do people actually use" without third-party
+ * analytics.
  *
  * Deduped events (see dedupKeyFor in lib-packages/shared) fire at most once per
  * user per key per Bangkok day. Two layers enforce that: localStorage stops a

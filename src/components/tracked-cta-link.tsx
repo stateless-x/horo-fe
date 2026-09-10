@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 
 import { useTrackEvent } from '@/lib/analytics';
 import type { TrackedCta, TrackedEventSurface } from '@/lib-packages/shared';
@@ -13,6 +13,7 @@ interface TrackedCtaLinkProps {
   surface: TrackedEventSurface;
   href: string;
   className?: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
   children: ReactNode;
 }
 
@@ -36,14 +37,17 @@ interface TrackedCtaLinkProps {
  * session, and the endpoint is authenticated anyway. Anonymous CTA clicks are
  * the visitor-tracking work, not this.
  */
-export function TrackedCtaLink({ cta, surface, href, className, children }: TrackedCtaLinkProps) {
+export function TrackedCtaLink({ cta, surface, href, className, onClick, children }: TrackedCtaLinkProps) {
   const track = useTrackEvent();
 
   return (
     <Link
       href={href}
       className={className}
-      onClick={() => track({ event: 'cta_clicked', surface, cta })}
+      onClick={(event) => {
+        track({ event: 'cta_clicked', surface, cta });
+        onClick?.(event);
+      }}
     >
       {children}
     </Link>

@@ -360,7 +360,7 @@ export default function FortuneChartPage() {
       {/* Auto-open donation modal. Mounted unconditionally: this whole
           return is already behind the `chartData` guard above, so the
           reading is on screen by the time it can fire. */}
-      <AutoDonationModal />
+      <AutoDonationModal affiliateSurface="fortune" />
 
       {/* Share Sheet */}
       <ShareSheet

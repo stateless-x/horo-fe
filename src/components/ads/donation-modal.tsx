@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Download, Share, ChevronDown, ChevronUp, Coffee } from 'lucide-react';
 import { DONATION_AUTO_DELAY_MS } from './donation-eligibility';
+import { useTrackEvent } from '@/lib/analytics';
+import { openTrackedShopeeAffiliateLink } from '@/lib/shopee-affiliate';
 
 const QR_IMAGE_PATH = '/mae_manee_qr.PNG';
 
@@ -224,6 +226,8 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
  * - mount it only where primary value is already visible (callers gate on data);
  * - never on the compatibility *form* — result surfaces only;
  * - opens no earlier than 10 s after mount.
+ * - Today/Fortune callers opt into one tracked Shopee tab on any close action;
+ *   compatibility keeps the ordinary close behavior.
  *
  * There is deliberately no cooldown and no permanent dismiss (decision
  * 2026-09-10): it opens on every eligible visit. The old
@@ -233,13 +237,27 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
  * keys are left in place, unread — clearing them would need a migration that
  * buys nothing.
  */
-export function AutoDonationModal() {
+interface AutoDonationModalProps {
+  /** Only these two reading surfaces open a Shopee offer when the modal closes. */
+  affiliateSurface?: 'today' | 'fortune';
+}
+
+export function AutoDonationModal({ affiliateSurface }: AutoDonationModalProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
+  const track = useTrackEvent();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsOpen(true), DONATION_AUTO_DELAY_MS);
     return () => clearTimeout(timer);
   }, []);
 
-  return <DonationModal isOpen={isOpen} onClose={() => setIsOpen(false)} />;
+  const handleClose = useCallback(() => {
+    if (!isOpen) return;
+    setIsOpen(false);
+    if (affiliateSurface) {
+      openTrackedShopeeAffiliateLink(track, affiliateSurface, 'donation_modal_close');
+    }
+  }, [affiliateSurface, isOpen, track]);
+
+  return <DonationModal isOpen={isOpen} onClose={handleClose} />;
 }

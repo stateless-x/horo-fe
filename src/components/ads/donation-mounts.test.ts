@@ -31,10 +31,26 @@ describe('AutoDonationModal stays mounted on result surfaces', () => {
       );
     });
 
-    test(`${page} renders <AutoDonationModal />`, () => {
-      expect(read(page)).toMatch(/<AutoDonationModal\s*\/>/);
+    test(`${page} renders AutoDonationModal`, () => {
+      expect(read(page)).toMatch(/<AutoDonationModal(?:\s+[^>]*)?\s*\/>/);
     });
   }
+
+  test('only today and fortune opt into the close-triggered Shopee offer', () => {
+    expect(read('src/app/dashboard/today/page.tsx')).toContain(
+      '<AutoDonationModal affiliateSurface="today" />',
+    );
+    expect(read('src/app/dashboard/fortune/page.tsx')).toContain(
+      '<AutoDonationModal affiliateSurface="fortune" />',
+    );
+    expect(read('src/app/dashboard/compatibility/page.tsx')).toContain('<AutoDonationModal />');
+  });
+
+  test('the fortune compatibility CTA opens a separately tracked Shopee offer', () => {
+    const readNext = read('src/features/fortune/chart/read-next.tsx');
+    expect(readNext).toContain("item.ctaId === 'fortune_compatibility'");
+    expect(readNext).toContain("'fortune_compatibility_cta'");
+  });
 
   test('the component the pages import still exists and is exported', () => {
     const modal = read('src/components/ads/donation-modal.tsx');

@@ -111,6 +111,9 @@ export const useOnboardingStore = create<OnboardingState>()(
         const shouldSetExpiry = !get().expiresAt;
         set((state) => ({
           profile: { ...state.profile, ...data },
+          // Any profile edit can change the teaser prompt. Clear the old result
+          // so returning through the flow never shows a reading for stale data.
+          teaserResult: {},
           ...(shouldSetExpiry && { expiresAt: Date.now() + EXPIRATION_TIME })
         }));
       },

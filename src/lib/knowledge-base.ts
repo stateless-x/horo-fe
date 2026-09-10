@@ -60,7 +60,7 @@ export const QUICK_FACTS: QuickFact[] = [
   { label: 'ประเภทบริการ', value: 'เว็บแอปดูดวงออนไลน์ ใช้ผ่านเบราว์เซอร์ ไม่ต้องติดตั้งแอป' },
   { label: 'ค่าบริการ', value: 'ดูผลเบื้องต้นฟรี ไม่ต้องสมัคร อ่านฉบับเต็มต้องเข้าสู่ระบบ และมีจำนวนครั้งจำกัดต่อผู้ใช้' },
   { label: 'วิธีเข้าสู่ระบบ', value: 'บัญชี Google หรือ X' },
-  { label: 'ผู้ดูแล', value: '@Askpurin', href: 'https://pooh.fyi' },
+  { label: 'ผู้ดูแล', value: '@Pooh.fyi', href: 'https://pooh.fyi' },
   { label: 'ข้อมูลในหน้านี้ตรวจสอบล่าสุด', value: LAST_VERIFIED_TH },
 ];
 

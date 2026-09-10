@@ -28,6 +28,19 @@ const PREVIEW_CATEGORIES = [
   { icon: Activity, label: 'สุขภาพ' },
 ];
 
+interface TeaserResult {
+  elementType: string;
+  personality: string;
+  todaySnippet: string;
+  luckyColor?: string;
+  luckyNumber?: number;
+}
+
+function completedTeaser(value: Partial<TeaserResult>): TeaserResult | null {
+  if (!value.elementType || !value.personality || !value.todaySnippet) return null;
+  return value as TeaserResult;
+}
+
 /**
  * Step 6: Teaser Result
  *
@@ -38,17 +51,12 @@ const PREVIEW_CATEGORIES = [
  * - THIS MUST HAPPEN BEFORE AUTH!
  */
 export function StepTeaser() {
-  const { profile, setTeaserResult, nextStep, prevStep, setStep } = useOnboardingStore();
-  const [isLoading, setIsLoading] = useState(true);
+  const { profile, teaserResult, setTeaserResult, nextStep, prevStep, setStep } = useOnboardingStore();
+  const storedResult = completedTeaser(teaserResult);
+  const [isLoading, setIsLoading] = useState(storedResult === null);
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
-  const [result, setResult] = useState<{
-    elementType: string;
-    personality: string;
-    todaySnippet: string;
-    luckyColor?: string;
-    luckyNumber?: number;
-  } | null>(null);
+  const [result, setResult] = useState<TeaserResult | null>(storedResult);
 
   const generateTeaser = async () => {
     const MAX_RETRIES = 2;
@@ -59,13 +67,7 @@ export function StepTeaser() {
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
-        const data = await api.post<{
-          elementType: string;
-          personality: string;
-          todaySnippet: string;
-          luckyColor?: string;
-          luckyNumber?: number;
-        }>('/api/fortune/teaser', profile);
+        const data = await api.post<TeaserResult>('/api/fortune/teaser', profile, { timeout: 60_000 });
 
         setResult(data);
         setTeaserResult(data);
@@ -131,6 +133,10 @@ export function StepTeaser() {
       setStep('gender');
       return;
     }
+
+    // A hard refresh rehydrates the completed teaser from localStorage. Keep
+    // showing it instead of spending another LLM request for identical input.
+    if (storedResult) return;
 
     generateTeaser();
     // eslint-disable-next-line react-hooks/exhaustive-deps

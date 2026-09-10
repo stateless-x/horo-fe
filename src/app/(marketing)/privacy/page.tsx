@@ -178,12 +178,12 @@ export default function PrivacyPage() {
               หรือประสงค์จะใช้สิทธิของคุณในฐานะเจ้าของข้อมูลส่วนบุคคลตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล
               กรุณาติดต่อเราผ่านช่องทาง{' '}
               <a
-                href="https://x.com/askpurin"
+                href="https://pooh.fyi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-accentBright hover:text-accentSoft underline underline-offset-2 transition-colors"
               >
-                @Askpurin บน X (Twitter)
+                @Pooh.fyi
               </a>
             </p>
           </section>

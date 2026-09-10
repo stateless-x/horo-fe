@@ -1,28 +1,15 @@
 import { describe, expect, test } from 'bun:test';
-import { canAutoShowDonation, DONATION_COOLDOWN_MS } from './donation-eligibility';
+import { DONATION_AUTO_DELAY_MS } from './donation-eligibility';
 
-const NOW = 1_800_000_000_000;
-
-describe('canAutoShowDonation', () => {
-  test('permanent dismiss always wins', () => {
-    expect(canAutoShowDonation(NOW, 'true', null)).toBe(false);
-    expect(canAutoShowDonation(NOW, 'true', String(NOW - DONATION_COOLDOWN_MS * 2))).toBe(false);
-  });
-
-  test('blocks within the seven-day cooldown', () => {
-    expect(canAutoShowDonation(NOW, null, String(NOW - 1000))).toBe(false);
-    expect(canAutoShowDonation(NOW, null, String(NOW - DONATION_COOLDOWN_MS + 1))).toBe(false);
-  });
-
-  test('allows after the cooldown has passed', () => {
-    expect(canAutoShowDonation(NOW, null, String(NOW - DONATION_COOLDOWN_MS - 1))).toBe(true);
-  });
-
-  test('allows when never shown before', () => {
-    expect(canAutoShowDonation(NOW, null, null)).toBe(true);
-  });
-
-  test('treats an unparseable timestamp as never shown', () => {
-    expect(canAutoShowDonation(NOW, null, 'garbage')).toBe(true);
+/**
+ * The modal now auto-opens on every eligible visit: no permanent dismiss and
+ * no cooldown (decision 2026-09-10). All that survives is the delay that keeps
+ * it from covering a reading the moment it lands, so that is all there is to
+ * assert. The cooldown/dismiss rules and their tests were removed together —
+ * a test asserting rules that no longer exist is worse than no test.
+ */
+describe('donation auto-display delay', () => {
+  test('waits long enough for the reading to be read first', () => {
+    expect(DONATION_AUTO_DELAY_MS).toBe(10_000);
   });
 });

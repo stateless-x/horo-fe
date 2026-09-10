@@ -31,6 +31,7 @@ import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 import { CategoryClayImage } from '@/components/ui/category-clay-image';
 import { FORTUNE_CATEGORY_CONFIG, DAILY_CATEGORY_KEYS } from '@/lib/fortune-category-config';
+import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { localizeColorName } from '@/lib/thai-localize';
 
 const ELEMENT_NAMES_THAI = {
@@ -382,6 +383,10 @@ export default function TodayPage() {
             luckyNumber: dailyReading?.luckyNumber || undefined,
           }}
         />
+
+        {/* Auto-open donation modal, gated on the reading actually
+            being present so it never fires over an empty page. */}
+        {structured && <AutoDonationModal />}
 
       </div>
     </div>

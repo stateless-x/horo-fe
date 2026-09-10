@@ -3,12 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Download, Share, ChevronDown, ChevronUp, Coffee } from 'lucide-react';
-import {
-  DONATION_DISMISSED_KEY,
-  DONATION_LAST_AUTO_SHOWN_KEY,
-  DONATION_AUTO_DELAY_MS,
-  canAutoShowDonation,
-} from './donation-eligibility';
+import { DONATION_AUTO_DELAY_MS } from './donation-eligibility';
 
 const QR_IMAGE_PATH = '/mae_manee_qr.PNG';
 
@@ -18,13 +13,12 @@ const FOCUSABLE_SELECTOR =
 interface DonationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  showDismissForever?: boolean;
 }
 
 /**
  * Controlled donation modal - requires isOpen and onClose props
  */
-export function DonationModal({ isOpen, onClose, showDismissForever = true }: DonationModalProps) {
+export function DonationModal({ isOpen, onClose }: DonationModalProps) {
   const [showQr, setShowQr] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -75,11 +69,6 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
-
-  const handleDismissForever = useCallback(() => {
-    localStorage.setItem(DONATION_DISMISSED_KEY, 'true');
-    onClose();
-  }, [onClose]);
 
   const handleSaveImage = useCallback(async () => {
     try {
@@ -219,18 +208,6 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
                   </AnimatePresence>
                 </div>
               </div>
-
-              {/* Dismiss forever */}
-              {showDismissForever && (
-                <div className="mt-3 text-center">
-                  <button
-                    onClick={handleDismissForever}
-                    className="min-h-11 px-2 font-thai text-xs text-inkMuted hover:text-ink transition-colors underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright rounded"
-                  >
-                    ไม่แสดงอีก
-                  </button>
-                </div>
-              )}
             </div>
           </motion.div>
         </>
@@ -242,45 +219,27 @@ export function DonationModal({ isOpen, onClose, showDismissForever = true }: Do
 /**
  * Auto-opening donation modal for result surfaces only.
  *
- * Rules (docs/claude-ui-correction-1.md §4):
+ * Rules (current source of truth; docs/claude-ui-correction-1.md §4 states the
+ * original ones, with its frequency rules marked superseded):
  * - mount it only where primary value is already visible (callers gate on data);
- * - opens no earlier than 10 s after mount;
- * - at most once per seven days (timestamp in localStorage);
- * - a permanent dismiss ("ไม่แสดงอีก") always wins.
+ * - never on the compatibility *form* — result surfaces only;
+ * - opens no earlier than 10 s after mount.
+ *
+ * There is deliberately no cooldown and no permanent dismiss (decision
+ * 2026-09-10): it opens on every eligible visit. The old
+ * `horo-donation-dismissed` / `horo-donation-last-auto-shown` keys are no
+ * longer read, so the ~1,971 users who opted out under the previous rules
+ * re-enter rotation rather than being silently excluded forever. Those stale
+ * keys are left in place, unread — clearing them would need a migration that
+ * buys nothing.
  */
 export function AutoDonationModal() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    let dismissedForever: string | null = null;
-    let lastAutoShown: string | null = null;
-    try {
-      dismissedForever = localStorage.getItem(DONATION_DISMISSED_KEY);
-      lastAutoShown = localStorage.getItem(DONATION_LAST_AUTO_SHOWN_KEY);
-    } catch {
-      return; // storage unavailable → never auto-open
-    }
-
-    if (!canAutoShowDonation(Date.now(), dismissedForever, lastAutoShown)) return;
-
-    const timer = setTimeout(() => {
-      try {
-        localStorage.setItem(DONATION_LAST_AUTO_SHOWN_KEY, String(Date.now()));
-      } catch {
-        // storage write failure only affects the cooldown, still show once
-      }
-      setIsOpen(true);
-    }, DONATION_AUTO_DELAY_MS);
+    const timer = setTimeout(() => setIsOpen(true), DONATION_AUTO_DELAY_MS);
     return () => clearTimeout(timer);
   }, []);
 
-  return (
-    <DonationModal
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-      showDismissForever
-    />
-  );
+  return <DonationModal isOpen={isOpen} onClose={() => setIsOpen(false)} />;
 }

@@ -28,7 +28,9 @@ import {
 import { CompatibilityForm } from '@/features/compatibility/compatibility-form';
 import { CompatibilityLoading } from '@/features/compatibility/compatibility-loading';
 import { CompatibilityResultView } from '@/features/compatibility/compatibility-result';
+import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { CompatibilityHistory } from '@/features/compatibility/compatibility-history';
+import { MainLoader } from '@/components/ui/main-loader';
 
 // --- Page ---
 
@@ -256,11 +258,7 @@ export default function CompatibilityPage() {
   if (sessionLoading || !session) {
     return (
       <div className="min-h-[calc(100vh-3.5rem)] bg-ground flex items-center justify-center">
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin"
-        />
+        <MainLoader />
       </div>
     );
   }
@@ -278,17 +276,23 @@ export default function CompatibilityPage() {
   // --- Result view ---
   if (result) {
     return (
-      <CompatibilityResultView
-        result={result}
-        fallbackConfig={config}
-        showShareSheet={showShareSheet}
-        onOpenShareSheet={() => setShowShareSheet(true)}
-        onCloseShareSheet={() => setShowShareSheet(false)}
-        onBackToForm={handleBackToForm}
-        onGuidanceOpen={handleGuidanceOpen}
-        onShareInitiated={handleShareInitiated}
-        onResultOpen={handleResultOpen}
-      />
+      <>
+        <CompatibilityResultView
+          result={result}
+          fallbackConfig={config}
+          showShareSheet={showShareSheet}
+          onOpenShareSheet={() => setShowShareSheet(true)}
+          onCloseShareSheet={() => setShowShareSheet(false)}
+          onBackToForm={handleBackToForm}
+          onGuidanceOpen={handleGuidanceOpen}
+          onShareInitiated={handleShareInitiated}
+          onResultOpen={handleResultOpen}
+        />
+
+        {/* Auto-open donation modal. Only in the result branch: the form and
+            history views below carry no reading to reward. */}
+        <AutoDonationModal />
+      </>
     );
   }
 

@@ -9,6 +9,13 @@ import type { BirthProfile } from '@/lib-packages/shared';
 
 const PENDING_PROFILE_KEY = 'horo-pending-profile';
 
+export type PendingProfileRecord = {
+  version: 1;
+  profile: Partial<BirthProfile>;
+  provider: string;
+  userId: string | null;
+};
+
 /**
  * Check if profile has all required fields
  */
@@ -16,20 +23,66 @@ export function isValidProfile(profile: Partial<BirthProfile>): boolean {
   return !!(profile.name && profile.birthDate && profile.gender);
 }
 
+export function getIncompleteProfileStep(
+  profile: Partial<BirthProfile>,
+): 'name' | 'birthDate' | 'gender' | null {
+  if (!profile.name) return 'name';
+  if (!profile.birthDate) return 'birthDate';
+  if (!profile.gender) return 'gender';
+  return null;
+}
+
 /**
  * Get profile from sessionStorage
  * Used as fallback after OAuth redirects where store data might be lost
  */
-export function getProfileFromSessionStorage(): Partial<BirthProfile> | null {
+export function claimPendingProfile(
+  value: unknown,
+  userId: string,
+  authProvider: string | null,
+): PendingProfileRecord | null {
+  if (!value || typeof value !== 'object') return null;
+
+  const record = value as Partial<PendingProfileRecord>;
+  if (
+    record.version !== 1 ||
+    !record.profile ||
+    typeof record.profile !== 'object' ||
+    typeof record.provider !== 'string' ||
+    (record.userId !== null && typeof record.userId !== 'string')
+  ) {
+    return null;
+  }
+
+  if (record.userId) {
+    return record.userId === userId ? (record as PendingProfileRecord) : null;
+  }
+
+  if (!authProvider || record.provider !== authProvider) return null;
+  return { ...(record as PendingProfileRecord), userId };
+}
+
+export function getProfileFromSessionStorage(
+  userId: string,
+  authProvider: string | null,
+): Partial<BirthProfile> | null {
   if (typeof window === 'undefined') return null;
 
   const pendingProfile = sessionStorage.getItem(PENDING_PROFILE_KEY);
   if (!pendingProfile) return null;
 
   try {
-    return JSON.parse(pendingProfile);
+    const claimed = claimPendingProfile(JSON.parse(pendingProfile), userId, authProvider);
+    if (!claimed) {
+      sessionStorage.removeItem(PENDING_PROFILE_KEY);
+      return null;
+    }
+
+    sessionStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(claimed));
+    return claimed.profile;
   } catch (e) {
     console.error('[ProfileUtils] Failed to parse pending profile:', e);
+    sessionStorage.removeItem(PENDING_PROFILE_KEY);
     return null;
   }
 }
@@ -50,31 +103,13 @@ export function clearProfileFromSessionStorage(): void {
 /**
  * Save profile to sessionStorage (for OAuth redirect persistence)
  */
-export function saveProfileToSessionStorage(profile: Partial<BirthProfile>): void {
+export function saveProfileToSessionStorage(
+  profile: Partial<BirthProfile>,
+  provider: string,
+  userId: string | null = null,
+): void {
   if (typeof window !== 'undefined') {
-    sessionStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(profile));
+    const record: PendingProfileRecord = { version: 1, profile, provider, userId };
+    sessionStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(record));
   }
-}
-
-/**
- * Get valid profile data with sessionStorage fallback
- * Returns profile data and whether it's valid
- */
-export function getValidProfileWithFallback(
-  storeProfile: Partial<BirthProfile>
-): { profileData: Partial<BirthProfile>; isValid: boolean } {
-  let profileData = storeProfile;
-  let isValid = isValidProfile(storeProfile);
-
-  // Fallback: Check sessionStorage for profile data (survives OAuth redirect)
-  if (!isValid) {
-    const sessionProfile = getProfileFromSessionStorage();
-    if (sessionProfile) {
-      profileData = sessionProfile;
-      isValid = isValidProfile(sessionProfile);
-      console.log('[ProfileUtils] Restored profile from sessionStorage:', isValid);
-    }
-  }
-
-  return { profileData, isValid };
 }

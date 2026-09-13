@@ -3,10 +3,11 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
 import { useOnboardingStore } from '@/stores/onboarding';
-import { useSession, signIn, getCallbackUrl } from '@/lib/auth-client';
+import { useSession, signIn, getCallbackUrl, type HoroSessionUser } from '@/lib/auth-client';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { DEFAULT_AUTHENTICATED_PATH, sanitizeReturnTo } from '@/lib/auth-navigation';
+import { saveProfileToSessionStorage } from '@/lib/profile-utils';
 
 /**
  * Step 7: Auth Prompt
@@ -29,6 +30,11 @@ export function StepAuth({
   // Auto-skip if user is already authenticated
   useEffect(() => {
     if (session && !isPending) {
+      const { profile } = useOnboardingStore.getState();
+      if (profile && Object.keys(profile).length > 0) {
+        const user = session.user as typeof session.user & HoroSessionUser;
+        saveProfileToSessionStorage(profile, user.authProvider ?? 'authenticated', user.id);
+      }
       console.log('[StepAuth] User already authenticated, auto-skipping to next step');
       nextStep();
     }
@@ -41,7 +47,7 @@ export function StepAuth({
       // This ensures data survives the OAuth redirect chain
       const { profile } = useOnboardingStore.getState();
       if (profile && Object.keys(profile).length > 0) {
-        sessionStorage.setItem('horo-pending-profile', JSON.stringify(profile));
+        saveProfileToSessionStorage(profile, 'google');
         console.log('[Onboarding] Saved profile to sessionStorage before OAuth');
       }
 
@@ -63,7 +69,7 @@ export function StepAuth({
       // This ensures data survives the OAuth redirect chain
       const { profile } = useOnboardingStore.getState();
       if (profile && Object.keys(profile).length > 0) {
-        sessionStorage.setItem('horo-pending-profile', JSON.stringify(profile));
+        saveProfileToSessionStorage(profile, 'twitter');
         console.log('[Onboarding] Saved profile to sessionStorage before OAuth');
       }
 

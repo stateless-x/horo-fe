@@ -18,9 +18,9 @@ interface DashboardProfileRecoveryOptions {
  * Establish the one invariant required by every dashboard page: the signed-in
  * user has a birth profile on the server.
  *
- * Incomplete signups may still have their profile in browser storage after an
- * OAuth redirect. Completed users deliberately ignore that storage so stale
- * onboarding data can never overwrite their existing server profile.
+ * A signup may still have its profile in browser storage after an OAuth
+ * redirect. Browser data is used only when the server has no profile, so stale
+ * onboarding data can never overwrite an existing server profile.
  */
 export async function recoverDashboardProfile({
   onboardingCompleted,
@@ -29,21 +29,25 @@ export async function recoverDashboardProfile({
   savePendingProfile,
   onPendingProfileSaved,
 }: DashboardProfileRecoveryOptions): Promise<DashboardProfileRecoveryResult> {
-  if (!onboardingCompleted && isValidProfile(pendingProfile)) {
+  const hasServerProfile = await loadServerProfile();
+  if (hasServerProfile) {
+    return {
+      destination: 'dashboard',
+      // Heal accounts whose profile exists but whose completion flag was not
+      // persisted (for example, an interrupted older onboarding request).
+      shouldCompleteOnboarding: !onboardingCompleted,
+    };
+  }
+
+  // The server profile is the source of truth. Only use browser data after we
+  // know no server profile exists, so stale onboarding data cannot overwrite a
+  // returning user's saved profile. This also repairs inconsistent accounts
+  // whose completion flag is true even though their profile is missing.
+  if (isValidProfile(pendingProfile)) {
     await savePendingProfile(pendingProfile);
     onPendingProfileSaved();
-    return { destination: 'dashboard', shouldCompleteOnboarding: true };
+    return { destination: 'dashboard', shouldCompleteOnboarding: !onboardingCompleted };
   }
 
-  const hasServerProfile = await loadServerProfile();
-  if (!hasServerProfile) {
-    return { destination: 'setup', shouldCompleteOnboarding: false };
-  }
-
-  return {
-    destination: 'dashboard',
-    // Heal accounts whose profile exists but whose completion flag was not
-    // persisted (for example, an interrupted older onboarding request).
-    shouldCompleteOnboarding: !onboardingCompleted,
-  };
+  return { destination: 'setup', shouldCompleteOnboarding: false };
 }

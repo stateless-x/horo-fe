@@ -35,9 +35,11 @@ TWITTER_CLIENT_SECRET=<your-twitter-oauth2-client-secret>
 
 ### Deployment Process
 
-1. **Connect Repository**: Connect your GitHub repository to Railway
-2. **Set Environment Variables**: Add all required environment variables in Railway dashboard
-3. **Deploy**: Railway will automatically:
+1. **Apply backend migrations first**: provider-aware frontend sessions require
+   `horo-be/drizzle/0013_provider_identity.sql` to have completed.
+2. **Connect Repository**: Connect your GitHub repository to Railway
+3. **Set Environment Variables**: Add all required environment variables in Railway dashboard
+4. **Deploy**: Railway will automatically:
    - Install dependencies with `bun install`
    - Build the Next.js app with `bun run build`
    - Start the server with `bun run start`
@@ -59,6 +61,8 @@ Railway will check the `/` endpoint to verify the application is running.
 - **OAuth Credentials**: Must be configured in Google/Twitter developer consoles with the correct callback URLs:
   - Google: `https://api-horo.up.railway.app/api/auth/callback/google`
   - Twitter: `https://api-horo.up.railway.app/api/auth/callback/twitter`
+- **Account identity**: Google and X are intentionally separate accounts even
+  when they return the same email. Do not enable Better Auth account linking.
 
 ### Troubleshooting
 

@@ -49,6 +49,17 @@ four call sites — `components/onboarding/step-auth.tsx` (both providers),
 used to send new users to `/dashboard/fortune` instead, which split new arrivals
 away from the surface built to bring them back.
 
+Before any dashboard page renders, `DashboardProfileGate` checks the server for
+the signed-in user's birth profile. A user with no profile goes to
+`/fortune?setup=true`; a complete OAuth draft is saved first, while a partial
+draft resumes at its first missing required field. Browser drafts are bound to
+the selected provider and then to the returned user ID, so another Google/X
+account on the same device cannot inherit them.
+
+Google and X are separate accounts even when both providers return the same
+email address. The provider used first keeps its own server profile and reading
+history; signing in through the other provider starts a fresh account.
+
 ## Before you edit
 
 **The voice is คุณ.** Readings and interface copy speak warm, natural Thai,
@@ -79,6 +90,7 @@ generation still takes one to two minutes; that is DeepSeek's speed, not a bug.
 
 ```bash
 bun run dev          # development server
+bun test             # unit and component tests
 bun run build        # production build
 bun run type-check   # tsc --noEmit
 ```

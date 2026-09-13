@@ -53,4 +53,5 @@ export function getCallbackUrl(path: string): string {
 export interface HoroSessionUser {
   displayName?: string | null;
   onboardingCompleted?: boolean | null;
+  authProvider?: string | null;
 }

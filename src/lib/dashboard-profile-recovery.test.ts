@@ -23,7 +23,7 @@ describe('dashboard profile recovery', () => {
 
     expect(result).toEqual({ destination: 'dashboard', shouldCompleteOnboarding: true });
     expect(savePendingProfile).toHaveBeenCalledWith(validPendingProfile);
-    expect(loadServerProfile).not.toHaveBeenCalled();
+    expect(loadServerProfile).toHaveBeenCalledTimes(1);
     expect(onPendingProfileSaved).toHaveBeenCalledTimes(1);
   });
 
@@ -63,6 +63,38 @@ describe('dashboard profile recovery', () => {
     });
 
     expect(result).toEqual({ destination: 'dashboard', shouldCompleteOnboarding: false });
+    expect(savePendingProfile).not.toHaveBeenCalled();
+  });
+
+  test('repairs a completed account whose server profile is missing', async () => {
+    const savePendingProfile = mock(async () => undefined);
+    const onPendingProfileSaved = mock(() => undefined);
+
+    const result = await recoverDashboardProfile({
+      onboardingCompleted: true,
+      pendingProfile: validPendingProfile,
+      loadServerProfile: async () => false,
+      savePendingProfile,
+      onPendingProfileSaved,
+    });
+
+    expect(result).toEqual({ destination: 'dashboard', shouldCompleteOnboarding: false });
+    expect(savePendingProfile).toHaveBeenCalledWith(validPendingProfile);
+    expect(onPendingProfileSaved).toHaveBeenCalledTimes(1);
+  });
+
+  test('sends a completed account with no server or browser profile to setup', async () => {
+    const savePendingProfile = mock(async () => undefined);
+
+    const result = await recoverDashboardProfile({
+      onboardingCompleted: true,
+      pendingProfile: {},
+      loadServerProfile: async () => false,
+      savePendingProfile,
+      onPendingProfileSaved: () => undefined,
+    });
+
+    expect(result).toEqual({ destination: 'setup', shouldCompleteOnboarding: false });
     expect(savePendingProfile).not.toHaveBeenCalled();
   });
 

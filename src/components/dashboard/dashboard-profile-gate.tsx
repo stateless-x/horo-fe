@@ -10,7 +10,8 @@ import { getCurrentReturnTo, withReturnTo } from '@/lib/auth-navigation';
 import { recoverDashboardProfile } from '@/lib/dashboard-profile-recovery';
 import {
   clearProfileFromSessionStorage,
-  getValidProfileWithFallback,
+  getIncompleteProfileStep,
+  getProfileFromSessionStorage,
 } from '@/lib/profile-utils';
 import { clearSignupSource, getSignupSource } from '@/lib/signup-source';
 import { useOnboardingStore } from '@/stores/onboarding';
@@ -24,7 +25,6 @@ type GateState = 'checking' | 'ready' | 'error';
 export function DashboardProfileGate({ children }: { children: ReactNode }) {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const profile = useOnboardingStore((state) => state.profile);
   const [gateState, setGateState] = useState<GateState>('checking');
   const [attempt, setAttempt] = useState(0);
   const recoveryRef = useRef<{
@@ -45,10 +45,16 @@ export function DashboardProfileGate({ children }: { children: ReactNode }) {
     let active = true;
     const user = session.user as typeof session.user & HoroSessionUser;
     const recoveryKey = `${user.id}:${attempt}`;
+    // OAuth drafts are claimed by the returned user and provider. Never read
+    // the global Zustand draft here: it may belong to another signed-in user
+    // on the same browser.
+    const profileData = getProfileFromSessionStorage(
+      user.id,
+      user.authProvider ?? null,
+    ) ?? {};
 
     if (recoveryRef.current?.key !== recoveryKey) {
       const onboardingCompleted = user.onboardingCompleted === true;
-      const { profileData } = getValidProfileWithFallback(profile);
 
       recoveryRef.current = {
         key: recoveryKey,
@@ -81,6 +87,15 @@ export function DashboardProfileGate({ children }: { children: ReactNode }) {
         if (!active) return;
 
         if (result.destination === 'setup') {
+          const onboarding = useOnboardingStore.getState();
+          onboarding.reset();
+
+          if (Object.keys(profileData).length > 0) {
+            // Rehydrate only this account's claimed partial draft, then resume
+            // at its first missing required field.
+            onboarding.updateProfile(profileData);
+            onboarding.setStep(getIncompleteProfileStep(profileData) ?? 'name');
+          }
           router.replace(withReturnTo('/fortune?setup=true', returnTo));
           return;
         }
@@ -112,7 +127,7 @@ export function DashboardProfileGate({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, [attempt, isPending, profile, router, session]);
+  }, [attempt, isPending, router, session]);
 
   if (gateState !== 'ready') {
     return (

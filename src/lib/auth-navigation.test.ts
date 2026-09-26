@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   DEFAULT_AUTHENTICATED_PATH,
+  resolvePostAuthDestination,
   sanitizeReturnTo,
   withReturnTo,
 } from './auth-navigation';
@@ -65,5 +66,38 @@ describe('authentication navigation wiring', () => {
     expect(settings).toContain('useAppLogout()');
     expect(logoutHook).toContain('signOut({ fetchOptions: { throw: true } })');
     expect(logoutHook).toContain("router.replace('/login')");
+  });
+});
+
+describe('resolvePostAuthDestination', () => {
+  test('the store intent wins only when returnTo is still the default landing page', () => {
+    expect(resolvePostAuthDestination(DEFAULT_AUTHENTICATED_PATH, '/dashboard/compatibility')).toBe(
+      '/dashboard/compatibility',
+    );
+    expect(resolvePostAuthDestination(undefined, '/dashboard/compatibility')).toBe(
+      '/dashboard/compatibility',
+    );
+  });
+
+  test('an explicit non-default returnTo always wins over the store intent', () => {
+    expect(
+      resolvePostAuthDestination('/dashboard/fortune?tab=work', '/dashboard/compatibility'),
+    ).toBe('/dashboard/fortune?tab=work');
+    expect(resolvePostAuthDestination('/invite/abc-123', '/dashboard/compatibility')).toBe(
+      '/invite/abc-123',
+    );
+  });
+
+  test('falls back to the default when no store intent is set', () => {
+    expect(resolvePostAuthDestination(DEFAULT_AUTHENTICATED_PATH, null)).toBe(
+      DEFAULT_AUTHENTICATED_PATH,
+    );
+    expect(resolvePostAuthDestination(undefined, undefined)).toBe(DEFAULT_AUTHENTICATED_PATH);
+  });
+
+  test('an unsafe store intent is sanitized rather than passed through', () => {
+    expect(resolvePostAuthDestination(DEFAULT_AUTHENTICATED_PATH, 'https://evil.example/steal')).toBe(
+      DEFAULT_AUTHENTICATED_PATH,
+    );
   });
 });

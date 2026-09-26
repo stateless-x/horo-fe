@@ -15,7 +15,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAmbientAudio } from '@/hooks/use-ambient-audio';
-import { DEFAULT_AUTHENTICATED_PATH, sanitizeReturnTo } from '@/lib/auth-navigation';
+import { DEFAULT_AUTHENTICATED_PATH, resolvePostAuthDestination } from '@/lib/auth-navigation';
+import { trackOnboardingStep } from '@/lib/onboarding-funnel';
+import type { OnboardingFunnelStep } from '@/lib-packages/shared';
 
 // The steps the visitor sees counted; welcome and the returning check are a
 // prologue, so the counter starts at the first question.
@@ -25,15 +27,27 @@ const PROGRESS_STEPS: OnboardingStep[] = ['name', 'birthDate', 'gender', 'birthT
  * Main onboarding flow component
  * Orchestrates all 8 steps with animations
  */
+// One-to-one with the funnel step names in lib-packages/shared/types/analytics.
+// `returning` and `dashboard` have no funnel step: `returning` is a prologue
+// branch off `welcome`, and `dashboard` is a navigation target, not a screen.
+const FUNNEL_STEP_BY_ONBOARDING_STEP: Partial<Record<OnboardingStep, OnboardingFunnelStep>> = {
+  welcome: 'welcome',
+  name: 'name',
+  birthDate: 'birthDate',
+  gender: 'gender',
+  birthTime: 'birthTime',
+  mbti: 'mbti',
+};
+
 export function OnboardingFlow({
   returnTo = DEFAULT_AUTHENTICATED_PATH,
 }: {
   returnTo?: string;
 }) {
-  const { currentStep } = useOnboardingStore();
+  const { currentStep, postAuthDestination } = useOnboardingStore();
   const router = useRouter();
   const { isMuted, toggleMute } = useAmbientAudio();
-  const destination = sanitizeReturnTo(returnTo);
+  const destination = resolvePostAuthDestination(returnTo, postAuthDestination);
 
   // Handle navigation after onboarding completes
   useEffect(() => {
@@ -41,6 +55,15 @@ export function OnboardingFlow({
       router.replace(destination);
     }
   }, [currentStep, destination, router]);
+
+  // Anonymous funnel beacon: fires once per step per session, the first time
+  // each step is reached. The teaser and auth steps report their own,
+  // more granular events (shown/failed/rate-limited, per CTA, per provider)
+  // from within their own components instead of a bare "step reached".
+  useEffect(() => {
+    const funnelStep = FUNNEL_STEP_BY_ONBOARDING_STEP[currentStep];
+    if (funnelStep) trackOnboardingStep(funnelStep);
+  }, [currentStep]);
 
   return (
     <div className="relative min-h-screen bg-ground text-ink">

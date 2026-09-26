@@ -37,3 +37,25 @@ export function getCurrentReturnTo(): string {
   if (typeof window === 'undefined') return DEFAULT_AUTHENTICATED_PATH;
   return sanitizeReturnTo(`${window.location.pathname}${window.location.search}`);
 }
+
+/**
+ * Resolves where auth should send the visitor, letting the onboarding
+ * store's intent (e.g. "เช็คดวงกับคนคุย" → /dashboard/compatibility) win only
+ * when the page did not already ask for a specific destination.
+ *
+ * An explicit `returnTo` (a real link into a specific dashboard page, or an
+ * invite) always takes priority over the store's intent — that link's whole
+ * point is to resume somewhere specific after auth. The store's
+ * `postAuthDestination` only applies on the default landing path, which is
+ * what every onboarding entry point uses when nothing more specific was asked
+ * for.
+ */
+export function resolvePostAuthDestination(
+  returnTo: string | null | undefined,
+  postAuthDestination?: string | null,
+): string {
+  const sanitizedReturnTo = sanitizeReturnTo(returnTo);
+  if (sanitizedReturnTo !== DEFAULT_AUTHENTICATED_PATH) return sanitizedReturnTo;
+  if (!postAuthDestination) return sanitizedReturnTo;
+  return sanitizeReturnTo(postAuthDestination);
+}

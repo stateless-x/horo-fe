@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useSession, type HoroSessionUser } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
@@ -33,6 +33,7 @@ import { CategoryClayImage } from '@/components/ui/category-clay-image';
 import { FORTUNE_CATEGORY_CONFIG, DAILY_CATEGORY_KEYS } from '@/lib/fortune-category-config';
 import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { localizeColorName } from '@/lib/thai-localize';
+import { consumeContinueFocus } from '@/lib/teaser-continuity';
 
 const ELEMENT_NAMES_THAI = {
   wood: 'ไม้',
@@ -69,6 +70,10 @@ export default function TodayPage() {
   const [expandedCategory, setExpandedCategory] = useState<CategoryKey | null>(null);
   const [showFullReading, setShowFullReading] = useState(false);
   const [showAllGuidance, setShowAllGuidance] = useState(false);
+  // Set once from the onboarding teaser's continuity pointer, then consumed:
+  // null means either "no pointer" or "already applied this page life".
+  const [continueFocusPill, setContinueFocusPill] = useState<CategoryKey | null>(null);
+  const continueFocusAppliedRef = useRef(false);
 
   useEffect(() => {
     if (!sessionLoading && !session) {
@@ -87,6 +92,31 @@ export default function TodayPage() {
   // Floor the loader at 3s even on a cache hit so the rotating copy and the
   // sponsored card are actually seen.
   const showLoader = useMinLoading(dailyLoading);
+
+  // Resumes the reading the visitor started in the onboarding teaser, once:
+  // expand its category, scroll it into view, and show a small pill on it.
+  // Gated on the daily reading actually being rendered (not the loader), since
+  // the category isn't in the DOM to expand or scroll to before then.
+  useEffect(() => {
+    if (continueFocusAppliedRef.current) return;
+    if (showLoader || !dailyReading?.structuredContent?.categories) return;
+
+    const area = consumeContinueFocus();
+    if (!area) {
+      continueFocusAppliedRef.current = true;
+      return;
+    }
+
+    continueFocusAppliedRef.current = true;
+    setExpandedCategory(area);
+    setContinueFocusPill(area);
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`daily-category-row-${area}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [showLoader, dailyReading]);
 
   if (sessionLoading || !session) return <LoadingSkeleton isLoading />;
   if (showLoader) return <LoadingSkeleton isLoading />;
@@ -260,7 +290,7 @@ export default function TodayPage() {
                 const textAccentClass = isLove ? 'text-pink-600 dark:text-pink-400' : 'text-accentBright';
 
                 return (
-                  <div key={key} className={index > 0 ? 'border-t border-edge' : ''}>
+                  <div key={key} id={`daily-category-row-${key}`} className={index > 0 ? 'border-t border-edge' : ''}>
                     <button
                       type="button"
                       onClick={() => {
@@ -274,7 +304,14 @@ export default function TodayPage() {
                     >
                       <CategoryClayImage category={key} sizes="72px" className="size-14 md:size-[4.5rem]" />
                       <div className="min-w-0">
-                        <p className="font-heading text-lg font-semibold text-ink">{config.label}</p>
+                        <p className="flex flex-wrap items-center gap-2 font-heading text-lg font-semibold text-ink">
+                          {config.label}
+                          {continueFocusPill === key && (
+                            <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs font-normal text-accentBright">
+                              อ่านต่อจากที่ค้างไว้
+                            </span>
+                          )}
+                        </p>
                         <p className="mt-0.5 line-clamp-2 text-sm leading-relaxed text-inkMuted md:text-base">{data.tip}</p>
                       </div>
                       <div className="hidden md:block">

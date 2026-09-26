@@ -6,8 +6,9 @@ import { useOnboardingStore } from '@/stores/onboarding';
 import { useSession, signIn, getCallbackUrl, type HoroSessionUser } from '@/lib/auth-client';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { DEFAULT_AUTHENTICATED_PATH, sanitizeReturnTo } from '@/lib/auth-navigation';
+import { DEFAULT_AUTHENTICATED_PATH, resolvePostAuthDestination } from '@/lib/auth-navigation';
 import { saveProfileToSessionStorage } from '@/lib/profile-utils';
+import { trackOnboardingStep } from '@/lib/onboarding-funnel';
 
 /**
  * Step 7: Auth Prompt
@@ -23,9 +24,9 @@ export function StepAuth({
 }: {
   returnTo?: string;
 }) {
-  const { nextStep, prevStep } = useOnboardingStore();
+  const { nextStep, prevStep, postAuthDestination } = useOnboardingStore();
   const { data: session, isPending } = useSession();
-  const destination = sanitizeReturnTo(returnTo);
+  const destination = resolvePostAuthDestination(returnTo, postAuthDestination);
 
   // Auto-skip if user is already authenticated
   useEffect(() => {
@@ -42,6 +43,7 @@ export function StepAuth({
 
   const handleGoogleLogin = async () => {
     console.log('[Onboarding] Google login clicked');
+    trackOnboardingStep('auth_google');
     try {
       // Save profile to sessionStorage before OAuth redirect
       // This ensures data survives the OAuth redirect chain
@@ -64,6 +66,7 @@ export function StepAuth({
 
   const handleXLogin = async () => {
     console.log('[Onboarding] X login clicked');
+    trackOnboardingStep('auth_x');
     try {
       // Save profile to sessionStorage before OAuth redirect
       // This ensures data survives the OAuth redirect chain

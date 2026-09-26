@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { BirthProfile } from '@/lib-packages/shared';
+import type { TeaserResult } from '@/lib/teaser-result';
 
 export type OnboardingStep =
   | 'welcome'
@@ -17,13 +18,14 @@ export type OnboardingStep =
 interface OnboardingState {
   currentStep: OnboardingStep;
   profile: Partial<BirthProfile>;
-  teaserResult: {
-    elementType?: string;
-    personality?: string;
-    todaySnippet?: string;
-    luckyColor?: string;
-    luckyNumber?: number;
-  };
+  teaserResult: Partial<TeaserResult>;
+  /**
+   * Where auth should land the visitor instead of the default dashboard page,
+   * set by a teaser CTA other than the primary one (e.g. "เช็คดวงกับคนคุย" →
+   * /dashboard/compatibility). Only takes effect when the page's own returnTo
+   * is still the default — see resolvePostAuthDestination in auth-navigation.
+   */
+  postAuthDestination: string | null;
   expiresAt: number | null; // Timestamp when data expires
   lastStepChangeAt: number; // Timestamp of the last nextStep/prevStep call, for the transition guard
 
@@ -33,6 +35,7 @@ interface OnboardingState {
   prevStep: () => void;
   updateProfile: (data: Partial<BirthProfile>) => void;
   setTeaserResult: (result: OnboardingState['teaserResult']) => void;
+  setPostAuthDestination: (destination: string | null) => void;
   reset: () => void;
   isExpired: () => boolean;
 }
@@ -65,6 +68,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       currentStep: 'welcome',
       profile: {},
       teaserResult: {},
+      postAuthDestination: null,
       expiresAt: null,
       lastStepChangeAt: 0,
 
@@ -120,11 +124,14 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       setTeaserResult: (result) => set({ teaserResult: result }),
 
+      setPostAuthDestination: (destination) => set({ postAuthDestination: destination }),
+
       reset: () =>
         set({
           currentStep: 'welcome',
           profile: {},
           teaserResult: {},
+          postAuthDestination: null,
           expiresAt: null,
         }),
 
@@ -142,6 +149,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         currentStep: state.currentStep,
         profile: state.profile,
         teaserResult: state.teaserResult,
+        postAuthDestination: state.postAuthDestination,
         expiresAt: state.expiresAt,
       }),
     }

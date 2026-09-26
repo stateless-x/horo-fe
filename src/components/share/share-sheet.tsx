@@ -26,10 +26,20 @@ interface ShareSheetProps {
   /**
    * Which surface opened the sheet. Recorded with every platform pick so the
    * admin can tell where sharing actually happens instead of only that it did.
+   *
+   * 'onboarding' is pre-auth (the teaser step, before signup) — there is no
+   * user yet to attach a product_events row to, so that surface never calls
+   * useTrackEvent; the caller records the funnel's own share_opened instead.
    */
-  surface: 'today' | 'fortune' | 'compatibility';
+  surface: 'today' | 'fortune' | 'compatibility' | 'onboarding';
   /** Called after copy succeeds or the user selects an external share destination. */
   onShareInitiated?: (platform: SharePlatform) => void;
+  /**
+   * Overrides the generated share phrases with these exact ones (no shuffle
+   * hint when there is only one). Used by pre-auth surfaces that already
+   * built their own text from data the generic phrase templates don't have.
+   */
+  phrases?: string[];
 }
 
 interface PlatformButtonProps {
@@ -68,13 +78,18 @@ function PlatformButton({
   );
 }
 
-export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title, surface, onShareInitiated }: ShareSheetProps) {
+export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, title, surface, onShareInitiated, phrases: phrasesOverride }: ShareSheetProps) {
   const [copied, setCopied] = useState(false);
   const [selectedPhraseIndex, setSelectedPhraseIndex] = useState(0);
   const track = useTrackEvent();
+  // No signed-in user exists yet on the pre-auth onboarding surface, so
+  // product_events tracking is skipped there — the caller records its own
+  // anonymous funnel beacon instead.
+  const canTrack = surface !== 'onboarding';
 
   // Get available phrases based on share type
   const phrases = useMemo(() => {
+    if (phrasesOverride) return phrasesOverride;
     if (compatibilityData) {
       return COMPATIBILITY_SHARE_PHRASES.map(phrase =>
         phrase
@@ -92,7 +107,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
       );
     }
     return [];
-  }, [shareData, compatibilityData]);
+  }, [shareData, compatibilityData, phrasesOverride]);
 
   const selectedPhrase = phrases[selectedPhraseIndex] || '';
 
@@ -119,13 +134,17 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
   }, [isOpen, onClose]);
 
   const shareUrl = shareData?.url || compatibilityData?.url || '';
+  // The tracker's surface union never includes 'onboarding' — canTrack is
+  // false exactly when surface is 'onboarding', so every guarded call below
+  // only ever reaches track() with a surface it accepts.
+  const trackableSurface = surface as 'today' | 'fortune' | 'compatibility';
 
   const handleShare = (platform: SharePlatform) => {
     if (platform === 'copy') {
       // Copy to clipboard
       navigator.clipboard.writeText(shareUrl).then(() => {
         setCopied(true);
-        track({ event: 'reading_shared', surface, platform: 'copy' });
+        if (canTrack) track({ event: 'reading_shared', surface: trackableSurface, platform: 'copy' });
         onShareInitiated?.('copy');
         setTimeout(() => setCopied(false), 2000);
       });
@@ -143,7 +162,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
 
       const deepLink = getLineDeepLink(textWithUrl);
       window.location.href = deepLink;
-      track({ event: 'reading_shared', surface, platform: 'line' });
+      if (canTrack) track({ event: 'reading_shared', surface: trackableSurface, platform: 'line' });
       onShareInitiated?.('line');
       onClose();
       return;
@@ -158,7 +177,7 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
 
     const platformShareUrl = getShareUrl(platform, text, shareUrl);
     window.open(platformShareUrl, '_blank', 'width=600,height=400');
-    track({ event: 'reading_shared', surface, platform });
+    if (canTrack) track({ event: 'reading_shared', surface: trackableSurface, platform });
     onShareInitiated?.(platform);
     onClose();
   };
@@ -173,17 +192,19 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-ground/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-ground/60 backdrop-blur-sm z-[60]"
             onClick={onClose}
           />
 
-          {/* Bottom sheet (mobile) / Modal (desktop) */}
+          {/* Bottom sheet (mobile) / Modal (desktop). z-[70], above the
+              onboarding progress pill (z-50, fixed once the viewport is tall
+              enough) so the teaser's share sheet is never covered by it. */}
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="fixed bottom-0 left-0 right-0 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-md md:w-full z-50"
+            className="fixed bottom-0 left-0 right-0 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-md md:w-full z-[70]"
           >
             <div className="bg-surface border-t border-surface2/50 md:border md:rounded-2xl rounded-t-3xl md:rounded-b-2xl p-6">
               {/* Header */}
@@ -200,8 +221,8 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
                 </button>
               </div>
 
-              {/* Phrase preview - tap to shuffle */}
-              {phrases.length > 0 && (
+              {/* Phrase preview - tap to shuffle when more than one phrase is available */}
+              {phrases.length > 1 && (
                 <button
                   onClick={shufflePhrase}
                   className="w-full mb-4 p-4 rounded-xl bg-gradient-to-r from-accent/20 to-accentBright/10 border border-accent/30 hover:border-accentBright/50 transition-all text-left group"
@@ -216,6 +237,13 @@ export function ShareSheet({ isOpen, onClose, shareData, compatibilityData, titl
                   </div>
                   <p className="text-xs text-inkMuted mt-2">แตะเพื่อเปลี่ยนข้อความ</p>
                 </button>
+              )}
+              {phrases.length === 1 && (
+                <div className="w-full mb-4 p-4 rounded-xl bg-gradient-to-r from-accent/20 to-accentBright/10 border border-accent/30">
+                  <p className="text-sm text-ink leading-relaxed">
+                    &ldquo;{selectedPhrase}&rdquo;
+                  </p>
+                </div>
               )}
 
               {/* Platform buttons */}

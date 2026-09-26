@@ -97,6 +97,32 @@ export const COMPATIBILITY_SHARE_PLATFORMS = ['line', 'facebook', 'twitter', 'co
 
 export type CompatibilitySharePlatform = (typeof COMPATIBILITY_SHARE_PLATFORMS)[number];
 
+/**
+ * Every step of the onboarding funnel worth counting, from first view through
+ * the auth choice. Anonymous (no auth required) — the funnel must be visible
+ * before a user exists to attach events to. Order matches the flow's step
+ * sequence in `stores/onboarding.ts`, with the teaser and CTA outcomes broken
+ * out into their own entries since one step produces several possible events.
+ */
+export const ONBOARDING_FUNNEL_STEPS = [
+  'welcome',
+  'name',
+  'birthDate',
+  'gender',
+  'birthTime',
+  'mbti',
+  'teaser_shown',
+  'teaser_failed',
+  'teaser_rate_limited',
+  'cta_full',
+  'cta_compat',
+  'share_opened',
+  'auth_google',
+  'auth_x',
+] as const;
+
+export type OnboardingFunnelStep = (typeof ONBOARDING_FUNNEL_STEPS)[number];
+
 export const TRACKED_EVENT_NAMES = [
   'surface_viewed',
   'category_opened',

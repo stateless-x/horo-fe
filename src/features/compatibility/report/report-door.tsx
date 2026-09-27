@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BookOpen, CalendarDays, History, ListChecks, Loader2, Lock, Sparkles, type LucideIcon } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
 import type { ApiError } from '@/lib/api';
+import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { WALLET_QUERY_KEY, useWallet } from '@/features/wallet/use-wallet';
 import { UNIT, shortfallLine, units } from '@/features/wallet/wallet-copy';
@@ -44,8 +45,9 @@ interface ReportDoorProps {
   allOpen: boolean;
   onToggleAll: () => void;
   /**
-   * Teaser only: unlocks the report. A rejection with HTTP status 402 (not
-   * enough มู) turns the button into "เติมมู"; any other
+   * Teaser only: unlocks the report. A rejection with HTTP 402
+   * `insufficient_balance` (the ApiError itself, rethrown) turns the button
+   * into "เติมมู"; any other
    * rejection's message is shown in the door.
    */
   onUnlock?: () => void | Promise<void>;
@@ -75,7 +77,8 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
     try {
       await onUnlock();
     } catch (failure) {
-      if ((failure as ApiError).status === 402) {
+      const refused = failure as ApiError;
+      if (refused.status === 402 && refused.body?.error === INSUFFICIENT_BALANCE) {
         setInsufficient(true);
         setSheetOpen(true);
       } else {

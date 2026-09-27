@@ -174,6 +174,8 @@ function CompatibilityPageContent() {
       setResult(unlocked);
     } catch (error) {
       console.error('Compatibility unlock failed:', error);
+      // 402: not enough มู. The door needs the status and body to offer the packs.
+      if ((error as ApiError).status === 402) throw error;
       const message = (error as ApiError).body?.error;
       throw new Error(typeof message === 'string' ? message : 'เขียนฉบับเต็มไม่สำเร็จ ลองอีกครั้งนะ');
     }

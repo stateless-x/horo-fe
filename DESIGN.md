@@ -163,7 +163,10 @@ not introduce a new brand hue.
 One further payload hue is reserved: **Romance Pink** (#E85D75, and Tailwind's pink
 ramp) marks love/relationship content only — the love category on daily readings,
 the compatibility (ดวงคู่) surfaces, and their CTAs. Fills and glows may stay fixed
-pink; pink TEXT must be theme-legible (`text-pink-600 dark:text-pink-400`).
+pink; pink TEXT must be theme-legible: use the `--romance-text` token
+(`text-romanceText`: pink-700 #BE185D light, pink-400 #F472B6 dark; pink-600 drops
+under 4.5:1 on tinted fills). The fixed fill is `bg-romance` (#E85D75). Older surfaces
+still use `text-pink-600 dark:text-pink-400`; new pink text uses the token.
 
 MBTI group hues are payload colors too: **Analysts** #88619A, **Diplomats**
 #33A474, **Sentinels** #4298B4, **Explorers** #E4AE3A (the 16personalities
@@ -278,6 +281,32 @@ asset belongs to a ธาตุ), labeled with the exact asset spec (e.g. `1600�
 `compact` variant for small in-card slots). Placeholders are honest scaffolding — they
 occupy the final layout box (fixed aspect-ratio) so the composition is real before
 the art is.
+
+### Signature: the ดวงคู่ report (content v4)
+Built in `src/features/compatibility/report/` and composed by `compatibility-report.tsx`.
+The report is one page: the free cover, bars and questions stay; the locked panel
+becomes the report's front page when it opens. It speaks to the reader as คุณ, an
+owner decision for this surface, set in Sarabun Light for the reading text.
+- **The seal (ตราประทับ):** a circular ring of text ("ฉบับเต็ม · ดวงคู่ · สายมู") around the
+  score medallion, rotated −8°, accentBright (accentSoft in dark). A mini seal (double ring
+  and four-point star) marks ฉบับเต็ม in the cover meta, the door and the side rail. It
+  appears only once the full report is open.
+- **Double-hairline frame:** the cover and the door, once open, carry a second hairline
+  inset 5px inside the card (`BOUND_FRAME`, inset shadows so nothing shifts). It says
+  "bound edition"; don't use it elsewhere.
+- **Moon-phase month states:** full moon ดี (success), half moon กลาง (accent), a crescent
+  in a broken ring ระวัง (warn), always with the word beside it, so the state reads by
+  shape as well as color.
+- **Copyable chat bubble:** a ready-to-send line is a bubble (16/16/16/4px radius, surface2,
+  Sarabun) with a soft "คัดลอก" button that confirms "คัดลอกแล้ว"; if the browser refuses,
+  it selects the text and says to long-press.
+- **Sticky chapter nav with progress:** past the report's front page, phones and tablets
+  get a chip bar pinned under the app header with a pink progress hairline; at ≥1120px a
+  side rail beside the 680px column takes over, with a pink progress line. Hidden until
+  then, and never inside the dev tools panel.
+- **Phrase-keeping for short display lines:** Thai has no spaces between words, so short
+  display lines (archetype tagline, share card) break only at the spaces between phrases;
+  a phrase of up to 16 graphemes never breaks inside (`DisplayLine`). Running text wraps normally.
 
 **The Clay Cast Rule.** All illustrative imagery is soft 3D clay-style renders —
 matte, rounded, single soft light, on transparent ground (PNG/WebP alpha), sitting

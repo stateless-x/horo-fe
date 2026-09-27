@@ -1,15 +1,28 @@
-import { AlertTriangle, CheckCircle2, ChevronDown, Lock, MinusCircle } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+'use client';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowRight, ArrowUp, History, Share2 } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
-import type { RelationshipType } from '@/lib-packages/shared';
+import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib-packages/shared';
 // Type-only: the v4 zod schemas must not reach the page bundle through this component.
 import type {
   CompatibilityV4Content,
   CompatibilityV4Shaped,
   V4Chapter,
-  V4MonthLabel,
+  V4ChapterKey,
 } from '@/lib-packages/shared/types/compatibility-v4';
-import { RELATIONSHIP_CONFIG } from '@/features/compatibility/relationship-config';
+import { ReportCover } from './report/report-cover';
+import { DimensionBars } from './report/dimension-bars';
+import { LockedHints } from './report/locked-hints';
+import { ReportDoor, type ReportContentsEntry } from './report/report-door';
+import { ChapterCard } from './report/chapter-card';
+import { BasisFacts, DoAvoid, NextMonth, ReadyLines, Scenarios, Signals } from './report/chapter-kit';
+import { MonthTiles } from './report/month-tiles';
+import { PlanChecklist } from './report/plan-checklist';
+import { ShareCard } from './report/share-card';
+import { ChapterChips, ChapterRail, useReportNav } from './report/chapter-nav';
+import { monthName, paragraphs, SectionHeading, ThaiText, type ReportElement } from './report/report-kit';
 
 interface CompatibilityReportProps {
   score: number;
@@ -18,250 +31,313 @@ interface CompatibilityReportProps {
   relationshipType?: RelationshipType;
   readerName: string | null;
   partnerName: string;
-  /** Renders the unlock button on the locked card. Not wired to payment yet. */
-  onUnlock?: () => void;
+  /** The stored reading's id: keys the plan checklist in this browser. */
+  reportId?: string;
+  /** Teaser only: the unlock button on ReportDoor. Not wired to payment yet (dev tools). */
+  onUnlock?: () => void | Promise<void>;
+  onShare?: () => void;
+  onNewCheck?: () => void;
+  /** Inside the dev tools panel: no fixed chapter nav or side rail (they belong to the page). */
+  embedded?: boolean;
 }
-
-const MONTH_LABEL: Record<V4MonthLabel, { text: string; icon: LucideIcon; tone: string }> = {
-  good: { text: 'ดี', icon: CheckCircle2, tone: 'text-emerald-700 dark:text-emerald-400' },
-  mixed: { text: 'กลาง', icon: MinusCircle, tone: 'text-inkMuted' },
-  caution: { text: 'ระวัง', icon: AlertTriangle, tone: 'text-amber-700 dark:text-amber-400' },
-};
 
 const isFull = (content: CompatibilityV4Shaped): content is CompatibilityV4Content => 'overview' in content;
 
-function monthName(month: string): string {
-  const [year, m] = month.split('-').map(Number);
-  return new Date(Date.UTC(year, m - 1, 1)).toLocaleDateString('th-TH', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-}
+const CHAPTER_SHORT: Record<V4ChapterKey, string | null> = {
+  attraction: 'แรงดึงดูด',
+  partner: null, // the partner's name
+  you: 'คุณ',
+  communication: 'สื่อสาร',
+  friction: 'คืนดี',
+  future: 'ไปต่อ',
+};
 
-/** The plan's day N as a date, counted from the day the report was written. */
-function planDate(generatedOn: string, day: number): string {
-  const [year, month, date] = generatedOn.split('-').map(Number);
-  return new Date(Date.UTC(year, month - 1, date + day - 1)).toLocaleDateString('th-TH', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    timeZone: 'UTC',
-  });
-}
-
-function List({ items }: { items: string[] }) {
-  return (
-    <ul className="list-disc space-y-1 pl-5">
-      {items.map((item, index) => (
-        <li key={index}>{item}</li>
-      ))}
-    </ul>
-  );
-}
-
-function Chapter({ chapter }: { chapter: V4Chapter }) {
-  return (
-    <article className="border-t border-edge py-5">
-      <h3 className="font-heading text-lg font-semibold text-ink">{chapter.title}</h3>
-      <p className="mt-2 max-w-[65ch] font-thai leading-relaxed text-ink">{chapter.summary}</p>
-      <details className="group mt-3">
-        <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 font-heading text-sm font-semibold text-accentBright [&::-webkit-details-marker]:hidden">
-          อ่านเจาะลึก
-          <ChevronDown className="size-4 group-open:rotate-180" aria-hidden="true" />
-        </summary>
-        <div className="mt-2 max-w-[65ch] space-y-4 font-thai leading-relaxed text-ink">
-          <p className="font-oracle text-lg font-light leading-[1.8]">{chapter.detail}</p>
-          {chapter.pairs && (
-            <ol className="space-y-3">
-              {chapter.pairs.map((pair, index) => (
-                <li key={index}>
-                  <p><span className="font-heading font-semibold">ทำ </span>{pair.do}</p>
-                  <p className="text-inkMuted"><span className="font-heading font-semibold">เลี่ยง </span>{pair.avoid}</p>
-                </li>
-              ))}
-            </ol>
-          )}
-          {chapter.lines && (
-            <div>
-              <h4 className="font-heading font-semibold">ประโยคที่ส่งได้เลย</h4>
-              <List items={chapter.lines} />
-            </div>
-          )}
-          {chapter.scenarios && (
-            <ol className="space-y-3">
-              {chapter.scenarios.map((item, index) => (
-                <li key={index}>
-                  <p>{item.scenario}</p>
-                  <p className="text-inkMuted"><span className="font-heading font-semibold">คืนดีด้วย </span>{item.repair}</p>
-                </li>
-              ))}
-            </ol>
-          )}
-          {chapter.goSignals && (
-            <div>
-              <h4 className="font-heading font-semibold">สัญญาณว่าไปต่อได้</h4>
-              <List items={chapter.goSignals} />
-            </div>
-          )}
-          {chapter.slowSignals && (
-            <div>
-              <h4 className="font-heading font-semibold">สัญญาณว่าควรชะลอ</h4>
-              <List items={chapter.slowSignals} />
-            </div>
-          )}
-          {chapter.nextStep && (
-            <p>
-              <span className="font-heading font-semibold">ขั้นต่อไป · {monthName(chapter.nextStep.month)} </span>
-              {chapter.nextStep.step}
-            </p>
-          )}
-          <p className="rounded-xl bg-surface2 p-3">
-            <span className="font-heading font-semibold">ลองทำ </span>
-            {chapter.move}
-          </p>
-        </div>
-      </details>
-    </article>
-  );
-}
+const CHAPTER_KEYS: V4ChapterKey[] = ['attraction', 'partner', 'you', 'communication', 'friction', 'future'];
 
 /**
- * Compatibility report (content v4), structural version: cover, score bars,
- * then, in the full view, overview, six chapters, the 3-month calendar and
- * the 7-day plan. The polished layout comes from the owner's approved
- * mockup; this component fixes the data shape and the teaser/full split.
+ * The ดวงคู่ report (content v4), per the approved mockup. The teaser and the
+ * full report are one page: the free cover, score bars and questions stay;
+ * the locked panel (ReportDoor) becomes the report's front page, and the
+ * overview, six chapters, calendar, plan and share card follow.
  */
-export function CompatibilityReport({ score, content, relationshipType, readerName, partnerName, onUnlock }: CompatibilityReportProps) {
-  const accent = relationshipType ? RELATIONSHIP_CONFIG[relationshipType].accent : 'text-accentBright';
-  const accentBorder = relationshipType ? RELATIONSHIP_CONFIG[relationshipType].accentBorder : 'border-accentBright/30';
+export function CompatibilityReport({
+  score,
+  content,
+  relationshipType,
+  readerName,
+  partnerName,
+  reportId,
+  onUnlock,
+  onShare,
+  onNewCheck,
+  embedded = false,
+}: CompatibilityReportProps) {
+  const reduce = useReducedMotion();
   const full = isFull(content) ? content : null;
-  const lines = full?.overview.dimensionLines;
+  const reader = readerName ?? 'คุณ';
+  const relationshipLabel = relationshipType ? `ดวง${RELATIONSHIP_LABELS[relationshipType]}` : 'ดวงคู่';
+  const doorRef = useRef<HTMLDivElement>(null);
+  const [openChapters, setOpenChapters] = useState<Set<V4ChapterKey>>(new Set());
 
-  return (
-    <section aria-labelledby="report-verdict" className={`overflow-hidden rounded-2xl border bg-surface ${accentBorder}`}>
-      <header className="space-y-3 bg-surface2 p-5 md:p-7">
-        <p className="font-heading text-sm text-inkMuted">
-          {readerName ?? 'คุณ'} กับ {partnerName}
-        </p>
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <p className="font-heading tabular-nums text-ink" aria-label={`ความเข้ากัน ${score} เปอร์เซ็นต์`}>
-            <span className="text-5xl font-semibold">{score}</span>
-            <span className="ml-1 text-lg text-inkMuted">%</span>
-          </p>
-          <div>
-            <p className={`font-heading text-xl font-semibold ${accent}`}>{content.archetype.name}</p>
-            <p className="font-thai text-sm text-inkMuted">{content.archetype.tagline}</p>
-          </div>
-        </div>
-        <h2 id="report-verdict" className="text-balance font-heading text-xl font-semibold text-ink md:text-2xl">
-          {content.cover.verdict}
-        </h2>
-      </header>
+  const chapterNumber = useCallback((key: V4ChapterKey) => CHAPTER_KEYS.indexOf(key) + 1, []);
 
-      <div className="space-y-6 p-5 md:p-7">
-        <section aria-labelledby="report-dimensions">
-          <h3 id="report-dimensions" className="font-heading text-lg font-semibold text-ink">คะแนนรายด้าน</h3>
-          <dl className="mt-3 space-y-4">
-            {content.dimensions.map((dimension) => (
-              <div key={dimension.key}>
-                <div className="flex items-baseline justify-between gap-3 font-heading">
-                  <dt className="text-ink">{dimension.label}</dt>
-                  <dd className="tabular-nums text-ink">{dimension.score}</dd>
-                </div>
-                <div className="mt-1 h-2 rounded-full bg-surface2" aria-hidden="true">
-                  <div className="h-2 rounded-full bg-accent" style={{ width: `${dimension.score}%` }} />
-                </div>
-                {lines ? (
-                  <p className="mt-1.5 max-w-[65ch] font-thai text-sm leading-relaxed text-inkMuted">{lines[dimension.key]}</p>
-                ) : (
-                  <p className="mt-1.5 flex items-center gap-1.5 font-thai text-sm text-inkMuted">
-                    <Lock className="size-3.5 shrink-0" aria-hidden="true" />
-                    ความหมายของคะแนนนี้อยู่ในฉบับเต็ม
-                  </p>
-                )}
-              </div>
+  const contents = useMemo<ReportContentsEntry[]>(
+    () => [
+      { id: 'report-overview-section', title: 'ภาพรวม', short: 'ภาพรวม', icon: 'overview' },
+      ...CHAPTER_KEYS.map((key, i) => ({
+        id: `ch-${key}`,
+        title: full?.chapters[i].title ?? CHAPTER_TITLE_TEASER(key, partnerName),
+        short: CHAPTER_SHORT[key] ?? partnerName,
+        n: i + 1,
+      })),
+      { id: 'report-calendar-section', title: 'ปฏิทินความสัมพันธ์ 3 เดือน', short: 'ปฏิทิน', icon: 'calendar' },
+      { id: 'report-plan-section', title: 'แผน 7 วัน', short: 'แผน 7 วัน', icon: 'plan' },
+    ],
+    [full, partnerName],
+  );
+
+  const nav = useReportNav(contents, doorRef, !!full && !embedded);
+
+  const jump = useCallback(
+    (id: string) => {
+      const key = id.startsWith('ch-') ? (id.slice(3) as V4ChapterKey) : null;
+      if (key) setOpenChapters((prev) => new Set(prev).add(key));
+      // After the chapter opens, so the scroll lands on its final position.
+      requestAnimationFrame(() => {
+        const target = document.getElementById(id);
+        if (!target) return;
+        target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        const heading = target.querySelector<HTMLElement>('h2');
+        heading?.focus({ preventScroll: true });
+      });
+    },
+    [reduce],
+  );
+
+  // The dev tools' unlock: land on the report's front page once it opens.
+  const wasFull = useRef(!!full);
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    if (full && !wasFull.current) {
+      setRevealed(true);
+      doorRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      document.getElementById('report-door')?.focus({ preventScroll: true });
+    }
+    wasFull.current = !!full;
+  }, [full, reduce]);
+
+  const allOpen = openChapters.size === CHAPTER_KEYS.length;
+  const toggleChapter = (key: V4ChapterKey) =>
+    setOpenChapters((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+
+  const column = (
+    <div className="mx-auto w-full min-w-0 max-w-[680px] min-[1120px]:col-start-2 min-[1120px]:mx-0">
+      <ReportCover
+        content={{ archetype: content.archetype, people: content.people, verdict: content.cover.verdict, generatedOn: content.generatedOn }}
+        score={score} readerName={reader} partnerName={partnerName} relationshipLabel={relationshipLabel} full={!!full} />
+
+      <div className="mt-14 sm:mt-[72px]">
+        <DimensionBars dimensions={content.dimensions} lines={full?.overview.dimensionLines} />
+      </div>
+
+      <div className="mt-14 sm:mt-[72px]">
+        <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} chapterNumber={chapterNumber} onJump={full ? (key) => jump(`ch-${key}`) : undefined} />
+      </div>
+
+      <div ref={doorRef} className="mt-14 scroll-mt-20 sm:mt-[72px]">
+        <ReportDoor
+          partnerName={partnerName}
+          readingMinutes={content.readingMinutes}
+          contents={contents}
+          full={!!full}
+          onJump={jump}
+          allOpen={allOpen}
+          onToggleAll={() => setOpenChapters(allOpen ? new Set() : new Set(CHAPTER_KEYS))}
+          onUnlock={full ? undefined : onUnlock}
+        />
+      </div>
+
+      {full ? (
+        <motion.div initial={revealed && !reduce ? { opacity: 0, y: 12 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
+          <section id="report-overview-section" aria-labelledby="report-overview" className="mt-14 scroll-mt-32 sm:mt-[72px] min-[1120px]:scroll-mt-20">
+            <SectionHeading id="report-overview" title="ภาพรวม" />
+            <div className="mt-3.5">
+              {paragraphs(full.overview.story).map((paragraph, i) => (
+                <p key={i} className="mb-[1em] max-w-[62ch] font-oracle text-lg font-light leading-[1.8] text-ink first:text-xl first:leading-[1.75]">
+                  <ThaiText>{paragraph}</ThaiText>
+                </p>
+              ))}
+            </div>
+            <a
+              href="#report-dimensions-section"
+              onClick={(event) => {
+                event.preventDefault();
+                jump('report-dimensions-section');
+              }}
+              className="inline-flex min-h-11 items-center gap-1.5 font-heading text-sm font-medium text-accentBright hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright dark:text-accentSoft"
+            >
+              <ArrowUp className="size-4" aria-hidden="true" />
+              ความหมายของ {full.dimensions.length} มิติ อยู่ใต้แต่ละแถบด้านบน
+            </a>
+          </section>
+
+          <div className="mt-14 space-y-4">
+            {full.chapters.map((chapter, i) => (
+              <ChapterCard
+                key={chapter.key}
+                chapter={chapter}
+                n={i + 1}
+                tone={chapterTone(chapter.key, full)}
+                open={openChapters.has(chapter.key)}
+                onToggle={() => toggleChapter(chapter.key)}
+                kit={chapterKit(chapter, full, partnerName, jump)}
+              />
             ))}
-          </dl>
-        </section>
+          </div>
 
-        {!full && (
-          <section aria-labelledby="report-locked" className={`rounded-2xl border bg-surface2 p-5 ${accentBorder}`}>
-            <h3 id="report-locked" className="flex items-center gap-2 font-heading text-lg font-semibold text-ink">
-              <Lock className={`size-5 shrink-0 ${accent}`} aria-hidden="true" />
-              ในรายงานฉบับเต็ม
-            </h3>
-            <ul className="mt-3 space-y-3">
-              {content.cover.lockedHints.map((hint) => (
-                <li key={hint.chapter} className="flex items-start gap-3 font-thai leading-relaxed text-ink">
-                  <Lock className="mt-1 size-4 shrink-0 text-inkMuted" aria-hidden="true" />
-                  {hint.text}
+          <div className="mt-14 sm:mt-[72px]">
+            <MonthTiles
+              calendar={full.calendar}
+              nextStepMonth={full.chapters.find((c) => c.nextStep)?.nextStep?.month}
+              futureChapterNumber={chapterNumber('future')}
+              onJumpToFuture={() => jump('ch-future')}
+            />
+          </div>
+
+          <div className="mt-14 sm:mt-[72px]">
+            <PlanChecklist plan={full.plan} generatedOn={full.generatedOn} reportId={reportId} />
+          </div>
+
+          <section aria-labelledby="report-next" className="mt-14 sm:mt-[72px]">
+            <SectionHeading id="report-next" title="ต่อจากนี้" />
+            <ul className="mt-4 border-t border-edge">
+              {nextLinks(full).map((link) => (
+                <li key={link.id} className="border-b border-edge">
+                  <a
+                    href={`#${link.id}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      jump(link.id);
+                    }}
+                    className="grid min-h-14 grid-cols-[minmax(0,1fr)_20px] items-center gap-3 px-1 py-2 font-medium leading-snug text-ink transition-colors hover:text-accentBright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+                  >
+                    {link.text}
+                    <ArrowRight className="size-4 text-accentBright" aria-hidden="true" />
+                  </a>
                 </li>
               ))}
             </ul>
-            <p className="mt-3 font-thai text-sm text-inkMuted">
-              พร้อมภาพรวมของคู่นี้ 6 บทเจาะลึก ปฏิทินความสัมพันธ์ 3 เดือน และแผน 7 วัน
-            </p>
-            {onUnlock && (
-              <Button onClick={onUnlock} className="mt-4 w-full sm:w-auto">
-                อ่านรายงานฉบับเต็ม
+            <div className="mt-5 grid grid-cols-[24px_minmax(0,1fr)] gap-3 rounded-xl border border-edge bg-surface2 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-ink">
+              <History className="mt-0.5 size-5 text-accentBright" aria-hidden="true" />
+              <p>ฉบับเต็มนี้เก็บอยู่ในประวัติดวงคู่ของคุณแล้ว เปิดอ่านซ้ำได้ตลอด</p>
+            </div>
+          </section>
+
+          <div className="mt-10">
+            <ShareCard
+              content={content}
+              score={score}
+              readerName={reader}
+              partnerName={partnerName}
+              relationshipLabel={relationshipLabel}
+              onShare={onShare}
+              onNewCheck={onNewCheck}
+            />
+          </div>
+        </motion.div>
+      ) : (
+        (onShare || onNewCheck) && (
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            {onShare && (
+              <Button type="button" variant="soft" onClick={onShare} className="flex-[1_1_160px] gap-2 font-heading">
+                <Share2 className="size-4" aria-hidden="true" />
+                แชร์การ์ดคู่นี้
               </Button>
             )}
-          </section>
-        )}
-
-        {full && (
-          <>
-            <section aria-labelledby="report-overview">
-              <h3 id="report-overview" className="font-heading text-lg font-semibold text-ink">ภาพรวม</h3>
-              <p className="mt-2 max-w-[65ch] font-oracle text-lg font-light leading-[1.8] text-ink">{full.overview.story}</p>
-            </section>
-
-            <section aria-label="บทในรายงาน">
-              {full.chapters.map((chapter) => (
-                <Chapter key={chapter.key} chapter={chapter} />
-              ))}
-            </section>
-
-            <section aria-labelledby="report-calendar">
-              <h3 id="report-calendar" className="font-heading text-lg font-semibold text-ink">ปฏิทินความสัมพันธ์ 3 เดือน</h3>
-              <ol className="mt-3 grid gap-3 sm:grid-cols-3">
-                {full.calendar.map((month) => {
-                  const label = MONTH_LABEL[month.label];
-                  return (
-                    <li key={month.month} className="rounded-2xl border border-edge p-4">
-                      <p className="font-heading font-semibold text-ink">{monthName(month.month)}</p>
-                      <p className={`mt-1 flex items-center gap-1.5 font-heading font-semibold ${label.tone}`}>
-                        <label.icon className="size-4" aria-hidden="true" />
-                        {label.text}
-                      </p>
-                      <p className="mt-2 font-thai text-sm leading-relaxed text-ink">{month.text}</p>
-                    </li>
-                  );
-                })}
-              </ol>
-            </section>
-
-            <section aria-labelledby="report-plan">
-              <h3 id="report-plan" className="font-heading text-lg font-semibold text-ink">แผน 7 วัน</h3>
-              <ol className="mt-3 space-y-4">
-                {full.plan.map((step) => (
-                  <li key={step.day} className="rounded-2xl border border-edge p-4 font-thai leading-relaxed">
-                    <p className="font-heading font-semibold text-ink">
-                      วันที่ {step.day} · {planDate(full.generatedOn, step.day)}
-                    </p>
-                    <p className="mt-1 text-ink">{step.action}</p>
-                    <p className="mt-2 text-inkMuted">
-                      <span className="font-heading font-semibold">ลองพูด </span>
-                      {step.conversationStarter}
-                    </p>
-                    <p className="mt-1 text-inkMuted">
-                      <span className="font-heading font-semibold">หลังจากนั้นสังเกต </span>
-                      {step.watchFor}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          </>
-        )}
-      </div>
-    </section>
+            {onNewCheck && (
+              <Button type="button" variant="ghost" onClick={onNewCheck} className="flex-[1_1_160px] font-heading">
+                ดูดวงคู่กับคนอื่น
+              </Button>
+            )}
+          </div>
+        )
+      )}
+    </div>
   );
+
+  if (embedded || !full) return column;
+  return (
+    <>
+      <div className="min-[1120px]:grid min-[1120px]:grid-cols-[minmax(0,1fr)_minmax(0,680px)_minmax(0,1fr)] min-[1120px]:gap-x-12">
+        <div className="hidden min-[1120px]:col-start-1 min-[1120px]:row-start-1 min-[1120px]:flex min-[1120px]:justify-end">
+          <ChapterRail entries={contents} nav={nav} onJump={jump} partnerName={partnerName} readingMinutes={full.readingMinutes} />
+        </div>
+        <div className="min-[1120px]:col-start-2 min-[1120px]:row-start-1">{column}</div>
+      </div>
+      <ChapterChips entries={contents} nav={nav} onJump={jump} />
+    </>
+  );
+}
+
+/** Chapter titles for the locked contents list (the full report carries its own). */
+function CHAPTER_TITLE_TEASER(key: V4ChapterKey, partnerName: string): string {
+  return {
+    attraction: 'แรงดึงดูด',
+    partner: `ตัวตนของ${partnerName}ในความสัมพันธ์นี้`,
+    you: 'ตัวคุณในความสัมพันธ์นี้',
+    communication: 'การสื่อสาร',
+    friction: 'จุดเสียดทานและวิธีคืนดี',
+    future: 'สิ่งที่พาไปต่อ',
+  }[key];
+}
+
+function chapterTone(key: V4ChapterKey, content: CompatibilityV4Content): ReportElement | 'romance' {
+  if (key === 'partner') return content.people.partner.element;
+  if (key === 'you') return content.people.reader.element;
+  return 'romance';
+}
+
+function chapterKit(chapter: V4Chapter, content: CompatibilityV4Content, partnerName: string, jump: (id: string) => void) {
+  switch (chapter.key) {
+    case 'attraction':
+      return <BasisFacts reader={content.palace.reader} partner={content.palace.partner} partnerName={partnerName} />;
+    case 'communication':
+      return (
+        <>
+          {chapter.pairs && <DoAvoid pairs={chapter.pairs} />}
+          {chapter.lines && <ReadyLines lines={chapter.lines} idPrefix="ch-communication" />}
+        </>
+      );
+    case 'friction':
+      return chapter.scenarios ? <Scenarios scenarios={chapter.scenarios} /> : null;
+    case 'future': {
+      if (!chapter.nextStep || !chapter.goSignals || !chapter.slowSignals) return null;
+      const nextStep = chapter.nextStep;
+      const month = content.calendar.find((m) => m.month === nextStep.month);
+      // The generation fails a report whose next-step month is not one of its calendar months.
+      if (!month) throw new Error(`Next-step month ${nextStep.month} is not in the report calendar`);
+      return (
+        <>
+          <Signals go={chapter.goSignals} slow={chapter.slowSignals} />
+          <NextMonth nextStep={nextStep} label={month.label} onJumpToCalendar={() => jump('report-calendar-section')} />
+        </>
+      );
+    }
+    default:
+      return null;
+  }
+}
+
+function nextLinks(content: CompatibilityV4Content) {
+  const nextStep = content.chapters.find((c) => c.nextStep)?.nextStep;
+  return [
+    { id: 'report-plan-section', text: 'เริ่มแผน 7 วัน สามก้าวเล็ก ๆ ที่ทำได้ในสัปดาห์นี้' },
+    { id: 'ch-communication', text: 'เก็บประโยคพร้อมส่งไว้ใช้ ในบทการสื่อสาร' },
+    ...(nextStep ? [{ id: 'ch-future', text: `กลับมาอ่านบทไปต่อ ก่อนเข้าเดือน${monthName(nextStep.month)}` }] : []),
+  ];
 }

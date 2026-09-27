@@ -15,7 +15,7 @@ interface CompatibilityReadingProps {
   structuredContent?: CompatibilityStructuredContent | CompatibilityV3Shaped | CompatibilityV4Shaped | null;
   relationshipType?: RelationshipType;
   onGuidanceOpen?: () => void;
-  /** v3 and v4 teaser views: shows the unlock button on the locked card. */
+  /** v3 and v4 teaser views: shows the unlock button on the locked card. v4 renders embedded (the dev tools); the result page renders CompatibilityReport itself. */
   onUnlock?: () => void;
   /** v4 cover. The partner's name is required to render a v4 report. */
   readerName?: string | null;
@@ -87,6 +87,7 @@ export function CompatibilityReading({
         readerName={readerName ?? null}
         partnerName={partnerName}
         onUnlock={onUnlock}
+        embedded
       />
     );
   }

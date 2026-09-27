@@ -15,6 +15,9 @@ import {
 } from 'lucide-react';
 import { MainLoader } from '@/components/ui/main-loader';
 import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
+import { ReportCover } from '@/features/compatibility/report/report-cover';
+import { DimensionBars } from '@/features/compatibility/report/dimension-bars';
+import type { CompatibilityV4Share } from '@/lib-packages/shared/types/compatibility-v4';
 
 
 const ELEMENT_NAMES_THAI: Record<string, string> = {
@@ -43,15 +46,16 @@ interface SharedResult {
   partnerName: string;
   relationshipType: string;
   score: number;
-  analysis: string;
+  /** Absent for v4: the stored report is paid text and never leaves the share endpoint. */
+  analysis?: string;
   contentVersion?: number;
-  structuredContent?: CompatibilityStructuredContent | null;
-  strengths: string[];
-  challenges: string[];
+  structuredContent?: CompatibilityStructuredContent | CompatibilityV4Share | null;
+  strengths?: string[];
+  challenges?: string[];
   userElement: string | null;
   partnerElement: string | null;
-  userDayMaster: string | null;
-  partnerDayMaster: string | null;
+  userDayMaster?: string | null;
+  partnerDayMaster?: string | null;
   createdAt: string;
 }
 
@@ -108,6 +112,52 @@ export default function CompatibilitySharePage() {
           <Button onClick={() => router.push('/dashboard/compatibility')} className="w-full max-w-xs mx-auto">
             ลองดูดวงของคุณ
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const tryYours = (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+      <Card className="bg-gradient-to-br from-accent/20 to-accentBright/10 border-accent/30">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <Sparkles className="w-8 h-8 text-accentBright mx-auto" />
+            <h3 className="text-lg font-heading text-ink">แล้วคุณกับคนในใจ เข้ากันแค่ไหน</h3>
+            <p className="text-inkMuted text-sm">ลองดูดวงคู่ฟรี มีทั้งคนคุย คนรัก เพื่อน และครอบครัว</p>
+            <Button
+              size="lg"
+              className="w-full max-w-xs mx-auto"
+              onClick={() => router.push('/dashboard/compatibility')}
+            >
+              ลองดูดวงของคุณ
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+
+  // Content v4: the free cover and the score numbers, the same components as the report page.
+  if (result.structuredContent?.contentVersion === 4) {
+    const shared = result.structuredContent;
+    const relationship = RelationshipTypeSchema.safeParse(result.relationshipType);
+    return (
+      <div className="min-h-screen px-4 py-6 md:px-6">
+        <div className="mx-auto max-w-[680px] space-y-14">
+          <ReportCover
+            content={{ archetype: shared.archetype, people: shared.people, verdict: shared.verdict }}
+            score={result.score}
+            readerName="เจ้าของดวง"
+            partnerName={result.partnerName}
+            relationshipLabel={relationship.success ? `ดวง${RELATIONSHIP_LABELS[relationship.data]}` : 'ดวงคู่'}
+            full={false}
+          />
+          <DimensionBars dimensions={shared.dimensions} hideLockNote />
+          {tryYours}
+          <p className="text-center text-xs text-inkMuted/60">
+            <Link href="/" className="hover:text-inkMuted transition-colors">สายมู.com</Link> ดูดวงออนไลน์ฟรี ด้วย AI
+          </p>
         </div>
       </div>
     );
@@ -183,31 +233,14 @@ export default function CompatibilitySharePage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <CompatibilityReading
             score={result.score}
-            analysis={result.analysis}
+            analysis={result.analysis ?? ''}
             structuredContent={result.structuredContent}
             relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
           />
         </motion.div>
 
         {/* CTA: Try it yourself */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-          <Card className="bg-gradient-to-br from-accent/20 to-accentBright/10 border-accent/30">
-            <CardContent className="pt-6">
-              <div className="text-center space-y-4">
-                <Sparkles className="w-8 h-8 text-accentBright mx-auto" />
-                <h3 className="text-lg font-heading text-ink">แล้วคุณกับคนในใจ เข้ากันแค่ไหน</h3>
-                <p className="text-inkMuted text-sm">ลองดูดวงคู่ฟรี มีทั้งคนคุย คนรัก เพื่อน และครอบครัว</p>
-                <Button
-                  size="lg"
-                  className="w-full max-w-xs mx-auto"
-                  onClick={() => router.push('/dashboard/compatibility')}
-                >
-                  ลองดูดวงของคุณ
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {tryYours}
 
         {/* Footer */}
         <div className="text-center py-4">

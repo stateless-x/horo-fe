@@ -1,0 +1,105 @@
+import type { ReactNode } from 'react';
+import { ChevronDown, Sprout } from 'lucide-react';
+import { ElementClayImage } from '@/components/ui/element-clay-image';
+import type { V4Chapter } from '@/lib-packages/shared/types/compatibility-v4';
+import { ELEMENT_TH, paragraphs, REPORT_CARD, ThaiText, type ReportElement } from './report-kit';
+
+interface ChapterCardProps {
+  chapter: V4Chapter;
+  n: number;
+  /** partner and you chapters take that person's element; the others are romance pink. */
+  tone: ReportElement | 'romance';
+  open: boolean;
+  onToggle: () => void;
+  /** The kit parts under the detail (basis facts, do/avoid, lines, scenarios, signals, next month). */
+  kit?: ReactNode;
+}
+
+/**
+ * ChapterCard: number, title, summary and pull quote always visible; the
+ * detail and the chapter's kit open under "อ่านเจาะลึก"; the one move to try
+ * sits in the card's foot.
+ */
+export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCardProps) {
+  const toneText = tone === 'romance' ? 'var(--romance-text)' : `var(--el-${tone})`;
+  const toneFill = tone === 'romance' ? 'var(--color-romance)' : `var(--el-${tone})`;
+  const regionId = `ch-${chapter.key}-more`;
+  return (
+    <article
+      id={`ch-${chapter.key}`}
+      aria-labelledby={`ch-${chapter.key}-title`}
+      className={`${REPORT_CARD} scroll-mt-32 overflow-clip px-5 pt-5 sm:px-7 sm:pt-[26px] min-[1120px]:scroll-mt-20`}
+    >
+      <header className="flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="grid size-[34px] shrink-0 place-items-center rounded-full border font-mono text-[0.8125rem] tabular-nums"
+          style={{
+            color: toneText,
+            borderColor: `color-mix(in srgb, ${toneFill} 40%, transparent)`,
+            background: `color-mix(in srgb, ${toneFill} 12%, transparent)`,
+          }}
+        >
+          {n}
+        </span>
+        <h2
+          id={`ch-${chapter.key}-title`}
+          tabIndex={-1}
+          className="min-w-0 flex-1 font-heading text-xl font-semibold leading-snug text-ink focus:outline-none"
+        >
+          <span className="sr-only">บทที่ {n} </span>
+          {chapter.title}
+        </h2>
+        {tone !== 'romance' && (
+          <ElementClayImage element={tone} alt={`ธาตุ${ELEMENT_TH[tone]}`} sizes="30px" className="size-[30px] shrink-0" />
+        )}
+      </header>
+      <p className="mt-3 leading-[1.75] text-ink">
+        <ThaiText>{chapter.summary}</ThaiText>
+      </p>
+      <blockquote className="relative mt-[18px] pl-[30px] font-oracle text-[1.3125rem] font-light leading-[1.6] text-ink">
+        <span aria-hidden="true" className="absolute -top-[0.08em] left-0 font-oracle text-[2.75rem] font-normal leading-none" style={{ color: toneText }}>
+          &ldquo;
+        </span>
+        <p>
+          <ThaiText>{chapter.pullQuote}</ThaiText>
+        </p>
+      </blockquote>
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={regionId}
+        onClick={onToggle}
+        className="mt-[18px] flex min-h-11 w-full items-center justify-between rounded-md border border-edge bg-surface2 px-4 font-heading text-sm font-semibold text-ink transition-colors hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+      >
+        {open ? 'ย่อบทนี้' : 'อ่านเจาะลึก'}
+        <ChevronDown className={`size-4 transition-transform duration-300 motion-reduce:transition-none ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+      </button>
+      <div
+        id={regionId}
+        inert={!open}
+        className={`grid transition-[grid-template-rows] duration-[450ms] ease-[cubic-bezier(.16,1,.3,1)] motion-reduce:transition-none ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div className="pt-5">
+            {paragraphs(chapter.detail).map((paragraph, i) => (
+              <p key={i} className="mb-[1em] max-w-[62ch] font-oracle text-lg font-light leading-[1.8] text-ink last:mb-0">
+                <ThaiText>{paragraph}</ThaiText>
+              </p>
+            ))}
+            {kit}
+          </div>
+        </div>
+      </div>
+      <footer className="-mx-5 mt-5 grid grid-cols-[24px_minmax(0,1fr)] gap-3 border-t border-edge bg-surface2/70 px-5 pb-[18px] pt-4 sm:-mx-7 sm:mt-[22px] sm:px-7 sm:pb-5 sm:pt-[18px]">
+        <Sprout className="mt-0.5 size-5 text-romanceText" aria-hidden="true" />
+        <div>
+          <p className="font-heading text-sm font-semibold leading-snug text-romanceText">ลองทำ</p>
+          <p className="mt-0.5 font-medium leading-[1.7] text-ink">
+            <ThaiText>{chapter.move}</ThaiText>
+          </p>
+        </div>
+      </footer>
+    </article>
+  );
+}

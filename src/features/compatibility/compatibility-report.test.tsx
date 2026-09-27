@@ -8,6 +8,7 @@ const chapter = (key: CompatibilityV4Content['chapters'][number]['key'], title: 
   key,
   title,
   summary: `สรุปบท${title}`,
+  pullQuote: `คำคมบท${title}`,
   detail: `รายละเอียดบท${title}`,
   move: `สิ่งที่ลองทำในบท${title}`,
 });
@@ -15,7 +16,16 @@ const chapter = (key: CompatibilityV4Content['chapters'][number]['key'], title: 
 const content: CompatibilityV4Content = {
   contentVersion: 4,
   generatedOn: '2026-09-27',
-  archetype: { key: 'generating-combine', name: 'คู่เติมเต็ม', tagline: 'คนหนึ่งหนุน อีกคนเติบโต' },
+  archetype: { key: 'fire-metal', name: 'คู่ไฟหลอมทอง', tagline: 'ความร้อนที่ขัดเกลาให้คมขึ้น ขอแค่อย่าร้อนเกินจนเสียรูป' },
+  people: {
+    reader: { element: 'metal', yinYang: 'yang', mbti: 'INFP' },
+    partner: { element: 'fire', yinYang: 'yin', mbti: 'ESTJ' },
+  },
+  palace: {
+    reader: { naksat: 'มะเมีย', animal: 'ม้า', hidden: { element: 'fire', yinYang: 'yin' } },
+    partner: { naksat: 'ระกา', animal: 'ไก่', hidden: { element: 'metal', yinYang: 'yin' } },
+  },
+  readingMinutes: 11,
   dimensions: [
     { key: 'chemistry', label: 'เคมี', score: 82, basis: ['dayBranch', 'element'] },
     { key: 'communication', label: 'การสื่อสาร', score: 64, basis: ['element', 'dayBranch'] },
@@ -74,32 +84,48 @@ const render = (view: 'teaser' | 'full', onUnlock?: () => void) =>
   );
 
 describe('CompatibilityReport', () => {
-  test('the teaser shows the cover and score bars, locks the meanings, and holds no paid text', () => {
+  test('the teaser shows the cover, bars, questions and the locked door, and holds no paid text', () => {
     const html = render('teaser', () => {});
-    expect(html).toContain('มิ้นท์ กับ ต้น');
-    expect(html).toContain('คู่เติมเต็ม');
+    expect(html).toContain('คู่ไฟหลอมทอง');
+    expect(html).toContain('มิ้นท์');
+    expect(html).toContain('เจ้าวันทองหยาง');
     expect(html).toContain(content.cover.verdict);
-    for (const dimension of content.dimensions) expect(html).toContain(`>${dimension.score}<`);
+    for (const dimension of content.dimensions) expect(html).toContain(`${dimension.score}<span class="sr-only">จาก 100`);
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);
-    expect(html).toContain('อ่านรายงานฉบับเต็ม');
-    expect(html).not.toContain(content.overview.story);
-    expect(html).not.toContain('บรรทัดเคมี');
-    expect(html).not.toContain('รายละเอียดบท');
-    expect(html).not.toContain('ข้อความเดือนตุลา');
-    expect(html).not.toContain('ขั้นแรก');
+    expect(html).toContain('ใช้ 1 เครดิตปลดล็อก (มี 1 เครดิต)');
+    expect(html).toContain('อ่านราว <b class="font-semibold text-ink">11 นาที</b>');
+    for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดบท', 'คำคมบท', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
+      expect(html).not.toContain(paid);
+    }
+    // No seal before the report is open.
+    expect(html).not.toContain('ฉบับเต็ม · ดวงคู่ · สายมู');
   });
 
-  test('the full view has the overview, six chapters, the calendar with labels in words, and the plan', () => {
+  test('the full view has the seal, meanings, six chapters with their kits, moon-phase months and the plan', () => {
     const html = render('full');
+    expect(html).toContain('ฉบับเต็ม · ดวงคู่ · สายมู');
     expect(html).toContain(content.overview.story);
     expect(html).toContain('บรรทัดความไว้ใจ');
     expect(html.match(/อ่านเจาะลึก/g)).toHaveLength(6);
-    expect(html).toContain('ประโยคที่ส่งได้เลย');
+    expect(html).toContain('คำคมบทแรงดึงดูด');
+    // The attraction chapter's computed basis: both spouse palaces.
+    expect(html).toContain('มะเมีย (ม้า)');
+    expect(html).toContain('มีทองหยินซ่อนอยู่');
+    expect(html).toContain('ประโยคพร้อมส่ง');
     expect(html).toContain('สัญญาณว่าควรชะลอ');
-    // The month state is a word and an icon, not only a color.
-    for (const word of ['ดี', 'กลาง', 'ระวัง']) expect(html).toContain(`</svg>${word}</p>`);
+    expect(html).toContain('ก้าวต่อไปเหมาะกับเดือนตุลาคม 2569');
+    // Month states are a word beside a moon glyph, not only a color.
+    for (const word of ['ดี', 'กลาง', 'ระวัง']) expect(html).toContain(`>${word}</span>`);
     expect(html).toContain('ข้อความเดือนธันวา');
-    expect(html).toContain('วันที่ 3');
-    expect(html).not.toContain('ในรายงานฉบับเต็ม');
+    expect(html).toContain('วันที่ <span class="font-mono">3</span>');
+    expect(html).toContain('การ์ดคู่สำหรับแชร์');
+    expect(html).not.toContain('ใช้ 1 เครดิตปลดล็อก');
+  });
+
+  test('the share card carries free fields only', () => {
+    const html = render('full');
+    const card = html.slice(html.indexOf('การ์ดแชร์'), html.indexOf('ดูดวงคู่ของคุณ'));
+    expect(card).toContain('คู่ไฟหลอมทอง');
+    for (const paid of ['สรุปบท', 'คำคมบท', content.cover.verdict, content.cover.lockedHints[0].text]) expect(card).not.toContain(paid);
   });
 });

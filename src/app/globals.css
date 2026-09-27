@@ -40,6 +40,8 @@
   --success: #047857;
   --warn: #b45309;
   --danger: #b91c1c;
+  /* Romance Pink TEXT for ดวงคู่ surfaces: pink-700, since pink-600 drops under 4.5:1 on tinted fills. */
+  --romance-text: #be185d;
   /* MBTI group hues (16personalities). Fills keep the hue; text uses a step that passes 4.5:1. */
   --mbti-analysts: #88619a;
   --mbti-analysts-text: #88619a;
@@ -88,6 +90,7 @@
   --success: #34d399;
   --warn: #fbbf24;
   --danger: #f87171;
+  --romance-text: #f472b6;
   --mbti-analysts: #88619a;
   --mbti-analysts-text: #9470a5;
   --mbti-diplomats: #33a474;
@@ -116,6 +119,9 @@
   --color-success: var(--success);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
+  --color-romanceText: var(--romance-text);
+  /* Romance Pink fill: fixed in both themes (fills and glows, never text). */
+  --color-romance: #e85d75;
 }
 
 /* Static tokens: fonts + animations (theme-independent) */

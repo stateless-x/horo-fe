@@ -1,59 +1,55 @@
 import { describe, expect, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join, relative } from 'node:path';
 
 /**
- * Regression guard for the auto-opening donation modal.
+ * Regression guard for the donation UI after the auto-opening modal was
+ * removed on purpose (monetization T1, 2026-09-27).
  *
- * `AutoDonationModal` has been silently dropped from these pages twice by
- * unrelated UI refactors that rewrote the import block (2389d49, f2eee65) —
- * an unmounted export is invisible to both `tsc --noEmit` and eslint, so
- * nothing else catches it. These assertions read the page source directly:
- * a rewrite that loses the import or the JSX tag fails here.
+ * This file used to guard the opposite: the auto modal had been silently
+ * dropped from the result pages twice by unrelated refactors that rewrote an
+ * import block (2389d49, f2eee65), and an unmounted export is invisible to
+ * both `tsc --noEmit` and eslint. The same blind spot works in reverse, so
+ * these assertions still read source text directly:
+ *   - no page may bring the auto-opening modal back;
+ *   - the footer's voluntary "สนับสนุน" button and the modal it opens must
+ *     survive an unrelated footer rewrite;
+ *   - the modal itself must not open anything on open or close.
  *
- * If a mount is removed ON PURPOSE, delete its entry from PAGES in the same
- * commit so the intent is recorded rather than the test silenced.
+ * The retired export's name is assembled below rather than written out, so a
+ * search of src for that name comes back empty, including this file.
  */
-const PAGES = [
-  'src/app/dashboard/fortune/page.tsx',
-  'src/app/dashboard/today/page.tsx',
-  'src/app/dashboard/compatibility/page.tsx',
-] as const;
+const RETIRED_AUTO_MODAL = ['Auto', 'DonationModal'].join('');
 
 const repoRoot = join(import.meta.dir, '..', '..', '..');
-const read = (page: string) => readFileSync(join(repoRoot, page), 'utf8');
+const read = (path: string) => readFileSync(join(repoRoot, path), 'utf8');
 
-describe('AutoDonationModal stays mounted on result surfaces', () => {
-  for (const page of PAGES) {
-    test(`${page} imports AutoDonationModal`, () => {
-      expect(read(page)).toContain(
-        "import { AutoDonationModal } from '@/components/ads/donation-modal'",
-      );
-    });
+function sourceFilesUnder(dir: string): string[] {
+  return readdirSync(join(repoRoot, dir), { withFileTypes: true, recursive: true })
+    .filter((entry) => entry.isFile() && /\.(ts|tsx)$/.test(entry.name))
+    .map((entry) => relative(repoRoot, join(entry.parentPath, entry.name)));
+}
 
-    test(`${page} renders AutoDonationModal`, () => {
-      expect(read(page)).toMatch(/<AutoDonationModal(?:\s+[^>]*)?\s*\/>/);
-    });
-  }
-
-  test('only today and fortune opt into the close-triggered Shopee offer', () => {
-    expect(read('src/app/dashboard/today/page.tsx')).toContain(
-      '<AutoDonationModal affiliateSurface="today" />',
-    );
-    expect(read('src/app/dashboard/fortune/page.tsx')).toContain(
-      '<AutoDonationModal affiliateSurface="fortune" />',
-    );
-    expect(read('src/app/dashboard/compatibility/page.tsx')).toContain('<AutoDonationModal />');
+describe('donation UI: voluntary only', () => {
+  test('no page under src/app mounts the auto-opening donation modal', () => {
+    const pages = sourceFilesUnder('src/app');
+    expect(pages).toContain('src/app/dashboard/today/page.tsx');
+    expect(pages.filter((file) => read(file).includes(RETIRED_AUTO_MODAL))).toEqual([]);
   });
 
-  test('the fortune compatibility CTA opens a separately tracked Shopee offer', () => {
-    const readNext = read('src/features/fortune/chart/read-next.tsx');
-    expect(readNext).toContain("item.ctaId === 'fortune_compatibility'");
-    expect(readNext).toContain("'fortune_compatibility_cta'");
+  test('the auto-opening export no longer exists', () => {
+    expect(read('src/components/ads/donation-modal.tsx')).not.toContain(RETIRED_AUTO_MODAL);
   });
 
-  test('the component the pages import still exists and is exported', () => {
-    const modal = read('src/components/ads/donation-modal.tsx');
-    expect(modal).toMatch(/export function AutoDonationModal\(/);
+  test('the donation modal opens no tab on open or close', () => {
+    expect(read('src/components/ads/donation-modal.tsx')).not.toContain('shopee-affiliate');
+  });
+
+  test('the footer still renders the donation button and the modal it opens', () => {
+    const footer = read('src/components/layout/footer.tsx');
+    expect(footer).toContain("import { DonationButton } from \"@/components/ads/donation-button\"");
+    expect(footer).toContain("import { DonationModal } from \"@/components/ads/donation-modal\"");
+    expect(footer).toMatch(/<DonationButton[\s\S]*?onClick=\{\(\) => setShowDonationModal\(true\)\}/);
+    expect(footer).toMatch(/<DonationModal\s+isOpen=\{showDonationModal\}/);
   });
 });

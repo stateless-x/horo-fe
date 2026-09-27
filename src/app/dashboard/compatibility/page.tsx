@@ -28,7 +28,6 @@ import {
 import { CompatibilityForm } from '@/features/compatibility/compatibility-form';
 import { CompatibilityLoading } from '@/features/compatibility/compatibility-loading';
 import { CompatibilityResultView } from '@/features/compatibility/compatibility-result';
-import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { CompatibilityHistory } from '@/features/compatibility/compatibility-history';
 import { MainLoader } from '@/components/ui/main-loader';
 
@@ -288,10 +287,6 @@ export default function CompatibilityPage() {
           onShareInitiated={handleShareInitiated}
           onResultOpen={handleResultOpen}
         />
-
-        {/* Auto-open donation modal. Only in the result branch: the form and
-            history views below carry no reading to reward. */}
-        <AutoDonationModal />
       </>
     );
   }

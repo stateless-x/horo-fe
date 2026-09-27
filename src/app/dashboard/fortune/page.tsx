@@ -26,7 +26,6 @@ import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { FortuneTabBar, fortuneTabId, type FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
 import { ReadNext, READ_NEXT_OVERVIEW, READ_NEXT_READINGS, READ_NEXT_DETAILS } from '@/features/fortune/chart/read-next';
-import { AutoDonationModal } from '@/components/ads/donation-modal';
 import { getChartReadingPeriod, resolveChartReadingPeriod } from '@/lib/date-utils';
 
 const ELEMENT_NAMES = {
@@ -356,11 +355,6 @@ export default function FortuneChartPage() {
           </motion.div>
         )}
       </div>
-
-      {/* Auto-open donation modal. Mounted unconditionally: this whole
-          return is already behind the `chartData` guard above, so the
-          reading is on screen by the time it can fire. */}
-      <AutoDonationModal affiliateSurface="fortune" />
 
       {/* Share Sheet */}
       <ShareSheet

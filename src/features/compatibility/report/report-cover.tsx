@@ -106,7 +106,7 @@ export function ReportCover({ content, score, readerName, partnerName, relations
         <PersonColumn name={partnerName} person={partner} />
       </div>
 
-      <p className="mt-[18px] text-center font-mono text-xs font-medium tracking-[0.05em] text-inkMuted">{eyebrow}</p>
+      <p className="mt-[18px] text-center font-mono text-xs font-medium text-inkMuted">{eyebrow}</p>
       <h1
         id="report-archetype"
         className="mt-1 text-balance text-center font-heading text-[clamp(2rem,8.6vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-ink"

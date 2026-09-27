@@ -149,9 +149,9 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="grid gap-2.5 pt-5">
+            <div className="grid grid-cols-[minmax(0,1fr)] gap-2.5 pt-5">
               {onUnlock && (
-                <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="w-full gap-2.5 font-heading">
+                <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
                   {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Lock className="size-5" aria-hidden="true" />}
                   {busy ? 'กำลังเขียนฉบับเต็ม (ราว 20 วินาที)' : 'ใช้ 1 เครดิตปลดล็อก (มี 1 เครดิต)'}
                 </Button>

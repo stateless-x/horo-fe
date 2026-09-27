@@ -39,11 +39,35 @@ export function ThaiText({ children }: { children: string }) {
 }
 
 const graphemes = new Intl.Segmenter('th', { granularity: 'grapheme' });
+const words = new Intl.Segmenter('th', { granularity: 'word' });
+const graphemeCount = (text: string) => [...graphemes.segment(text)].length;
+
+/**
+ * Thai words a display line may break before: connectives and prepositions
+ * that open a new sense group ("…ให้กันได้|ในพริบตา"). ICU's dictionary, which
+ * both Intl.Segmenter and the browser's line breaker use, splits compounds such
+ * as พริบตา into พริบ|ตา, so a word boundary alone is not a safe place to break.
+ */
+const BREAK_BEFORE = new Set(['ที่', 'ซึ่ง', 'ใน', 'ให้', 'แต่', 'และ', 'หรือ', 'กับ', 'ของ', 'เมื่อ', 'ถ้า', 'จน', 'ก็', 'ว่า', 'เพื่อ', 'เพราะ', 'จาก', 'ด้วย', 'โดย']);
+
+/** A long phrase split into sense groups, each starting at a BREAK_BEFORE word. */
+function senseGroups(phrase: string): string[] {
+  const groups: string[] = [];
+  for (const { segment } of words.segment(phrase)) {
+    if (groups.length === 0 || BREAK_BEFORE.has(segment)) groups.push(segment);
+    else groups[groups.length - 1] += segment;
+  }
+  return groups;
+}
+
+const Nowrap = ({ text }: { text: string }) => <span className="whitespace-nowrap">{text}</span>;
 
 /**
  * The phrase-keeping rule for short display lines (archetype tagline, share
- * card): Thai has no spaces between words, so a line may only break at the
- * spaces between phrases. Phrases up to 16 graphemes never break inside.
+ * card): Thai has no spaces between words, so a line breaks at the spaces
+ * between phrases. A phrase of up to 16 graphemes never breaks inside. A longer
+ * phrase breaks only between its sense groups (senseGroups), never mid-word;
+ * a group longer than 16 graphemes is left to the browser.
  */
 export function DisplayLine({ text }: { text: string }) {
   const phrases = text.split(' ');
@@ -52,7 +76,16 @@ export function DisplayLine({ text }: { text: string }) {
       {phrases.map((phrase, i) => (
         <Fragment key={i}>
           {i > 0 && ' '}
-          {[...graphemes.segment(phrase)].length <= 16 ? <span className="whitespace-nowrap">{phrase}</span> : phrase}
+          {graphemeCount(phrase) <= 16 ? (
+            <Nowrap text={phrase} />
+          ) : (
+            senseGroups(phrase).map((group, j) => (
+              <Fragment key={j}>
+                {j > 0 && <wbr />}
+                {graphemeCount(group) <= 16 ? <Nowrap text={group} /> : group}
+              </Fragment>
+            ))
+          )}
         </Fragment>
       ))}
     </>

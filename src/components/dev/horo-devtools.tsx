@@ -28,6 +28,16 @@ const DEFAULT_PREFS: Prefs = {
   tab: DEV_GENERATORS[0].id,
 };
 
+/** Below this width the panel only docks at the bottom and opens taller by default. */
+const NARROW_QUERY = '(max-width: 767px)';
+
+/** Defaults for this window: on a phone the panel starts at 75% of the height, so a result fits. */
+function defaultPrefs(): Prefs {
+  return window.matchMedia(NARROW_QUERY).matches
+    ? { ...DEFAULT_PREFS, height: Math.round(window.innerHeight * 0.75) }
+    : DEFAULT_PREFS;
+}
+
 /**
  * Stored preferences, or the defaults when there are none or they no longer
  * parse (an older shape, or hand-edited). Storage can also be unavailable
@@ -39,18 +49,18 @@ function readPrefs(): Prefs {
     raw = localStorage.getItem(STORAGE_KEY);
   } catch {
     // Storage blocked: start from the defaults every time.
-    return DEFAULT_PREFS;
+    return defaultPrefs();
   }
-  if (raw === null) return DEFAULT_PREFS;
+  if (raw === null) return defaultPrefs();
   let json: unknown;
   try {
     json = JSON.parse(raw);
   } catch {
     // Not JSON (hand-edited or another tool's key): start over.
-    return DEFAULT_PREFS;
+    return defaultPrefs();
   }
   const parsed = PrefsSchema.safeParse(json);
-  if (!parsed.success) return DEFAULT_PREFS;
+  if (!parsed.success) return defaultPrefs();
   const knownTab = DEV_GENERATORS.some((generator) => generator.id === parsed.data.tab);
   return knownTab ? parsed.data : { ...parsed.data, tab: DEFAULT_PREFS.tab };
 }
@@ -91,12 +101,18 @@ export function isTypingTarget(target: EventTarget | null): boolean {
 export function HoroDevtools() {
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
   const [mounted, setMounted] = useState(false);
+  const [narrow, setNarrow] = useState(false);
   const resizing = useRef(false);
 
   // Read storage after mount: the first client render must match the server's (nothing).
   useEffect(() => {
     setPrefs(readPrefs());
     setMounted(true);
+    const query = window.matchMedia(NARROW_QUERY);
+    const onChange = () => setNarrow(query.matches);
+    onChange();
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
   }, []);
 
   const update = useCallback((patch: Partial<Prefs>) => {
@@ -149,7 +165,8 @@ export function HoroDevtools() {
 
   if (!mounted) return null;
 
-  const bottom = prefs.dock === 'bottom';
+  // A right dock has no room below 768 px; the stored choice comes back on a wider window.
+  const bottom = prefs.dock === 'bottom' || narrow;
   // Stored sizes can outgrow a smaller window; the panel never exceeds the viewport.
   const panelStyle = bottom
     ? { height: `min(${prefs.height}px, calc(100vh - 2.5rem))` }
@@ -212,10 +229,11 @@ export function HoroDevtools() {
             </nav>
             <button
               type="button"
+              disabled={narrow}
               onClick={() => update({ dock: bottom ? 'right' : 'bottom' })}
               aria-label={bottom ? 'ย้ายไปด้านขวา' : 'ย้ายไปด้านล่าง'}
               title={bottom ? 'ย้ายไปด้านขวา' : 'ย้ายไปด้านล่าง'}
-              className="flex size-8 items-center justify-center rounded text-inkMuted hover:bg-edge hover:text-ink"
+              className="flex size-8 items-center justify-center rounded text-inkMuted hover:bg-edge hover:text-ink disabled:pointer-events-none disabled:opacity-40"
             >
               {bottom ? <PanelRight className="size-4" aria-hidden="true" /> : <PanelBottom className="size-4" aria-hidden="true" />}
             </button>

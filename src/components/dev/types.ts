@@ -50,6 +50,8 @@ export interface DevGeneratorConfig {
   fields: ReadonlyArray<DevField>;
   presets: ReadonlyArray<DevPreset>;
   variants: ReadonlyArray<DevVariant>;
+  /** One line describing the last request, shown in place of the form after a generation. */
+  summary: (values: DevFormValues, variants: DevVariantValues) => string;
   /** Maps form values and chosen variants to the endpoint's request body. */
   buildRequest: (values: DevFormValues, variants: DevVariantValues) => unknown;
   /** The variant compare mode runs once per option, side by side. Omit to disable compare. */

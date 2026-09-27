@@ -40,6 +40,7 @@ export const teaserGenerator: DevGeneratorConfig = {
     },
   })),
   variants: [],
+  summary: (values) => `${values.name} · ${values.birthDate}`,
   buildRequest: (values): BirthProfile => ({
     name: values.name,
     // Same shape onboarding sends: an ISO datetime at UTC midnight.

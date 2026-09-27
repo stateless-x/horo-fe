@@ -1,11 +1,12 @@
 import { z } from 'zod';
-import { RELATIONSHIP_TYPES } from '@/lib-packages/shared';
+import { RELATIONSHIP_LABELS, RELATIONSHIP_TYPES } from '@/lib-packages/shared';
 import { CompatibilityStructuredContentSchema } from '@/lib-packages/shared/types/reading';
 import {
   COMPATIBILITY_VIEWS,
   CompatibilityV3ContentSchema,
   shapeCompatibilityView,
 } from '@/lib-packages/shared/types/compatibility-v3';
+import { CompatibilityV4ContentSchema } from '@/lib-packages/shared/types/compatibility-v4';
 import {
   COMPATIBILITY_DEV_FIXTURES,
   type DevCompatibilityRequest,
@@ -13,17 +14,26 @@ import {
 import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
 import type { DevGeneratorConfig } from '../types';
 
-const OutputSchema = z.object({ score: z.number(), relationshipType: z.enum(RELATIONSHIP_TYPES) });
-const ContentSchema = z.union([CompatibilityStructuredContentSchema, CompatibilityV3ContentSchema]);
+const OutputSchema = z.object({
+  score: z.number(),
+  relationshipType: z.enum(RELATIONSHIP_TYPES),
+  readerName: z.string().nullable(),
+  partnerName: z.string(),
+  qualityFlags: z.array(z.string()).optional(),
+});
+const ContentSchema = z.union([CompatibilityStructuredContentSchema, CompatibilityV3ContentSchema, CompatibilityV4ContentSchema]);
+const VERSION_LABELS: Record<string, string> = { v4: 'v4 รายงาน', v3: 'v3', v2: 'v2' };
+const VIEW_LABELS: Record<string, string> = { full: 'ฉบับเต็ม', teaser: 'teaser' };
 
 const optional = (value: string) => (value === '' ? undefined : value);
 
 export const compatibilityGenerator: DevGeneratorConfig = {
   id: 'compatibility',
   title: 'ดวงคู่',
-  description: 'สร้างดวงคู่จากวันเกิดสองคน เลือก v2 หรือ v3 และดูแบบ teaser หรือฉบับเต็ม',
+  description: 'สร้างดวงคู่จากวันเกิดสองคน เลือก v2, v3 หรือรายงาน v4 และดูแบบ teaser หรือฉบับเต็ม',
   endpoint: '/api/dev/generate/compatibility',
   fields: [
+    { key: 'readerName', label: 'ชื่อ (แสดงบนรายงานเท่านั้น)', type: 'text', group: 'คุณ' },
     { key: 'readerBirthDate', label: 'วันเกิด', type: 'date', group: 'คุณ', required: true },
     { key: 'readerBirthHour', label: 'ชั่วโมงเกิด', type: 'hour', group: 'คุณ' },
     { key: 'readerGender', label: 'เพศ', type: 'gender', group: 'คุณ', required: true },
@@ -48,13 +58,18 @@ export const compatibilityGenerator: DevGeneratorConfig = {
     },
   })),
   variants: [
-    { key: 'version', label: 'เวอร์ชัน', options: [{ value: 'v3', label: 'v3' }, { value: 'v2', label: 'v2' }] },
-    { key: 'view', label: 'มุมมอง (v3)', options: [{ value: 'full', label: 'ฉบับเต็ม' }, { value: 'teaser', label: 'teaser' }] },
+    {
+      key: 'version',
+      label: 'เวอร์ชัน',
+      options: [{ value: 'v4', label: 'v4 รายงาน' }, { value: 'v3', label: 'v3' }, { value: 'v2', label: 'v2' }],
+    },
+    { key: 'view', label: 'มุมมอง', options: [{ value: 'full', label: 'ฉบับเต็ม' }, { value: 'teaser', label: 'teaser' }] },
   ],
   compareVariant: 'version',
   presentationVariants: ['view'],
   buildRequest: (values, variants): DevCompatibilityRequest => ({
     reader: {
+      name: optional(values.readerName),
       birthDate: values.readerBirthDate,
       birthHour: values.readerBirthHour === '' ? undefined : Number(values.readerBirthHour),
       gender: z.enum(['male', 'female']).parse(values.readerGender),
@@ -66,27 +81,54 @@ export const compatibilityGenerator: DevGeneratorConfig = {
       mbti: optional(values.partnerMbti),
     },
     relationshipType: z.enum(RELATIONSHIP_TYPES).parse(values.relationshipType),
-    version: z.enum(['v2', 'v3']).parse(variants.version),
+    version: z.enum(['v2', 'v3', 'v4']).parse(variants.version),
     view: z.enum(COMPATIBILITY_VIEWS).parse(variants.view),
   }),
+  summary: (values, variants) =>
+    [
+      RELATIONSHIP_LABELS[z.enum(RELATIONSHIP_TYPES).parse(values.relationshipType)],
+      values.partnerName,
+      VERSION_LABELS[variants.version],
+      variants.version === 'v2' ? null : VIEW_LABELS[variants.view],
+    ]
+      .filter(Boolean)
+      .join(' · '),
   renderResult: (response, variants, setVariant) => {
     const output = OutputSchema.parse(response.output);
     const content = ContentSchema.parse(response.content);
-    // v3: re-shape the stored reading for the current view, the same way the
-    // server does, so switching views never needs another generation.
+    const view = z.enum(COMPATIBILITY_VIEWS).parse(variants.view);
+    // v3 and v4: re-shape the stored reading for the current view, the same
+    // way the server does, so switching views never needs another generation.
+    // Separate branches so each call resolves to its version's overload.
     const structuredContent =
-      content.contentVersion === 3
-        ? shapeCompatibilityView(content, z.enum(COMPATIBILITY_VIEWS).parse(variants.view))
-        : content;
+      content.contentVersion === 4
+        ? shapeCompatibilityView(content, view)
+        : content.contentVersion === 3
+          ? shapeCompatibilityView(content, view)
+          : content;
     return (
-      <CompatibilityReading
-        score={output.score}
-        analysis={JSON.stringify(content)}
-        structuredContent={structuredContent}
-        relationshipType={output.relationshipType}
-        // Prepared, not enforced: in the dev tool the unlock just opens the full view.
-        onUnlock={() => setVariant('view', 'full')}
-      />
+      <>
+        {output.qualityFlags && output.qualityFlags.length > 0 && (
+          <details className="mb-4 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 font-mono text-xs text-ink">
+            <summary className="cursor-pointer">quality flags ({output.qualityFlags.length})</summary>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              {output.qualityFlags.map((flag, index) => (
+                <li key={index}>{flag}</li>
+              ))}
+            </ul>
+          </details>
+        )}
+        <CompatibilityReading
+          score={output.score}
+          analysis={JSON.stringify(content)}
+          structuredContent={structuredContent}
+          relationshipType={output.relationshipType}
+          readerName={output.readerName}
+          partnerName={output.partnerName}
+          // Prepared, not enforced: in the dev tool the unlock just opens the full view.
+          onUnlock={() => setVariant('view', 'full')}
+        />
+      </>
     );
   },
 };

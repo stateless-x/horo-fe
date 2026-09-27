@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { shapeCompatibilityView } from '@/lib-packages/shared/types/compatibility-v3';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility-v4';
 import { CompatibilityReading } from './compatibility-reading';
@@ -70,17 +71,20 @@ const content: CompatibilityV4Content = {
   insights: [],
 };
 
+// The door reads the ละอองดาว wallet through React Query; on the server render it is still loading.
 const render = (view: 'teaser' | 'full', onUnlock?: () => void) =>
   renderToStaticMarkup(
-    <CompatibilityReading
-      score={72}
-      analysis=""
-      structuredContent={shapeCompatibilityView(content, view)}
-      relationshipType="romantic"
-      readerName="มิ้นท์"
-      partnerName="ต้น"
-      onUnlock={onUnlock}
-    />,
+    <QueryClientProvider client={new QueryClient()}>
+      <CompatibilityReading
+        score={72}
+        analysis=""
+        structuredContent={shapeCompatibilityView(content, view)}
+        relationshipType="romantic"
+        readerName="มิ้นท์"
+        partnerName="ต้น"
+        onUnlock={onUnlock}
+      />
+    </QueryClientProvider>,
   );
 
 describe('CompatibilityReport', () => {
@@ -94,7 +98,8 @@ describe('CompatibilityReport', () => {
     expect(html).toContain(content.cover.verdict);
     for (const dimension of content.dimensions) expect(html).toContain(`${dimension.score}<span class="sr-only">จาก 100`);
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);
-    expect(html).toContain('ใช้ 1 เครดิตปลดล็อก (มี 1 เครดิต)');
+    // No balance or price until the wallet loads: never a made-up number.
+    expect(html).toContain('ปลดล็อกด้วยละอองดาว');
     expect(html).toContain('อ่านราว <b class="font-semibold text-ink">11 นาที</b>');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดบท', 'คำคมบท', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
@@ -121,7 +126,7 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('ข้อความเดือนธันวา');
     expect(html).toContain('วันที่ <span class="font-mono">3</span>');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');
-    expect(html).not.toContain('ใช้ 1 เครดิตปลดล็อก');
+    expect(html).not.toContain('ปลดล็อกด้วยละอองดาว');
     // Owner rule: no purple text inside the report (fills, focus rings and controls may stay purple).
     expect(html).not.toMatch(/(?<![\w-])text-accent(Bright|Soft)\b/);
   });

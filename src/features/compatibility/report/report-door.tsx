@@ -1,9 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BookOpen, CalendarDays, History, ListChecks, Loader2, Lock, Sparkles, type LucideIcon } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
+import type { ApiError } from '@/lib/api';
+import { PackSheet } from '@/features/wallet/pack-sheet';
+import { WALLET_QUERY_KEY, useWallet } from '@/features/wallet/use-wallet';
+import { UNIT, stardustWithBaht } from '@/features/wallet/wallet-copy';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 
 export interface ReportContentsEntry {
@@ -38,7 +43,11 @@ interface ReportDoorProps {
   onJump: (id: string) => void;
   allOpen: boolean;
   onToggleAll: () => void;
-  /** Teaser only: unlocks the report; a rejection's message is shown in the door. */
+  /**
+   * Teaser only: unlocks the report. A rejection with HTTP status 402 (not
+   * enough ละอองดาว) turns the button into "เติมละอองดาว"; any other
+   * rejection's message is shown in the door.
+   */
   onUnlock?: () => void | Promise<void>;
 }
 
@@ -49,8 +58,15 @@ interface ReportDoorProps {
  */
 export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
   const reduce = useReducedMotion();
+  const queryClient = useQueryClient();
+  const wallet = useWallet();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [insufficient, setInsufficient] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const price = wallet.data?.prices.compat_unlock;
+  const balance = wallet.data?.balance;
 
   const unlock = async () => {
     if (!onUnlock || busy) return;
@@ -59,12 +75,22 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
     try {
       await onUnlock();
     } catch (failure) {
-      // The caller turns a failed request into a message for the reader.
-      setError(failure instanceof Error ? failure.message : String(failure));
+      if ((failure as ApiError).status === 402) {
+        setInsufficient(true);
+        setSheetOpen(true);
+      } else {
+        // The caller turns a failed request into a message for the reader.
+        setError(failure instanceof Error ? failure.message : String(failure));
+      }
     } finally {
       setBusy(false);
+      // A spend (or a refused one) changes what the balance chip and this button show.
+      await queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
     }
   };
+
+  const unlockLabel =
+    price !== undefined && balance !== undefined ? `ใช้ ${price} ${UNIT} ปลดล็อก (มี ${balance})` : `ปลดล็อกด้วย${UNIT}`;
 
   return (
     <section
@@ -150,10 +176,16 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
             className="overflow-hidden"
           >
             <div className="grid grid-cols-[minmax(0,1fr)] gap-2.5 pt-5">
-              {onUnlock && (
+              {onUnlock && insufficient && (
+                <Button type="button" size="lg" onClick={() => setSheetOpen(true)} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
+                  <Sparkles className="size-5" aria-hidden="true" />
+                  เติม{UNIT}
+                </Button>
+              )}
+              {onUnlock && !insufficient && (
                 <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
                   {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Lock className="size-5" aria-hidden="true" />}
-                  {busy ? 'กำลังเขียนฉบับเต็ม (ราว 20 วินาที)' : 'ใช้ 1 เครดิตปลดล็อก (มี 1 เครดิต)'}
+                  {busy ? 'กำลังเขียนฉบับเต็ม (ราว 20 วินาที)' : unlockLabel}
                 </Button>
               )}
               <p aria-live="polite" className="empty:hidden text-[0.8125rem] leading-relaxed text-inkMuted">
@@ -164,14 +196,27 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
                   {error}
                 </p>
               )}
+              {insufficient && price !== undefined && balance !== undefined && (
+                <p className="text-[0.8125rem] leading-relaxed text-inkMuted">
+                  {UNIT}ไม่พอ มี {balance} ต้องใช้ {stardustWithBaht(price)}
+                </p>
+              )}
               <p className="flex items-start gap-2 text-[0.8125rem] leading-relaxed text-inkMuted">
                 <History className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                เครดิตต้อนรับ ใช้ได้กับ 1 คน · ปลดล็อกแล้วอ่านซ้ำได้ตลอดในประวัติ
+                1 {UNIT} = ฿1 · ปลดล็อกแล้วอ่านซ้ำได้ตลอดในประวัติ
               </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+      {wallet.data && (
+        <PackSheet
+          open={sheetOpen}
+          onClose={() => setSheetOpen(false)}
+          packs={wallet.data.packs}
+          shortfall={insufficient && price !== undefined && balance !== undefined ? { balance, price } : undefined}
+        />
+      )}
     </section>
   );
 }

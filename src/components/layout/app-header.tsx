@@ -10,6 +10,7 @@ import { Menu, X, Settings, Sun, Moon, LogOut } from 'lucide-react';
 import { useAppLogout } from '@/hooks/use-app-logout';
 import { SYSTEMS, type DashboardTab } from '@/lib/systems';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { BalanceChip } from '@/features/wallet/balance-chip';
 
 // Settings is dashboard chrome, not a fortune-telling system, so it isn't
 // part of the systems registry — it's appended here as a fixed last tab.
@@ -98,6 +99,7 @@ export function AppHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5 shrink-0">
+          <BalanceChip />
           <div className="hidden md:flex">
             <ThemeToggle />
           </div>

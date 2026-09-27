@@ -3,7 +3,7 @@ import type { WalletPack } from '@/lib-packages/shared/types/wallet';
 import { UNIT, baht } from './wallet-copy';
 
 /**
- * The three ละอองดาว packs with their baht price and bonus. Payment is not
+ * The three มู packs with their baht price and bonus. Payment is not
  * wired yet (monetization T5), so each pack's button is disabled and one line
  * says why. No purple text: ink, ink-muted and the disabled button only.
  */
@@ -30,7 +30,7 @@ export function PackList({ packs }: { packs: WalletPack[] }) {
         ))}
       </ul>
       <p className="mt-3 text-[0.8125rem] leading-relaxed text-inkMuted">
-        ยังเติมละอองดาวไม่ได้ตอนนี้ การจ่ายด้วย PromptPay กำลังจะเปิด
+        ยังเติม{UNIT}ไม่ได้ตอนนี้ การจ่ายด้วย PromptPay กำลังจะเปิด
       </p>
     </div>
   );

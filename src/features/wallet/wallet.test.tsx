@@ -6,7 +6,7 @@ import { ReportDoor } from '@/features/compatibility/report/report-door';
 import { LedgerList } from './ledger-list';
 import { PackList } from './pack-list';
 import { WALLET_QUERY_KEY } from './use-wallet';
-import { entryLabel, signed, stardustWithBaht } from './wallet-copy';
+import { entryLabel, shortfallLine, signed, unitsWithBaht } from './wallet-copy';
 
 const wallet: WalletResponse = {
   balance: 49,
@@ -46,7 +46,8 @@ const PURPLE_TEXT = /(?<![\w-])text-accent(Bright|Soft)?\b/;
 
 describe('wallet copy', () => {
   test('amounts carry their baht, deltas their sign', () => {
-    expect(stardustWithBaht(49)).toBe('49 ละอองดาว (฿49)');
+    expect(unitsWithBaht(49)).toBe('49 มู (฿49)');
+    expect(shortfallLine(0, 49)).toBe('ยอดไม่พอ มี 0 มู ต้องใช้ 49 มู (฿49)');
     expect(signed(49)).toBe('+49');
     expect(signed(-49)).toBe('−49');
     expect(entryLabel(wallet.ledger[0])).toBe('ปลดล็อกดวงคู่');
@@ -62,14 +63,14 @@ describe('PackList', () => {
       ['109', '฿99'],
       ['229', '฿199'],
     ]) {
-      expect(html).toContain(`>${total}</span> ละอองดาว`);
+      expect(html).toContain(`>${total}</span> มู`);
       expect(html).toContain(price);
     }
     expect(html).toContain('99 + โบนัส 10');
     expect(html).toContain('199 + โบนัส 30');
     expect(html.match(/disabled=""/g)).toHaveLength(3);
     expect(html.match(/PromptPay เร็ว ๆ นี้/g)).toHaveLength(3);
-    expect(html).toContain('ยังเติมละอองดาวไม่ได้ตอนนี้');
+    expect(html).toContain('ยังเติมมูไม่ได้ตอนนี้');
     expect(html).not.toMatch(PURPLE_TEXT);
   });
 });
@@ -102,8 +103,8 @@ describe('ReportDoor with a known balance', () => {
         />
       </QueryClientProvider>,
     );
-    expect(html).toContain('ใช้ 49 ละอองดาว ปลดล็อก (มี 49)');
-    expect(html).toContain('1 ละอองดาว = ฿1');
+    expect(html).toContain('ใช้ 49 มู ปลดล็อก (มี 49 มู)');
+    expect(html).toContain('1 มู = ฿1');
     expect(html).not.toMatch(PURPLE_TEXT);
   });
 });

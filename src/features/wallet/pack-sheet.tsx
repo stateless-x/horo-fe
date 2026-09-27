@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import type { WalletPack } from '@/lib-packages/shared/types/wallet';
 import { PackList } from './pack-list';
-import { UNIT, stardustWithBaht } from './wallet-copy';
+import { UNIT, shortfallLine } from './wallet-copy';
 
 interface PackSheetProps {
   open: boolean;
@@ -15,7 +15,7 @@ interface PackSheetProps {
 }
 
 /**
- * Bottom sheet listing the ละอองดาว packs. A native <dialog>: showModal gives
+ * Bottom sheet listing the มู packs. A native <dialog>: showModal gives
  * the focus trap, Escape and the backdrop; a tap on the backdrop closes it.
  */
 export function PackSheet({ open, onClose, packs, shortfall }: PackSheetProps) {
@@ -53,9 +53,7 @@ export function PackSheet({ open, onClose, packs, shortfall }: PackSheetProps) {
           </button>
         </div>
         <p className="mb-4 mt-1 text-[0.9375rem] leading-relaxed text-inkMuted">
-          {shortfall
-            ? `${UNIT}ไม่พอ มี ${shortfall.balance} ต้องใช้ ${stardustWithBaht(shortfall.price)}`
-            : `1 ${UNIT} = ฿1 · ใช้ได้ในสายมูเท่านั้น`}
+          {shortfall ? shortfallLine(shortfall.balance, shortfall.price) : `1 ${UNIT} = ฿1 · ใช้ได้ในสายมูเท่านั้น`}
         </p>
         <PackList packs={packs} />
       </div>

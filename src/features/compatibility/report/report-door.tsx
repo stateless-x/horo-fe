@@ -8,7 +8,7 @@ import { Button } from '@/lib-packages/ui';
 import type { ApiError } from '@/lib/api';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { WALLET_QUERY_KEY, useWallet } from '@/features/wallet/use-wallet';
-import { UNIT, stardustWithBaht } from '@/features/wallet/wallet-copy';
+import { UNIT, shortfallLine, units } from '@/features/wallet/wallet-copy';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 
 export interface ReportContentsEntry {
@@ -45,7 +45,7 @@ interface ReportDoorProps {
   onToggleAll: () => void;
   /**
    * Teaser only: unlocks the report. A rejection with HTTP status 402 (not
-   * enough ละอองดาว) turns the button into "เติมละอองดาว"; any other
+   * enough มู) turns the button into "เติมมู"; any other
    * rejection's message is shown in the door.
    */
   onUnlock?: () => void | Promise<void>;
@@ -90,7 +90,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
   };
 
   const unlockLabel =
-    price !== undefined && balance !== undefined ? `ใช้ ${price} ${UNIT} ปลดล็อก (มี ${balance})` : `ปลดล็อกด้วย${UNIT}`;
+    price !== undefined && balance !== undefined ? `ใช้ ${units(price)} ปลดล็อก (มี ${units(balance)})` : 'ปลดล็อกฉบับเต็ม';
 
   return (
     <section
@@ -198,7 +198,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
               )}
               {insufficient && price !== undefined && balance !== undefined && (
                 <p className="text-[0.8125rem] leading-relaxed text-inkMuted">
-                  {UNIT}ไม่พอ มี {balance} ต้องใช้ {stardustWithBaht(price)}
+                  {shortfallLine(balance, price)}
                 </p>
               )}
               <p className="flex items-start gap-2 text-[0.8125rem] leading-relaxed text-inkMuted">

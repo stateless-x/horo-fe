@@ -5,9 +5,9 @@ import { Button } from '@/lib-packages/ui';
 import { LedgerList } from '@/features/wallet/ledger-list';
 import { PackList } from '@/features/wallet/pack-list';
 import { useWallet } from '@/features/wallet/use-wallet';
-import { UNIT, baht } from '@/features/wallet/wallet-copy';
+import { UNIT, baht, units } from '@/features/wallet/wallet-copy';
 
-/** /dashboard/wallet: the ละอองดาว balance, the packs, and the newest ledger rows. */
+/** /dashboard/wallet: the มู balance, the packs, and the newest ledger rows. */
 export default function WalletPage() {
   const wallet = useWallet();
 
@@ -15,7 +15,7 @@ export default function WalletPage() {
     <div className="min-h-[calc(100vh-3.5rem)] bg-ground pb-10">
       <div className="border-b border-edge bg-surface">
         <div className="mx-auto max-w-2xl px-4 py-5">
-          <h1 className="font-heading text-2xl font-semibold text-ink">กระเป๋า{UNIT}</h1>
+          <h1 className="font-heading text-2xl font-semibold text-ink">{UNIT}ของคุณ</h1>
           <p className="mt-1 text-sm text-inkMuted">1 {UNIT} = ฿1 · ใช้ได้ในสายมูเท่านั้น ถอนเป็นเงินหรือโอนให้คนอื่นไม่ได้</p>
         </div>
       </div>
@@ -37,13 +37,13 @@ export default function WalletPage() {
             <section aria-labelledby="wallet-balance" className="rounded-2xl border border-edge bg-surface px-5 py-5">
               <h2 id="wallet-balance" className="flex items-center gap-2 text-sm text-inkMuted">
                 <Sparkles className="size-4" aria-hidden="true" />
-                {UNIT}คงเหลือ
+                ยอดคงเหลือ
               </h2>
               <p className="mt-1 font-heading text-4xl font-semibold text-ink">
-                <span className="font-mono tabular-nums">{wallet.data.balance.toLocaleString('th-TH')}</span>
+                <span className="font-mono tabular-nums">{wallet.data.balance.toLocaleString('th-TH')}</span> {UNIT}
               </p>
               <p className="mt-1 text-sm text-inkMuted">
-                เท่ากับ {baht(wallet.data.balance)} · ปลดล็อกดวงคู่ 1 คนใช้ {wallet.data.prices.compat_unlock}
+                เท่ากับ {baht(wallet.data.balance)} · ปลดล็อกดวงคู่ 1 คนใช้ {units(wallet.data.prices.compat_unlock)}
               </p>
             </section>
 

@@ -71,7 +71,7 @@ const content: CompatibilityV4Content = {
   insights: [],
 };
 
-// The door reads the ละอองดาว wallet through React Query; on the server render it is still loading.
+// The door reads the มู wallet through React Query; on the server render it is still loading.
 const render = (view: 'teaser' | 'full', onUnlock?: () => void) =>
   renderToStaticMarkup(
     <QueryClientProvider client={new QueryClient()}>
@@ -99,7 +99,7 @@ describe('CompatibilityReport', () => {
     for (const dimension of content.dimensions) expect(html).toContain(`${dimension.score}<span class="sr-only">จาก 100`);
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);
     // No balance or price until the wallet loads: never a made-up number.
-    expect(html).toContain('ปลดล็อกด้วยละอองดาว');
+    expect(html).toContain('ปลดล็อกฉบับเต็ม');
     expect(html).toContain('อ่านราว <b class="font-semibold text-ink">11 นาที</b>');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดบท', 'คำคมบท', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
@@ -126,7 +126,7 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('ข้อความเดือนธันวา');
     expect(html).toContain('วันที่ <span class="font-mono">3</span>');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');
-    expect(html).not.toContain('ปลดล็อกด้วยละอองดาว');
+    expect(html).not.toContain('ปลดล็อกฉบับเต็ม');
     // Owner rule: no purple text inside the report (fills, focus rings and controls may stay purple).
     expect(html).not.toMatch(/(?<![\w-])text-accent(Bright|Soft)\b/);
   });

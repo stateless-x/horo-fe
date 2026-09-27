@@ -51,7 +51,7 @@ export const teaserGenerator: DevGeneratorConfig = {
   }),
   renderResult: (response) => {
     const result = completedTeaser(response.output);
-    if (!result) throw new Error('The teaser response is not a complete v2 teaser');
+    if (!result) throw new Error('The teaser response is not a complete teaser');
     return (
       <div className="flex justify-center rounded-2xl border border-edge bg-ground px-4 py-8">
         <TeaserResultCard result={result} onBack={noop} onShare={noop} onPrimaryCta={noop} onCompatCta={noop} />

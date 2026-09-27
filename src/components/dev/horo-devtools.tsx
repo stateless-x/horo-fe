@@ -4,12 +4,23 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPoi
 import { createPortal } from 'react-dom';
 import { z } from 'zod';
 import { FlaskConical, PanelBottom, PanelRight, X } from 'lucide-react';
-import { DevGenerator } from './dev-generator';
-import { DEV_GENERATORS } from './generators';
+import { DevLab } from './lab';
+import { RegenerateCompatibility, RegenerateReading } from './regenerate';
 
 const STORAGE_KEY = 'horo-devtools';
 const MIN_HEIGHT = 200;
 const MIN_WIDTH = 360;
+
+/**
+ * The first three write to the signed-in user's own readings (the main
+ * action); ทดลอง holds the stateless previews.
+ */
+const TABS = [
+  { id: 'compatibility', title: 'ดวงคู่', render: () => <RegenerateCompatibility /> },
+  { id: 'daily', title: 'ดวงวันนี้', render: () => <RegenerateReading reading="daily" /> },
+  { id: 'chart', title: 'ดวงเดือน', render: () => <RegenerateReading reading="chart" /> },
+  { id: 'lab', title: 'ทดลอง', render: () => <DevLab /> },
+] as const;
 
 const PrefsSchema = z.object({
   open: z.boolean(),
@@ -25,7 +36,7 @@ const DEFAULT_PREFS: Prefs = {
   dock: 'bottom',
   height: 420,
   width: 640,
-  tab: DEV_GENERATORS[0].id,
+  tab: TABS[0].id,
 };
 
 /** Below this width the panel only docks at the bottom and opens taller by default. */
@@ -61,7 +72,7 @@ function readPrefs(): Prefs {
   }
   const parsed = PrefsSchema.safeParse(json);
   if (!parsed.success) return defaultPrefs();
-  const knownTab = DEV_GENERATORS.some((generator) => generator.id === parsed.data.tab);
+  const knownTab = TABS.some((tab) => tab.id === parsed.data.tab);
   return knownTab ? parsed.data : { ...parsed.data, tab: DEFAULT_PREFS.tab };
 }
 
@@ -93,9 +104,10 @@ export function isTypingTarget(target: EventTarget | null): boolean {
 }
 
 /**
- * horo devtools: a floating toggle that opens a docked panel with one tab per
- * dev generator. Dev builds only (see devtools-loader.tsx). Rendered into a
- * portal on <body> as a fixed overlay, so it never moves the page under it.
+ * horo devtools: a floating toggle that opens a docked panel: regenerate the
+ * signed-in user's readings, or preview generators under ทดลอง. Dev builds
+ * only (see devtools-loader.tsx). Rendered into a portal on <body> as a
+ * fixed overlay, so it never moves the page under it.
  * Alt+Shift+D (Option+Shift+D on a Mac) toggles it; see DEVTOOLS_SHORTCUT.
  */
 export function HoroDevtools() {
@@ -207,22 +219,23 @@ export function HoroDevtools() {
           <header className="flex shrink-0 items-center gap-2 border-b border-edge bg-surface2 px-2">
             <span className="flex items-center gap-1.5 px-1 font-semibold text-accentBright">
               <FlaskConical className="size-3.5" aria-hidden="true" />
-              horo devtools
+              {/* On a phone the four tabs need the room; the icon stays. */}
+              <span className="max-sm:hidden">horo devtools</span>
             </span>
             <nav aria-label="เครื่องมือ" className="flex min-w-0 flex-1 overflow-x-auto">
-              {DEV_GENERATORS.map((generator) => {
-                const active = generator.id === prefs.tab;
+              {TABS.map((tab) => {
+                const active = tab.id === prefs.tab;
                 return (
                   <button
-                    key={generator.id}
+                    key={tab.id}
                     type="button"
                     aria-current={active ? 'page' : undefined}
-                    onClick={() => update({ tab: generator.id })}
-                    className={`shrink-0 border-b-2 px-3 py-2 ${
+                    onClick={() => update({ tab: tab.id })}
+                    className={`shrink-0 border-b-2 px-2 py-2 sm:px-3 ${
                       active ? 'border-accentBright text-ink' : 'border-transparent text-inkMuted hover:text-ink'
                     }`}
                   >
-                    {generator.title}
+                    {tab.title}
                   </button>
                 );
               })}
@@ -248,12 +261,12 @@ export function HoroDevtools() {
             </button>
           </header>
 
-          {/* Every generator stays mounted so a running generation and its
+          {/* Every tab stays mounted so a running generation and its
               result survive switching tabs. */}
           <div className="@container min-h-0 flex-1">
-            {DEV_GENERATORS.map((generator) => (
-              <div key={generator.id} hidden={generator.id !== prefs.tab} className="h-full">
-                <DevGenerator config={generator} />
+            {TABS.map((tab) => (
+              <div key={tab.id} hidden={tab.id !== prefs.tab} className="h-full">
+                {tab.render()}
               </div>
             ))}
           </div>

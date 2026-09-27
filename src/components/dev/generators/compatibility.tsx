@@ -22,15 +22,25 @@ const OutputSchema = z.object({
   qualityFlags: z.array(z.string()).optional(),
 });
 const ContentSchema = z.union([CompatibilityStructuredContentSchema, CompatibilityV3ContentSchema, CompatibilityV4ContentSchema]);
-const VERSION_LABELS: Record<string, string> = { v4: 'v4 รายงาน', v3: 'v3', v2: 'v2' };
-const VIEW_LABELS: Record<string, string> = { full: 'ฉบับเต็ม', teaser: 'teaser' };
+// No version numbers in the UI: v4 is the live report (ฉบับเต็ม), v2 the older reading (แบบเดิม).
+const VERSION_OPTIONS = [
+  { value: 'v4', label: 'ฉบับเต็ม' },
+  { value: 'v3', label: 'ต้นแบบ' },
+  { value: 'v2', label: 'แบบเดิม' },
+];
+const VIEW_OPTIONS = [
+  { value: 'full', label: 'ทั้งหมด' },
+  { value: 'teaser', label: 'ส่วนฟรี' },
+];
+const labelOf = (options: ReadonlyArray<{ value: string; label: string }>, value: string) =>
+  options.find((option) => option.value === value)?.label;
 
 const optional = (value: string) => (value === '' ? undefined : value);
 
 export const compatibilityGenerator: DevGeneratorConfig = {
   id: 'compatibility',
   title: 'ดวงคู่',
-  description: 'สร้างดวงคู่จากวันเกิดสองคน เลือก v2, v3 หรือรายงาน v4 และดูแบบ teaser หรือฉบับเต็ม',
+  description: 'ลองสร้างดวงคู่จากวันเกิดสองคน (ไม่บันทึก) เลือกเนื้อหา แล้วดูทั้งหมดหรือเฉพาะส่วนฟรี',
   endpoint: '/api/dev/generate/compatibility',
   fields: [
     { key: 'readerName', label: 'ชื่อ (แสดงบนรายงานเท่านั้น)', type: 'text', group: 'คุณ' },
@@ -58,12 +68,8 @@ export const compatibilityGenerator: DevGeneratorConfig = {
     },
   })),
   variants: [
-    {
-      key: 'version',
-      label: 'เวอร์ชัน',
-      options: [{ value: 'v4', label: 'v4 รายงาน' }, { value: 'v3', label: 'v3' }, { value: 'v2', label: 'v2' }],
-    },
-    { key: 'view', label: 'มุมมอง', options: [{ value: 'full', label: 'ฉบับเต็ม' }, { value: 'teaser', label: 'teaser' }] },
+    { key: 'version', label: 'เนื้อหา', options: VERSION_OPTIONS },
+    { key: 'view', label: 'มุมมอง', options: VIEW_OPTIONS },
   ],
   compareVariant: 'version',
   presentationVariants: ['view'],
@@ -88,8 +94,8 @@ export const compatibilityGenerator: DevGeneratorConfig = {
     [
       RELATIONSHIP_LABELS[z.enum(RELATIONSHIP_TYPES).parse(values.relationshipType)],
       values.partnerName,
-      VERSION_LABELS[variants.version],
-      variants.version === 'v2' ? null : VIEW_LABELS[variants.view],
+      labelOf(VERSION_OPTIONS, variants.version),
+      variants.version === 'v2' ? null : labelOf(VIEW_OPTIONS, variants.view),
     ]
       .filter(Boolean)
       .join(' · '),

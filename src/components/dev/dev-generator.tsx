@@ -23,13 +23,13 @@ type RunResult =
   | { variants: DevVariantValues; response: DevGenerateResponse<unknown, unknown> }
   | { variants: DevVariantValues; error: string };
 
-type Status =
+export type Status =
   | { kind: 'idle' }
   | { kind: 'running'; startedAt: number }
   | { kind: 'done'; seconds: number }
   | { kind: 'error'; seconds: number };
 
-const controlClass =
+export const controlClass =
   'h-8 w-full rounded border border-inkMuted/30 bg-surface px-2 font-sans text-xs text-ink focus:outline-none focus:ring-2 focus:ring-accentBright';
 
 function emptyValues(fields: ReadonlyArray<DevField>): DevFormValues {
@@ -40,7 +40,7 @@ function defaultVariants(config: DevGeneratorConfig): DevVariantValues {
   return Object.fromEntries(config.variants.map((variant) => [variant.key, variant.options[0].value]));
 }
 
-function describeError(error: unknown): string {
+export function describeError(error: unknown): string {
   const failure = error as ApiError;
   const parts = [
     failure.status ? `HTTP ${failure.status}` : null,
@@ -50,7 +50,7 @@ function describeError(error: unknown): string {
   return parts.filter(Boolean).join(' · ');
 }
 
-function FieldInput({ field, value, onChange }: { field: DevField; value: string; onChange: (value: string) => void }) {
+export function FieldInput({ field, value, onChange }: { field: DevField; value: string; onChange: (value: string) => void }) {
   const id = `dev-field-${field.key}`;
   const select = (options: ReactNode, empty: string) => (
     <select id={id} className={controlClass} value={value} onChange={(event) => onChange(event.target.value)}>
@@ -131,7 +131,7 @@ function FieldInput({ field, value, onChange }: { field: DevField; value: string
   );
 }
 
-function StatusPill({ status, now }: { status: Status; now: number }) {
+export function StatusPill({ status, now }: { status: Status; now: number }) {
   const [label, tone] =
     status.kind === 'idle'
       ? ['idle', 'bg-edge text-inkMuted']
@@ -141,7 +141,7 @@ function StatusPill({ status, now }: { status: Status; now: number }) {
           ? [`done ${status.seconds.toFixed(1)}s`, 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400']
           : [`error ${status.seconds.toFixed(1)}s`, 'bg-red-500/15 text-red-700 dark:text-red-400'];
   return (
-    <span role="status" className={`rounded-full px-2 py-0.5 font-semibold ${tone}`}>
+    <span role="status" className={`shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 font-semibold ${tone}`}>
       {label}
     </span>
   );

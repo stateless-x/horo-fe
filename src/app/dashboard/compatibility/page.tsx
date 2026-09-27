@@ -19,7 +19,6 @@ import { useInfiniteQuery, useQueryClient, useQuery } from '@tanstack/react-quer
 import { api, type ApiError } from '@/lib/api';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { classifyCompatibilityFailure, useTrackEvent } from '@/lib/analytics';
-import { PawjaiAdsBanner } from '@/components/ads/pawjai-ads-banner';
 import {
   RELATIONSHIP_CONFIG,
   type CompatibilityResult,
@@ -399,8 +398,6 @@ function CompatibilityPageContent() {
           onViewHistory={handleViewHistory}
         />
 
-        {/* Ad sits after the form + history value unit */}
-        <PawjaiAdsBanner />
       </div>
     </div>
   );

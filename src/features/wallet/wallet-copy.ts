@@ -1,4 +1,4 @@
-import type { LedgerEntry, LedgerKind, ProductId } from '@/lib-packages/shared/types/wallet';
+import type { LedgerEntry, LedgerKind, ProductId, WalletPack } from '@/lib-packages/shared/types/wallet';
 
 /**
  * Wallet copy: transactional and pronoun-free. The unit มู is pegged
@@ -29,6 +29,12 @@ export function signed(delta: number): string {
   return delta > 0 ? `+${number(delta)}` : `−${number(-delta)}`;
 }
 
+/** The cheapest pack whose มู cover `needed`, or the biggest one if none does. */
+export function smallestPackCovering(packs: WalletPack[], needed: number): WalletPack | undefined {
+  const byPrice = [...packs].sort((a, b) => a.priceBaht - b.priceBaht);
+  return byPrice.find((pack) => pack.base + pack.bonus >= needed) ?? byPrice.at(-1);
+}
+
 /** "ยอดไม่พอ มี 0 มู ต้องใช้ 49 มู (฿49)" */
 export function shortfallLine(balance: number, price: number): string {
   return `ยอดไม่พอ มี ${units(balance)} ต้องใช้ ${unitsWithBaht(price)}`;
@@ -53,7 +59,8 @@ const KIND_LABELS: Record<LedgerKind, string> = {
 
 /** What a ledger row was for, in one short line. */
 export function entryLabel(entry: LedgerEntry): string {
-  if (entry.productId && entry.kind === 'spend') return PRODUCT_LABELS[entry.productId];
-  if (entry.productId && entry.kind === 'refund') return `คืนยอด · ${PRODUCT_LABELS[entry.productId]}`;
+  const named = (label: string) => (entry.refName ? `${label} · ${entry.refName}` : label);
+  if (entry.productId && entry.kind === 'spend') return named(PRODUCT_LABELS[entry.productId]);
+  if (entry.productId && entry.kind === 'refund') return named(`คืนยอด · ${PRODUCT_LABELS[entry.productId]}`);
   return KIND_LABELS[entry.kind];
 }

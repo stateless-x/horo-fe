@@ -5,11 +5,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BookOpen, CalendarDays, History, ListChecks, Loader2, Lock, Sparkles, type LucideIcon } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
-import type { ApiError } from '@/lib/api';
-import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
+import { api, type ApiError } from '@/lib/api';
+import { INSUFFICIENT_BALANCE, type CheckoutResponse } from '@/lib-packages/shared/types/wallet';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
-import { UNIT, shortfallLine, units } from '@/features/wallet/wallet-copy';
+import { UNIT, baht, shortfallLine, smallestPackCovering, units } from '@/features/wallet/wallet-copy';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 
 export interface ReportContentsEntry {
@@ -41,6 +41,8 @@ interface ReportDoorProps {
   contents: ReportContentsEntry[];
   /** Full report: the contents become links and the foot offers "open every chapter". */
   full: boolean;
+  /** The stored reading's id: a one-flow purchase unlocks this row once paid. */
+  unlockRef?: string;
   onJump: (id: string) => void;
   allOpen: boolean;
   onToggleAll: () => void;
@@ -58,7 +60,7 @@ interface ReportDoorProps {
  * it lists what is inside with the unlock button; open, the same list is the
  * table of contents, framed as the bound ฉบับเต็ม.
  */
-export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
+export function ReportDoor({ partnerName, readingMinutes, contents, full, unlockRef, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
   const reduce = useReducedMotion();
   const queryClient = useQueryClient();
   const wallet = enabledWallet(useWallet().data);
@@ -66,9 +68,27 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
   const [error, setError] = useState<string | null>(null);
   const [insufficient, setInsufficient] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [checkout, setCheckout] = useState<CheckoutResponse | null>(null);
 
   const price = wallet?.prices.compat_unlock;
   const balance = wallet?.balance;
+  // Short of the price: the primary button buys and unlocks in one flow instead of spending.
+  const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
+  const pack = wallet && price !== undefined && balance !== undefined ? smallestPackCovering(wallet.packs, price - balance) : undefined;
+
+  /** One-flow purchase: an order for the smallest pack that covers this unlock, which unlocks this row once paid. */
+  const buy = async () => {
+    if (!pack || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      setCheckout(await api.post<CheckoutResponse>('/api/wallet/checkout', { packId: pack.id, unlockRef }));
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : String(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const unlock = async () => {
     if (!onUnlock || busy) return;
@@ -79,8 +99,8 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
     } catch (failure) {
       const refused = failure as ApiError;
       if (refused.status === 402 && refused.body?.error === INSUFFICIENT_BALANCE) {
+        // The balance changed since it was read: offer the purchase, which unlocks after paying.
         setInsufficient(true);
-        setSheetOpen(true);
       } else {
         // The caller turns a failed request into a message for the reader.
         setError(failure instanceof Error ? failure.message : String(failure));
@@ -179,13 +199,34 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
             className="overflow-hidden"
           >
             <div className="grid grid-cols-[minmax(0,1fr)] gap-2.5 pt-5">
-              {onUnlock && insufficient && (
-                <Button type="button" size="lg" onClick={() => setSheetOpen(true)} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
-                  <Sparkles className="size-5" aria-hidden="true" />
-                  เติม{UNIT}
-                </Button>
+              {onUnlock && short && pack && (
+                <>
+                  <Button
+                    type="button"
+                    size="lg"
+                    onClick={buy}
+                    aria-busy={busy}
+                    disabled={busy || checkout !== null}
+                    className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading"
+                  >
+                    {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Lock className="size-5" aria-hidden="true" />}
+                    {checkout?.payment === 'unavailable' ? 'PromptPay เร็ว ๆ นี้' : `ปลดล็อก ${baht(pack.priceBaht)}`}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setSheetOpen(true)}
+                    className="mx-auto min-h-11 rounded-lg px-3 text-sm text-ink underline decoration-edge underline-offset-4 transition-colors hover:decoration-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+                  >
+                    ซื้อแพ็กคุ้มกว่า
+                  </button>
+                  {checkout && (
+                    <p role="status" className="text-[0.8125rem] leading-relaxed text-inkMuted">
+                      {checkout.message}
+                    </p>
+                  )}
+                </>
               )}
-              {onUnlock && !insufficient && (
+              {onUnlock && !(short && pack) && (
                 <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
                   {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Lock className="size-5" aria-hidden="true" />}
                   {busy ? 'กำลังเขียนฉบับเต็ม (ราว 20 วินาที)' : unlockLabel}
@@ -199,7 +240,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
                   {error}
                 </p>
               )}
-              {insufficient && price !== undefined && balance !== undefined && (
+              {short && price !== undefined && balance !== undefined && (
                 <p className="text-[0.8125rem] leading-relaxed text-inkMuted">
                   {shortfallLine(balance, price)}
                 </p>
@@ -217,7 +258,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
           open={sheetOpen}
           onClose={() => setSheetOpen(false)}
           packs={wallet.packs}
-          shortfall={insufficient && price !== undefined && balance !== undefined ? { balance, price } : undefined}
+          shortfall={short && price !== undefined && balance !== undefined ? { balance, price } : undefined}
         />
       )}
     </section>

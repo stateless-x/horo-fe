@@ -159,6 +159,7 @@ export function CompatibilityReport({
           readingMinutes={content.readingMinutes}
           contents={contents}
           full={!!full}
+          unlockRef={reportId}
           onJump={jump}
           allOpen={allOpen}
           onToggleAll={() => setOpenChapters(allOpen ? new Set() : new Set(CHAPTER_KEYS))}

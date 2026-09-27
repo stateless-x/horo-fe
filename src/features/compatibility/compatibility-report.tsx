@@ -76,6 +76,7 @@ export function CompatibilityReport({
   const full = isFull(content) ? content : null;
   const reader = readerName ?? 'คุณ';
   const relationshipLabel = relationshipType ? `ดวง${RELATIONSHIP_LABELS[relationshipType]}` : 'ดวงคู่';
+  const eyebrow = relationshipType ? `ดวงคู่ · ${RELATIONSHIP_LABELS[relationshipType]}` : 'ดวงคู่';
   const doorRef = useRef<HTMLDivElement>(null);
   const [openChapters, setOpenChapters] = useState<Set<V4ChapterKey>>(new Set());
 
@@ -139,7 +140,7 @@ export function CompatibilityReport({
     <div className="mx-auto w-full min-w-0 max-w-[680px] min-[1120px]:col-start-2 min-[1120px]:mx-0">
       <ReportCover
         content={{ archetype: content.archetype, people: content.people, verdict: content.cover.verdict, generatedOn: content.generatedOn }}
-        score={score} readerName={reader} partnerName={partnerName} relationshipLabel={relationshipLabel} full={!!full} />
+        score={score} readerName={reader} partnerName={partnerName} relationshipLabel={relationshipLabel} eyebrow={eyebrow} full={!!full} />
 
       <div className="mt-14 sm:mt-[72px]">
         <DimensionBars dimensions={content.dimensions} lines={full?.overview.dimensionLines} />
@@ -179,7 +180,7 @@ export function CompatibilityReport({
                 event.preventDefault();
                 jump('report-dimensions-section');
               }}
-              className="inline-flex min-h-11 items-center gap-1.5 font-heading text-sm font-medium text-accentBright hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright dark:text-accentSoft"
+              className="inline-flex min-h-11 items-center gap-1.5 font-heading text-sm font-medium text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
             >
               <ArrowUp className="size-4" aria-hidden="true" />
               ความหมายของ {full.dimensions.length} มิติ อยู่ใต้แต่ละแถบด้านบน
@@ -224,16 +225,16 @@ export function CompatibilityReport({
                       event.preventDefault();
                       jump(link.id);
                     }}
-                    className="grid min-h-14 grid-cols-[minmax(0,1fr)_20px] items-center gap-3 px-1 py-2 font-medium leading-snug text-ink transition-colors hover:text-accentBright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+                    className="grid min-h-14 grid-cols-[minmax(0,1fr)_20px] items-center gap-3 px-1 py-2 font-medium leading-snug text-ink transition-colors hover:bg-edgeSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
                   >
                     {link.text}
-                    <ArrowRight className="size-4 text-accentBright" aria-hidden="true" />
+                    <ArrowRight className="size-4 text-inkMuted" aria-hidden="true" />
                   </a>
                 </li>
               ))}
             </ul>
             <div className="mt-5 grid grid-cols-[24px_minmax(0,1fr)] gap-3 rounded-xl border border-edge bg-surface2 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-ink">
-              <History className="mt-0.5 size-5 text-accentBright" aria-hidden="true" />
+              <History className="mt-0.5 size-5 text-inkMuted" aria-hidden="true" />
               <p>ฉบับเต็มนี้เก็บอยู่ในประวัติดวงคู่ของคุณแล้ว เปิดอ่านซ้ำได้ตลอด</p>
             </div>
           </section>

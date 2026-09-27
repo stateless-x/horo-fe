@@ -151,6 +151,7 @@ export default function CompatibilitySharePage() {
             readerName="เจ้าของดวง"
             partnerName={result.partnerName}
             relationshipLabel={relationship.success ? `ดวง${RELATIONSHIP_LABELS[relationship.data]}` : 'ดวงคู่'}
+            eyebrow={relationship.success ? `ดวงคู่ · ${RELATIONSHIP_LABELS[relationship.data]}` : 'ดวงคู่'}
             full={false}
           />
           <DimensionBars dimensions={shared.dimensions} hideLockNote />

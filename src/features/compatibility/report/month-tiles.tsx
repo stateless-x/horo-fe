@@ -48,7 +48,7 @@ export function MonthTiles({ calendar, nextStepMonth, futureChapterNumber, onJum
                   event.preventDefault();
                   onJumpToFuture();
                 }}
-                className="mt-1 inline-flex min-h-11 items-center gap-1.5 font-heading text-sm font-medium text-accentBright hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright dark:text-accentSoft"
+                className="mt-1 inline-flex min-h-11 items-center gap-1.5 font-heading text-sm font-medium text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
               >
                 เหมาะกับก้าวต่อไป ดูบทที่ {futureChapterNumber}
                 <ArrowUp className="size-4" aria-hidden="true" />

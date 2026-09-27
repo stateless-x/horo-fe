@@ -56,6 +56,8 @@ interface ReportCoverProps {
   readerName: string;
   partnerName: string;
   relationshipLabel: string;
+  /** The kind of reading above the archetype, e.g. "ดวงคู่ · ความรัก". */
+  eyebrow: string;
   /** Full report open: the seal ring, the bound frame and the ฉบับเต็ม flag appear. */
   full: boolean;
 }
@@ -64,7 +66,7 @@ interface ReportCoverProps {
  * ReportCover: the pair, the score medallion (sealed once the full report is
  * open), the archetype as the page title, its tagline and the verdict. Free.
  */
-export function ReportCover({ content, score, readerName, partnerName, relationshipLabel, full }: ReportCoverProps) {
+export function ReportCover({ content, score, readerName, partnerName, relationshipLabel, eyebrow, full }: ReportCoverProps) {
   const reduce = useReducedMotion();
   const { reader, partner } = content.people;
   return (
@@ -104,9 +106,10 @@ export function ReportCover({ content, score, readerName, partnerName, relations
         <PersonColumn name={partnerName} person={partner} />
       </div>
 
+      <p className="mt-[18px] text-center font-mono text-xs font-medium tracking-[0.05em] text-inkMuted">{eyebrow}</p>
       <h1
         id="report-archetype"
-        className="mt-[18px] text-balance text-center font-heading text-[clamp(2rem,8.6vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-ink"
+        className="mt-1 text-balance text-center font-heading text-[clamp(2rem,8.6vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-ink"
       >
         {content.archetype.name}
       </h1>
@@ -123,7 +126,7 @@ export function ReportCover({ content, score, readerName, partnerName, relations
         </span>
         {content.generatedOn && <span>{coverDate(content.generatedOn)}</span>}
         {full && (
-          <span className="inline-flex items-center gap-1.5 font-heading font-semibold text-accentBright dark:text-accentSoft">
+          <span className="inline-flex items-center gap-1.5 font-heading font-semibold text-ink">
             <MiniSeal className="size-4" />
             ฉบับเต็ม
           </span>

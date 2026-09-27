@@ -98,7 +98,7 @@ export function ChapterChips({ entries, nav, onJump }: ChapterNavProps) {
                 event.preventDefault();
                 onJump(entry.id);
               }}
-              className={`relative inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 font-heading text-sm font-medium after:absolute after:inset-x-0 after:-inset-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${current ? 'border-accentBright/45 bg-accentBright/10 text-accentBright dark:text-accentSoft' : 'border-edge bg-surface text-inkMuted'}`}
+              className={`relative inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 font-heading text-sm font-medium after:absolute after:inset-x-0 after:-inset-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${current ? 'border-accentBright/45 bg-accentBright/10 text-ink' : 'border-edge bg-surface text-inkMuted'}`}
             >
               {entry.n && <span className="font-mono text-xs">{entry.n}</span>}
               {entry.short}
@@ -122,7 +122,7 @@ export function ChapterRail({ entries, nav, onJump, partnerName, readingMinutes 
       className={`sticky top-[88px] mt-[120px] hidden w-[220px] justify-self-end self-start transition-[opacity,transform,visibility] duration-300 motion-reduce:transition-none min-[1120px]:block ${nav.visible ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-2 opacity-0'}`}
     >
       <div className="flex items-center gap-2.5 border-b border-edge pb-3.5">
-        <MiniSeal className="size-[34px] text-accentBright dark:text-accentSoft" />
+        <MiniSeal className="size-[34px] text-ink" />
         <div>
           <b className="block font-heading text-[0.9375rem] font-semibold leading-snug text-ink">ฉบับเต็ม</b>
           <span className="block text-[0.8125rem] leading-snug text-inkMuted">
@@ -150,7 +150,7 @@ export function ChapterRail({ entries, nav, onJump, partnerName, readingMinutes 
                   event.preventDefault();
                   onJump(entry.id);
                 }}
-                className={`flex min-h-9 items-center gap-2 rounded-md px-2 text-sm leading-snug transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${current ? 'font-semibold text-accentBright dark:text-accentSoft' : 'text-inkMuted'}`}
+                className={`flex min-h-9 items-center gap-2 rounded-md px-2 text-sm leading-snug transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${current ? 'font-semibold text-ink' : 'text-inkMuted'}`}
               >
                 <span className="grid w-4 place-items-center">
                   <EntryMark entry={entry} />

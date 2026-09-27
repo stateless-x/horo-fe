@@ -95,7 +95,7 @@ export const MONTH_WORD: Record<V4MonthLabel, string> = { good: 'ดี', mixed:
 /** Month state color: success, accent and warn read by form too (see MoonGlyph). */
 export const MONTH_TONE: Record<V4MonthLabel, string> = {
   good: 'text-success',
-  mixed: 'text-accentBright dark:text-accentSoft',
+  mixed: 'text-inkMuted',
   caution: 'text-warn',
 };
 
@@ -139,7 +139,7 @@ export function SealRing({ id }: { id: string }) {
   return (
     <svg
       viewBox="0 0 112 112"
-      className="pointer-events-none absolute inset-0 size-full -rotate-[8deg] text-accentBright dark:text-accentSoft"
+      className="pointer-events-none absolute inset-0 size-full -rotate-[8deg] text-inkMuted"
       aria-hidden="true"
     >
       <defs>

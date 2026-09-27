@@ -288,13 +288,20 @@ The report is one page: the free cover, bars and questions stay; the locked pane
 becomes the report's front page when it opens. It speaks to the reader as คุณ, an
 owner decision for this surface, set in Sarabun Light for the reading text.
 - **The seal (ตราประทับ):** a circular ring of text ("ฉบับเต็ม · ดวงคู่ · สายมู") around the
-  score medallion, rotated −8°, accentBright (accentSoft in dark). A mini seal (double ring
-  and four-point star) marks ฉบับเต็ม in the cover meta, the door and the side rail. It
-  appears only once the full report is open.
+  score medallion, rotated −8°, in ink-muted. A mini seal (double ring and four-point star)
+  marks ฉบับเต็ม in the cover meta, the door and the side rail, in ink. It appears only once
+  the full report is open.
+- **No purple text inside the report (owner, 2026-09-27):** seal text, the ฉบับเต็ม flag, the
+  active chapter chip and rail entry, jump links and list arrows are ink or ink-muted. Purple
+  stays on real buttons, focus rings, controls and fills; the progress line is Romance Pink;
+  chapter numbers keep their element or romance tone.
+- **Reading-kind eyebrow:** above the archetype h1, a JetBrains Mono label line (500, 0.75rem,
+  tracking 0.05em, ink-muted) names the reading, "ดวงคู่ · {RELATIONSHIP_LABELS}", e.g.
+  "ดวงคู่ · คนคุย".
 - **Double-hairline frame:** the cover and the door, once open, carry a second hairline
   inset 5px inside the card (`BOUND_FRAME`, inset shadows so nothing shifts). It says
   "bound edition"; don't use it elsewhere.
-- **Moon-phase month states:** full moon ดี (success), half moon กลาง (accent), a crescent
+- **Moon-phase month states:** full moon ดี (success), half moon กลาง (ink-muted), a crescent
   in a broken ring ระวัง (warn), always with the word beside it, so the state reads by
   shape as well as color.
 - **Copyable chat bubble:** a ready-to-send line is a bubble (16/16/16/4px radius, surface2,

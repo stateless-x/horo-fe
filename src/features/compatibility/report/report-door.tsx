@@ -72,7 +72,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
     >
       <div className="flex items-center gap-3">
         <span
-          className={`grid size-10 shrink-0 place-items-center rounded-full ${full ? 'text-accentBright dark:text-accentSoft' : 'border border-edge bg-surface text-inkMuted'}`}
+          className={`grid size-10 shrink-0 place-items-center rounded-full ${full ? 'text-ink' : 'border border-edge bg-surface text-inkMuted'}`}
         >
           {full ? <MiniSeal /> : <Lock className="size-5" aria-hidden="true" />}
         </span>
@@ -93,7 +93,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
               </span>
               <span className="font-heading font-medium leading-snug text-ink">{entry.title}</span>
               {full ? (
-                <ArrowRight className="size-4 text-accentBright" aria-hidden="true" />
+                <ArrowRight className="size-4 text-inkMuted" aria-hidden="true" />
               ) : (
                 <Lock className="size-4 text-inkMuted" aria-hidden="true" />
               )}

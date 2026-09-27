@@ -38,7 +38,7 @@ export function ShareCard({ content, score, readerName, partnerName, relationshi
         className="relative mx-auto mt-4 flex aspect-[4/5] w-full max-w-[320px] flex-col overflow-hidden rounded-[20px] border border-edge bg-[radial-gradient(120%_70%_at_50%_0%,color-mix(in_srgb,var(--accent)_42%,var(--ground))_0%,var(--surface)_55%,var(--ground)_100%)] px-[18px] pb-4 pt-[18px] text-ink shadow-[0_24px_48px_-24px_rgba(107,33,168,0.55)]"
       >
         <div className="flex items-center justify-between text-xs">
-          <span className="font-heading text-base font-bold text-accentSoft">สายมู</span>
+          <span className="font-heading text-base font-bold text-ink">สายมู</span>
           <span className="font-heading font-semibold text-romanceText">{relationshipLabel}</span>
         </div>
         <div className="mt-auto grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-1">

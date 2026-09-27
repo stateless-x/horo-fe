@@ -12,18 +12,43 @@ const PARTICLES = [
 interface CompatibilityLoadingProps {
   /** When the request was sent (Date.now()); the status line counts from it. */
   startedAt: number;
+  /**
+   * From the history response: true when the check writes the teaser alone
+   * (locked mode), false for the full report, undefined while history loads.
+   */
+  lockEnabled?: boolean;
 }
 
-/** After this, the wait is longer than usual and the screen says so. */
-const SLOW_AFTER_S = 45;
+/**
+ * What the wait is for, by what the POST will write. `slowAfterS`: past it the
+ * wait is longer than usual and the screen says so. Unknown (history not
+ * loaded yet) promises no content and no time.
+ */
+const WAIT_COPY = {
+  full: {
+    line: 'กำลังเขียนฉบับเต็มของคู่นี้',
+    what: 'คะแนน ฉายาคู่ และปฏิทิน 3 เดือนคำนวณจากดวง ส่วนเนื้อหา 6 บทกำลังเขียนให้คู่นี้โดยเฉพาะ',
+    usual: 'ปกติใช้เวลาราว 20–30 วินาที',
+    slowAfterS: 45,
+  },
+  teaser: {
+    line: 'กำลังอ่านดวงคู่',
+    what: 'คะแนนและฉายาคู่คำนวณจากดวง ส่วนคำทำนายสั้น ๆ กำลังเขียนให้คู่นี้โดยเฉพาะ',
+    usual: 'ปกติใช้เวลาราว 10 วินาที',
+    slowAfterS: 25,
+  },
+  unknown: { line: 'กำลังอ่านดวงคู่', what: null, usual: null, slowAfterS: 45 },
+} as const;
 
 /**
- * The wait for a new ดวงคู่ report, usually 20 to 30 s. Everything here is
- * honest: the request is already sent, the status says what is happening
- * and how long it usually takes, and says so again when it runs long. The
- * rotating line pool (with its sponsored card) keeps the screen moving.
+ * The wait for a new ดวงคู่ reading: about 7 s for the locked teaser, 20 to
+ * 30 s for the full report. Everything here is honest: the request is already
+ * sent, the status says what is being written and how long it usually takes,
+ * and says so again when it runs long. The rotating line pool (with its
+ * sponsored card) keeps the screen moving.
  */
-export function CompatibilityLoading({ startedAt }: CompatibilityLoadingProps) {
+export function CompatibilityLoading({ startedAt, lockEnabled }: CompatibilityLoadingProps) {
+  const copy = WAIT_COPY[lockEnabled === undefined ? 'unknown' : lockEnabled ? 'teaser' : 'full'];
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [elapsed, setElapsed] = useState(0);
 
@@ -86,15 +111,13 @@ export function CompatibilityLoading({ startedAt }: CompatibilityLoadingProps) {
           </h2>
 
           <div className="min-h-[28px]">
-            <LoadingLine surface="compatibility" fallback="กำลังเขียนฉบับเต็มของคู่นี้" />
+            <LoadingLine surface="compatibility" fallback={copy.line} />
           </div>
 
           <div className="mx-auto max-w-sm space-y-1 pt-2 font-thai text-sm leading-relaxed text-inkMuted">
-            <p>คะแนน ฉายาคู่ และปฏิทิน 3 เดือนคำนวณจากดวง ส่วนเนื้อหา 6 บทกำลังเขียนให้คู่นี้โดยเฉพาะ</p>
+            {copy.what && <p>{copy.what}</p>}
             <p aria-live="polite">
-              {elapsed < SLOW_AFTER_S
-                ? 'ปกติใช้เวลาราว 20–30 วินาที'
-                : 'ใช้เวลานานกว่าปกติ ยังเขียนอยู่ ไม่ต้องกดซ้ำนะ'}
+              {elapsed < copy.slowAfterS ? copy.usual : 'ใช้เวลานานกว่าปกติ ยังเขียนอยู่ ไม่ต้องกดซ้ำนะ'}
             </p>
             <p className="font-mono text-xs tabular-nums" aria-hidden="true">
               {elapsed} วินาที

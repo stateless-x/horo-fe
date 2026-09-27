@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ReactNode } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { Button } from '@/lib-packages/ui';
@@ -109,14 +109,15 @@ function RegenerateShell({
   );
 }
 
-/** Refreshes a real page's data and goes there, so the new reading is on screen. */
+/** Refreshes a real page's data and goes there (path may carry a query, e.g. ?id=), so the new reading is on screen. */
 function useShowOnPage() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
+  const search = useSearchParams().toString();
   return async (queryKey: string[], path: string) => {
     await queryClient.invalidateQueries({ queryKey });
-    if (pathname !== path) router.push(path);
+    if (`${pathname}${search ? `?${search}` : ''}` !== path) router.push(path);
   };
 }
 
@@ -169,11 +170,15 @@ const HistorySchema = z.object({
 });
 
 const ResultSchema = z.object({
+  id: z.string(),
   partnerName: z.string(),
   score: z.number(),
   partnerMbti: z.string().nullable(),
+  locked: z.boolean(),
   qualityFlags: z.array(z.string()),
 });
+
+const readingPath = (id: string) => `/dashboard/compatibility?id=${id}`;
 
 const KINDS = [
   { value: 'full', label: 'ฉบับเต็ม' },
@@ -229,9 +234,25 @@ export function RegenerateCompatibility() {
     if (!response) return;
     const result = ResultSchema.parse(response);
     const flags = result.qualityFlags.length ? ` · quality flags ${result.qualityFlags.length}` : '';
-    setNote(`${result.partnerName} ${result.score} · MBTI ${result.partnerMbti ?? 'ไม่ระบุ'}${flags} · เปิดจากประวัติ`);
+    const lock = result.locked ? ' · ล็อก' : '';
+    setNote(`${result.partnerName} ${result.score} · MBTI ${result.partnerMbti ?? 'ไม่ระบุ'}${lock}${flags}`);
     if (result.qualityFlags.length) console.warn('[horo devtools] quality flags', result.qualityFlags);
-    await showOnPage(['compatibility'], '/dashboard/compatibility');
+    await showOnPage(['compatibility'], readingPath(result.id));
+  }
+
+  /**
+   * ล็อกใหม่: the dev route sets the row's detail back to null. ปลดล็อก: the
+   * real unlock route, as the page's door calls it (a row that isn't locked
+   * comes back as it is). Both then open the row on the page.
+   */
+  async function onRowAction(action: 'relock' | 'unlock') {
+    const response =
+      action === 'relock'
+        ? await regen.run('/api/dev/relock/compatibility', { id: target })
+        : await regen.run(`/api/fortune/compatibility/${target}/unlock`, {});
+    if (!response) return;
+    setNote(action === 'relock' ? 'ล็อกแล้ว' : 'ปลดล็อกแล้ว');
+    await showOnPage(['compatibility'], readingPath(target));
   }
 
   return (
@@ -255,6 +276,29 @@ export function RegenerateCompatibility() {
           <option value={NEW_PARTNER}>+ คนใหม่</option>
         </select>
       </div>
+
+      {!isNew && (
+        <div className="flex gap-1" role="group" aria-label="ล็อก">
+          <Button
+            type="button"
+            variant="soft"
+            disabled={regen.running}
+            className="h-7 flex-1 px-2 text-xs"
+            onClick={() => void onRowAction('relock')}
+          >
+            ล็อกใหม่
+          </Button>
+          <Button
+            type="button"
+            variant="soft"
+            disabled={regen.running}
+            className="h-7 flex-1 px-2 text-xs"
+            onClick={() => void onRowAction('unlock')}
+          >
+            ปลดล็อก
+          </Button>
+        </div>
+      )}
 
       {isNew && (
         <div className="grid grid-cols-2 gap-x-2 gap-y-1.5">

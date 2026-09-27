@@ -2,11 +2,11 @@
 
 import { useMinLoading } from '@/hooks/use-min-loading';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   BE_OFFSET,
   createUTCDateFromBE,
@@ -31,12 +31,34 @@ import { CompatibilityResultView } from '@/features/compatibility/compatibility-
 import { CompatibilityHistory } from '@/features/compatibility/compatibility-history';
 import { MainLoader } from '@/components/ui/main-loader';
 
+/** The history route also says whether a new check writes the teaser alone (locked mode). */
+type HistoryPage = HistoryResponse & { lockEnabled?: boolean };
+
+const PAGE_PATH = '/dashboard/compatibility';
+
 // --- Page ---
 
+// useSearchParams needs a Suspense boundary for the static build.
 export default function CompatibilityPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[calc(100vh-3.5rem)] bg-ground flex items-center justify-center">
+          <MainLoader />
+        </div>
+      }
+    >
+      <CompatibilityPageContent />
+    </Suspense>
+  );
+}
+
+function CompatibilityPageContent() {
   const { data: session, isPending: sessionLoading } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
+  // ?id=<rowId> opens that reading directly (the devtools go there after a rewrite).
+  const linkedId = useSearchParams().get('id');
 
   useTrackSurfaceView('compatibility');
   const track = useTrackEvent();
@@ -99,12 +121,12 @@ export default function CompatibilityPage() {
   }, [rateLimitCountdown]);
 
   // History query
-  const historyQuery = useInfiniteQuery<HistoryResponse>({
+  const historyQuery = useInfiniteQuery<HistoryPage>({
     queryKey: ['compatibility', 'history'],
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams({ limit: '20' });
       if (pageParam) params.set('cursor', pageParam as string);
-      return api.get<HistoryResponse>(`/api/fortune/compatibility/history?${params}`);
+      return api.get<HistoryPage>(`/api/fortune/compatibility/history?${params}`);
     },
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     initialPageParam: undefined as string | undefined,
@@ -119,6 +141,15 @@ export default function CompatibilityPage() {
     enabled: !!viewingHistoryId,
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    if (linkedId) setViewingHistoryId(linkedId);
+  }, [linkedId]);
+
+  /** Drops ?id= once the page leaves that reading, so a reload doesn't reopen it. */
+  const clearLink = useCallback(() => {
+    if (linkedId) router.replace(PAGE_PATH);
+  }, [linkedId, router]);
 
   // When viewing a history detail, set the result
   useEffect(() => {
@@ -171,6 +202,7 @@ export default function CompatibilityPage() {
     const yearNum = parseInt(year);
 
     calculationInFlight.current = true;
+    clearLink();
     track({ event: 'calculation_started', relationshipType });
     setCalculating(true);
     setError('');
@@ -234,11 +266,12 @@ export default function CompatibilityPage() {
       calculationInFlight.current = false;
       setCalculating(false);
     }
-  }, [partnerName, day, month, year, partnerMbti, relationshipType, queryClient, track]);
+  }, [partnerName, day, month, year, partnerMbti, relationshipType, queryClient, track, clearLink]);
 
   const handleBackToForm = () => {
     setResult(null);
     setViewingHistoryId(null);
+    clearLink();
   };
 
   const handleViewHistory = (id: string) => {
@@ -274,7 +307,10 @@ export default function CompatibilityPage() {
   // --- Calculating screen ---
   if (showCalculating) {
     return (
-      <CompatibilityLoading startedAt={calculationStartedAt} />
+      <CompatibilityLoading
+        startedAt={calculationStartedAt}
+        lockEnabled={historyQuery.data?.pages[0]?.lockEnabled}
+      />
     );
   }
 

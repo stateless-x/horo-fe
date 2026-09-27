@@ -3,8 +3,8 @@ import { compatibilityGenerator } from './compatibility';
 import { teaserGenerator } from './teaser';
 
 /**
- * Every dev generator, in hub order. Adding one = a config file here plus its
- * /api/dev/generate/<id> endpoint in horo-be. /dev and /dev/[tool] read this.
+ * Every dev generator, in tab order. Adding one = a config file here plus its
+ * /api/dev/generate/<id> endpoint in horo-be; the devtools panel gets a tab.
  */
 export const DEV_GENERATORS: ReadonlyArray<DevGeneratorConfig> = [compatibilityGenerator, teaserGenerator];
 

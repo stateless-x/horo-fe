@@ -1,3 +1,4 @@
+import type { CompatibilityV4Shaped } from '@/lib-packages/shared/types/compatibility-v4';
 import { type RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
 
@@ -11,7 +12,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   placeholder: string;
   cta: string;
   resultTitle: (name: string) => string;
-  loadingSteps: string[];
 }> = {
   talking: {
     accent: 'text-pink-600 dark:text-pink-400',
@@ -21,7 +21,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     placeholder: 'ชื่อคนที่คุณคุยอยู่',
     cta: 'ส่องดวงคนคุย',
     resultTitle: (name: string) => `ดวงระหว่างคุณกับ ${name}`,
-    loadingSteps: ['กำลังดูเคมีของทั้งคู่...', 'อ่านสัญญาณดวงดาว...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   romantic: {
     accent: 'text-pink-600 dark:text-pink-400',
@@ -31,7 +30,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     placeholder: 'ชื่อคนรักของคุณ',
     cta: 'ส่องดวงคู่รัก',
     resultTitle: (name: string) => `ดวงรักระหว่างคุณกับ ${name}`,
-    loadingSteps: ['วิเคราะห์ธาตุของทั้งสองคน...', 'เปรียบเทียบดาวประจำวัน...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   boss: {
     accent: 'text-accentBright',
@@ -41,7 +39,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     placeholder: 'ชื่อหัวหน้าของคุณ',
     cta: 'ส่องดวงหัวหน้า',
     resultTitle: (name: string) => `ดวงการงานกับ ${name}`,
-    loadingSteps: ['วิเคราะห์สไตล์การทำงาน...', 'เปรียบเทียบพลังงานการงาน...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   coworker: {
     accent: 'text-accentBright',
@@ -51,7 +48,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     placeholder: 'ชื่อเพื่อนร่วมงาน',
     cta: 'ส่องดวงเพื่อนร่วมงาน',
     resultTitle: (name: string) => `ดวงการงานกับ ${name}`,
-    loadingSteps: ['วิเคราะห์สไตล์การทำงาน...', 'เปรียบเทียบจุดแข็งของทีม...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   friend: {
     accent: 'text-accentBright',
@@ -61,7 +57,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     placeholder: 'ชื่อเพื่อนของคุณ',
     cta: 'ส่องดวงเพื่อน',
     resultTitle: (name: string) => `ดวงมิตรภาพกับ ${name}`,
-    loadingSteps: ['วิเคราะห์พลังงานมิตรภาพ...', 'เปรียบเทียบธาตุของสองคน...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
   family: {
     accent: 'text-accentBright',
@@ -71,7 +66,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     placeholder: 'ชื่อคนในครอบครัว',
     cta: 'ส่องดวงครอบครัว',
     resultTitle: (name: string) => `ดวงครอบครัวกับ ${name}`,
-    loadingSteps: ['วิเคราะห์สายสัมพันธ์ครอบครัว...', 'เปรียบเทียบธาตุของสองคน...', 'กำลังเรียบเรียงเรื่องราวของคู่นี้...'],
   },
 };
 
@@ -88,7 +82,8 @@ export interface CompatibilityResult {
   score: number;
   analysis: string;
   contentVersion?: number;
-  structuredContent?: CompatibilityStructuredContent | null;
+  /** v2 readings, or the v4 report (the live route returns it unlocked, the full view). */
+  structuredContent?: CompatibilityStructuredContent | CompatibilityV4Shaped | null;
   strengths?: string[];
   challenges?: string[];
   userElement?: string;

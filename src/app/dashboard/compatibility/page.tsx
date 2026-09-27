@@ -53,9 +53,7 @@ export default function CompatibilityPage() {
   // Calculation state
   const [calculating, setCalculating] = useState(false);
   const calculationInFlight = useRef(false);
-  const [calculationStep, setCalculationStep] = useState('');
-  // Set once the scripted steps run out, which is when the real LLM wait starts.
-  const [stepsExhausted, setStepsExhausted] = useState(false);
+  const [calculationStartedAt, setCalculationStartedAt] = useState(0);
   // Floor the calculating screen at 3s so its copy and sponsored card are seen.
   const showCalculating = useMinLoading(calculating);
   const [error, setError] = useState('');
@@ -158,19 +156,12 @@ export default function CompatibilityPage() {
     setError('');
     setResult(null);
     setViewingHistoryId(null);
-    setStepsExhausted(false);
+    // The request goes out now; the loading screen counts from here (no scripted steps before it).
+    setCalculationStartedAt(Date.now());
 
     let resetAt = '';
 
     try {
-      const steps = config.loadingSteps;
-      for (let i = 0; i < steps.length - 1; i++) {
-        setCalculationStep(steps[i]);
-        await new Promise(resolve => setTimeout(resolve, 800));
-      }
-      setCalculationStep(steps[steps.length - 1]);
-      setStepsExhausted(true);
-
       const birthDate = createUTCDateFromBE(dayNum, monthNum, yearNum);
 
       const data = await api.post<CompatibilityResult>(
@@ -182,8 +173,8 @@ export default function CompatibilityPage() {
           ...(partnerMbti ? { partnerMbti } : {}),
         },
         {
-          // Backend allows up to four 60s attempts plus retry backoff.
-          // Wait beyond its 255s socket budget instead of aborting at 45s.
+          // The server finishes a v4 report within its 220s model budget and
+          // 255s socket budget (docs/compatibility-response-fix.md); wait past both.
           timeout: 270_000,
           onHeaders: (headers) => {
             const remaining = parseInt(headers.get('X-RateLimit-Remaining') || '5');
@@ -222,10 +213,8 @@ export default function CompatibilityPage() {
     } finally {
       calculationInFlight.current = false;
       setCalculating(false);
-      setCalculationStep('');
-      setStepsExhausted(false);
     }
-  }, [partnerName, day, month, year, partnerMbti, relationshipType, config.loadingSteps, queryClient, track]);
+  }, [partnerName, day, month, year, partnerMbti, relationshipType, queryClient, track]);
 
   const handleBackToForm = () => {
     setResult(null);
@@ -265,10 +254,7 @@ export default function CompatibilityPage() {
   // --- Calculating screen ---
   if (showCalculating) {
     return (
-      <CompatibilityLoading
-        calculationStep={calculationStep}
-        stepsExhausted={stepsExhausted}
-      />
+      <CompatibilityLoading startedAt={calculationStartedAt} />
     );
   }
 

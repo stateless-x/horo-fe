@@ -24,6 +24,8 @@ const VIEWS: { id: View; label: string; note: string }[] = [
 
 export function LoaderPreview() {
   const [view, setView] = useState<View>('bare');
+  // The compatibility loader counts from when its view opened.
+  const [previewStartedAt] = useState(() => Date.now());
   const { resolvedTheme } = useTheme();
   // next-themes only resolves on the client, so rendering the theme name
   // directly would disagree with the server markup. Render a stable
@@ -87,7 +89,7 @@ export function LoaderPreview() {
       {view === 'fortune' && <LoadingSkeleton isLoading />}
 
       {view === 'compatibility' && (
-        <CompatibilityLoading calculationStep="กำลังอ่านพลังธาตุของคุณ..." />
+        <CompatibilityLoading startedAt={previewStartedAt} />
       )}
 
       {view === 'teaser' && (

@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { MainLoader } from '@/components/ui/main-loader';
 import { LoadingLine } from '@/components/ui/loading-line';
 
@@ -10,17 +10,29 @@ const PARTICLES = [
 ] as const;
 
 interface CompatibilityLoadingProps {
-  calculationStep: string;
-  /**
-   * True once the scripted steps have run out. The last step used to sit
-   * frozen on screen for the whole LLM wait, so from here the rotating line
-   * pool takes over and the screen keeps moving.
-   */
-  stepsExhausted?: boolean;
+  /** When the request was sent (Date.now()); the status line counts from it. */
+  startedAt: number;
 }
 
-export function CompatibilityLoading({ calculationStep, stepsExhausted }: CompatibilityLoadingProps) {
+/** After this, the wait is longer than usual and the screen says so. */
+const SLOW_AFTER_S = 45;
+
+/**
+ * The wait for a new ดวงคู่ report, usually 20 to 30 s. Everything here is
+ * honest: the request is already sent, the status says what is happening
+ * and how long it usually takes, and says so again when it runs long. The
+ * rotating line pool (with its sponsored card) keeps the screen moving.
+ */
+export function CompatibilityLoading({ startedAt }: CompatibilityLoadingProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    const tick = () => setElapsed(Math.floor((Date.now() - startedAt) / 1000));
+    tick();
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, [startedAt]);
 
   useEffect(() => {
     // The calculate button sits below the fold, especially on phones.
@@ -73,23 +85,21 @@ export function CompatibilityLoading({ calculationStep, stepsExhausted }: Compat
             กำลังคำนวณดวงคู่
           </h2>
 
-          {stepsExhausted ? (
-            <div className="min-h-[28px]">
-              <LoadingLine surface="compatibility" fallback={calculationStep} />
-            </div>
-          ) : (
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={calculationStep}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="text-lg md:text-xl text-inkMuted font-oracle min-h-[28px]"
-              >
-                {calculationStep}
-              </motion.p>
-            </AnimatePresence>
-          )}
+          <div className="min-h-[28px]">
+            <LoadingLine surface="compatibility" fallback="กำลังเขียนฉบับเต็มของคู่นี้" />
+          </div>
+
+          <div className="mx-auto max-w-sm space-y-1 pt-2 font-thai text-sm leading-relaxed text-inkMuted">
+            <p>คะแนน ฉายาคู่ และปฏิทิน 3 เดือนคำนวณจากดวง ส่วนเนื้อหา 6 บทกำลังเขียนให้คู่นี้โดยเฉพาะ</p>
+            <p aria-live="polite">
+              {elapsed < SLOW_AFTER_S
+                ? 'ปกติใช้เวลาราว 20–30 วินาที'
+                : 'ใช้เวลานานกว่าปกติ ยังเขียนอยู่ ไม่ต้องกดซ้ำนะ'}
+            </p>
+            <p className="font-mono text-xs tabular-nums" aria-hidden="true">
+              {elapsed} วินาที
+            </p>
+          </div>
 
           <div className="flex justify-center gap-2 mt-6">
             {[...Array(3)].map((_, i) => (

@@ -7,6 +7,8 @@ import { ArrowLeft, ArrowLeftRight, Share2, Stars } from 'lucide-react';
 import { ShareSheet } from '@/components/share/share-sheet';
 import { SITE_URL } from '@/lib/share-utils';
 import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
+import { CompatibilityReport } from '@/features/compatibility/compatibility-report';
+import { useUserProfile } from '@/features/fortune/hooks/use-daily-fortune';
 import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
 import {
   RELATIONSHIP_CONFIG,
@@ -43,10 +45,52 @@ export function CompatibilityResultView({
   const resultConfig = RELATIONSHIP_CONFIG[result.relationshipType as RelationshipType] || fallbackConfig;
   const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
   const resultOpenTracked = useRef(false);
+  const { data: userProfile } = useUserProfile();
 
   useEffect(() => {
     trackMountedResultOnce(resultOpenTracked, onResultOpen);
   }, [onResultOpen]);
+
+  const shareSheet = (
+    <ShareSheet
+      surface="compatibility"
+      isOpen={showShareSheet}
+      onClose={onCloseShareSheet}
+      compatibilityData={{
+        url: result.shareToken ? `${SITE_URL}/compatibility/${result.shareToken}` : `${SITE_URL}/dashboard/compatibility`,
+        partnerName: result.partnerName,
+        relationshipLabel: RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType,
+        userElement: toThaiElement(result.userElement) || '',
+        partnerElement: toThaiElement(result.partnerElement) || '',
+      }}
+      onShareInitiated={onShareInitiated}
+    />
+  );
+
+  // Content v4: the report page. It carries its own cover, pair and share card.
+  if (result.structuredContent?.contentVersion === 4) {
+    return (
+      <div className="min-h-[calc(100vh-3.5rem)] px-4 pb-24 md:px-6">
+        <div className="mx-auto max-w-[680px] pb-2 pt-3">
+          <Button variant="ghost" onClick={onBackToForm} className="-ml-3 min-h-11 gap-2 text-inkMuted hover:text-ink">
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            ดูดวงคู่อีกครั้ง
+          </Button>
+        </div>
+        <CompatibilityReport
+          reportId={result.id}
+          score={result.score}
+          content={result.structuredContent}
+          relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
+          readerName={userProfile ? userProfile.user.displayName || userProfile.user.name : null}
+          partnerName={result.partnerName}
+          onShare={onOpenShareSheet}
+          onNewCheck={onBackToForm}
+        />
+        {shareSheet}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] p-4 md:p-6">
@@ -155,20 +199,7 @@ export function CompatibilityResultView({
           </Button>
         </motion.div>
 
-        {/* Share Sheet */}
-        <ShareSheet
-          surface="compatibility"
-          isOpen={showShareSheet}
-          onClose={onCloseShareSheet}
-          compatibilityData={{
-            url: result.shareToken ? `${SITE_URL}/compatibility/${result.shareToken}` : `${SITE_URL}/dashboard/compatibility`,
-            partnerName: result.partnerName,
-            relationshipLabel: RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType,
-            userElement: toThaiElement(result.userElement) || '',
-            partnerElement: toThaiElement(result.partnerElement) || '',
-          }}
-          onShareInitiated={onShareInitiated}
-        />
+        {shareSheet}
       </div>
     </div>
   );

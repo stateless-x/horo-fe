@@ -3,18 +3,23 @@ import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
 import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 import type { CompatibilityV3Shaped } from '@/lib-packages/shared/types/compatibility-v3';
+import type { CompatibilityV4Shaped } from '@/lib-packages/shared/types/compatibility-v4';
 import { RELATIONSHIP_CONFIG } from '@/features/compatibility/relationship-config';
 import { CompatibilityReadingV3 } from '@/features/compatibility/compatibility-reading-v3';
+import { CompatibilityReport } from '@/features/compatibility/compatibility-report';
 
 interface CompatibilityReadingProps {
   score: number;
   analysis: string;
-  /** v2 content, or v3 content already shaped for one view. */
-  structuredContent?: CompatibilityStructuredContent | CompatibilityV3Shaped | null;
+  /** v2 content, or v3 / v4 content already shaped for one view. */
+  structuredContent?: CompatibilityStructuredContent | CompatibilityV3Shaped | CompatibilityV4Shaped | null;
   relationshipType?: RelationshipType;
   onGuidanceOpen?: () => void;
-  /** v3 teaser view only: shows the unlock button on the locked card. */
+  /** v3 and v4 teaser views: shows the unlock button on the locked card. */
   onUnlock?: () => void;
+  /** v4 cover. The partner's name is required to render a v4 report. */
+  readerName?: string | null;
+  partnerName?: string;
 }
 
 const SECTION_ICONS = {
@@ -62,7 +67,30 @@ const SECTION_LABELS: Record<RelationshipType, Record<keyof typeof SECTION_ICONS
   },
 };
 
-export function CompatibilityReading({ score, analysis, structuredContent, relationshipType, onGuidanceOpen, onUnlock }: CompatibilityReadingProps) {
+export function CompatibilityReading({
+  score,
+  analysis,
+  structuredContent,
+  relationshipType,
+  onGuidanceOpen,
+  onUnlock,
+  readerName,
+  partnerName,
+}: CompatibilityReadingProps) {
+  if (structuredContent?.contentVersion === 4) {
+    if (!partnerName) throw new Error('A v4 compatibility report needs the partner name');
+    return (
+      <CompatibilityReport
+        score={score}
+        content={structuredContent}
+        relationshipType={relationshipType}
+        readerName={readerName ?? null}
+        partnerName={partnerName}
+        onUnlock={onUnlock}
+      />
+    );
+  }
+
   if (structuredContent?.contentVersion === 3) {
     return (
       <CompatibilityReadingV3

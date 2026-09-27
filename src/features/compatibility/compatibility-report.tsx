@@ -33,7 +33,7 @@ interface CompatibilityReportProps {
   partnerName: string;
   /** The stored reading's id: keys the plan checklist in this browser. */
   reportId?: string;
-  /** Teaser only: the unlock button on ReportDoor. Not wired to payment yet (dev tools). */
+  /** Teaser only: the unlock button on ReportDoor (the result page's unlock call, or the dev tools' view switch). */
   onUnlock?: () => void | Promise<void>;
   onShare?: () => void;
   onNewCheck?: () => void;
@@ -115,17 +115,20 @@ export function CompatibilityReport({
     [reduce],
   );
 
-  // The dev tools' unlock: land on the report's front page once it opens.
-  const wasFull = useRef(!!full);
+  // Unlock opens the report in place: the reveal plays from the render where
+  // the content turns full (decided during render, so the first frame of the
+  // opened report already animates), then the page lands on its front page.
+  const [shownFull, setShownFull] = useState(!!full);
   const [revealed, setRevealed] = useState(false);
+  if (!!full !== shownFull) {
+    setShownFull(!!full);
+    if (full) setRevealed(true);
+  }
   useEffect(() => {
-    if (full && !wasFull.current) {
-      setRevealed(true);
-      doorRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-      document.getElementById('report-door')?.focus({ preventScroll: true });
-    }
-    wasFull.current = !!full;
-  }, [full, reduce]);
+    if (!revealed) return;
+    doorRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    document.getElementById('report-door')?.focus({ preventScroll: true });
+  }, [revealed, reduce]);
 
   const allOpen = openChapters.size === CHAPTER_KEYS.length;
   const toggleChapter = (key: V4ChapterKey) =>

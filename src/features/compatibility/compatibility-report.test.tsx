@@ -87,6 +87,8 @@ describe('CompatibilityReport', () => {
   test('the teaser shows the cover, bars, questions and the locked door, and holds no paid text', () => {
     const html = render('teaser', () => {});
     expect(html).toContain('คู่ไฟหลอมทอง');
+    // The reading's kind, above the archetype.
+    expect(html).toContain('ดวงคู่ · ความรัก</p><h1');
     expect(html).toContain('มิ้นท์');
     expect(html).toContain('เจ้าวันทองหยาง');
     expect(html).toContain(content.cover.verdict);
@@ -120,6 +122,8 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('วันที่ <span class="font-mono">3</span>');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');
     expect(html).not.toContain('ใช้ 1 เครดิตปลดล็อก');
+    // Owner rule: no purple text inside the report (fills, focus rings and controls may stay purple).
+    expect(html).not.toMatch(/(?<![\w-])text-accent(Bright|Soft)\b/);
   });
 
   test('the share card carries free fields only', () => {

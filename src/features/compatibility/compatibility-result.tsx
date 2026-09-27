@@ -29,6 +29,8 @@ interface CompatibilityResultViewProps {
   onGuidanceOpen: () => void;
   onShareInitiated: (platform: CompatibilitySharePlatform) => void;
   onResultOpen: () => void;
+  /** A locked v4 report: writes the detail; resolves once the result holds the full report. */
+  onUnlock: () => Promise<void>;
 }
 
 export function CompatibilityResultView({
@@ -41,6 +43,7 @@ export function CompatibilityResultView({
   onGuidanceOpen,
   onShareInitiated,
   onResultOpen,
+  onUnlock,
 }: CompatibilityResultViewProps) {
   const resultConfig = RELATIONSHIP_CONFIG[result.relationshipType as RelationshipType] || fallbackConfig;
   const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
@@ -84,6 +87,7 @@ export function CompatibilityResultView({
           relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
           readerName={userProfile ? userProfile.user.displayName || userProfile.user.name : null}
           partnerName={result.partnerName}
+          onUnlock={result.locked ? onUnlock : undefined}
           onShare={onOpenShareSheet}
           onNewCheck={onBackToForm}
         />
@@ -91,6 +95,11 @@ export function CompatibilityResultView({
       </div>
     );
   }
+
+
+  // v1 and v2 rows always carry their text; a v4 row takes the branch above.
+  const analysis = result.analysis;
+  if (analysis === undefined) throw new Error(`Compatibility ${result.id} is not v4 and has no analysis`);
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] p-4 md:p-6">
@@ -177,7 +186,7 @@ export function CompatibilityResultView({
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <CompatibilityReading
             score={result.score}
-            analysis={result.analysis}
+            analysis={analysis}
             structuredContent={result.structuredContent}
             relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
             onGuidanceOpen={onGuidanceOpen}

@@ -38,7 +38,7 @@ interface ReportDoorProps {
   onJump: (id: string) => void;
   allOpen: boolean;
   onToggleAll: () => void;
-  /** Teaser only: spends the credit. Not wired to payment yet (dev tools). */
+  /** Teaser only: unlocks the report; a rejection's message is shown in the door. */
   onUnlock?: () => void | Promise<void>;
 }
 
@@ -50,12 +50,17 @@ interface ReportDoorProps {
 export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
   const reduce = useReducedMotion();
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const unlock = async () => {
     if (!onUnlock || busy) return;
     setBusy(true);
+    setError(null);
     try {
       await onUnlock();
+    } catch (failure) {
+      // The caller turns a failed request into a message for the reader.
+      setError(failure instanceof Error ? failure.message : String(failure));
     } finally {
       setBusy(false);
     }
@@ -148,8 +153,16 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
               {onUnlock && (
                 <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="w-full gap-2.5 font-heading">
                   {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Lock className="size-5" aria-hidden="true" />}
-                  {busy ? 'กำลังเปิดฉบับเต็ม' : 'ใช้ 1 เครดิตปลดล็อก (มี 1 เครดิต)'}
+                  {busy ? 'กำลังเขียนฉบับเต็ม (ราว 20 วินาที)' : 'ใช้ 1 เครดิตปลดล็อก (มี 1 เครดิต)'}
                 </Button>
+              )}
+              <p aria-live="polite" className="empty:hidden text-[0.8125rem] leading-relaxed text-inkMuted">
+                {busy ? 'ฉบับเต็มเขียนให้คู่นี้โดยเฉพาะ เสร็จแล้วจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
+              </p>
+              {error && (
+                <p role="alert" className="text-[0.8125rem] leading-relaxed text-danger">
+                  {error}
+                </p>
               )}
               <p className="flex items-start gap-2 text-[0.8125rem] leading-relaxed text-inkMuted">
                 <History className="mt-0.5 size-4 shrink-0" aria-hidden="true" />

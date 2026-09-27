@@ -128,6 +128,26 @@ export default function CompatibilityPage() {
     }
   }, [historyDetailQuery.data]);
 
+  // Locked v4 report: the server writes the detail (about 20 s) and returns the full report.
+  const handleUnlock = useCallback(async () => {
+    if (!result) return;
+    try {
+      const unlocked = await api.post<CompatibilityResult>(
+        `/api/fortune/compatibility/${result.id}/unlock`,
+        {},
+        // Same budget as a new check (docs/compatibility-response-fix.md): the server ends by 225 s.
+        { timeout: 270_000 },
+      );
+      // The history detail query feeds `result`; keep it from reverting to the locked row.
+      queryClient.setQueryData(['compatibility', unlocked.id], unlocked);
+      setResult(unlocked);
+    } catch (error) {
+      console.error('Compatibility unlock failed:', error);
+      const message = (error as ApiError).body?.error;
+      throw new Error(typeof message === 'string' ? message : 'เขียนฉบับเต็มไม่สำเร็จ ลองอีกครั้งนะ');
+    }
+  }, [result, queryClient]);
+
   const handleResultOpen = () => {
     if (!result) return;
     const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
@@ -272,6 +292,7 @@ export default function CompatibilityPage() {
           onGuidanceOpen={handleGuidanceOpen}
           onShareInitiated={handleShareInitiated}
           onResultOpen={handleResultOpen}
+          onUnlock={handleUnlock}
         />
       </>
     );

@@ -80,10 +80,13 @@ export interface CompatibilityResult {
   partnerBirthDate: string;
   relationshipType: string;
   score: number;
-  analysis: string;
+  /** v1/v2 readings only: a v4 row's stored JSON never leaves the server. */
+  analysis?: string;
   contentVersion?: number;
-  /** v2 readings, or the v4 report (the live route returns it unlocked, the full view). */
+  /** v2 readings, or the v4 report: the teaser view while `locked`, else the full view. */
   structuredContent?: CompatibilityStructuredContent | CompatibilityV4Shaped | null;
+  /** A v4 report whose paid detail is not written yet; POST /compatibility/:id/unlock writes it. */
+  locked?: boolean;
   strengths?: string[];
   challenges?: string[];
   userElement?: string;

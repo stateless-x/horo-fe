@@ -14,7 +14,9 @@ import { join, relative } from 'node:path';
  *   - no page may bring the auto-opening modal back;
  *   - the footer's voluntary "สนับสนุน" button and the modal it opens must
  *     survive an unrelated footer rewrite;
- *   - the modal itself must not open anything on open or close.
+ *   - the modal itself must not open anything on open or close;
+ *   - the fortune read-next ดวงคู่ card is a plain link again (T2), with no
+ *     Shopee tab riding along on the tap.
  *
  * The retired export's name is assembled below rather than written out, so a
  * search of src for that name comes back empty, including this file.
@@ -43,6 +45,12 @@ describe('donation UI: voluntary only', () => {
 
   test('the donation modal opens no tab on open or close', () => {
     expect(read('src/components/ads/donation-modal.tsx')).not.toContain('shopee-affiliate');
+  });
+
+  test('the fortune read-next block has no forced Shopee opener', () => {
+    const readNext = read('src/features/fortune/chart/read-next.tsx');
+    expect(readNext).not.toContain('shopee-affiliate');
+    expect(readNext).not.toContain('openTrackedShopeeAffiliateLink');
   });
 
   test('the footer still renders the donation button and the modal it opens', () => {

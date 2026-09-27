@@ -5,8 +5,6 @@ import type { LucideIcon } from 'lucide-react';
 import { TrackedCtaLink } from '@/components/tracked-cta-link';
 import type { TrackedCta } from '@/lib-packages/shared';
 import type { FortuneTab } from '@/features/fortune/chart/fortune-tab-bar';
-import { useTrackEvent } from '@/lib/analytics';
-import { openTrackedShopeeAffiliateLink } from '@/lib/shopee-affiliate';
 
 interface ReadNextTabItem {
   type: 'tab';
@@ -48,8 +46,6 @@ interface ReadNextProps {
  * Link/anchor, no nested interactive elements.
  */
 export function ReadNext({ items, onTabChange }: ReadNextProps) {
-  const track = useTrackEvent();
-
   if (items.length === 0) return null;
 
   return (
@@ -83,13 +79,6 @@ export function ReadNext({ items, onTabChange }: ReadNextProps) {
                 surface="fortune"
                 href={item.href}
                 className={cardClass}
-                onClick={item.ctaId === 'fortune_compatibility'
-                  ? () => openTrackedShopeeAffiliateLink(
-                      track,
-                      'fortune',
-                      'fortune_compatibility_cta',
-                    )
-                  : undefined}
               >
                 {content}
               </TrackedCtaLink>

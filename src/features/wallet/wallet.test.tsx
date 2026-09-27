@@ -3,12 +3,14 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { WalletResponse } from '@/lib-packages/shared/types/wallet';
 import { ReportDoor } from '@/features/compatibility/report/report-door';
+import { BalanceChip } from './balance-chip';
 import { LedgerList } from './ledger-list';
 import { PackList } from './pack-list';
 import { WALLET_QUERY_KEY } from './use-wallet';
 import { entryLabel, shortfallLine, signed, unitsWithBaht } from './wallet-copy';
 
 const wallet: WalletResponse = {
+  enabled: true,
   balance: 49,
   cap: 2000,
   packs: [
@@ -85,24 +87,51 @@ describe('LedgerList', () => {
   });
 });
 
-describe('ReportDoor with a known balance', () => {
-  test('the CTA spends from the real wallet: price and balance', () => {
+const door = (data: WalletResponse) => {
+  const client = new QueryClient();
+  client.setQueryData(WALLET_QUERY_KEY, data);
+  return renderToStaticMarkup(
+    <QueryClientProvider client={client}>
+      <ReportDoor
+        partnerName="ต้น"
+        readingMinutes={11}
+        contents={[{ id: 'c1', title: 'บทหนึ่ง', short: 'หนึ่ง', n: 1 }]}
+        full={false}
+        onJump={() => {}}
+        allOpen={false}
+        onToggleAll={() => {}}
+        onUnlock={() => {}}
+      />
+    </QueryClientProvider>,
+  );
+};
+
+describe('wallet off (nothing sellable)', () => {
+  test('no chip, and the door shows no balance, price or packs', () => {
     const client = new QueryClient();
-    client.setQueryData(WALLET_QUERY_KEY, wallet);
-    const html = renderToStaticMarkup(
+    client.setQueryData(WALLET_QUERY_KEY, { enabled: false });
+    const chip = renderToStaticMarkup(
       <QueryClientProvider client={client}>
-        <ReportDoor
-          partnerName="ต้น"
-          readingMinutes={11}
-          contents={[{ id: 'c1', title: 'บทหนึ่ง', short: 'หนึ่ง', n: 1 }]}
-          full={false}
-          onJump={() => {}}
-          allOpen={false}
-          onToggleAll={() => {}}
-          onUnlock={() => {}}
-        />
+        <BalanceChip />
       </QueryClientProvider>,
     );
+    expect(chip).toBe('');
+    const html = door({ enabled: false });
+    expect(html).toContain('ปลดล็อกฉบับเต็ม');
+    expect(html).not.toContain('มี ');
+    expect(html).not.toContain('<dialog');
+  });
+
+  test('the door carries nothing promotional', () => {
+    for (const html of [door(wallet), door({ enabled: false })]) {
+      for (const promo of ['สนับสนุน', 'ซื้อกาแฟ', 'shopee', 'Shopee', 'Pawjai', 'pawjai']) expect(html).not.toContain(promo);
+    }
+  });
+});
+
+describe('ReportDoor with a known balance', () => {
+  test('the CTA spends from the real wallet: price and balance', () => {
+    const html = door(wallet);
     expect(html).toContain('ใช้ 49 มู ปลดล็อก (มี 49 มู)');
     expect(html).toContain('1 มู = ฿1');
     expect(html).not.toMatch(PURPLE_TEXT);

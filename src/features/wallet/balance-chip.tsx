@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
-import { useWallet } from './use-wallet';
+import { enabledWallet, useWallet } from './use-wallet';
 import { UNIT } from './wallet-copy';
 
-/** "มู 49" in the app header, linking to /dashboard/wallet. Nothing until the balance is known. */
+/** "มู 49" in the app header, linking to /dashboard/wallet. Nothing until the balance is known, or while the wallet is off. */
 export function BalanceChip() {
-  const { data } = useWallet();
+  const data = enabledWallet(useWallet().data);
   if (!data) return null;
   return (
     <Link

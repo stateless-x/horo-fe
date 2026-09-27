@@ -8,7 +8,7 @@ import { Button } from '@/lib-packages/ui';
 import type { ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import { PackSheet } from '@/features/wallet/pack-sheet';
-import { WALLET_QUERY_KEY, useWallet } from '@/features/wallet/use-wallet';
+import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 import { UNIT, shortfallLine, units } from '@/features/wallet/wallet-copy';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 
@@ -61,14 +61,14 @@ interface ReportDoorProps {
 export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
   const reduce = useReducedMotion();
   const queryClient = useQueryClient();
-  const wallet = useWallet();
+  const wallet = enabledWallet(useWallet().data);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [insufficient, setInsufficient] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const price = wallet.data?.prices.compat_unlock;
-  const balance = wallet.data?.balance;
+  const price = wallet?.prices.compat_unlock;
+  const balance = wallet?.balance;
 
   const unlock = async () => {
     if (!onUnlock || busy) return;
@@ -212,11 +212,11 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, onJump
           </motion.div>
         )}
       </AnimatePresence>
-      {wallet.data && (
+      {wallet && (
         <PackSheet
           open={sheetOpen}
           onClose={() => setSheetOpen(false)}
-          packs={wallet.data.packs}
+          packs={wallet.packs}
           shortfall={insufficient && price !== undefined && balance !== undefined ? { balance, price } : undefined}
         />
       )}

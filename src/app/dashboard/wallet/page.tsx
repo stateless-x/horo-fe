@@ -4,12 +4,13 @@ import { Sparkles } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
 import { LedgerList } from '@/features/wallet/ledger-list';
 import { PackList } from '@/features/wallet/pack-list';
-import { useWallet } from '@/features/wallet/use-wallet';
+import { enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 import { UNIT, baht, units } from '@/features/wallet/wallet-copy';
 
 /** /dashboard/wallet: the มู balance, the packs, and the newest ledger rows. */
 export default function WalletPage() {
-  const wallet = useWallet();
+  const query = useWallet();
+  const wallet = enabledWallet(query.data);
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-ground pb-10">
@@ -21,18 +22,20 @@ export default function WalletPage() {
       </div>
 
       <div className="mx-auto grid max-w-2xl gap-8 px-4 pt-6">
-        {wallet.isPending && <p className="text-inkMuted">กำลังโหลด...</p>}
+        {query.isPending && <p className="text-inkMuted">กำลังโหลด...</p>}
 
-        {wallet.isError && (
+        {query.isError && (
           <div className="rounded-xl border border-edge bg-surface px-4 py-5">
             <p className="text-ink">โหลดกระเป๋าไม่สำเร็จ</p>
-            <Button type="button" variant="soft" onClick={() => wallet.refetch()} className="mt-3">
+            <Button type="button" variant="soft" onClick={() => query.refetch()} className="mt-3">
               ลองอีกครั้ง
             </Button>
           </div>
         )}
 
-        {wallet.data && (
+        {query.data?.enabled === false && <p className="text-inkMuted">ยังไม่เปิดใช้งาน</p>}
+
+        {wallet && (
           <>
             <section aria-labelledby="wallet-balance" className="rounded-2xl border border-edge bg-surface px-5 py-5">
               <h2 id="wallet-balance" className="flex items-center gap-2 text-sm text-inkMuted">
@@ -40,10 +43,10 @@ export default function WalletPage() {
                 ยอดคงเหลือ
               </h2>
               <p className="mt-1 font-heading text-4xl font-semibold text-ink">
-                <span className="font-mono tabular-nums">{wallet.data.balance.toLocaleString('th-TH')}</span> {UNIT}
+                <span className="font-mono tabular-nums">{wallet.balance.toLocaleString('th-TH')}</span> {UNIT}
               </p>
               <p className="mt-1 text-sm text-inkMuted">
-                เท่ากับ {baht(wallet.data.balance)} · ปลดล็อกดวงคู่ 1 คนใช้ {units(wallet.data.prices.compat_unlock)}
+                เท่ากับ {baht(wallet.balance)} · ปลดล็อกดวงคู่ 1 คนใช้ {units(wallet.prices.compat_unlock)}
               </p>
             </section>
 
@@ -51,14 +54,14 @@ export default function WalletPage() {
               <h2 id="wallet-packs" className="mb-3 font-heading text-lg font-semibold text-ink">
                 เติม{UNIT}
               </h2>
-              <PackList packs={wallet.data.packs} />
+              <PackList packs={wallet.packs} />
             </section>
 
             <section aria-labelledby="wallet-ledger">
               <h2 id="wallet-ledger" className="mb-3 font-heading text-lg font-semibold text-ink">
                 ความเคลื่อนไหว
               </h2>
-              <LedgerList entries={wallet.data.ledger} />
+              <LedgerList entries={wallet.ledger} />
             </section>
           </>
         )}

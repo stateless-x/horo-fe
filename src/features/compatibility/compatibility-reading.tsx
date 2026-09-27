@@ -2,14 +2,19 @@ import { ChevronDown, Lightbulb, ShieldAlert, Sparkles } from 'lucide-react';
 import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
 import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
+import type { CompatibilityV3Shaped } from '@/lib-packages/shared/types/compatibility-v3';
 import { RELATIONSHIP_CONFIG } from '@/features/compatibility/relationship-config';
+import { CompatibilityReadingV3 } from '@/features/compatibility/compatibility-reading-v3';
 
 interface CompatibilityReadingProps {
   score: number;
   analysis: string;
-  structuredContent?: CompatibilityStructuredContent | null;
+  /** v2 content, or v3 content already shaped for one view. */
+  structuredContent?: CompatibilityStructuredContent | CompatibilityV3Shaped | null;
   relationshipType?: RelationshipType;
   onGuidanceOpen?: () => void;
+  /** v3 teaser view only: shows the unlock button on the locked card. */
+  onUnlock?: () => void;
 }
 
 const SECTION_ICONS = {
@@ -57,7 +62,19 @@ const SECTION_LABELS: Record<RelationshipType, Record<keyof typeof SECTION_ICONS
   },
 };
 
-export function CompatibilityReading({ score, analysis, structuredContent, relationshipType, onGuidanceOpen }: CompatibilityReadingProps) {
+export function CompatibilityReading({ score, analysis, structuredContent, relationshipType, onGuidanceOpen, onUnlock }: CompatibilityReadingProps) {
+  if (structuredContent?.contentVersion === 3) {
+    return (
+      <CompatibilityReadingV3
+        score={score}
+        content={structuredContent}
+        relationshipType={relationshipType}
+        onGuidanceOpen={onGuidanceOpen}
+        onUnlock={onUnlock}
+      />
+    );
+  }
+
   if (!structuredContent) {
     return (
       <section aria-labelledby="legacy-reading-title" className="rounded-2xl border border-edge bg-surface p-5 md:p-7">

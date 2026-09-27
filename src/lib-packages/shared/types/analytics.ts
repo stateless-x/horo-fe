@@ -98,11 +98,14 @@ export const COMPATIBILITY_SHARE_PLATFORMS = ['line', 'facebook', 'twitter', 'co
 export type CompatibilitySharePlatform = (typeof COMPATIBILITY_SHARE_PLATFORMS)[number];
 
 /**
- * Every step of the onboarding funnel worth counting, from first view through
- * the auth choice. Anonymous (no auth required) — the funnel must be visible
- * before a user exists to attach events to. Order matches the flow's step
- * sequence in `stores/onboarding.ts`, with the teaser and CTA outcomes broken
- * out into their own entries since one step produces several possible events.
+ * Steps of the anonymous (pre-auth) onboarding funnel, in the order a user
+ * moves through them. Single source of truth for both the backend's
+ * `POST /api/analytics/onboarding-step` body validation and the frontend's
+ * tracking calls — the horo-fe copy of this list must stay identical, since
+ * there is no auth on this endpoint to otherwise tie the two together.
+ *
+ * Deliberately a step name, not a numeric index: reordering steps in the UI
+ * must not renumber historical rows.
  */
 export const ONBOARDING_FUNNEL_STEPS = [
   'welcome',
@@ -122,6 +125,11 @@ export const ONBOARDING_FUNNEL_STEPS = [
 ] as const;
 
 export type OnboardingFunnelStep = (typeof ONBOARDING_FUNNEL_STEPS)[number];
+
+/** Pure membership check — the same list drives both this and the route's 400. */
+export function isOnboardingFunnelStep(value: string): value is OnboardingFunnelStep {
+  return (ONBOARDING_FUNNEL_STEPS as readonly string[]).includes(value);
+}
 
 export const TRACKED_EVENT_NAMES = [
   'surface_viewed',

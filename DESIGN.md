@@ -296,9 +296,9 @@ owner decision for this surface, set in Sarabun Light for the reading text.
   stays on real buttons, focus rings, controls and fills; the progress line is Romance Pink;
   chapter numbers keep their element or romance tone.
 - **Reading-kind eyebrow:** above the archetype h1, a JetBrains Mono label line (500, 0.75rem,
-  ink-muted) names the reading, "ดวงคู่ · {RELATIONSHIP_LABELS}", e.g. "ดวงคู่ · คนคุย". No
-  letter-spacing: the Thai falls back from the mono face, and tracked Thai reads as broken
-  apart.
+  ink-muted) names the reading, "ดวงคู่ · {RELATIONSHIP_LABELS}", e.g. "ดวงคู่ · คนคุย". Its
+  stack is JetBrains Mono then Noto Sans Thai, with no letter-spacing: JetBrains Mono has no
+  Thai, and the generic monospace fallback and tracking both spread Thai apart.
 - **Double-hairline frame:** the cover and the door, once open, carry a second hairline
   inset 5px inside the card (`BOUND_FRAME`, inset shadows so nothing shifts). It says
   "bound edition"; don't use it elsewhere.

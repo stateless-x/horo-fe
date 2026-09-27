@@ -88,7 +88,7 @@ describe('CompatibilityReport', () => {
     const html = render('teaser', () => {});
     expect(html).toContain('คู่ไฟหลอมทอง');
     // The reading's kind, above the archetype.
-    expect(html).toContain('ดวงคู่ · ความรัก</p><h1');
+    expect(html).toMatch(/ดวงคู่ · ความรัก\s*<\/p><h1/);
     expect(html).toContain('มิ้นท์');
     expect(html).toContain('เจ้าวันทองหยาง');
     expect(html).toContain(content.cover.verdict);

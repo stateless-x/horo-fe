@@ -15,7 +15,7 @@ const content: CompatibilityV3Content = {
     lockedHints: [
       { text: 'อีกฝ่ายมักแสดงความใส่ใจแบบไหน', section: 'understandingPartner' },
       { text: 'จุดบอดของคุณที่ทำให้เรื่องค้าง', section: 'yourSide' },
-      { text: 'วันไหนเหมาะกับเรื่องสำคัญ', section: 'timing' },
+      { text: 'ถ้าคุณเงียบไป อีกฝ่ายมักทำอย่างไร', section: 'friction' },
     ],
   },
   detail: {

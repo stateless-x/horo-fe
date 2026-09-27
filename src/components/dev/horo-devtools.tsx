@@ -66,10 +66,27 @@ function writePrefs(prefs: Prefs) {
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 /**
+ * Alt+Shift+D. Ctrl/Cmd+Shift+D is Chrome's bookmark-all-tabs; Alt+Shift+D is
+ * not taken by Chrome, Safari or macOS (on a Mac, Option+Shift+D only types a
+ * character, which is why the match is on `code`, not `key`).
+ */
+const DEVTOOLS_SHORTCUT = 'Alt+Shift+D';
+
+export function isDevtoolsShortcut(event: Pick<KeyboardEvent, 'altKey' | 'shiftKey' | 'ctrlKey' | 'metaKey' | 'code'>): boolean {
+  return event.altKey && event.shiftKey && !event.ctrlKey && !event.metaKey && event.code === 'KeyD';
+}
+
+/** Never steal a keystroke from someone typing. */
+export function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+}
+
+/**
  * horo devtools: a floating toggle that opens a docked panel with one tab per
  * dev generator. Dev builds only (see devtools-loader.tsx). Rendered into a
  * portal on <body> as a fixed overlay, so it never moves the page under it.
- * Ctrl/Cmd+Shift+D toggles it.
+ * Alt+Shift+D (Option+Shift+D on a Mac) toggles it; see DEVTOOLS_SHORTCUT.
  */
 export function HoroDevtools() {
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
@@ -92,7 +109,7 @@ export function HoroDevtools() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === 'd') {
+      if (isDevtoolsShortcut(event) && !isTypingTarget(event.target)) {
         event.preventDefault();
         setPrefs((current) => {
           const next = { ...current, open: !current.open };
@@ -144,8 +161,8 @@ export function HoroDevtools() {
         <button
           type="button"
           onClick={() => update({ open: true })}
-          aria-label="เปิด horo devtools (Ctrl/Cmd+Shift+D)"
-          title="horo devtools (Ctrl/Cmd+Shift+D)"
+          aria-label={`เปิด horo devtools (${DEVTOOLS_SHORTCUT})`}
+          title={`horo devtools · ${DEVTOOLS_SHORTCUT} (Mac: ⌥⇧D)`}
           className="fixed bottom-4 left-16 z-[2147483000] flex size-11 items-center justify-center rounded-full border border-edge bg-surface text-accentBright shadow-[0_8px_24px_rgba(107,33,168,0.25)] transition-colors hover:bg-surface2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
         >
           <FlaskConical className="size-5" aria-hidden="true" />
@@ -206,7 +223,7 @@ export function HoroDevtools() {
               type="button"
               onClick={() => update({ open: false })}
               aria-label="ปิด horo devtools"
-              title="ปิด (Ctrl/Cmd+Shift+D)"
+              title={`ปิด (${DEVTOOLS_SHORTCUT})`}
               className="flex size-8 items-center justify-center rounded text-inkMuted hover:bg-edge hover:text-ink"
             >
               <X className="size-4" aria-hidden="true" />

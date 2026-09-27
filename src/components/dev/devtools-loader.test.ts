@@ -39,3 +39,22 @@ describe('devtools mount', () => {
     expect(HoroDevtoolsLoader).not.toBeNull();
   });
 });
+
+describe('devtools shortcut', () => {
+  const key = (overrides: Partial<Pick<KeyboardEvent, 'altKey' | 'shiftKey' | 'ctrlKey' | 'metaKey' | 'code'>>) => ({
+    altKey: false,
+    shiftKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    code: 'KeyD',
+    ...overrides,
+  });
+
+  test('Alt+Shift+D toggles; the combos browsers own do not', async () => {
+    const { isDevtoolsShortcut } = await import('./horo-devtools');
+    expect(isDevtoolsShortcut(key({ altKey: true, shiftKey: true }))).toBe(true);
+    expect(isDevtoolsShortcut(key({ ctrlKey: true, shiftKey: true }))).toBe(false);
+    expect(isDevtoolsShortcut(key({ metaKey: true, shiftKey: true }))).toBe(false);
+    expect(isDevtoolsShortcut(key({ altKey: true, shiftKey: true, code: 'KeyF' }))).toBe(false);
+  });
+});

@@ -157,7 +157,7 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('role="tablist"');
     expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
     for (const label of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยให้เข้าใจกัน', 'ไปต่อยังไงดี']) expect(html).toContain(`aria-label="${label}"`);
-    for (const mobileLabel of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยกันยังไง', 'ไปต่อยังไงดี']) expect(html).toContain(mobileLabel);
+    for (const tabLabel of ['ทำไมถึงใช่', 'นิสัยเขา', 'คุยกันยังไง', 'ไปต่อยังไง']) expect(html).toContain(tabLabel);
     expect(html).toContain('id="report-tab-overview"');
     expect(html).toContain('id="report-panel-next"');
     expect(html).toContain('อ่านราว 11 นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย');

@@ -25,6 +25,10 @@ export interface FortuneCategoryConfig {
   clayAsset: string;
   /** Functional fallback icon (chrome-scale contexts only). */
   icon: LucideIcon;
+  /** Stable, theme-safe data color used by score bars across daily and chart readings. */
+  chartFillClass: string;
+  /** Text treatment paired with the score bar; colors never carry the score alone. */
+  chartValueClass: string;
 }
 
 export const FORTUNE_CATEGORY_CONFIG = {
@@ -33,36 +37,48 @@ export const FORTUNE_CATEGORY_CONFIG = {
     fullLabel: 'ภาพรวมชีวิต',
     clayAsset: '/assets/clay/categories/life-overview.webp',
     icon: Orbit,
+    chartFillClass: 'bg-accentBright',
+    chartValueClass: 'text-accentBright',
   },
   love: {
     label: 'ความรัก',
     fullLabel: 'ความรัก',
     clayAsset: '/assets/clay/categories/love.webp',
     icon: Heart,
+    chartFillClass: 'bg-romance',
+    chartValueClass: 'text-romanceText',
   },
   career: {
     label: 'การงาน',
     fullLabel: 'การงาน',
     clayAsset: '/assets/clay/categories/career.webp',
     icon: Briefcase,
+    chartFillClass: 'bg-[var(--el-fire)]',
+    chartValueClass: 'text-[var(--el-fire)]',
   },
   finance: {
     label: 'การเงิน',
     fullLabel: 'การเงิน',
     clayAsset: '/assets/clay/categories/finance.webp',
     icon: Coins,
+    chartFillClass: 'bg-[var(--el-earth)]',
+    chartValueClass: 'text-[var(--el-earth)]',
   },
   health: {
     label: 'สุขภาพ',
     fullLabel: 'สุขภาพ',
     clayAsset: '/assets/clay/categories/health.webp',
     icon: Activity,
+    chartFillClass: 'bg-success',
+    chartValueClass: 'text-success',
   },
   family: {
     label: 'ครอบครัว',
     fullLabel: 'ครอบครัว',
     clayAsset: '/assets/clay/categories/family.webp',
     icon: Home,
+    chartFillClass: 'bg-[var(--el-water)]',
+    chartValueClass: 'text-[var(--el-water)]',
   },
 // Keyed by the shared FortuneCategoryKey rather than `string`, so a key added
 // to lib/shared but missing here is a compile error instead of an `undefined`

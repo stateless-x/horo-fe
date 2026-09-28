@@ -57,11 +57,8 @@ export function FortuneEnergySection({ fortuneReadings, readingPeriod, onOpenRea
           const config = FORTUNE_CATEGORY_CONFIG[area.key as FortuneCategoryKey];
           if (!config) return null;
 
-          // Romance Pink is a reserved payload hue for love/relationship
-          // content (DESIGN.md), matching the daily page's category bars.
-          const isLove = area.key === 'love';
-          const fillClass = isLove ? 'bg-pink-500' : 'bg-accentBright';
-          const valueClass = isLove ? 'text-pink-600 dark:text-pink-400' : 'text-accentBright';
+          const fillClass = config.chartFillClass;
+          const valueClass = config.chartValueClass;
 
           return (
             <li key={area.key}>

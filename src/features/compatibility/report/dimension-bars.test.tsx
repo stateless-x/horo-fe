@@ -18,6 +18,9 @@ describe('DimensionBars', () => {
     // look like an alert and competed with the rest of the reading.
     expect(html).not.toContain('bg-romance/[0.06]');
     expect(html).not.toContain('ring-inset');
+    // Four fixed meanings use four fixed hues: chemistry, communication,
+    // trust and life rhythm remain distinguishable beyond their score values.
+    for (const tone of ['bg-romance', 'bg-accentBright', 'bg-success', 'bg-warn']) expect(html).toContain(tone);
     // Only one tag: the highest (เคมี 82), not the three lower scores.
     expect((html.match(/จุดแข็ง/g) || []).length).toBe(1);
     // The tag sits with เคมี's row, not another dimension's.

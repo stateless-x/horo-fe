@@ -284,9 +284,8 @@ export default function TodayPage() {
                 const isExpanded = expandedCategory === key;
                 const panelId = `daily-category-panel-${key}`;
                 const percent = clampScore(data.score);
-                const isLove = key === 'love';
-                const accentClass = isLove ? 'bg-pink-500' : 'bg-accentBright';
-                const textAccentClass = isLove ? 'text-pink-600 dark:text-pink-400' : 'text-accentBright';
+                const accentClass = config.chartFillClass;
+                const textAccentClass = config.chartValueClass;
 
                 return (
                   <div key={key} id={`daily-category-row-${key}`} className={index > 0 ? 'border-t border-edge' : ''}>

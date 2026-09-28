@@ -37,12 +37,6 @@ function PersonColumn({ name, person, className = '' }: { name: string; person: 
         <b className="font-semibold" style={elementText(person.element)}>
           ธาตุ{ELEMENT_TH[person.element]}
         </b>
-        {person.mbti && (
-          <span className="hidden sm:inline">
-            {' · '}
-            <span className="font-english font-medium">{person.mbti}</span>
-          </span>
-        )}
       </span>
       <span className="relative hidden whitespace-nowrap text-xs leading-snug text-inkMuted sm:block">{dayMasterTh(person.element, person.yinYang)}</span>
     </div>
@@ -77,11 +71,11 @@ export function ReportCover({ content, score, readerName, partnerName, relations
       <div
         role="group"
         aria-label={`${readerName} ธาตุ${ELEMENT_TH[reader.element]} กับ ${partnerName} ธาตุ${ELEMENT_TH[partner.element]}`}
-        className="mx-auto grid max-w-[520px] grid-cols-2 items-start gap-x-4 gap-y-3 sm:grid-cols-[minmax(0,1fr)_minmax(132px,170px)_minmax(0,1fr)] sm:gap-x-3 sm:gap-y-0"
+        className="mx-auto grid max-w-[660px] grid-cols-2 items-start gap-x-4 gap-y-3 sm:grid-cols-[minmax(0,1fr)_minmax(190px,224px)_minmax(0,1fr)] sm:gap-x-4 sm:gap-y-0"
       >
         <PersonColumn name={readerName} person={reader} className="col-start-1 row-start-2 sm:col-start-1 sm:row-start-1" />
         <motion.div
-          className="relative col-span-2 row-start-1 mx-auto w-[132px] text-center sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:w-auto sm:-mt-9"
+          className="relative col-span-2 row-start-1 mx-auto w-[188px] text-center sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:w-auto sm:-mt-10"
           initial={reduce ? false : { opacity: 0, y: 8, scale: 0.94 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
@@ -98,7 +92,7 @@ export function ReportCover({ content, score, readerName, partnerName, relations
 
       <h1
         id="report-archetype"
-        className="mt-6 text-balance text-center font-heading text-[clamp(2rem,8.6vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-ink"
+        className="mt-7 text-balance text-center font-heading text-[clamp(2rem,8.6vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-ink"
       >
         {content.archetype.name}
       </h1>

@@ -106,6 +106,8 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('aria-label="ความเข้ากัน 72 จาก 100"');
     expect(html).toContain('มิ้นท์');
     expect(html).toContain('เจ้าวันทองหยาง');
+    expect(html).not.toContain('INFP');
+    expect(html).not.toContain('ESTJ');
     expect(html).toContain(content.cover.verdict);
     for (const dimension of content.dimensions) expect(html).toContain(`${dimension.score}<span class="sr-only">จาก 100`);
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);

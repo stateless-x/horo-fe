@@ -42,7 +42,7 @@ export function CompatibilityTalisman({ score, priority = false }: { score: numb
   const band = compatibilityTalismanBand(score);
 
   return (
-    <div className="relative mx-auto w-full max-w-[148px] sm:max-w-[170px]">
+    <div className="relative mx-auto w-full max-w-[188px] sm:max-w-[224px] lg:max-w-[240px]">
       <span
         aria-hidden="true"
         className="absolute inset-[15%] rounded-full bg-romance/20 blur-2xl dark:bg-romance/15"
@@ -52,9 +52,9 @@ export function CompatibilityTalisman({ score, priority = false }: { score: numb
         alt={`เครื่องรางดวงคู่ ${band.label}`}
         width={768}
         height={768}
-        sizes="(min-width: 640px) 170px, 148px"
+        sizes="(min-width: 1024px) 240px, (min-width: 640px) 224px, 188px"
         priority={priority}
-        className="relative aspect-square w-full object-contain drop-shadow-[0_14px_18px_rgba(107,33,168,0.16)]"
+        className="relative aspect-square w-full object-contain drop-shadow-[0_18px_26px_rgba(107,33,168,0.18)]"
       />
     </div>
   );

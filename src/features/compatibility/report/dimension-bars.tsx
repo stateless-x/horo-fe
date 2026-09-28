@@ -31,9 +31,7 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
             return (
               <li
                 key={dimension.key}
-                className={`-mx-1 rounded-xl px-1 pb-4 pt-3.5 sm:-mx-2 sm:px-2 ${
-                  isTop ? 'bg-romance/[0.06] ring-1 ring-inset ring-romance/25' : ''
-                }`}
+                className="-mx-1 px-1 pb-4 pt-3.5 sm:-mx-2 sm:px-2"
               >
                 <div className="flex items-center gap-2">
                   <span className="font-heading text-base font-semibold leading-snug text-ink">{dimension.label}</span>
@@ -50,7 +48,7 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-edge" aria-hidden="true">
                   <div
-                    className={`h-full rounded-full ${isTop ? 'bg-romanceText' : 'bg-romance'}`}
+                    className="h-full rounded-full bg-romance"
                     style={{ width: `${dimension.score}%` }}
                   />
                 </div>

@@ -312,7 +312,7 @@ owner decision for this surface, set in Sarabun Light for the reading text.
   door and genuinely interactive content. Dimension scores and personal questions use simple
   hairline lists, with one lock explanation per section rather than a lock on every row. A collapsed
   chapter shows its title, summary and one action; its pull quote and detail appear only after
-  “อ่านเจาะลึก”. Do not repeat back-links or saved-history reminders when the same fact is already
+  “รายละเอียด”. Do not repeat back-links or saved-history reminders when the same fact is already
   visible nearby.
 - **Double-hairline frame:** the cover and the door, once open, carry a second hairline
   inset 5px inside the card (`BOUND_FRAME`, inset shadows so nothing shifts). It says

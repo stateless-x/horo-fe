@@ -32,7 +32,7 @@ Make the compatibility result the product's most memorable paid-conversion surfa
 - Locked offer: four benefit groups only; detailed chapter contents appear after unlock.
 - Visual density: reserve cards for the cover, purchase door and interactive report modules. Scores and questions use hairline lists; explain the lock once per section instead of decorating every row.
 - Section cues: the opened report uses one small transparent clay asset beside each focused section heading, replacing redundant tab numbering and decorative UI chrome. The assets are contextual, text-free and never carry state or essential information.
-- Progressive reading: collapsed chapters show title, summary and one practical action. Pull quotes, long text and specialist detail stay behind “อ่านเจาะลึก”.
+- Progressive reading: collapsed chapters show title, summary and one practical action. Pull quotes, long text and specialist detail stay behind “รายละเอียด”.
 - Focused full report: after unlock, every viewport shows one of four sections at a time—เคมีของเรา, ใจเขา ใจเรา, คุยให้ถึงใจ, ไปต่อยังไงดี (the unit is ส่วน, never a numbered บท)—with previous/next controls.
 - URL behavior: each signed-in result has the canonical path `/dashboard/compatibility/[id]`; the selected full-report section lives in `?section=`, and browser Back/Forward restores the section naturally. Legacy `?id=` links redirect to this path.
 - Responsive behavior: locked desktop aligns a 680px cover/content column and sticky offer rail inside one 1080px shell. The opened report uses one 720px reading column; phones compose the four tabs as 2×2, while iPad and desktop use one row.

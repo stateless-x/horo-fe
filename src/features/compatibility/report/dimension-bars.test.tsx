@@ -14,6 +14,10 @@ describe('DimensionBars', () => {
   test('tags only the highest score with จุดแข็ง, text and icon, not the others', () => {
     const html = renderToStaticMarkup(<DimensionBars dimensions={dims([82, 64, 71, 43])} hideLockNote />);
     expect(html).toContain('จุดแข็ง');
+    // The tag gives the meaning. A tinted, outlined row made the best score
+    // look like an alert and competed with the rest of the reading.
+    expect(html).not.toContain('bg-romance/[0.06]');
+    expect(html).not.toContain('ring-inset');
     // Only one tag: the highest (เคมี 82), not the three lower scores.
     expect((html.match(/จุดแข็ง/g) || []).length).toBe(1);
     // The tag sits with เคมี's row, not another dimension's.

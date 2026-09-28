@@ -125,11 +125,10 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('ฉบับเต็ม');
     expect(html).toContain(content.overview.story);
     expect(html).toContain('บรรทัดความไว้ใจ');
-    // Each closed chapter's toggle button reads "รายละเอียด" immediately before
-    // its chevron icon. The fixture's own detail text also starts with that
-    // word (e.g. "รายละเอียดเรื่องแรงดึงดูด"), so a bare substring match on the
-    // whole page double-counts; anchor to the button's own text instead.
-    expect(html.match(/>รายละเอียด<svg/g)).toHaveLength(6);
+    // The two conversation chapters name their action; the other four keep
+    // the neutral detail label. Anchor to the chevron so fixture prose cannot
+    // inflate the count.
+    expect(html.match(/>(?:รายละเอียด|ดูวิธีเริ่มคุย|ดูวิธีกลับมาคุย)<svg/g)).toHaveLength(6);
     expect(html).toContain('คำคมเรื่องแรงดึงดูด');
     // The attraction chapter's computed basis: both spouse palaces.
     expect(html).toContain('มะเมีย (ม้า)');
@@ -151,11 +150,18 @@ describe('CompatibilityReport', () => {
     const html = render('full');
     expect(html).toContain('role="tablist"');
     expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
-    for (const label of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'พูดยังไงไม่ให้พัง', 'ไปต่อยังไงดี']) expect(html).toContain(`>${label}</button>`);
+    for (const label of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยให้เข้าใจกัน', 'ไปต่อยังไงดี']) expect(html).toContain(`>${label}</button>`);
     expect(html).toContain('id="report-tab-overview"');
     expect(html).toContain('id="report-panel-next"');
     expect(html).toContain('อ่านราว 11 นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย');
     expect(html).toContain('two-mirrors.webp');
+    expect(html).toContain('talking.webp');
+    expect(html).toContain('ตอนนี้คุณอยู่ตรงไหน');
+    expect(html).toContain('มีเรื่องอยากคุย');
+    expect(html).toContain('เริ่มรู้สึกตึง');
+    expect(html).toContain('reconnect.webp');
+    expect(html).toContain('ดูวิธีเริ่มคุย');
+    expect(html).toContain('ดูวิธีกลับมาคุย');
   });
 
   test('sections, not chapters: no บท and no chapter numbers, and hints name their section', () => {
@@ -165,7 +171,7 @@ describe('CompatibilityReport', () => {
     const full = render('full');
     for (const html of [teaser, full]) expect(html).not.toMatch(unitWord);
     expect(teaser).toContain('คำตอบอยู่ในส่วน ‘อ่านนิสัยเขา’ ของฉบับเต็ม');
-    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘พูดยังไงไม่ให้พัง’ ของฉบับเต็ม');
+    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘คุยให้เข้าใจกัน’ ของฉบับเต็ม');
     expect(teaser).not.toContain('จ่ายครั้งเดียว');
     expect(full).toContain('เหมาะกับก้าวต่อไป ดู ‘สิ่งที่ทำให้อยู่ยาว’');
     // No numbered chapter badge beside a chapter title.

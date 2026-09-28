@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowLeft, ArrowRight, Share2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, HeartHandshake, MessageCircleMore, Share2 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
@@ -19,6 +19,7 @@ import { DimensionBars } from './report/dimension-bars';
 import { LockedHints } from './report/locked-hints';
 import { ReportDoor, type ReportContentsEntry } from './report/report-door';
 import { ChapterCard } from './report/chapter-card';
+import { ConversationMomentMap } from './report/conversation-moment-map';
 import { BasisFacts, DoAvoid, NextMonth, ReadyLines, Scenarios, Signals } from './report/chapter-kit';
 import { MonthTiles } from './report/month-tiles';
 import { PlanChecklist } from './report/plan-checklist';
@@ -80,9 +81,9 @@ const REPORT_SECTIONS: ReadonlyArray<{
   },
   {
     id: 'conversation',
-    label: 'พูดยังไงไม่ให้พัง',
-    title: 'คุยแบบไหนถึงจะเข้าใจกัน',
-    description: 'ประโยคเปิดใจ และวิธีง้อเวลาหัวร้อน',
+    label: 'คุยให้เข้าใจกัน',
+    title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี',
+    description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วหยิบวิธีคุยไปใช้ได้เลย',
     art: '/assets/clay/relationships/talking.webp',
   },
   {
@@ -295,6 +296,7 @@ export function CompatibilityReport({
         open={openChapters.has(chapter.key)}
         onToggle={() => toggleChapter(chapter.key)}
         kit={chapterKit(chapter, full, partnerName, jump)}
+        cue={chapterCue(chapter.key)}
       />
     );
   };
@@ -391,8 +393,8 @@ export function CompatibilityReport({
                     alt=""
                     width={128}
                     height={128}
-                    sizes="64px"
-                    className="size-16 shrink-0 object-contain"
+                    sizes={section.id === 'conversation' ? '(min-width: 640px) 96px, 80px' : '64px'}
+                    className={`${section.id === 'conversation' ? 'size-20 sm:size-24' : 'size-16'} shrink-0 object-contain`}
                   />
                 </div>
 
@@ -417,7 +419,12 @@ export function CompatibilityReport({
 
                 {section.id === 'people' && <div className="mt-8 space-y-4">{renderChapter('partner')}{renderChapter('you')}</div>}
 
-                {section.id === 'conversation' && <div className="mt-8 space-y-4">{renderChapter('communication')}{renderChapter('friction')}</div>}
+                {section.id === 'conversation' && (
+                  <div className="mt-7">
+                    <ConversationMomentMap onChoose={(moment) => jump(`ch-${moment}`)} />
+                    <div className="mt-5 space-y-4">{renderChapter('communication')}{renderChapter('friction')}</div>
+                  </div>
+                )}
 
                 {section.id === 'next' && (
                   <>
@@ -534,6 +541,29 @@ function chapterTone(key: V4ChapterKey, content: CompatibilityV4Content): Report
   if (key === 'partner') return content.people.partner.element;
   if (key === 'you') return content.people.reader.element;
   return 'romance';
+}
+
+/** A small tag gives the two conversation tools a use-case before the reader opens either one. */
+function chapterCue(key: V4ChapterKey) {
+  if (key === 'communication') {
+    return {
+      label: 'คุยตอนยังนิ่ง',
+      actionLabel: 'ลองเริ่มแบบนี้',
+      detailLabel: 'ดูวิธีเริ่มคุย',
+      collapseLabel: 'ย่อวิธีเริ่มคุย',
+      icon: <MessageCircleMore className="size-3.5" aria-hidden="true" />,
+    };
+  }
+  if (key === 'friction') {
+    return {
+      label: 'เริ่มรู้สึกตึง',
+      actionLabel: 'ลองลดแรงก่อน',
+      detailLabel: 'ดูวิธีกลับมาคุย',
+      collapseLabel: 'ย่อวิธีกลับมาคุย',
+      icon: <HeartHandshake className="size-3.5" aria-hidden="true" />,
+    };
+  }
+  return undefined;
 }
 
 function chapterKit(chapter: V4Chapter, content: CompatibilityV4Content, partnerName: string, jump: (id: string) => void) {

@@ -147,7 +147,7 @@ describe('CompatibilityReport', () => {
     const html = render('full');
     expect(html).toContain('role="tablist"');
     expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
-    for (const label of ['เคมีของเรา', 'ใจเขา ใจเรา', 'คุยให้ถึงใจ', 'ไปต่อยังไงดี']) expect(html).toContain(`>${label}</button>`);
+    for (const label of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'พูดยังไงไม่ให้พัง', 'ไปต่อยังไงดี']) expect(html).toContain(`>${label}</button>`);
     expect(html).toContain('id="report-tab-overview"');
     expect(html).toContain('id="report-panel-next"');
     expect(html).toContain('อ่านราว 11 นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย');
@@ -160,8 +160,8 @@ describe('CompatibilityReport', () => {
     const teaser = render('teaser', () => {});
     const full = render('full');
     for (const html of [teaser, full]) expect(html).not.toMatch(unitWord);
-    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘ใจเขา ใจเรา’ ของฉบับเต็ม');
-    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘คุยให้ถึงใจ’ ของฉบับเต็ม');
+    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘อ่านนิสัยเขา’ ของฉบับเต็ม');
+    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘พูดยังไงไม่ให้พัง’ ของฉบับเต็ม');
     expect(teaser).not.toContain('จ่ายครั้งเดียว');
     expect(full).toContain('เหมาะกับก้าวต่อไป ดู ‘สิ่งที่ทำให้อยู่ยาว’');
     // No numbered chapter badge beside a chapter title.

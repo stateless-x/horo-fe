@@ -66,30 +66,30 @@ const REPORT_SECTIONS: ReadonlyArray<{
 }> = [
   {
     id: 'overview',
-    label: 'เคมีของเรา',
-    title: 'เคมีของคู่นี้',
-    description: 'ดูเคมี จุดแข็ง และแรงดึงดูด',
+    label: 'ทำไมถึงใช่',
+    title: 'ทำไมถึงเป็นคู่นี้',
+    description: 'จุดที่ดึงกันเข้ามา และจุดที่ทำให้ใช่',
     art: '/assets/clay/chart-scroll-oracle.webp',
   },
   {
     id: 'people',
-    label: 'ใจเขา ใจเรา',
-    title: 'เข้าใจเขา และเข้าใจตัวคุณ',
-    description: 'ดูความรู้สึกของทั้งคู่',
+    label: 'อ่านนิสัยเขา',
+    title: 'นิสัยเขา นิสัยเรา',
+    description: 'สิ่งที่เขามักทำแบบนั้น และทำไมคุณถึงเป็นแบบนี้',
     art: '/assets/clay/compatibility-sections/two-mirrors.webp',
   },
   {
     id: 'conversation',
-    label: 'คุยให้ถึงใจ',
-    title: 'คุยยังไงให้เข้าใจกันมากขึ้น',
-    description: 'ดูคำที่ช่วยเปิดใจ และวิธีคืนดีเวลาติดขัด',
+    label: 'พูดยังไงไม่ให้พัง',
+    title: 'คุยแบบไหนถึงจะเข้าใจกัน',
+    description: 'ประโยคเปิดใจ และวิธีง้อเวลาหัวร้อน',
     art: '/assets/clay/relationships/talking.webp',
   },
   {
     id: 'next',
     label: 'ไปต่อยังไงดี',
-    title: 'ก้าวต่อไปที่ทำได้จริง',
-    description: 'เลือกจังหวะที่เหมาะ แล้วเริ่มจากก้าวเล็ก ๆ',
+    title: 'ไปต่อ หรือพอแค่นี้',
+    description: 'สัญญาณที่บอกว่าควรลุยหรือควรถอย',
     art: '/assets/clay/categories/life-overview.webp',
   },
 ];
@@ -146,8 +146,8 @@ export function CompatibilityReport({
       title: full?.chapters[i].title ?? CHAPTER_TITLE_TEASER(key, partnerName),
       short: CHAPTER_SHORT[key] ?? partnerName,
     })),
-    { id: 'report-calendar-section', title: 'ปฏิทินความสัมพันธ์ 3 เดือน', short: 'ปฏิทิน', icon: 'calendar' },
-    { id: 'report-plan-section', title: '3 ก้าวใน 7 วัน', short: '3 ก้าว', icon: 'plan' },
+    { id: 'report-calendar-section', title: 'จังหวะ 3 เดือนข้างหน้า', short: 'ปฏิทิน', icon: 'calendar' },
+    { id: 'report-plan-section', title: '7 วันแรกที่ควรลอง', short: '3 ก้าว', icon: 'plan' },
   ];
 
   const syncSectionToUrl = useCallback(

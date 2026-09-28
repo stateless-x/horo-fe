@@ -337,8 +337,10 @@ export function CompatibilityReport({
                   );
                 })}
               </div>
-              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 flex items-center gap-0.5 bg-gradient-to-l from-ground via-ground/95 to-transparent pl-5 text-xs font-medium text-inkMuted sm:hidden">
-                เลื่อนดู
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 right-0 flex w-9 items-center justify-end bg-gradient-to-l from-ground via-ground/95 to-transparent text-inkMuted sm:hidden"
+              >
                 <ChevronRight className="size-4" />
               </span>
             </div>

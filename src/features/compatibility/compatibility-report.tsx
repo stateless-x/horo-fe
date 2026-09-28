@@ -26,6 +26,7 @@ import { MonthTiles } from './report/month-tiles';
 import { PlanChecklist } from './report/plan-checklist';
 import { ShareCard } from './report/share-card';
 import { MiniSeal, paragraphs, SectionHeading, ThaiText, type ReportElement } from './report/report-kit';
+import { relationshipReportCopy, type ReportSectionId } from './report/report-copy';
 
 interface CompatibilityReportProps {
   score: number;
@@ -57,55 +58,18 @@ const CHAPTER_SHORT: Record<V4ChapterKey, string | null> = {
 
 const CHAPTER_KEYS: V4ChapterKey[] = ['attraction', 'partner', 'you', 'communication', 'friction', 'future'];
 
-type ReportSection = 'overview' | 'people' | 'conversation' | 'next';
+type ReportSection = ReportSectionId;
 
-const REPORT_SECTIONS: ReadonlyArray<{
-  id: ReportSection;
-  label: string;
-  title: string;
-  description: string;
-  art: string;
-}> = [
-  {
-    id: 'overview',
-    label: 'ทำไมถึงใช่',
-    title: 'ทำไมถึงเป็นคู่นี้',
-    description: 'จุดที่ดึงกันเข้ามา และจุดที่ทำให้ใช่',
-    art: '/assets/clay/chart-scroll-oracle.webp',
-  },
-  {
-    id: 'people',
-    label: 'อ่านนิสัยเขา',
-    title: 'นิสัยเขา นิสัยเรา',
-    description: 'สิ่งที่เขามักทำแบบนั้น และทำไมคุณถึงเป็นแบบนี้',
-    art: '/assets/clay/compatibility-sections/two-mirrors.webp',
-  },
-  {
-    id: 'conversation',
-    label: 'คุยให้เข้าใจกัน',
-    title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี',
-    description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วหยิบวิธีคุยไปใช้ได้เลย',
-    art: '/assets/clay/relationships/talking.webp',
-  },
-  {
-    id: 'next',
-    label: 'ไปต่อยังไงดี',
-    title: 'ไปต่อ หรือพอแค่นี้',
-    description: 'สัญญาณที่บอกว่าควรลุยหรือควรถอย',
-    art: '/assets/clay/categories/life-overview.webp',
-  },
-];
-
-const REPORT_SECTION_IDS = new Set<ReportSection>(REPORT_SECTIONS.map((section) => section.id));
+const REPORT_SECTION_IDS = new Set<ReportSection>(['overview', 'people', 'conversation', 'next']);
+const SECTION_ART: Record<ReportSection, string> = {
+  overview: '/assets/clay/chart-scroll-oracle.webp',
+  people: '/assets/clay/compatibility-sections/two-mirrors.webp',
+  conversation: '/assets/clay/relationships/talking.webp',
+  next: '/assets/clay/categories/life-overview.webp',
+};
 
 function isReportSection(value: string | null): value is ReportSection {
   return value !== null && REPORT_SECTION_IDS.has(value as ReportSection);
-}
-
-/** The name of the section a chapter sits in, e.g. for a hint that points to its answer. */
-function sectionLabelOf(key: V4ChapterKey): string {
-  const id = sectionForTarget(`ch-${key}`);
-  return REPORT_SECTIONS.find((section) => section.id === id)!.label;
 }
 
 function sectionForTarget(id: string): ReportSection {
@@ -136,6 +100,13 @@ export function CompatibilityReport({
   const full = isFull(content) ? content : null;
   const reader = readerName ?? 'คุณ';
   const relationshipLabel = relationshipType ? `ดวง${RELATIONSHIP_LABELS[relationshipType]}` : 'ดวงคู่';
+  const reportCopy = relationshipReportCopy(relationshipType);
+  const reportSections = (['overview', 'people', 'conversation', 'next'] as const).map((id) => ({
+    id,
+    ...reportCopy.sections[id],
+    art: SECTION_ART[id],
+  }));
+  const sectionLabelOf = (key: V4ChapterKey) => reportCopy.sections[sectionForTarget(`ch-${key}`)].label;
   const doorRef = useRef<HTMLDivElement>(null);
   const sectionNavRef = useRef<HTMLDivElement>(null);
   const [openChapters, setOpenChapters] = useState<Set<V4ChapterKey>>(new Set());
@@ -149,7 +120,7 @@ export function CompatibilityReport({
       short: CHAPTER_SHORT[key] ?? partnerName,
     })),
     { id: 'report-calendar-section', title: 'จังหวะ 3 เดือนข้างหน้า', short: 'ปฏิทิน', icon: 'calendar' },
-    { id: 'report-plan-section', title: '7 วันแรกที่ควรลอง', short: '3 ก้าว', icon: 'plan' },
+    { id: 'report-plan-section', title: reportCopy.plan.findingRhythm.title, short: 'แนวทาง', icon: 'plan' },
   ];
 
   const syncSectionToUrl = useCallback(
@@ -306,13 +277,13 @@ export function CompatibilityReport({
     const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
     if (!keys.includes(event.key)) return;
     event.preventDefault();
-    const currentIndex = REPORT_SECTIONS.findIndex((section) => section.id === activeSection);
+    const currentIndex = reportSections.findIndex((section) => section.id === activeSection);
     let nextIndex = currentIndex;
     if (event.key === 'Home') nextIndex = 0;
-    else if (event.key === 'End') nextIndex = REPORT_SECTIONS.length - 1;
-    else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % REPORT_SECTIONS.length;
-    else nextIndex = (currentIndex - 1 + REPORT_SECTIONS.length) % REPORT_SECTIONS.length;
-    const next = REPORT_SECTIONS[nextIndex];
+    else if (event.key === 'End') nextIndex = reportSections.length - 1;
+    else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % reportSections.length;
+    else nextIndex = (currentIndex - 1 + reportSections.length) % reportSections.length;
+    const next = reportSections[nextIndex];
     chooseSection(next.id, false);
     document.getElementById(`report-tab-${next.id}`)?.focus();
   };
@@ -342,7 +313,7 @@ export function CompatibilityReport({
               onKeyDown={handleTabsKeyDown}
               className="mt-4 grid grid-cols-2 gap-2 rounded-2xl bg-surface2 p-1.5 sm:grid-cols-4"
             >
-              {REPORT_SECTIONS.map((section) => {
+              {reportSections.map((section) => {
                 const selected = activeSection === section.id;
                 return (
                   <button
@@ -369,7 +340,7 @@ export function CompatibilityReport({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
           >
-            {REPORT_SECTIONS.map((section) => (
+            {reportSections.map((section) => (
               <section
                 key={section.id}
                 id={`report-panel-${section.id}`}
@@ -411,7 +382,7 @@ export function CompatibilityReport({
                       actions={[
                         { id: 'report-dimensions-section', tag: 'เช็กจุดแข็ง', title: 'ดู 4 มิติของคู่นี้', detail: 'เคมี การสื่อสาร ความไว้ใจ และจังหวะชีวิต', icon: ChartNoAxesCombined, tone: 'accent' },
                         { id: 'report-overview-section', tag: 'เริ่มจากภาพใหญ่', title: 'อ่านเรื่องของคู่นี้', detail: 'ดูภาพรวมว่าอะไรพาให้มาเจอกัน', icon: Sparkles, tone: 'success' },
-                        { id: 'ch-attraction', tag: 'มองให้ลึกขึ้น', title: 'ดูแรงดึงดูด', detail: 'เข้าใจจุดที่ทำให้รู้สึกพิเศษต่อกัน', icon: HeartHandshake, tone: 'romance' },
+                        { id: 'ch-attraction', ...reportCopy.overviewAction, icon: HeartHandshake, tone: 'romance' },
                       ]}
                       />
                     <section id="report-overview-section" aria-labelledby="report-overview" className="mt-8 scroll-mt-20">
@@ -435,8 +406,8 @@ export function CompatibilityReport({
                       helper="เลือกแล้วดูต่อได้เลย"
                       onChoose={jump}
                       actions={[
-                        { id: 'ch-partner', tag: 'ดูเขาก่อน', title: 'เขาเป็นคนแบบไหน', detail: 'เวลาอยู่ในความสัมพันธ์และต้องการพื้นที่', icon: UserRound, tone: 'accent' },
-                        { id: 'ch-you', tag: 'กลับมาดูใจเรา', title: 'เราเป็นยังไงเวลาอิน', detail: 'เข้าใจสิ่งที่เราให้ความสำคัญในความสัมพันธ์', icon: CircleUserRound, tone: 'success' },
+                        { id: 'ch-partner', ...reportCopy.peopleActions.partner, icon: UserRound, tone: 'accent' },
+                        { id: 'ch-you', ...reportCopy.peopleActions.reader, icon: CircleUserRound, tone: 'success' },
                       ]}
                     />
                     <div className="mt-5 space-y-4">{renderChapter('partner')}{renderChapter('you')}</div>
@@ -445,7 +416,7 @@ export function CompatibilityReport({
 
                 {section.id === 'conversation' && (
                   <div className="mt-7">
-                    <ConversationMomentMap onChoose={(moment) => jump(`ch-${moment}`)} />
+                    <ConversationMomentMap relationshipType={relationshipType} onChoose={(moment) => jump(`ch-${moment}`)} />
                     <div className="mt-5 space-y-4">{renderChapter('communication')}{renderChapter('friction')}</div>
                   </div>
                 )}
@@ -458,9 +429,9 @@ export function CompatibilityReport({
                         helper="เลือกข้อที่ตรงกับใจตอนนี้"
                         onChoose={jump}
                         actions={[
-                          { id: 'ch-future', tag: 'กำลังชั่งใจ', title: 'ไปต่อดีไหม', detail: 'มีอะไรให้ดูก่อนตัดสินใจต่อ', icon: HeartHandshake, tone: 'romance', art: '/assets/clay/relationships/next-signal.webp' },
-                          { id: 'report-calendar-section', tag: 'อยากดูจังหวะ', title: 'เดือนไหนค่อยขยับ', detail: 'เช็กจังหวะ 3 เดือนข้างหน้า', icon: CalendarDays, tone: 'warn', art: '/assets/clay/relationships/next-timing.webp' },
-                          { id: 'report-plan-section', tag: 'พร้อมลองขยับ', title: 'เริ่มอะไรได้บ้าง', detail: 'หยิบ 1 ก้าวเล็ก ๆ ที่ทำได้จริง', icon: ListChecks, tone: 'success', art: '/assets/clay/relationships/next-step.webp' },
+                          { id: 'ch-future', ...reportCopy.nextActions.future, icon: HeartHandshake, tone: 'romance', art: '/assets/clay/relationships/next-signal.webp' },
+                          { id: 'report-calendar-section', ...reportCopy.nextActions.calendar, icon: CalendarDays, tone: 'warn', art: '/assets/clay/relationships/next-timing.webp' },
+                          { id: 'report-plan-section', ...reportCopy.nextActions.plan, icon: ListChecks, tone: 'success', art: '/assets/clay/relationships/next-step.webp' },
                         ]}
                       />
                     </div>
@@ -474,7 +445,7 @@ export function CompatibilityReport({
                       />
                     </div>
                     <div className="mt-12">
-                      <PlanChecklist plan={full.plan} reportId={reportId} />
+                      <PlanChecklist plan={full.plan} relationshipType={relationshipType} score={score} reportId={reportId} />
                     </div>
                     <div className="mt-12">
                       <ShareCard
@@ -490,7 +461,7 @@ export function CompatibilityReport({
                   </>
                 )}
 
-                <ReportSectionPager current={section.id} onSelect={chooseSection} />
+                <ReportSectionPager sections={reportSections} current={section.id} onSelect={chooseSection} />
               </section>
             ))}
           </motion.div>
@@ -526,14 +497,16 @@ export function CompatibilityReport({
 
 function ReportSectionPager({
   current,
+  sections,
   onSelect,
 }: {
   current: ReportSection;
+  sections: ReadonlyArray<{ id: ReportSection; label: string }>;
   onSelect: (section: ReportSection, scroll?: boolean) => void;
 }) {
-  const index = REPORT_SECTIONS.findIndex((section) => section.id === current);
-  const previous = index > 0 ? REPORT_SECTIONS[index - 1] : null;
-  const next = index < REPORT_SECTIONS.length - 1 ? REPORT_SECTIONS[index + 1] : null;
+  const index = sections.findIndex((section) => section.id === current);
+  const previous = index > 0 ? sections[index - 1] : null;
+  const next = index < sections.length - 1 ? sections[index + 1] : null;
 
   return (
     <nav aria-label="ไปส่วนก่อนหน้าหรือส่วนถัดไป" className="mt-12 grid grid-cols-2 gap-3 border-t border-edge pt-5">

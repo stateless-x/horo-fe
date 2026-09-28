@@ -2,9 +2,10 @@ import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { shapeCompatibilityView } from '@/lib-packages/shared/types/compatibility';
-import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
+import type { CompatibilityV4Content, RelationshipType } from '@/lib-packages/shared/types/compatibility';
 import { CompatibilityReading } from './compatibility-reading';
 import { compatibilityTalismanBand } from './report/compatibility-talisman';
+import { planFrameFor, relationshipReportCopy } from './report/report-copy';
 
 const chapter = (key: CompatibilityV4Content['chapters'][number]['key'], title: string) => ({
   key,
@@ -73,14 +74,14 @@ const content: CompatibilityV4Content = {
 };
 
 // The door reads the มู wallet through React Query; on the server render it is still loading.
-const render = (view: 'teaser' | 'full', onUnlock?: () => void, partnerName = 'ต้น') =>
+const render = (view: 'teaser' | 'full', onUnlock?: () => void, partnerName = 'ต้น', relationshipType: RelationshipType = 'romantic') =>
   renderToStaticMarkup(
     <QueryClientProvider client={new QueryClient()}>
       <CompatibilityReading
         score={72}
         analysis=""
         structuredContent={shapeCompatibilityView(content, view)}
-        relationshipType="romantic"
+        relationshipType={relationshipType}
         readerName="มิ้นท์"
         partnerName={partnerName}
         onUnlock={onUnlock}
@@ -139,7 +140,7 @@ describe('CompatibilityReport', () => {
     // Month states explain the next move in words, never only through color or a repeated symbol.
     for (const word of ['คุยเรื่องสำคัญได้', 'ไปทีละเรื่อง', 'เลี่ยงการตัดสินใจใหญ่']) expect(html).toContain(word);
     expect(html).toContain('ข้อความเดือนธันวา');
-    expect(html).toContain('ค่อย ๆ กลับมาใกล้กัน');
+    expect(html).toContain('ต่อยอดสิ่งที่เข้ากัน');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');
     // Each tab opens with a useful decision rather than a second introduction.
     for (const prompt of ['อยากเห็นมุมไหนของคู่นี้', 'อยากเข้าใจใครก่อน', 'ตอนนี้อยากทำอะไรต่อ']) expect(html).toContain(prompt);
@@ -192,7 +193,7 @@ describe('CompatibilityReport', () => {
 
   test('the locked offer summarizes value without repeating a lock for every chapter', () => {
     const html = render('teaser', () => {});
-    for (const value of ['เข้าใจว่าเขารู้สึกยังไง', 'รู้ว่าควรคุยเรื่องไหน', 'เห็นจังหวะ 3 เดือนข้างหน้า', 'มีก้าวต่อไปที่ทำได้จริง']) expect(html).toContain(value);
+    for (const value of ['เข้าใจว่าเขารู้สึกยังไง', 'รู้ว่าควรคุยเรื่องไหน', 'เห็นจังหวะ 3 เดือนข้างหน้า', 'มีแนวทางที่เลือกลองได้จริง']) expect(html).toContain(value);
     expect(html).not.toContain('ตัวตนของต้นในความสัมพันธ์นี้');
   });
 
@@ -203,5 +204,26 @@ describe('CompatibilityReport', () => {
     expect(card).toContain('balanced-fit.webp');
     expect(card).toContain('เข้ากันได้ดี');
     for (const paid of ['สรุปเรื่อง', 'คำคมเรื่อง', content.cover.verdict, content.cover.lockedHints[0].text]) expect(card).not.toContain(paid);
+  });
+
+  test('relationship context, not one romance template, names every report section and its next step', () => {
+    expect(relationshipReportCopy('talking').sections.next.title).toBe('ค่อย ๆ ดูใจกันต่อไหม');
+    expect(relationshipReportCopy('friend').sections.next.label).toBe('ดูแลมิตรภาพยังไงดี');
+    expect(relationshipReportCopy('boss').sections.people.label).toBe('อ่านสไตล์หัวหน้า');
+    expect(relationshipReportCopy('coworker').sections.conversation.title).toBe('อยากให้งานลื่นขึ้น เริ่มคุยยังไงดี');
+    expect(relationshipReportCopy('family').sections.next.title).toBe('อยู่ด้วยกันให้สบายใจขึ้น');
+    expect(planFrameFor('romantic', 35).title).toBe('ค่อย ๆ หาจังหวะที่สบายใจ');
+    expect(planFrameFor('romantic', 55).title).toBe('ค่อย ๆ จูนจังหวะกัน');
+    expect(planFrameFor('romantic', 72).title).toBe('ต่อยอดสิ่งที่เข้ากัน');
+    expect(planFrameFor('boss', 72).title).toBe('ต่อยอดจังหวะงานที่เข้ากัน');
+
+    const family = render('full', undefined, 'แม่', 'family');
+    for (const visibleCopy of ['ทำไมถึงเป็นแบบนี้', 'เข้าใจกันมากขึ้น', 'คุยกันให้ใจเย็น', 'อยู่ด้วยกันยังไงดี', 'ต่อยอดพื้นที่ปลอดภัยในบ้าน']) {
+      expect(family).toContain(visibleCopy);
+    }
+    const boss = render('full', undefined, 'หัวหน้า', 'boss');
+    for (const visibleCopy of ['ทำงานกับหัวหน้าไหวไหม', 'อ่านสไตล์หัวหน้า', 'คุยงานให้เข้าใจ', 'ทำงานต่อยังไงดี', 'ต่อยอดจังหวะงานที่เข้ากัน']) {
+      expect(boss).toContain(visibleCopy);
+    }
   });
 });

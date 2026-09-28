@@ -34,7 +34,7 @@ const LOCKED_VALUE_GROUPS = [
   { icon: BookOpen, title: 'เข้าใจว่าเขารู้สึกยังไง', detail: 'พร้อมเห็นมุมของคุณในความสัมพันธ์นี้' },
   { icon: MessageCircle, title: 'รู้ว่าควรคุยเรื่องไหน', detail: 'และเริ่มด้วยประโยคอะไร' },
   { icon: CalendarDays, title: 'เห็นจังหวะ 3 เดือนข้างหน้า', detail: 'ช่วงไหนควรคุย ช่วงไหนควรรอ' },
-  { icon: ListChecks, title: 'มีก้าวต่อไปที่ทำได้จริง', detail: '3 ก้าวเล็ก ๆ ที่เลือกทำได้ใน 7 วัน' },
+  { icon: ListChecks, title: 'มีแนวทางที่เลือกลองได้จริง', detail: '3 แนวทางเล็ก ๆ ที่เลือกหยิบไปใช้ได้' },
 ] as const;
 
 export function EntryMark({ entry }: { entry: ReportContentsEntry }) {

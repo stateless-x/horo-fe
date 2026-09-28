@@ -1,10 +1,13 @@
 import Image from 'next/image';
 import { HeartHandshake, MessageCircleMore } from 'lucide-react';
+import type { RelationshipType } from '@/lib-packages/shared';
+import { relationshipReportCopy } from './report-copy';
 
 type ConversationMoment = 'communication' | 'friction';
 
 interface ConversationMomentMapProps {
   onChoose: (moment: ConversationMoment) => void;
+  relationshipType?: RelationshipType;
 }
 
 /**
@@ -12,14 +15,16 @@ interface ConversationMomentMapProps {
  * section. These are buttons, not decorative cards: a choice opens and lands
  * on the matching detailed guide below.
  */
-export function ConversationMomentMap({ onChoose }: ConversationMomentMapProps) {
+export function ConversationMomentMap({ onChoose, relationshipType }: ConversationMomentMapProps) {
+  const copy = relationshipReportCopy(relationshipType).conversation;
+
   return (
     <section aria-labelledby="conversation-moment-map" className="border-y border-edge py-4 sm:py-5">
       <div className="flex items-baseline justify-between gap-3">
         <h3 id="conversation-moment-map" className="font-heading text-lg font-semibold leading-snug text-ink">
-          ตอนนี้คุณอยู่ตรงไหน
+          {copy.title}
         </h3>
-        <p className="shrink-0 text-xs leading-relaxed text-inkMuted">เลือกแล้วดูวิธีต่อได้เลย</p>
+        <p className="shrink-0 text-xs leading-relaxed text-inkMuted">{copy.helper}</p>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:gap-4">
         <button
@@ -37,13 +42,13 @@ export function ConversationMomentMap({ onChoose }: ConversationMomentMapProps) 
           />
           <span className="inline-flex items-center gap-1.5 font-heading text-xs font-medium text-romanceText">
             <MessageCircleMore className="size-3.5" aria-hidden="true" />
-            มีเรื่องอยากคุย
+            {copy.open.tag}
           </span>
           <span className="mt-7 block max-w-[14ch] font-heading text-base font-semibold leading-snug text-ink sm:mt-8 sm:text-lg">
-            เริ่มคุยตอนใจยังเปิด
+            {copy.open.title}
           </span>
           <span className="mt-1 block max-w-[17ch] text-xs leading-relaxed text-inkMuted sm:text-sm">
-            หยิบประโยคแรกที่ไม่ทำให้อีกฝ่ายตั้งการ์ด
+            {copy.open.detail}
           </span>
         </button>
 
@@ -62,13 +67,13 @@ export function ConversationMomentMap({ onChoose }: ConversationMomentMapProps) 
           />
           <span className="inline-flex items-center gap-1.5 font-heading text-xs font-medium text-romanceText">
             <HeartHandshake className="size-3.5" aria-hidden="true" />
-            เริ่มรู้สึกตึง
+            {copy.tension.tag}
           </span>
           <span className="mt-7 block max-w-[14ch] font-heading text-base font-semibold leading-snug text-ink sm:mt-8 sm:text-lg">
-            ลดแรงก่อน แล้วค่อยคุย
+            {copy.tension.title}
           </span>
           <span className="mt-1 block max-w-[17ch] text-xs leading-relaxed text-inkMuted sm:text-sm">
-            ดูวิธีกลับมาคุย โดยไม่ต้องรีบหาคนผิด
+            {copy.tension.detail}
           </span>
         </button>
       </div>

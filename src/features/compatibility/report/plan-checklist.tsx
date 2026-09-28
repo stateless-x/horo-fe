@@ -2,25 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { Check, ChevronDown, Heart } from 'lucide-react';
+import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
 import { REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
+import { planFrameFor } from './report-copy';
 
 const storageKey = (reportId: string) => `saimu.compat.moments.${reportId}`;
-
-const RELATIONSHIP_MOMENTS = [
-  {
-    title: 'อยู่ใกล้กันแบบไม่กดดัน',
-    detail: 'ให้ความเงียบมีพื้นที่ โดยยังอยู่ข้างกัน',
-  },
-  {
-    title: 'บอกสิ่งที่ต้องการแบบนุ่ม ๆ',
-    detail: 'พูดความต้องการของเรา โดยไม่โยนความผิด',
-  },
-  {
-    title: 'คุยเรื่องเดียวให้ชัด',
-    detail: 'หยิบแค่เรื่องเดียวมาคุยให้จบ',
-  },
-] as const;
 
 function readTried(reportId: string): number[] {
   let raw: string | null;
@@ -41,6 +28,8 @@ function readTried(reportId: string): number[] {
 
 interface PlanChecklistProps {
   plan: CompatibilityV4Content['plan'];
+  relationshipType?: RelationshipType;
+  score: number;
   /** The choices saved in this browser belong to this one compatibility report. */
   reportId?: string;
 }
@@ -49,10 +38,11 @@ interface PlanChecklistProps {
  * A low-pressure relationship practice picker. It reveals one useful moment at
  * a time, instead of presenting care as a dated checklist that must be finished.
  */
-export function PlanChecklist({ plan, reportId }: PlanChecklistProps) {
+export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanChecklistProps) {
   const [tried, setTried] = useState<number[]>([]);
   const [openDay, setOpenDay] = useState<number | null>(null);
   const [unsaved, setUnsaved] = useState(false);
+  const frame = planFrameFor(relationshipType, score);
 
   useEffect(() => {
     if (reportId) setTried(readTried(reportId));
@@ -74,17 +64,17 @@ export function PlanChecklist({ plan, reportId }: PlanChecklistProps) {
     <section id="report-plan-section" aria-labelledby="report-plan" className="scroll-mt-32 min-[1120px]:scroll-mt-20">
       <SectionHeading
         id="report-plan"
-        title="ค่อย ๆ กลับมาใกล้กัน"
-        sub="เลือกหนึ่งอย่างที่อยากลอง เมื่อรู้สึกพร้อม"
+        title={frame.title}
+        sub={frame.sub}
       />
       <div className={`${REPORT_CARD} mt-4 overflow-hidden`}>
         <div className="border-b border-edge px-5 py-4 sm:px-7">
-          <p className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">ตอนนี้อยากดูแลความสัมพันธ์แบบไหน</p>
-          <p className="mt-1 text-sm leading-relaxed text-inkMuted">ไม่ต้องรีบแก้ทุกอย่างพร้อมกัน เลือกเรื่องที่คุณอยากเริ่มได้เลย</p>
+          <p className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{frame.prompt}</p>
+          <p className="mt-1 text-sm leading-relaxed text-inkMuted">{frame.helper}</p>
         </div>
         <ol className="divide-y divide-edge">
           {plan.map((step, index) => {
-            const moment = RELATIONSHIP_MOMENTS[index] ?? {
+            const moment = frame.moments[index] ?? {
               title: 'ค่อย ๆ อยู่ข้างกัน',
               detail: 'เลือกวิธีที่รู้สึกว่าไหวสำหรับวันนี้',
             };

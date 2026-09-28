@@ -10,7 +10,8 @@ import { api, type ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE, type CheckoutResponse } from '@/lib-packages/shared/types/wallet';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
-import { UNIT, baht, shortfallLine, smallestPackCovering, units, unitsWithBaht } from '@/features/wallet/wallet-copy';
+import { baht, shortfallLine, smallestPackCovering, units, unitsWithBaht } from '@/features/wallet/wallet-copy';
+import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 
 export interface ReportContentsEntry {
@@ -19,8 +20,7 @@ export interface ReportContentsEntry {
   title: string;
   /** Short label for the phone chip bar. */
   short: string;
-  /** Chapter number; the other entries show an icon. */
-  n?: number;
+  /** Chapters show a dot; the other entries show an icon. */
   icon?: 'overview' | 'calendar' | 'plan';
 }
 
@@ -38,8 +38,8 @@ const LOCKED_VALUE_GROUPS = [
 ] as const;
 
 export function EntryMark({ entry }: { entry: ReportContentsEntry }) {
-  if (entry.n) return <span className="font-mono text-xs tabular-nums">{entry.n}</span>;
-  const Icon = ENTRY_ICON[entry.icon ?? 'overview'];
+  if (!entry.icon) return <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />;
+  const Icon = ENTRY_ICON[entry.icon];
   return <Icon className="size-[15px]" aria-hidden="true" />;
 }
 
@@ -47,7 +47,7 @@ interface ReportDoorProps {
   partnerName: string;
   readingMinutes: number;
   contents: ReportContentsEntry[];
-  /** Full report: the contents become links and the foot offers "open every chapter". */
+  /** Full report: the contents become links and the foot offers "open everything". */
   full: boolean;
   /** The stored reading's id: a one-flow purchase unlocks this row once paid. */
   unlockRef?: string;
@@ -138,12 +138,12 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
           {full ? <MiniSeal /> : <MuGemMark className="size-9" />}
         </span>
         <h2 id="report-door" tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink focus:outline-none">
-          {full ? `คำตอบของคุณกับ${partnerName}` : 'ถ้ายังไม่แน่ใจว่าควรไปต่อยังไง'}
+          {full ? spaceLatinName(`คำตอบของคุณกับ${partnerName}`, partnerName) : 'ถ้ายังไม่แน่ใจว่าควรไปต่อยังไง'}
         </h2>
       </div>
       <p className="mt-2.5 text-base leading-relaxed text-inkMuted">
         {full ? (
-          <>อ่านราว <b className="font-semibold text-ink">{readingMinutes} นาที</b> · 6 บท · ปฏิทิน 3 เดือน · 3 ก้าวเล็ก ๆ ใน 7 วัน</>
+          <>อ่านราว <b className="font-semibold text-ink">{readingMinutes} นาที</b> · 4 ส่วน · ปฏิทิน 3 เดือน · 3 ก้าวเล็ก ๆ ใน 7 วัน</>
         ) : (
           <>ฉบับเต็มช่วยให้เห็นทั้งใจเขา จุดที่ติด และก้าวต่อไป เขียนจากข้อมูลของคุณสองคนโดยเฉพาะ</>
         )}
@@ -207,7 +207,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
             </p>
             <Button type="button" variant="soft" onClick={onToggleAll} aria-pressed={allOpen} className="h-11 gap-1.5 px-3 font-heading">
               <BookOpen className="size-4" aria-hidden="true" />
-              {allOpen ? 'ย่อทุกบท' : 'เปิดอ่านทุกบท'}
+              {allOpen ? 'ย่อทั้งหมด' : 'เปิดอ่านทั้งหมด'}
             </Button>
           </motion.div>
         ) : (
@@ -264,10 +264,9 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
                   {shortfallLine(balance, price)}
                 </p>
               )}
-              <p className="text-center text-sm leading-relaxed text-inkMuted">
-                {!short && price !== undefined && balance !== undefined && <>ยอดคงเหลือ {units(balance)} · </>}
-                จ่ายครั้งเดียว · 1 {UNIT} = ฿1 · กลับมาอ่านได้ทุกเมื่อ
-              </p>
+              {!short && price !== undefined && balance !== undefined && (
+                <p className="text-center text-sm leading-relaxed text-inkMuted">ยอดคงเหลือ {units(balance)}</p>
+              )}
             </div>
           </motion.div>
         )}

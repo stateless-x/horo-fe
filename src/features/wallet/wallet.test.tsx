@@ -111,7 +111,7 @@ const door = (data: WalletResponse) => {
       <ReportDoor
         partnerName="ต้น"
         readingMinutes={11}
-        contents={[{ id: 'c1', title: 'บทหนึ่ง', short: 'หนึ่ง', n: 1 }]}
+        contents={[{ id: 'c1', title: 'ส่วนหนึ่ง', short: 'หนึ่ง' }]}
         full={false}
         onJump={() => {}}
         allOpen={false}
@@ -160,7 +160,9 @@ describe('ReportDoor with a known balance', () => {
     expect(html).not.toContain('ซื้อแพ็กคุ้มกว่า');
     expect(html).toContain('เปิดคำตอบทั้งหมด · 49 มู (฿49)');
     expect(html).toContain('ยอดคงเหลือ 49 มู');
-    expect(html).toContain('1 มู = ฿1');
+    // Owner, 2026-09-28: the pay-once line waits for the payment system.
+    expect(html).not.toContain('จ่ายครั้งเดียว');
+    expect(html).not.toContain('กลับมาอ่านได้ทุกเมื่อ');
     expect(html).not.toMatch(PURPLE_TEXT);
   });
 });

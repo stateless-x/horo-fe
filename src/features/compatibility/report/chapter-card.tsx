@@ -6,7 +6,6 @@ import { DisplayLine, ELEMENT_TH, paragraphs, REPORT_CARD, ThaiText, type Report
 
 interface ChapterCardProps {
   chapter: V4Chapter;
-  n: number;
   /** partner and you chapters take that person's element; the others are romance pink. */
   tone: ReportElement | 'romance';
   open: boolean;
@@ -16,13 +15,12 @@ interface ChapterCardProps {
 }
 
 /**
- * ChapterCard: number, title, summary and pull quote always visible; the
+ * ChapterCard: title and summary always visible; the pull quote,
  * detail and the chapter's kit open under "อ่านเจาะลึก"; the one move to try
  * sits in the card's foot.
  */
-export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCardProps) {
+export function ChapterCard({ chapter, tone, open, onToggle, kit }: ChapterCardProps) {
   const toneText = tone === 'romance' ? 'var(--romance-text)' : `var(--el-${tone})`;
-  const toneFill = tone === 'romance' ? 'var(--color-romance)' : `var(--el-${tone})`;
   const regionId = `ch-${chapter.key}-more`;
   return (
     <article
@@ -31,23 +29,11 @@ export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCa
       className={`${REPORT_CARD} scroll-mt-32 overflow-clip px-5 pt-5 sm:px-7 sm:pt-[26px] min-[1120px]:scroll-mt-20`}
     >
       <header className="flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="grid size-[34px] shrink-0 place-items-center rounded-full border font-mono text-xs tabular-nums"
-          style={{
-            color: toneText,
-            borderColor: `color-mix(in srgb, ${toneFill} 40%, transparent)`,
-            background: `color-mix(in srgb, ${toneFill} 12%, transparent)`,
-          }}
-        >
-          {n}
-        </span>
         <h2
           id={`ch-${chapter.key}-title`}
           tabIndex={-1}
           className="min-w-0 flex-1 font-heading text-xl font-semibold leading-snug text-ink focus:outline-none"
         >
-          <span className="sr-only">บทที่ {n} </span>
           <DisplayLine text={chapter.title} />
         </h2>
         {tone !== 'romance' && (
@@ -64,7 +50,7 @@ export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCa
         onClick={onToggle}
         className="mt-[18px] flex min-h-11 w-full items-center justify-between rounded-md border border-edge bg-surface2 px-4 font-heading text-sm font-semibold text-ink transition-colors hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
       >
-        {open ? 'ย่อบทนี้' : 'อ่านเจาะลึก'}
+        {open ? 'ย่อเนื้อหา' : 'อ่านเจาะลึก'}
         <ChevronDown className={`size-4 transition-transform duration-300 motion-reduce:transition-none ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
       <div

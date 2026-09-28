@@ -13,6 +13,7 @@ import type {
   V4Chapter,
   V4ChapterKey,
 } from '@/lib-packages/shared/types/compatibility';
+import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { ReportCover } from './report/report-cover';
 import { DimensionBars } from './report/dimension-bars';
 import { LockedHints } from './report/locked-hints';
@@ -65,28 +66,28 @@ const REPORT_SECTIONS: ReadonlyArray<{
 }> = [
   {
     id: 'overview',
-    label: 'ภาพรวม',
-    title: 'ภาพรวมของคู่นี้',
+    label: 'เคมีของเรา',
+    title: 'เคมีของคู่นี้',
     description: 'ดูเคมี จุดแข็ง และแรงดึงดูด',
     art: '/assets/clay/chart-scroll-oracle.webp',
   },
   {
     id: 'people',
-    label: 'เข้าใจเราสองคน',
+    label: 'ใจเขา ใจเรา',
     title: 'เข้าใจเขา และเข้าใจตัวคุณ',
     description: 'ดูความรู้สึกของทั้งคู่',
     art: '/assets/clay/compatibility-sections/two-mirrors.webp',
   },
   {
     id: 'conversation',
-    label: 'คุยให้เข้าใจ',
+    label: 'คุยให้ถึงใจ',
     title: 'คุยยังไงให้เข้าใจกันมากขึ้น',
     description: 'ดูคำที่ช่วยเปิดใจ และวิธีคืนดีเวลาติดขัด',
     art: '/assets/clay/relationships/talking.webp',
   },
   {
     id: 'next',
-    label: 'ก้าวต่อไป',
+    label: 'ไปต่อยังไงดี',
     title: 'ก้าวต่อไปที่ทำได้จริง',
     description: 'เลือกจังหวะที่เหมาะ แล้วเริ่มจากก้าวเล็ก ๆ',
     art: '/assets/clay/categories/life-overview.webp',
@@ -97,6 +98,12 @@ const REPORT_SECTION_IDS = new Set<ReportSection>(REPORT_SECTIONS.map((section) 
 
 function isReportSection(value: string | null): value is ReportSection {
   return value !== null && REPORT_SECTION_IDS.has(value as ReportSection);
+}
+
+/** The name of the section a chapter sits in, e.g. for a hint that points to its answer. */
+function sectionLabelOf(key: V4ChapterKey): string {
+  const id = sectionForTarget(`ch-${key}`);
+  return REPORT_SECTIONS.find((section) => section.id === id)!.label;
 }
 
 function sectionForTarget(id: string): ReportSection {
@@ -132,15 +139,12 @@ export function CompatibilityReport({
   const [openChapters, setOpenChapters] = useState<Set<V4ChapterKey>>(new Set());
   const [activeSection, setActiveSection] = useState<ReportSection>('overview');
 
-  const chapterNumber = useCallback((key: V4ChapterKey) => CHAPTER_KEYS.indexOf(key) + 1, []);
-
   const contents: ReportContentsEntry[] = [
     { id: 'report-overview-section', title: 'ภาพรวม', short: 'ภาพรวม', icon: 'overview' },
     ...CHAPTER_KEYS.map((key, i) => ({
       id: `ch-${key}`,
       title: full?.chapters[i].title ?? CHAPTER_TITLE_TEASER(key, partnerName),
       short: CHAPTER_SHORT[key] ?? partnerName,
-      n: i + 1,
     })),
     { id: 'report-calendar-section', title: 'ปฏิทินความสัมพันธ์ 3 เดือน', short: 'ปฏิทิน', icon: 'calendar' },
     { id: 'report-plan-section', title: '3 ก้าวใน 7 วัน', short: '3 ก้าว', icon: 'plan' },
@@ -258,7 +262,7 @@ export function CompatibilityReport({
         </div>
 
         <div className="mt-12 min-w-0 sm:mt-16 lg:col-start-1 lg:row-start-2">
-          <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} chapterNumber={chapterNumber} />
+          <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
           {(onShare || onNewCheck) && (
             <div className="mt-6 flex flex-wrap gap-2.5">
               {onShare && (
@@ -281,14 +285,12 @@ export function CompatibilityReport({
 
   const renderChapter = (key: V4ChapterKey) => {
     if (!full) return null;
-    const index = CHAPTER_KEYS.indexOf(key);
     const chapter = full.chapters.find((item) => item.key === key);
     if (!chapter) return null;
     return (
       <ChapterCard
         key={chapter.key}
         chapter={chapter}
-        n={index + 1}
         tone={chapterTone(chapter.key, full)}
         open={openChapters.has(chapter.key)}
         onToggle={() => toggleChapter(chapter.key)}
@@ -324,7 +326,7 @@ export function CompatibilityReport({
             <div className="flex items-center gap-3 border-y border-edge py-4">
               <MiniSeal className="size-10 shrink-0 text-ink" />
               <div className="min-w-0">
-                <h2 className="font-heading text-xl font-semibold leading-snug text-ink">ฉบับเต็มของคุณกับ{partnerName}</h2>
+                <h2 className="font-heading text-xl font-semibold leading-snug text-ink">{spaceLatinName(`ฉบับเต็มของคุณกับ${partnerName}`, partnerName)}</h2>
                 <p className="mt-0.5 text-sm leading-relaxed text-inkMuted">
                   อ่านราว {full.readingMinutes} นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย
                 </p>
@@ -424,7 +426,7 @@ export function CompatibilityReport({
                       <MonthTiles
                         calendar={full.calendar}
                         nextStepMonth={full.chapters.find((c) => c.nextStep)?.nextStep?.month}
-                        futureChapterNumber={chapterNumber('future')}
+                        futureTitle={full.chapters.find((c) => c.key === 'future')?.title ?? CHAPTER_TITLE_TEASER('future', partnerName)}
                         onJumpToFuture={() => jump('ch-future')}
                       />
                     </div>
@@ -469,7 +471,7 @@ export function CompatibilityReport({
             />
           </div>
           <div className="mt-14 sm:mt-[72px]">
-            <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} chapterNumber={chapterNumber} />
+            <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
           </div>
         </>
       )}
@@ -520,7 +522,7 @@ function ReportSectionPager({
 function CHAPTER_TITLE_TEASER(key: V4ChapterKey, partnerName: string): string {
   return {
     attraction: 'แรงดึงดูด',
-    partner: `ตัวตนของ${partnerName}ในความสัมพันธ์นี้`,
+    partner: spaceLatinName(`ตัวตนของ${partnerName}ในความสัมพันธ์นี้`, partnerName),
     you: 'ตัวคุณในความสัมพันธ์นี้',
     communication: 'การสื่อสาร',
     friction: 'จุดเสียดทานและวิธีคืนดี',

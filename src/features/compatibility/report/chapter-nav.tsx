@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { EntryMark, type ReportContentsEntry } from './report-door';
+import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { MiniSeal } from './report-kit';
 
 const HEADER_PX = 56; // AppHeader, h-14
@@ -80,7 +81,7 @@ export function ChapterChips({ entries, nav, onJump }: ChapterNavProps) {
 
   return (
     <nav
-      aria-label="บทในฉบับเต็ม"
+      aria-label="ส่วนในฉบับเต็ม"
       aria-hidden={!nav.visible}
       className={`fixed inset-x-0 top-14 z-30 border-b border-edge bg-ground/85 backdrop-blur-md transition-[transform,visibility] duration-300 ease-[cubic-bezier(.16,1,.3,1)] motion-reduce:transition-none min-[1120px]:hidden ${nav.visible ? 'visible translate-y-0' : 'invisible -translate-y-[120%]'}`}
     >
@@ -100,7 +101,6 @@ export function ChapterChips({ entries, nav, onJump }: ChapterNavProps) {
               }}
               className={`relative inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 font-heading text-sm font-medium after:absolute after:inset-x-0 after:-inset-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${current ? 'border-accentBright/45 bg-accentBright/10 text-ink' : 'border-edge bg-surface text-inkMuted'}`}
             >
-              {entry.n && <span className="font-mono text-xs">{entry.n}</span>}
               {entry.short}
             </a>
           );
@@ -126,7 +126,7 @@ export function ChapterRail({ entries, nav, onJump, partnerName, readingMinutes 
         <div>
           <b className="block font-heading text-[0.9375rem] font-semibold leading-snug text-ink">ฉบับเต็ม</b>
           <span className="block text-[0.8125rem] leading-snug text-inkMuted">
-            คุณกับ{partnerName} · อ่านราว {readingMinutes} นาที
+            {spaceLatinName(`คุณกับ${partnerName}`, partnerName)} · อ่านราว {readingMinutes} นาที
           </span>
         </div>
       </div>

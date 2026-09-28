@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { ArrowDown, CircleCheck, CircleMinus, CirclePause, CornerDownRight } from 'lucide-react';
 import type { CompatibilityV4Content, V4Chapter, V4MonthLabel } from '@/lib-packages/shared/types/compatibility';
+import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { CopyLine } from './copy-button';
 import { ELEMENT_TH, MONTH_TONE, monthName, MoonGlyph, ThaiText } from './report-kit';
 
@@ -21,10 +22,10 @@ type Palace = CompatibilityV4Content['palace']['reader'];
 export function BasisFacts({ reader, partner, partnerName }: { reader: Palace; partner: Palace; partnerName: string }) {
   const rows: Array<[string, Palace]> = [
     ['วังคู่ครองของคุณ', reader],
-    [`วังคู่ครองของ${partnerName}`, partner],
+    [spaceLatinName(`วังคู่ครองของ${partnerName}`, partnerName), partner],
   ];
   return (
-    <Kit title="ที่มาของบทนี้" sub="นักษัตรวันเกิดในปาจื้อ คือตำแหน่งวังคู่ครองของแต่ละคน">
+    <Kit title="ที่มาจากดวง" sub="นักษัตรวันเกิดในปาจื้อ คือตำแหน่งวังคู่ครองของแต่ละคน">
       <dl className="mt-2.5">
         {rows.map(([label, palace]) => (
           <div key={label} className="grid gap-0 border-t border-edge py-2.5 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)] sm:gap-3">

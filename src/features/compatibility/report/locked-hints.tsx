@@ -1,11 +1,13 @@
 import { ChevronRight } from 'lucide-react';
 import type { CompatibilityV4Teaser, V4ChapterKey } from '@/lib-packages/shared/types/compatibility';
+import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { SectionHeading, ThaiText } from './report-kit';
 
 interface LockedHintsProps {
   hints: CompatibilityV4Teaser['cover']['lockedHints'];
   partnerName: string;
-  chapterNumber: (key: V4ChapterKey) => number;
+  /** The report section that answers a hint's chapter, named on each hint. */
+  sectionLabel: (key: V4ChapterKey) => string;
   /** Full report: each hint becomes a jump link to the chapter that answers it. */
   onJump?: (key: V4ChapterKey) => void;
 }
@@ -14,24 +16,26 @@ interface LockedHintsProps {
  * LockedHints: three questions about the reader's own life. Locked in the
  * teaser; in the full report they are jump links to their answers.
  */
-export function LockedHints({ hints, partnerName, chapterNumber, onJump }: LockedHintsProps) {
+export function LockedHints({ hints, partnerName, sectionLabel, onJump }: LockedHintsProps) {
   const open = !!onJump;
   return (
     <section aria-labelledby="report-hints">
       <SectionHeading
         id="report-hints"
         title="3 คำถามที่ฉบับเต็มตอบ"
-        sub={open ? 'แตะเพื่อไปที่คำตอบในบทนั้นได้เลย' : `เรื่องที่คุณน่าจะเคยเจอกับ${partnerName} คำตอบแต่ละข้ออยู่ในบทของฉบับเต็ม`}
+        sub={open ? 'แตะเพื่อไปที่คำตอบได้เลย' : spaceLatinName(`เรื่องที่คุณน่าจะเคยเจอกับ${partnerName}`, partnerName)}
       />
       <ol className="mt-4 divide-y divide-edge border-y border-edge">
         {hints.map((hint) => {
-          const n = chapterNumber(hint.chapter);
+          const section = sectionLabel(hint.chapter);
           const question = (
             <span>
               <span className="block font-medium leading-[1.65] text-ink">
                 <ThaiText>{hint.text}</ThaiText>
               </span>
-              {open && <span className="mt-1 block text-sm leading-normal text-inkMuted">ไปที่คำตอบในบทที่ {n}</span>}
+              <span className="mt-1 block text-sm leading-normal text-inkMuted">
+                {open ? `ไปที่คำตอบในส่วน ‘${section}’` : `คำตอบอยู่ในส่วน ‘${section}’ ของฉบับเต็ม`}
+              </span>
             </span>
           );
           return (

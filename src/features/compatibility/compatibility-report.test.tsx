@@ -9,10 +9,10 @@ import { compatibilityTalismanBand } from './report/compatibility-talisman';
 const chapter = (key: CompatibilityV4Content['chapters'][number]['key'], title: string) => ({
   key,
   title,
-  summary: `สรุปบท${title}`,
-  pullQuote: `คำคมบท${title}`,
-  detail: `รายละเอียดบท${title}`,
-  move: `สิ่งที่ลองทำในบท${title}`,
+  summary: `สรุปเรื่อง${title}`,
+  pullQuote: `คำคมเรื่อง${title}`,
+  detail: `รายละเอียดเรื่อง${title}`,
+  move: `สิ่งที่ลองทำเรื่อง${title}`,
 });
 
 const content: CompatibilityV4Content = {
@@ -73,7 +73,7 @@ const content: CompatibilityV4Content = {
 };
 
 // The door reads the มู wallet through React Query; on the server render it is still loading.
-const render = (view: 'teaser' | 'full', onUnlock?: () => void) =>
+const render = (view: 'teaser' | 'full', onUnlock?: () => void, partnerName = 'ต้น') =>
   renderToStaticMarkup(
     <QueryClientProvider client={new QueryClient()}>
       <CompatibilityReading
@@ -82,7 +82,7 @@ const render = (view: 'teaser' | 'full', onUnlock?: () => void) =>
         structuredContent={shapeCompatibilityView(content, view)}
         relationshipType="romantic"
         readerName="มิ้นท์"
-        partnerName="ต้น"
+        partnerName={partnerName}
         onUnlock={onUnlock}
       />
     </QueryClientProvider>,
@@ -114,7 +114,7 @@ describe('CompatibilityReport', () => {
     // No balance or price until the wallet loads: never a made-up number.
     expect(html).toContain('เปิดคำตอบทั้งหมด');
     expect(html).toContain('ฉบับเต็มช่วยให้เห็นทั้งใจเขา จุดที่ติด และก้าวต่อไป');
-    for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดบท', 'คำคมบท', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
+    for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดเรื่อง', 'คำคมเรื่อง', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
     }
     expect(html).not.toContain('ฉบับเต็มนี้เก็บอยู่ในประวัติ');
@@ -126,7 +126,7 @@ describe('CompatibilityReport', () => {
     expect(html).toContain(content.overview.story);
     expect(html).toContain('บรรทัดความไว้ใจ');
     expect(html.match(/อ่านเจาะลึก/g)).toHaveLength(6);
-    expect(html).toContain('คำคมบทแรงดึงดูด');
+    expect(html).toContain('คำคมเรื่องแรงดึงดูด');
     // The attraction chapter's computed basis: both spouse palaces.
     expect(html).toContain('มะเมีย (ม้า)');
     expect(html).toContain('มีทองหยินซ่อนอยู่');
@@ -147,11 +147,32 @@ describe('CompatibilityReport', () => {
     const html = render('full');
     expect(html).toContain('role="tablist"');
     expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
-    for (const label of ['ภาพรวม', 'เข้าใจเราสองคน', 'คุยให้เข้าใจ', 'ก้าวต่อไป']) expect(html).toContain(label);
+    for (const label of ['เคมีของเรา', 'ใจเขา ใจเรา', 'คุยให้ถึงใจ', 'ไปต่อยังไงดี']) expect(html).toContain(`>${label}</button>`);
     expect(html).toContain('id="report-tab-overview"');
     expect(html).toContain('id="report-panel-next"');
     expect(html).toContain('อ่านราว 11 นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย');
     expect(html).toContain('two-mirrors.webp');
+  });
+
+  test('sections, not chapters: no บท and no chapter numbers, and hints name their section', () => {
+    // บท as the unit word (a bare /บท/ also hits คำตอบทั้งหมด and ครบทุก).
+    const unitWord = /บทที่|บทนี้|บทนั้น|บทของ|ในบท|ทุกบท|\d\s*บท/;
+    const teaser = render('teaser', () => {});
+    const full = render('full');
+    for (const html of [teaser, full]) expect(html).not.toMatch(unitWord);
+    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘ใจเขา ใจเรา’ ของฉบับเต็ม');
+    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘คุยให้ถึงใจ’ ของฉบับเต็ม');
+    expect(teaser).not.toContain('จ่ายครั้งเดียว');
+    expect(full).toContain('เหมาะกับก้าวต่อไป ดู ‘สิ่งที่ทำให้อยู่ยาว’');
+    // No numbered chapter badge beside a chapter title.
+    expect(full).not.toMatch(/tabular-nums">\d<\/span>/);
+  });
+
+  test('a Latin partner name is spaced from the Thai around it; a Thai name is not', () => {
+    expect(render('full', undefined, 'Ice')).toContain('ฉบับเต็มของคุณกับ Ice</h2>');
+    expect(render('teaser', () => {}, 'Ice')).toContain('เรื่องที่คุณน่าจะเคยเจอกับ Ice');
+    expect(render('full')).toContain('ฉบับเต็มของคุณกับต้น</h2>');
+    expect(render('full', undefined, 'Ice')).toContain('วังคู่ครองของ Ice');
   });
 
   test('the locked offer summarizes value without repeating a lock for every chapter', () => {
@@ -166,6 +187,6 @@ describe('CompatibilityReport', () => {
     expect(card).toContain('คู่ไฟหลอมทอง');
     expect(card).toContain('balanced-fit.webp');
     expect(card).toContain('เข้ากันได้ดี');
-    for (const paid of ['สรุปบท', 'คำคมบท', content.cover.verdict, content.cover.lockedHints[0].text]) expect(card).not.toContain(paid);
+    for (const paid of ['สรุปเรื่อง', 'คำคมเรื่อง', content.cover.verdict, content.cover.lockedHints[0].text]) expect(card).not.toContain(paid);
   });
 });

@@ -302,8 +302,7 @@ owner decision for this surface, set in Sarabun Light for the reading text.
   marks an opened full edition only.
 - **No purple text inside the report (owner, 2026-09-27):** edition marks, the ฉบับเต็ม flag, the
   active chapter chip and rail entry, jump links and list arrows are ink or ink-muted. Purple
-  stays on real buttons, focus rings, controls and fills; the progress line is Romance Pink;
-  chapter numbers keep their element or romance tone.
+  stays on real buttons, focus rings, controls and fills; the progress line is Romance Pink.
 - **Free-to-paid rhythm (owner, 2026-09-28):** the cover and all four dimension scores are
   free value. The compact paid summary follows them, before the three locked questions. In a
   locked result it groups the offer into four benefits instead of repeating a lock for every
@@ -326,11 +325,21 @@ owner decision for this surface, set in Sarabun Light for the reading text.
   it selects the text and says to long-press.
 - **Focused report sections (owner, 2026-09-28):** the opened report is not one long
   chapter stack. After the cover, every viewport uses the same four-part journey:
-  ภาพรวม → เข้าใจเราสองคน → คุยให้เข้าใจ → ก้าวต่อไป. Only the chosen part is visible;
+  เคมีของเรา → ใจเขา ใจเรา → คุยให้ถึงใจ → ไปต่อยังไงดี. Only the chosen part is visible;
   `?section=` preserves it for Back/Forward and shared history URLs. Phones use a 2×2
   tab control, while iPad and desktop use one row. Previous/next controls close each
   part so readers can move forward without returning to the tabs. The information
   architecture stays identical across breakpoints; only its composition adapts.
+- **Sections, not chapters (owner, 2026-09-28):** the reader-facing unit is ส่วน, never บท,
+  and nothing in the report is numbered as a chapter (no "บทที่ N", no number badge, no
+  "6 บท"). A pointer to an answer names its section: "คำตอบอยู่ในส่วน ‘ใจเขา ใจเรา’ ของฉบับเต็ม".
+  The section ids and `?section=` values (overview, people, conversation, next) stay fixed so
+  links never break when a label changes.
+- **Latin names in Thai copy (owner, 2026-09-28):** a name with Latin letters or digits gets one
+  space each side where it touches Thai ("ฉบับเต็มของคุณกับ Ice", "ของ มู2242 ที่"); a Thai-script
+  name runs into the Thai around it as usual. Every template that interpolates a name goes
+  through `spaceLatinName` (`lib-packages/shared/types/names.ts`, synced from horo-be, which
+  applies the same rule to generated readings).
 - **Clay section cues (owner, 2026-09-28):** use one small, text-free transparent clay
   object beside a focused report heading when it replaces redundant chrome or helps a
   reader recognise the subject at a glance. It is decorative (`alt=""`), never a state
@@ -352,10 +361,11 @@ diviner's room.
 ## Documentation health
 
 FRESH before → after: F 2→2 (descriptive root filename and headings; still no docs index) ·
-R 3→3 (re-verified the compatibility result and added its implemented text-free clay section
-cue rule; the document still has no whole-file freshness metadata) · E 2→2 · S 3→3 · H 2→2
-(the section rule names behavior and breakpoints, but this broad design system is not a task
-handoff). Total: 12/15 (B) → 12/15 (B).
+R 3→3 (re-verified the compatibility report against the code and replaced the retired
+chapter-number rule and section labels; still no whole-file freshness metadata) · E 2→3 (the
+sections and Latin-name rules name the helper file and the fixed `?section=` ids an agent must
+keep) · S 3→3 · H 2→2 (still a broad design system, not a task handoff). Total: 12/15 (B) →
+13/15 (B).
 
 ## Do's and Don'ts
 

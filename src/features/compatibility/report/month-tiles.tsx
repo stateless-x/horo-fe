@@ -6,7 +6,8 @@ interface MonthTilesProps {
   calendar: CompatibilityV4Content['calendar'];
   /** The month the future chapter recommends for the next step. */
   nextStepMonth?: string;
-  futureChapterNumber: number;
+  /** The future chapter's title, which the next-step month links back to. */
+  futureTitle: string;
   onJumpToFuture: () => void;
 }
 
@@ -14,7 +15,7 @@ interface MonthTilesProps {
  * MonthTiles: the computed 3-month calendar. Each state is a moon phase and
  * a word, never color alone.
  */
-export function MonthTiles({ calendar, nextStepMonth, futureChapterNumber, onJumpToFuture }: MonthTilesProps) {
+export function MonthTiles({ calendar, nextStepMonth, futureTitle, onJumpToFuture }: MonthTilesProps) {
   return (
     <section id="report-calendar-section" aria-labelledby="report-calendar" className="scroll-mt-32 min-[1120px]:scroll-mt-20">
       <SectionHeading id="report-calendar" title="ปฏิทินความสัมพันธ์ 3 เดือน" sub="นับจากเดือนที่อ่าน เมื่อถึงแต่ละเดือนกลับมาเปิดอ่านซ้ำได้" />
@@ -50,7 +51,7 @@ export function MonthTiles({ calendar, nextStepMonth, futureChapterNumber, onJum
                 }}
                 className="mt-1 inline-flex min-h-11 items-center gap-1.5 font-heading text-sm font-medium text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
               >
-                เหมาะกับก้าวต่อไป ดูบทที่ {futureChapterNumber}
+                เหมาะกับก้าวต่อไป ดู ‘{futureTitle}’
                 <ArrowUp className="size-4" aria-hidden="true" />
               </a>
             )}

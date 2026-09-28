@@ -264,7 +264,7 @@ export default function FortuneChartPage() {
               <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 shadow-md shadow-accent/20 dark:shadow-accent/40">
                 <Sparkles className="size-3.5 shrink-0 text-accentInk" aria-hidden="true" />
                 <span className="font-thai text-sm font-medium text-accentInk">
-                  ดวงเดือนนี้ · {readingPeriod.monthTh} พ.ศ. {readingPeriod.yearBe}
+                  ดวงเดือน{readingPeriod.monthTh}
                 </span>
                 <span className="hidden font-thai text-sm text-accentInk/70 sm:inline">
                   · ต่ออายุ {readingPeriod.renewsOn}

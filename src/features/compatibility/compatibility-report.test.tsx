@@ -139,7 +139,7 @@ describe('CompatibilityReport', () => {
     // Month states explain the next move in words, never only through color or a repeated symbol.
     for (const word of ['คุยเรื่องสำคัญได้', 'ไปทีละเรื่อง', 'เลี่ยงการตัดสินใจใหญ่']) expect(html).toContain(word);
     expect(html).toContain('ข้อความเดือนธันวา');
-    expect(html).toContain('วันที่ <span class="font-mono">3</span>');
+    expect(html).toContain('อยู่ใกล้กันแบบไม่กดดัน');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');
     // Each tab opens with a useful decision rather than a second introduction.
     for (const prompt of ['อยากเห็นมุมไหนของคู่นี้', 'อยากเข้าใจใครก่อน', 'ตอนนี้อยากทำอะไรต่อ']) expect(html).toContain(prompt);

@@ -474,7 +474,7 @@ export function CompatibilityReport({
                       />
                     </div>
                     <div className="mt-12">
-                      <PlanChecklist plan={full.plan} generatedOn={full.generatedOn} reportId={reportId} />
+                      <PlanChecklist plan={full.plan} reportId={reportId} />
                     </div>
                     <div className="mt-12">
                       <ShareCard

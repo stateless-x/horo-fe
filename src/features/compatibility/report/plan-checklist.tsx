@@ -1,64 +1,66 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check } from 'lucide-react';
+import { Check, ChevronDown, Heart } from 'lucide-react';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
-import { CopyLine } from './copy-button';
-import { planDate, REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
+import { REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
 
-const storageKey = (reportId: string) => `saimu.compat.plan.${reportId}`;
-const PLAN_FRAMES = ['เริ่มจากเรื่องเล็ก', 'คุยให้ชัดขึ้น', 'ดูว่าจังหวะเปลี่ยนไหม'] as const;
+const storageKey = (reportId: string) => `saimu.compat.moments.${reportId}`;
 
-function readDone(reportId: string): number[] {
+const RELATIONSHIP_MOMENTS = [
+  {
+    title: 'อยู่ใกล้กันแบบไม่กดดัน',
+    detail: 'เริ่มจากการอยู่ข้างกัน โดยไม่ต้องรีบหาคำตอบ',
+  },
+  {
+    title: 'บอกสิ่งที่ต้องการแบบนุ่ม ๆ',
+    detail: 'ชวนให้อีกฝ่ายเข้าใจ โดยไม่ต้องตัดสินกัน',
+  },
+  {
+    title: 'คุยเรื่องเดียวให้ชัด',
+    detail: 'ไม่ต้องเคลียร์ทุกอย่างในครั้งเดียว',
+  },
+] as const;
+
+function readTried(reportId: string): number[] {
   let raw: string | null;
   try {
     raw = localStorage.getItem(storageKey(reportId));
   } catch {
-    return []; // storage blocked (private mode, in-app browser): the checklist still works for this visit
+    return [];
   }
   if (!raw) return [];
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
   } catch {
-    return []; // a corrupt value in this browser's own storage: start the ticks again rather than break the report
+    return [];
   }
   return Array.isArray(parsed) ? parsed.filter((day): day is number => typeof day === 'number') : [];
 }
 
-/** The plan step's date as YYYY-MM-DD, and today's in Bangkok, to mark "วันนี้". */
-function stepIso(generatedOn: string, day: number): string {
-  const [year, month, date] = generatedOn.split('-').map(Number);
-  return new Date(Date.UTC(year, month - 1, date + day - 1)).toISOString().slice(0, 10);
-}
-const bangkokToday = () =>
-  new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-
 interface PlanChecklistProps {
   plan: CompatibilityV4Content['plan'];
-  generatedOn: string;
-  /** Ticks persist per reading. Without an id (dev tools) they last for the visit only. */
+  /** The choices saved in this browser belong to this one compatibility report. */
   reportId?: string;
 }
 
 /**
- * PlanChecklist: the 7-day plan as three dated steps to tick. Ticks are saved
- * in this browser per reading; if the browser won't store them, it says so.
+ * A low-pressure relationship practice picker. It reveals one useful moment at
+ * a time, instead of presenting care as a dated checklist that must be finished.
  */
-export function PlanChecklist({ plan, generatedOn, reportId }: PlanChecklistProps) {
-  const [done, setDone] = useState<number[]>([]);
+export function PlanChecklist({ plan, reportId }: PlanChecklistProps) {
+  const [tried, setTried] = useState<number[]>([]);
+  const [openDay, setOpenDay] = useState<number | null>(null);
   const [unsaved, setUnsaved] = useState(false);
-  const [today, setToday] = useState<string | null>(null);
 
-  // Read after mount: the server render has no storage or clock, and the first client render must match it.
   useEffect(() => {
-    if (reportId) setDone(readDone(reportId));
-    setToday(bangkokToday());
+    if (reportId) setTried(readTried(reportId));
   }, [reportId]);
 
-  const toggle = (day: number) => {
-    const next = done.includes(day) ? done.filter((d) => d !== day) : [...done, day];
-    setDone(next);
+  const toggleTried = (day: number) => {
+    const next = tried.includes(day) ? tried.filter((item) => item !== day) : [...tried, day];
+    setTried(next);
     if (!reportId) return;
     try {
       localStorage.setItem(storageKey(reportId), JSON.stringify(next));
@@ -72,66 +74,75 @@ export function PlanChecklist({ plan, generatedOn, reportId }: PlanChecklistProp
     <section id="report-plan-section" aria-labelledby="report-plan" className="scroll-mt-32 min-[1120px]:scroll-mt-20">
       <SectionHeading
         id="report-plan"
-        title="3 ก้าวเล็ก ๆ ใน 7 วัน"
-        sub="ไม่ต้องทำให้ครบทุกข้อ เลือกเริ่มจากข้อที่ไหว"
+        title="ชวนกันใกล้ขึ้นทีละนิด"
+        sub="เลือกแค่ 1 โมเมนต์ที่อยากลองใน 7 วันนี้ก็พอ"
       />
-      <div className={`${REPORT_CARD} mt-4 px-5 pb-2 pt-1.5 sm:px-7`}>
-        <div className="flex items-center gap-3 pb-2.5 pt-3.5 text-sm text-inkMuted" role="status" aria-live="polite">
-          <span>
-            ลองแล้ว <b className="font-mono text-ink">{done.length}</b> จาก {plan.length} ก้าว
-          </span>
-          <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-edge" aria-hidden="true">
-            <span
-              className="block h-full origin-left bg-accentBright transition-transform duration-400 motion-reduce:transition-none"
-              style={{ transform: `scaleX(${done.length / plan.length})` }}
-            />
-          </span>
+      <div className={`${REPORT_CARD} mt-4 overflow-hidden`}>
+        <div className="border-b border-edge px-5 py-4 sm:px-7">
+          <p className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">วันนี้อยากให้ความสัมพันธ์ดีขึ้นแบบไหน</p>
+          <p className="mt-1 text-sm leading-relaxed text-inkMuted">ไม่มีข้อไหนต้องทำให้ครบ เลือกสิ่งที่ตรงกับใจตอนนี้ได้เลย</p>
         </div>
-        {unsaved && <p className="pb-2 text-sm text-warn">เบราว์เซอร์นี้ไม่ให้บันทึก ติ๊กจะหายเมื่อปิดหน้า</p>}
-        <ol>
+        <ol className="divide-y divide-edge">
           {plan.map((step, index) => {
-            const checked = done.includes(step.day);
-            const inputId = `plan-step-${step.day}`;
-            const frame = PLAN_FRAMES[index] ?? 'ค่อย ๆ ไปต่อ';
+            const moment = RELATIONSHIP_MOMENTS[index] ?? {
+              title: 'ค่อย ๆ อยู่ข้างกัน',
+              detail: 'เลือกวิธีที่รู้สึกว่าไหวสำหรับวันนี้',
+            };
+            const isOpen = openDay === step.day;
+            const hasTried = tried.includes(step.day);
+            const detailId = `relationship-moment-${step.day}`;
+
             return (
-              <li key={step.day} className="border-t border-edge pb-4 pt-3.5">
-                <input id={inputId} type="checkbox" checked={checked} onChange={() => toggle(step.day)} className="peer sr-only" />
-                <label htmlFor={inputId} className="grid min-h-11 cursor-pointer grid-cols-[28px_minmax(0,1fr)] items-start gap-3 peer-focus-visible:[&>span:first-child]:outline-2 peer-focus-visible:[&>span:first-child]:outline-accentBright peer-focus-visible:[&>span:first-child]:outline-offset-2">
-                  <span
-                    className={`mt-0.5 grid size-[26px] place-items-center rounded-lg border-2 transition-colors ${checked ? 'border-accent bg-accent' : 'border-accentBright/55 bg-surface'}`}
-                  >
-                    <Check className={`size-4 stroke-[3] text-accentInk transition-opacity ${checked ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
+              <li key={step.day} className={isOpen ? 'bg-surface2/45' : ''}>
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={detailId}
+                  onClick={() => setOpenDay(isOpen ? null : step.day)}
+                  className="flex min-h-[76px] w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-surface2/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright sm:px-7"
+                >
+                  <span className={`grid size-9 shrink-0 place-items-center rounded-full border ${hasTried ? 'border-success/30 bg-success/10 text-success' : 'border-edge bg-surface text-inkMuted'}`}>
+                    {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <Heart className="size-4" aria-hidden="true" />}
                   </span>
-                  <span>
-                    <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[0.8125rem] leading-normal text-inkMuted">
-                      <span>ก้าวที่ {index + 1} · {frame}</span>
-                      <span>ภายในวันที่ <span className="font-mono">{step.day}</span> · {planDate(generatedOn, step.day)}</span>
-                      {today === stepIso(generatedOn, step.day) && (
-                        <span className="rounded-full bg-romance/15 px-2 font-heading font-semibold text-romanceText">วันนี้</span>
-                      )}
-                      {checked && <span className="rounded-full bg-success/10 px-2 font-heading font-semibold text-success">ลองแล้ว</span>}
-                    </span>
-                    <span className={`mt-0.5 block font-medium leading-[1.7] ${checked ? 'text-inkMuted' : 'text-ink'}`}>
-                      <ThaiText>{step.action}</ThaiText>
-                    </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{moment.title}</span>
+                    <span className="mt-1 block text-sm leading-relaxed text-inkMuted">{moment.detail}</span>
                   </span>
-                </label>
-                <div className="ml-10 mt-2.5 grid gap-3">
-                  <div>
-                    <h3 className="mb-1.5 font-heading text-sm font-semibold leading-snug text-inkMuted">ถ้าพร้อมคุย ลองใช้ประโยคนี้</h3>
-                    <CopyLine id={`plan-starter-${step.day}`} text={step.conversationStarter} />
+                  <ChevronDown className={`size-5 shrink-0 text-inkMuted transition-transform ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                </button>
+                {isOpen && (
+                  <div id={detailId} className="border-t border-edge px-5 pb-5 pt-4 sm:px-7">
+                    <div className="max-w-[62ch]">
+                      <p className="font-heading text-sm font-semibold text-inkMuted">ลองแบบนี้</p>
+                      <p className="mt-1.5 text-[0.9375rem] leading-[1.7] text-ink">
+                        <ThaiText>{step.action}</ThaiText>
+                      </p>
+                    </div>
+                    <div className="mt-4 max-w-[62ch] border-t border-edge pt-4">
+                      <p className="font-heading text-sm font-semibold text-inkMuted">ถ้าอยากพูด ลองเปิดแบบนี้</p>
+                      <p className="mt-1.5 font-oracle text-lg font-light leading-[1.65] text-ink">“<ThaiText>{step.conversationStarter}</ThaiText>”</p>
+                    </div>
+                    <div className="mt-4 max-w-[62ch] border-t border-edge pt-4">
+                      <p className="font-heading text-sm font-semibold text-inkMuted">หลังจากนั้น แค่สังเกต</p>
+                      <p className="mt-1.5 text-[0.9375rem] leading-[1.7] text-ink">
+                        <ThaiText>{step.watchFor}</ThaiText>
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => toggleTried(step.day)}
+                      className={`mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 font-heading text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${hasTried ? 'border-success/30 bg-success/10 text-success hover:bg-success/15' : 'border-edge bg-surface text-ink hover:bg-surface2'}`}
+                    >
+                      {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <Heart className="size-4" aria-hidden="true" />}
+                      {hasTried ? 'วันนี้ได้ลองแล้ว' : 'เก็บไว้ลองวันนี้'}
+                    </button>
                   </div>
-                  <div>
-                    <h3 className="mb-1.5 font-heading text-sm font-semibold leading-snug text-inkMuted">แล้วค่อยดูว่าเกิดอะไรขึ้น</h3>
-                    <p className="text-[0.9375rem] leading-[1.7] text-ink">
-                      <ThaiText>{step.watchFor}</ThaiText>
-                    </p>
-                  </div>
-                </div>
+                )}
               </li>
             );
           })}
         </ol>
+        {unsaved && <p className="border-t border-edge px-5 py-3 text-sm text-warn sm:px-7">เบราว์เซอร์นี้จะจำโมเมนต์ที่ลองแล้วไม่ได้เมื่อปิดหน้า</p>}
       </div>
     </section>
   );

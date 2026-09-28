@@ -389,10 +389,10 @@ export function CompatibilityReport({
                     <p className="mt-1.5 leading-relaxed text-inkMuted">{section.description}</p>
                   </div>
                   <Image
-                    src={section.art}
                     alt=""
                     width={128}
                     height={128}
+                    src={section.id === 'conversation' ? '/assets/clay/relationships/listening.webp' : section.art}
                     sizes={section.id === 'conversation' ? '(min-width: 640px) 96px, 80px' : '64px'}
                     className={`${section.id === 'conversation' ? 'size-20 sm:size-24' : 'size-16'} shrink-0 object-contain`}
                   />

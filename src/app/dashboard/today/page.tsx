@@ -346,17 +346,25 @@ export default function TodayPage() {
         <MonthlyChartPromo />
 
         {(doItems.length > 0 || avoidItems.length > 0) && (
-          <section className="mt-12 overflow-hidden rounded-2xl border border-edge bg-surface2/55" aria-label="สิ่งที่ควรทำและควรเลี่ยง">
-            <div className="grid md:grid-cols-2">
+          <section className="mt-12 border-y border-edge py-6 sm:py-8" aria-labelledby="today-guidance-heading">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="today-guidance-heading" className="font-heading text-xl font-semibold text-ink sm:text-2xl">วันนี้เริ่มจากข้อที่ไหว</h2>
+                <p className="mt-1 max-w-[56ch] text-sm leading-relaxed text-inkMuted">ไม่ต้องเป๊ะทั้งหมด เลือกทำแค่เรื่องเดียว แล้วพักเรื่องที่ยังไม่พร้อมไว้ก่อนได้</p>
+              </div>
+              <Sparkles className="mt-1 size-5 shrink-0 text-accentBright" aria-hidden="true" />
+            </div>
+            <div className="mt-5 grid gap-5 md:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] md:gap-7">
               {doItems.length > 0 && (
-                <div className="p-5 md:p-7">
+                <div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="size-5 text-success" aria-hidden="true" />
-                    <h2 className="font-heading text-xl font-semibold text-ink">ลองทำแบบนี้</h2>
+                    <span className="grid size-8 place-items-center rounded-xl bg-success/[0.1] text-success"><CheckCircle2 className="size-4" aria-hidden="true" /></span>
+                    <h3 className="font-heading text-lg font-semibold text-ink">ลองเริ่มจากตรงนี้</h3>
                   </div>
-                  <ul className="mt-4 space-y-3">
+                  <ul className="mt-3 divide-y divide-edge border-y border-edge">
                     {visibleDoItems.map((item, i) => (
-                      <li key={i} className="relative pl-5 text-sm leading-relaxed text-ink md:text-base before:absolute before:left-0 before:top-2.5 before:size-1.5 before:rounded-full before:bg-success">
+                      <li key={i} className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-2.5 py-3 text-sm leading-[1.7] text-ink first:pt-2.5 last:pb-2.5 md:text-base">
+                        <CheckCircle2 className="mt-[0.2rem] size-4 text-success" aria-hidden="true" />
                         {item}
                       </li>
                     ))}
@@ -364,15 +372,18 @@ export default function TodayPage() {
                 </div>
               )}
 
+              {doItems.length > 0 && avoidItems.length > 0 && <div className="hidden bg-edge md:block" aria-hidden="true" />}
+
               {avoidItems.length > 0 && (
-                <div className="border-t border-edge p-5 md:border-l md:border-t-0 md:p-7">
+                <div>
                   <div className="flex items-center gap-2">
-                    <XCircle className="size-5 text-warn" aria-hidden="true" />
-                    <h2 className="font-heading text-xl font-semibold text-ink">เก็บไว้ในใจ</h2>
+                    <span className="grid size-8 place-items-center rounded-xl bg-warn/[0.1] text-warn"><XCircle className="size-4" aria-hidden="true" /></span>
+                    <h3 className="font-heading text-lg font-semibold text-ink">เรื่องนี้พักไว้ก่อน</h3>
                   </div>
-                  <ul className="mt-4 space-y-3">
+                  <ul className="mt-3 divide-y divide-edge border-y border-edge">
                     {visibleAvoidItems.map((item, i) => (
-                      <li key={i} className="relative pl-5 text-sm leading-relaxed text-ink md:text-base before:absolute before:left-0 before:top-2.5 before:size-1.5 before:rounded-full before:bg-warn">
+                      <li key={i} className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-2.5 py-3 text-sm leading-[1.7] text-ink first:pt-2.5 last:pb-2.5 md:text-base">
+                        <XCircle className="mt-[0.2rem] size-4 text-warn" aria-hidden="true" />
                         {item}
                       </li>
                     ))}
@@ -385,9 +396,9 @@ export default function TodayPage() {
               <button
                 type="button"
                 onClick={() => setShowAllGuidance(true)}
-                className="flex min-h-12 w-full items-center justify-center gap-1 border-t border-edge bg-surface/70 font-heading text-sm text-accentBright transition-colors hover:bg-accent/10 hover:text-accentSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright"
+                className="mt-5 flex min-h-11 items-center gap-1 font-heading text-sm text-accentBright transition-colors hover:text-accentSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
               >
-                ดูคำแนะนำทั้งหมด ({hiddenGuidanceCount})
+                ดูเพิ่มอีก {hiddenGuidanceCount} ข้อ
                 <ChevronDown className="size-4" aria-hidden="true" />
               </button>
             )}

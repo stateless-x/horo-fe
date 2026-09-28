@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Sparkles, Check, X } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Recommendations } from "@/lib-packages/shared/types/astrology";
 import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { GuidanceColumns } from './fortune-guidance';
 
 interface RecommendationsSectionProps {
   recommendations: Recommendations;
@@ -226,42 +227,19 @@ export function RecommendationsSection({
         </div>
       )}
 
-      {/* Do's and Don'ts */}
-      <div className="bg-surface border border-surface2/50 rounded-xl p-6">
-        <h3 className="text-accentSoft font-heading font-medium text-base mb-4">
-          ปีนี้ลองทำอะไร พักอะไรไว้ก่อน
+      <section className="border-y border-edge py-6" aria-labelledby="annual-guidance-heading">
+        <h3 id="annual-guidance-heading" className="font-heading text-lg font-semibold text-ink">
+          ปีนี้โฟกัสให้ถูกเรื่อง
         </h3>
-
-        <div className="space-y-4">
-          {/* Do's */}
-          {recommendations.dos.length > 0 && (
-            <div>
-              <ul className="space-y-2">
-                {recommendations.dos.map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <Check className="text-success w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <p className="text-ink font-thai text-base">{item}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Don'ts */}
-          {recommendations.donts.length > 0 && (
-            <div className="pt-4 border-t border-surface2/50">
-              <ul className="space-y-2">
-                {recommendations.donts.map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <X className="text-danger w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <p className="text-ink font-thai text-base">{item}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
+        <p className="mt-1 text-sm leading-relaxed text-inkMuted">เลือกเรื่องที่อยากขยับก่อน ส่วนที่ยังไม่พร้อม ค่อยกลับมาดูทีหลังก็ได้</p>
+        <GuidanceColumns
+          positiveItems={recommendations.dos}
+          negativeItems={recommendations.donts}
+          positiveLabel="ลองเริ่มจากตรงนี้"
+          negativeLabel="เรื่องนี้พักไว้ก่อน"
+          className="mt-5"
+        />
+      </section>
     </div>
   );
 }

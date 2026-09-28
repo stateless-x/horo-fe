@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ArrowDown, CircleCheck, CircleMinus, CirclePause, CornerDownRight } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, CircleCheck, CirclePause, CornerDownRight, Pause } from 'lucide-react';
 import type { CompatibilityV4Content, V4Chapter, V4MonthLabel } from '@/lib-packages/shared/types/compatibility';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { CopyLine } from './copy-button';
@@ -44,27 +44,25 @@ export function BasisFacts({ reader, partner, partnerName }: { reader: Palace; p
   );
 }
 
-/** DoAvoid: three do / avoid pairs. */
+/** Small paired moves, written as something to try and something that can wait. */
 export function DoAvoid({ pairs }: { pairs: NonNullable<V4Chapter['pairs']> }) {
   return (
-    <Kit title="ทำ และเลี่ยง">
-      <ol className="divide-y divide-edge">
+    <Kit title="เริ่มแบบไหน เรื่องไหนพักก่อน" sub="เลือกข้อที่ตรงกับจังหวะของคุณตอนนี้แค่ข้อเดียวก็พอ">
+      <div className="mb-2 hidden grid-cols-2 gap-6 border-b border-edge pb-2 sm:grid">
+        <p className="font-heading text-sm font-semibold text-success">ลองทำแบบนี้</p>
+        <p className="font-heading text-sm font-semibold text-warn">เรื่องนี้พักไว้ก่อน</p>
+      </div>
+      <ol className="divide-y divide-edge border-y border-edge">
         {pairs.map((pair, i) => (
-          <li key={i} className="py-3 first:pt-0">
-            <p className="grid grid-cols-[22px_minmax(0,1fr)] gap-2.5 text-[0.9375rem] leading-[1.7] text-ink">
-              <CircleCheck className="mt-[3px] size-4 text-success" aria-hidden="true" />
-              <span>
-                <b className="font-heading font-semibold">ทำ </b>
-                <ThaiText>{pair.do}</ThaiText>
-              </span>
-            </p>
-            <p className="mt-1.5 grid grid-cols-[22px_minmax(0,1fr)] gap-2.5 text-[0.9375rem] leading-[1.7] text-inkMuted">
-              <CircleMinus className="mt-[3px] size-4 text-warn" aria-hidden="true" />
-              <span>
-                <b className="font-heading font-semibold text-ink">เลี่ยง </b>
-                <ThaiText>{pair.avoid}</ThaiText>
-              </span>
-            </p>
+          <li key={i} className="grid gap-3 py-4 first:pt-3 last:pb-3 sm:grid-cols-2 sm:gap-6">
+            <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-[0.9375rem] leading-[1.7] text-ink">
+              <ArrowUpRight className="mt-[3px] size-4 text-success" aria-hidden="true" />
+              <p><span className="mb-0.5 block font-heading text-xs font-semibold text-success sm:hidden">ลองทำแบบนี้</span><ThaiText>{pair.do}</ThaiText></p>
+            </div>
+            <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-[0.9375rem] leading-[1.7] text-inkMuted">
+              <Pause className="mt-[3px] size-4 text-warn" aria-hidden="true" />
+              <p><span className="mb-0.5 block font-heading text-xs font-semibold text-warn sm:hidden">เรื่องนี้พักไว้ก่อน</span><ThaiText>{pair.avoid}</ThaiText></p>
+            </div>
           </li>
         ))}
       </ol>

@@ -156,6 +156,7 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('อ่านราว 11 นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย');
     expect(html).toContain('two-mirrors.webp');
     expect(html).toContain('talking.webp');
+    expect(html).toContain('listening.webp');
     expect(html).toContain('ตอนนี้คุณอยู่ตรงไหน');
     expect(html).toContain('มีเรื่องอยากคุย');
     expect(html).toContain('เริ่มรู้สึกตึง');

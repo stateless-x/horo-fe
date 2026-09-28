@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { shapeCompatibilityView } from '@/lib-packages/shared/types/compatibility';
+import { RELATIONSHIP_TYPES, shapeCompatibilityView } from '@/lib-packages/shared/types/compatibility';
 import type { CompatibilityV4Content, RelationshipType } from '@/lib-packages/shared/types/compatibility';
 import { CompatibilityReading } from './compatibility-reading';
 import { compatibilityTalismanBand } from './report/compatibility-talisman';
-import { planFrameFor, relationshipReportCopy } from './report/report-copy';
+import { REPORT_SECTION_IDS, planFrameFor, relationshipReportCopy } from './report/report-copy';
 import { relationshipReportVisuals } from './report/report-visuals';
 
 const chapter = (key: CompatibilityV4Content['chapters'][number]['key'], title: string) => ({
@@ -240,5 +240,19 @@ describe('CompatibilityReport', () => {
     expect(relationshipReportVisuals('coworker').sections.people).toContain('relationships/coworker.webp');
     expect(relationshipReportVisuals('boss').next.future.tone).toBe('accent');
     expect(relationshipReportVisuals('romantic').next.future.tone).toBe('romance');
+  });
+
+  test('every compatibility type has complete, mobile-safe tab labels', () => {
+    for (const relationshipType of RELATIONSHIP_TYPES) {
+      const sections = relationshipReportCopy(relationshipType).sections;
+      for (const id of REPORT_SECTION_IDS) {
+        const { label, tabLabel } = sections[id];
+        expect(label.trim()).not.toBe('');
+        expect(tabLabel.trim()).not.toBe('');
+        expect(tabLabel).not.toContain('…');
+        // All four tabs share one row on wider phone/tablet layouts.
+        expect(Array.from(tabLabel).length).toBeLessThanOrEqual(14);
+      }
+    }
   });
 });

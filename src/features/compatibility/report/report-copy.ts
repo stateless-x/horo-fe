@@ -1,6 +1,8 @@
 import type { RelationshipType } from '@/lib-packages/shared';
 
-export type ReportSectionId = 'overview' | 'people' | 'conversation' | 'next';
+/** The stable section keys used by report URLs, navigation, copy and visual cues. */
+export const REPORT_SECTION_IDS = ['overview', 'people', 'conversation', 'next'] as const;
+export type ReportSectionId = (typeof REPORT_SECTION_IDS)[number];
 type ScoreBand = 'careful' | 'findingRhythm' | 'flowing';
 
 type Moment = { title: string; detail: string };
@@ -20,8 +22,18 @@ export type ConversationFrame = {
   tension: { tag: string; title: string; detail: string };
 };
 
+/** Copy that appears both in the navigation and in the focused report panel. */
+export type ReportSectionCopy = {
+  /** Full, descriptive section name for accessibility and desktop context. */
+  label: string;
+  /** Complete short label that always fits the four-tab control. Never truncate it. */
+  tabLabel: string;
+  title: string;
+  description: string;
+};
+
 export type RelationshipReportCopy = {
-  sections: Record<ReportSectionId, { label: string; tabLabel: string; title: string; description: string }>;
+  sections: Record<ReportSectionId, ReportSectionCopy>;
   overviewAction: { tag: string; title: string; detail: string };
   peopleActions: {
     partner: { tag: string; title: string; detail: string };

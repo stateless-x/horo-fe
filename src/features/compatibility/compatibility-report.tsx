@@ -26,7 +26,7 @@ import { MonthTiles } from './report/month-tiles';
 import { PlanChecklist } from './report/plan-checklist';
 import { ShareCard } from './report/share-card';
 import { MiniSeal, paragraphs, SectionHeading, ThaiText, type ReportElement } from './report/report-kit';
-import { relationshipReportCopy, type ReportSectionId } from './report/report-copy';
+import { REPORT_SECTION_IDS, relationshipReportCopy, type ReportSectionId } from './report/report-copy';
 import { relationshipReportVisuals } from './report/report-visuals';
 
 interface CompatibilityReportProps {
@@ -61,9 +61,9 @@ const CHAPTER_KEYS: V4ChapterKey[] = ['attraction', 'partner', 'you', 'communica
 
 type ReportSection = ReportSectionId;
 
-const REPORT_SECTION_IDS = new Set<ReportSection>(['overview', 'people', 'conversation', 'next']);
+const REPORT_SECTION_ID_SET = new Set<ReportSection>(REPORT_SECTION_IDS);
 function isReportSection(value: string | null): value is ReportSection {
-  return value !== null && REPORT_SECTION_IDS.has(value as ReportSection);
+  return value !== null && REPORT_SECTION_ID_SET.has(value as ReportSection);
 }
 
 function sectionForTarget(id: string): ReportSection {
@@ -96,7 +96,7 @@ export function CompatibilityReport({
   const relationshipLabel = relationshipType ? `ดวง${RELATIONSHIP_LABELS[relationshipType]}` : 'ดวงคู่';
   const reportCopy = relationshipReportCopy(relationshipType);
   const reportVisuals = relationshipReportVisuals(relationshipType);
-  const reportSections = (['overview', 'people', 'conversation', 'next'] as const).map((id) => ({
+  const reportSections = REPORT_SECTION_IDS.map((id) => ({
     id,
     ...reportCopy.sections[id],
     art: reportVisuals.sections[id],

@@ -141,6 +141,9 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('ข้อความเดือนธันวา');
     expect(html).toContain('วันที่ <span class="font-mono">3</span>');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');
+    // Each tab opens with a useful decision rather than a second introduction.
+    for (const prompt of ['อยากเห็นมุมไหนของคู่นี้', 'อยากเข้าใจใครก่อน', 'อยากขยับเรื่องไหนก่อน']) expect(html).toContain(prompt);
+    for (const action of ['ดู 4 มิติของคู่นี้', 'เขาเป็นคนแบบไหน', 'มีอะไรให้ทำตอนนี้']) expect(html).toContain(action);
     expect(html).not.toContain('เปิดคำตอบทั้งหมด');
     // Owner rule: no purple text inside the report (fills, focus rings and controls may stay purple).
     expect(html).not.toMatch(/(?<![\w-])text-accent(Bright|Soft)\b/);

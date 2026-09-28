@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowLeft, ArrowRight, HeartHandshake, MessageCircleMore, Share2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, ChartNoAxesCombined, CircleUserRound, HeartHandshake, ListChecks, MessageCircleMore, Sparkles, UserRound, Share2 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
@@ -20,6 +20,7 @@ import { LockedHints } from './report/locked-hints';
 import { ReportDoor, type ReportContentsEntry } from './report/report-door';
 import { ChapterCard } from './report/chapter-card';
 import { ConversationMomentMap } from './report/conversation-moment-map';
+import { SectionActionMap } from './report/section-action-map';
 import { BasisFacts, DoAvoid, NextMonth, ReadyLines, Scenarios, Signals } from './report/chapter-kit';
 import { MonthTiles } from './report/month-tiles';
 import { PlanChecklist } from './report/plan-checklist';
@@ -400,10 +401,20 @@ export function CompatibilityReport({
 
                 {section.id === 'overview' && (
                   <>
-                    <div className="mt-10">
+                    <div id="report-dimensions-section" className="mt-10 scroll-mt-32 min-[1120px]:scroll-mt-20">
                       <DimensionBars dimensions={content.dimensions} lines={full.overview.dimensionLines} />
                     </div>
-                    <section id="report-overview-section" aria-labelledby="report-overview" className="mt-12 scroll-mt-20">
+                    <SectionActionMap
+                      title="อยากเห็นมุมไหนของคู่นี้"
+                      helper="เลือกแล้วพาไปดูต่อ"
+                      onChoose={jump}
+                      actions={[
+                        { id: 'report-dimensions-section', tag: 'เช็กจุดแข็ง', title: 'ดู 4 มิติของคู่นี้', detail: 'เคมี การสื่อสาร ความไว้ใจ และจังหวะชีวิต', icon: ChartNoAxesCombined, tone: 'accent' },
+                        { id: 'report-overview-section', tag: 'เริ่มจากภาพใหญ่', title: 'อ่านเรื่องของคู่นี้', detail: 'ดูภาพรวมว่าอะไรพาให้มาเจอกัน', icon: Sparkles, tone: 'success' },
+                        { id: 'ch-attraction', tag: 'มองให้ลึกขึ้น', title: 'ดูแรงดึงดูด', detail: 'เข้าใจจุดที่ทำให้รู้สึกพิเศษต่อกัน', icon: HeartHandshake, tone: 'romance' },
+                      ]}
+                      />
+                    <section id="report-overview-section" aria-labelledby="report-overview" className="mt-8 scroll-mt-20">
                       <SectionHeading id="report-overview" title="เรื่องของคู่นี้" />
                       <div className="mt-3.5">
                         {paragraphs(full.overview.story).map((paragraph, i) => (
@@ -417,7 +428,20 @@ export function CompatibilityReport({
                   </>
                 )}
 
-                {section.id === 'people' && <div className="mt-8 space-y-4">{renderChapter('partner')}{renderChapter('you')}</div>}
+                {section.id === 'people' && (
+                  <div className="mt-7">
+                    <SectionActionMap
+                      title="อยากเข้าใจใครก่อน"
+                      helper="เลือกแล้วดูต่อได้เลย"
+                      onChoose={jump}
+                      actions={[
+                        { id: 'ch-partner', tag: 'ดูเขาก่อน', title: 'เขาเป็นคนแบบไหน', detail: 'เวลาอยู่ในความสัมพันธ์และต้องการพื้นที่', icon: UserRound, tone: 'accent' },
+                        { id: 'ch-you', tag: 'กลับมาดูใจเรา', title: 'เราเป็นยังไงเวลาอิน', detail: 'เข้าใจสิ่งที่เราให้ความสำคัญในความสัมพันธ์', icon: CircleUserRound, tone: 'success' },
+                      ]}
+                    />
+                    <div className="mt-5 space-y-4">{renderChapter('partner')}{renderChapter('you')}</div>
+                  </div>
+                )}
 
                 {section.id === 'conversation' && (
                   <div className="mt-7">
@@ -428,7 +452,19 @@ export function CompatibilityReport({
 
                 {section.id === 'next' && (
                   <>
-                    <div className="mt-8">{renderChapter('future')}</div>
+                    <div className="mt-7">
+                      <SectionActionMap
+                        title="อยากขยับเรื่องไหนก่อน"
+                        helper="เลือกจากสิ่งที่กำลังลังเล"
+                        onChoose={jump}
+                        actions={[
+                          { id: 'ch-future', tag: 'เช็กสัญญาณ', title: 'ควรไปต่อไหม', detail: 'ดูอะไรบอกให้ลุย หรือควรชะลอก่อน', icon: HeartHandshake, tone: 'romance' },
+                          { id: 'report-calendar-section', tag: 'ดูจังหวะ', title: 'เดือนไหนเหมาะสุด', detail: 'เปิดปฏิทิน 3 เดือนของคู่นี้', icon: CalendarDays, tone: 'warn' },
+                          { id: 'report-plan-section', tag: 'เริ่มแบบเบา ๆ', title: 'มีอะไรให้ทำตอนนี้', detail: 'เลือก 1 ก้าวใน 7 วันที่พอไหว', icon: ListChecks, tone: 'success' },
+                        ]}
+                      />
+                    </div>
+                    <div className="mt-5">{renderChapter('future')}</div>
                     <div className="mt-12">
                       <MonthTiles
                         calendar={full.calendar}

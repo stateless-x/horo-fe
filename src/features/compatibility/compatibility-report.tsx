@@ -306,7 +306,7 @@ export function CompatibilityReport({
               role="tablist"
               aria-label="ส่วนของคำตอบฉบับเต็ม"
               onKeyDown={handleTabsKeyDown}
-              className="mt-4 grid grid-cols-2 gap-2 rounded-2xl bg-surface2 p-1.5 sm:grid-cols-4"
+              className="mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-2xl bg-surface2 p-1.5 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {reportSections.map((section) => {
                 const selected = activeSection === section.id;
@@ -321,9 +321,9 @@ export function CompatibilityReport({
                     aria-label={section.label}
                     tabIndex={selected ? 0 : -1}
                     onClick={() => chooseSection(section.id, false)}
-                    className={`min-h-11 min-w-0 whitespace-nowrap rounded-xl px-2 font-heading text-sm font-semibold leading-none transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${selected ? 'bg-surface text-ink shadow-[0_4px_14px_-8px_rgba(23,12,38,0.45)]' : 'text-inkMuted hover:bg-edgeSoft hover:text-ink'}`}
+                    className={`min-h-11 shrink-0 snap-start whitespace-nowrap rounded-xl px-3.5 font-heading text-sm font-semibold leading-none transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${selected ? 'bg-surface text-ink shadow-[0_4px_14px_-8px_rgba(23,12,38,0.45)]' : 'text-inkMuted hover:bg-edgeSoft hover:text-ink'}`}
                   >
-                    {section.tabLabel}
+                    {section.label}
                   </button>
                 );
               })}

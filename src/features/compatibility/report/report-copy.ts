@@ -26,8 +26,6 @@ export type ConversationFrame = {
 export type ReportSectionCopy = {
   /** Full, descriptive section name for accessibility and desktop context. */
   label: string;
-  /** Complete short label that always fits the four-tab control. Never truncate it. */
-  tabLabel: string;
   title: string;
   description: string;
 };
@@ -78,10 +76,10 @@ const commonMoments = {
 
 const romantic: RelationshipReportCopy = {
   sections: {
-    overview: { label: 'ทำไมถึงใช่', tabLabel: 'ทำไมถึงใช่', title: 'ทำไมถึงเป็นคู่นี้', description: 'จุดที่ดึงกันเข้ามา และจุดที่ทำให้ใช่' },
-    people: { label: 'อ่านนิสัยเขา', tabLabel: 'นิสัยเขา', title: 'นิสัยเขา นิสัยเรา', description: 'สิ่งที่เขามักทำแบบนั้น และทำไมคุณถึงเป็นแบบนี้' },
-    conversation: { label: 'คุยให้เข้าใจกัน', tabLabel: 'คุยกันยังไง', title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วหยิบวิธีคุยไปใช้ได้เลย' },
-    next: { label: 'ไปต่อยังไงดี', tabLabel: 'ไปต่อยังไง', title: 'ไปต่อ หรือพอแค่นี้', description: 'สัญญาณที่บอกว่าควรลุยหรือควรถอย' },
+    overview: { label: 'ทำไมถึงใช่', title: 'ทำไมถึงเป็นคู่นี้', description: 'จุดที่ดึงกันเข้ามา และจุดที่ทำให้ใช่' },
+    people: { label: 'อ่านนิสัยเขา', title: 'นิสัยเขา นิสัยเรา', description: 'สิ่งที่เขามักทำแบบนั้น และทำไมคุณถึงเป็นแบบนี้' },
+    conversation: { label: 'คุยให้เข้าใจกัน', title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วหยิบวิธีคุยไปใช้ได้เลย' },
+    next: { label: 'ไปต่อยังไงดี', title: 'ไปต่อ หรือพอแค่นี้', description: 'สัญญาณที่บอกว่าควรลุยหรือควรถอย' },
   },
   overviewAction: { tag: 'มองให้ลึกขึ้น', title: 'ดูแรงดึงดูด', detail: 'เข้าใจจุดที่ทำให้รู้สึกพิเศษต่อกัน' },
   peopleActions: {
@@ -108,10 +106,10 @@ const romantic: RelationshipReportCopy = {
 const talking: RelationshipReportCopy = {
   ...romantic,
   sections: {
-    overview: { label: 'ทำไมถึงรู้สึกพิเศษ', tabLabel: 'ทำไมถึงพิเศษ', title: 'ทำไมถึงยังอยากรู้จักกัน', description: 'จุดที่ทำให้คุยกันแล้วรู้สึกพิเศษ' },
-    people: { label: 'อ่านนิสัยเขา', tabLabel: 'นิสัยเขา', title: 'นิสัยเขา นิสัยเรา', description: 'จังหวะที่แต่ละคนเปิดใจและต้องการพื้นที่' },
-    conversation: { label: 'คุยให้เข้าใจกัน', tabLabel: 'คุยต่อยังไง', title: 'อยากคุยต่อ เริ่มยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วคุยกันแบบไม่ต้องรีบ' },
-    next: { label: 'ไปต่อยังไงดี', tabLabel: 'ไปต่อยังไง', title: 'ค่อย ๆ ดูใจกันต่อไหม', description: 'สัญญาณที่ช่วยให้เลือกจังหวะของคู่นี้' },
+    overview: { label: 'ทำไมถึงรู้สึกพิเศษ', title: 'ทำไมถึงยังอยากรู้จักกัน', description: 'จุดที่ทำให้คุยกันแล้วรู้สึกพิเศษ' },
+    people: { label: 'อ่านนิสัยเขา', title: 'นิสัยเขา นิสัยเรา', description: 'จังหวะที่แต่ละคนเปิดใจและต้องการพื้นที่' },
+    conversation: { label: 'คุยให้เข้าใจกัน', title: 'อยากคุยต่อ เริ่มยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วคุยกันแบบไม่ต้องรีบ' },
+    next: { label: 'ไปต่อยังไงดี', title: 'ค่อย ๆ ดูใจกันต่อไหม', description: 'สัญญาณที่ช่วยให้เลือกจังหวะของคู่นี้' },
   },
   overviewAction: { tag: 'มองให้ลึกขึ้น', title: 'ดูสิ่งที่ทำให้รู้สึกดี', detail: 'เข้าใจจุดที่ทำให้ยังอยากคุยกันต่อ' },
   nextActions: {
@@ -129,10 +127,10 @@ const talking: RelationshipReportCopy = {
 const friend: RelationshipReportCopy = {
   ...romantic,
   sections: {
-    overview: { label: 'ทำไมถึงคลิกกัน', tabLabel: 'ทำไมคลิกกัน', title: 'อะไรทำให้เป็นเพื่อนกันได้ดี', description: 'จุดที่อยู่ด้วยกันแล้วสบายใจ และจุดที่ควรเข้าใจกัน' },
-    people: { label: 'อ่านนิสัยกัน', tabLabel: 'นิสัยกัน', title: 'นิสัยเราสองคน', description: 'สิ่งที่แต่ละคนให้ความสำคัญในมิตรภาพ' },
-    conversation: { label: 'คุยให้สบายใจกัน', tabLabel: 'คุยกันดี ๆ', title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วคุยโดยไม่ทำให้ห่างกัน' },
-    next: { label: 'ดูแลมิตรภาพยังไงดี', tabLabel: 'ดูแลมิตรภาพ', title: 'ไปต่อแบบเพื่อนที่สบายใจ', description: 'สัญญาณที่ช่วยให้รักษาระยะของกันและกัน' },
+    overview: { label: 'ทำไมถึงคลิกกัน', title: 'อะไรทำให้เป็นเพื่อนกันได้ดี', description: 'จุดที่อยู่ด้วยกันแล้วสบายใจ และจุดที่ควรเข้าใจกัน' },
+    people: { label: 'นิสัยเราสองคน', title: 'นิสัยเราสองคน', description: 'สิ่งที่แต่ละคนให้ความสำคัญในมิตรภาพ' },
+    conversation: { label: 'คุยกันให้สบายใจ', title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วคุยโดยไม่ทำให้ห่างกัน' },
+    next: { label: 'ดูแลมิตรภาพ', title: 'ไปต่อแบบเพื่อนที่สบายใจ', description: 'สัญญาณที่ช่วยให้รักษาระยะของกันและกัน' },
   },
   overviewAction: { tag: 'มองให้ลึกขึ้น', title: 'ดูจุดที่เข้ากัน', detail: 'เข้าใจสิ่งที่ทำให้เป็นเพื่อนกันได้ดี' },
   peopleActions: {
@@ -159,10 +157,10 @@ const friend: RelationshipReportCopy = {
 const workBase: RelationshipReportCopy = {
   ...romantic,
   sections: {
-    overview: { label: 'ทำงานด้วยกันไหวไหม', tabLabel: 'จังหวะงาน', title: 'จังหวะงานของเราสองคน', description: 'จุดที่ทำงานเข้ากัน และจุดที่ต้องคุยให้ชัด' },
-    people: { label: 'อ่านสไตล์การทำงาน', tabLabel: 'สไตล์งาน', title: 'สไตล์เขา สไตล์เรา', description: 'สิ่งที่แต่ละคนให้ความสำคัญเวลาทำงานร่วมกัน' },
-    conversation: { label: 'คุยงานให้เข้าใจ', tabLabel: 'คุยเรื่องงาน', title: 'อยากให้งานลื่นขึ้น เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วหยิบวิธีคุยไปใช้ได้เลย' },
-    next: { label: 'ทำงานต่อยังไงดี', tabLabel: 'ไปต่อในงาน', title: 'ทำงานร่วมกันให้ลื่นขึ้น', description: 'สัญญาณที่ช่วยให้เลือกจังหวะคุยและขยับงาน' },
+    overview: { label: 'ทำงานด้วยกันไหวไหม', title: 'จังหวะงานของเราสองคน', description: 'จุดที่ทำงานเข้ากัน และจุดที่ต้องคุยให้ชัด' },
+    people: { label: 'สไตล์การทำงาน', title: 'สไตล์เขา สไตล์เรา', description: 'สิ่งที่แต่ละคนให้ความสำคัญเวลาทำงานร่วมกัน' },
+    conversation: { label: 'คุยงานให้เข้าใจ', title: 'อยากให้งานลื่นขึ้น เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ตรงกับตอนนี้ แล้วหยิบวิธีคุยไปใช้ได้เลย' },
+    next: { label: 'ทำงานต่อยังไงดี', title: 'ทำงานร่วมกันให้ลื่นขึ้น', description: 'สัญญาณที่ช่วยให้เลือกจังหวะคุยและขยับงาน' },
   },
   overviewAction: { tag: 'มองให้ลึกขึ้น', title: 'ดูจุดที่ทำงานเข้ากัน', detail: 'เข้าใจสิ่งที่ช่วยให้ทำงานร่วมกันลื่นขึ้น' },
   peopleActions: {
@@ -190,8 +188,8 @@ const boss: RelationshipReportCopy = {
   ...workBase,
   sections: {
     ...workBase.sections,
-    overview: { label: 'ทำงานกับหัวหน้าไหวไหม', tabLabel: 'จังหวะหัวหน้า', title: 'จังหวะงานของคุณกับหัวหน้า', description: 'จุดที่ทำงานเข้ากัน และจุดที่ควรคุยให้ชัด' },
-    people: { label: 'อ่านสไตล์หัวหน้า', tabLabel: 'สไตล์หัวหน้า', title: 'สไตล์หัวหน้า สไตล์คุณ', description: 'สิ่งที่แต่ละคนให้ความสำคัญเวลาทำงานร่วมกัน' },
+    overview: { label: 'ทำงานกับหัวหน้าไหวไหม', title: 'จังหวะงานของคุณกับหัวหน้า', description: 'จุดที่ทำงานเข้ากัน และจุดที่ควรคุยให้ชัด' },
+    people: { label: 'สไตล์หัวหน้า', title: 'สไตล์หัวหน้า สไตล์คุณ', description: 'สิ่งที่แต่ละคนให้ความสำคัญเวลาทำงานร่วมกัน' },
   },
   peopleActions: {
     partner: { tag: 'ดูหัวหน้าก่อน', title: 'หัวหน้าทำงานแบบไหน', detail: 'เวลาเร่งงาน ตัดสินใจ และต้องการพื้นที่' },
@@ -204,10 +202,10 @@ const coworker: RelationshipReportCopy = workBase;
 const family: RelationshipReportCopy = {
   ...romantic,
   sections: {
-    overview: { label: 'ทำไมถึงเป็นแบบนี้', tabLabel: 'เรื่องในบ้าน', title: 'ความสัมพันธ์ในบ้านของเรา', description: 'สิ่งที่ผูกกันไว้ และจุดที่ควรเข้าใจกันให้มากขึ้น' },
-    people: { label: 'เข้าใจกันมากขึ้น', tabLabel: 'เข้าใจกัน', title: 'นิสัยเขา นิสัยเรา', description: 'สิ่งที่แต่ละคนต้องการเมื่ออยู่ในครอบครัว' },
-    conversation: { label: 'คุยกันให้ใจเย็น', tabLabel: 'คุยกันดี ๆ', title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ทุกคนพร้อม แล้วหยิบวิธีคุยไปใช้ได้เลย' },
-    next: { label: 'อยู่ด้วยกันยังไงดี', tabLabel: 'อยู่ด้วยกัน', title: 'อยู่ด้วยกันให้สบายใจขึ้น', description: 'สัญญาณที่ช่วยให้เลือกจังหวะคุยและดูแลกัน' },
+    overview: { label: 'ทำไมถึงเป็นแบบนี้', title: 'ความสัมพันธ์ในบ้านของเรา', description: 'สิ่งที่ผูกกันไว้ และจุดที่ควรเข้าใจกันให้มากขึ้น' },
+    people: { label: 'นิสัยเขา นิสัยเรา', title: 'นิสัยเขา นิสัยเรา', description: 'สิ่งที่แต่ละคนต้องการเมื่ออยู่ในครอบครัว' },
+    conversation: { label: 'คุยกันให้ใจเย็น', title: 'อยากให้เข้าใจกัน เริ่มคุยยังไงดี', description: 'เลือกจังหวะที่ทุกคนพร้อม แล้วหยิบวิธีคุยไปใช้ได้เลย' },
+    next: { label: 'อยู่ด้วยกันยังไงดี', title: 'อยู่ด้วยกันให้สบายใจขึ้น', description: 'สัญญาณที่ช่วยให้เลือกจังหวะคุยและดูแลกัน' },
   },
   overviewAction: { tag: 'มองให้ลึกขึ้น', title: 'ดูสิ่งที่ผูกกันไว้', detail: 'เข้าใจจุดที่ทำให้ครอบครัวนี้เป็นแบบนี้' },
   peopleActions: {

@@ -157,7 +157,6 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('role="tablist"');
     expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
     for (const label of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยให้เข้าใจกัน', 'ไปต่อยังไงดี']) expect(html).toContain(`aria-label="${label}"`);
-    for (const tabLabel of ['ทำไมถึงใช่', 'นิสัยเขา', 'คุยกันยังไง', 'ไปต่อยังไง']) expect(html).toContain(tabLabel);
     expect(html).toContain('id="report-tab-overview"');
     expect(html).toContain('id="report-panel-next"');
     expect(html).toContain('อ่านราว 11 นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย');
@@ -210,8 +209,8 @@ describe('CompatibilityReport', () => {
 
   test('relationship context, not one romance template, names every report section and its next step', () => {
     expect(relationshipReportCopy('talking').sections.next.title).toBe('ค่อย ๆ ดูใจกันต่อไหม');
-    expect(relationshipReportCopy('friend').sections.next.label).toBe('ดูแลมิตรภาพยังไงดี');
-    expect(relationshipReportCopy('boss').sections.people.label).toBe('อ่านสไตล์หัวหน้า');
+    expect(relationshipReportCopy('friend').sections.next.label).toBe('ดูแลมิตรภาพ');
+    expect(relationshipReportCopy('boss').sections.people.label).toBe('สไตล์หัวหน้า');
     expect(relationshipReportCopy('coworker').sections.conversation.title).toBe('อยากให้งานลื่นขึ้น เริ่มคุยยังไงดี');
     expect(relationshipReportCopy('family').sections.next.title).toBe('อยู่ด้วยกันให้สบายใจขึ้น');
     expect(planFrameFor('romantic', 35).title).toBe('ค่อย ๆ หาจังหวะที่สบายใจ');
@@ -220,13 +219,13 @@ describe('CompatibilityReport', () => {
     expect(planFrameFor('boss', 72).title).toBe('ต่อยอดจังหวะงานที่เข้ากัน');
 
     const family = render('full', undefined, 'แม่', 'family');
-    for (const visibleCopy of ['ทำไมถึงเป็นแบบนี้', 'เข้าใจกันมากขึ้น', 'คุยกันให้ใจเย็น', 'อยู่ด้วยกันยังไงดี', 'ต่อยอดพื้นที่ปลอดภัยในบ้าน']) {
+    for (const visibleCopy of ['ทำไมถึงเป็นแบบนี้', 'นิสัยเขา นิสัยเรา', 'คุยกันให้ใจเย็น', 'อยู่ด้วยกันยังไงดี', 'ต่อยอดพื้นที่ปลอดภัยในบ้าน']) {
       expect(family).toContain(visibleCopy);
     }
     expect(family).toContain('family.webp');
     expect(family).not.toContain('next-signal.webp');
     const boss = render('full', undefined, 'หัวหน้า', 'boss');
-    for (const visibleCopy of ['ทำงานกับหัวหน้าไหวไหม', 'อ่านสไตล์หัวหน้า', 'คุยงานให้เข้าใจ', 'ทำงานต่อยังไงดี', 'ต่อยอดจังหวะงานที่เข้ากัน']) {
+    for (const visibleCopy of ['ทำงานกับหัวหน้าไหวไหม', 'สไตล์หัวหน้า', 'คุยงานให้เข้าใจ', 'ทำงานต่อยังไงดี', 'ต่อยอดจังหวะงานที่เข้ากัน']) {
       expect(boss).toContain(visibleCopy);
     }
     expect(boss).toContain('career.webp');
@@ -242,17 +241,17 @@ describe('CompatibilityReport', () => {
     expect(relationshipReportVisuals('romantic').next.future.tone).toBe('romance');
   });
 
-  test('every compatibility type has complete, mobile-safe tab labels', () => {
+  test('every compatibility type has complete natural-language labels for the swipeable tab rail', () => {
     for (const relationshipType of RELATIONSHIP_TYPES) {
       const sections = relationshipReportCopy(relationshipType).sections;
       for (const id of REPORT_SECTION_IDS) {
-        const { label, tabLabel } = sections[id];
+        const { label } = sections[id];
         expect(label.trim()).not.toBe('');
-        expect(tabLabel.trim()).not.toBe('');
-        expect(tabLabel).not.toContain('…');
-        // All four tabs share one row on wider phone/tablet layouts.
-        expect(Array.from(tabLabel).length).toBeLessThanOrEqual(14);
+        expect(label).not.toContain('…');
       }
     }
+    expect(relationshipReportCopy('friend').sections.people.label).toBe('นิสัยเราสองคน');
+    expect(relationshipReportCopy('family').sections.people.label).toBe('นิสัยเขา นิสัยเรา');
+    expect(relationshipReportCopy('boss').sections.people.label).toBe('สไตล์หัวหน้า');
   });
 });

@@ -10,15 +10,15 @@ const storageKey = (reportId: string) => `saimu.compat.moments.${reportId}`;
 const RELATIONSHIP_MOMENTS = [
   {
     title: 'อยู่ใกล้กันแบบไม่กดดัน',
-    detail: 'เริ่มจากการอยู่ข้างกัน โดยไม่ต้องรีบหาคำตอบ',
+    detail: 'ให้ความเงียบมีพื้นที่ โดยยังอยู่ข้างกัน',
   },
   {
     title: 'บอกสิ่งที่ต้องการแบบนุ่ม ๆ',
-    detail: 'ชวนให้อีกฝ่ายเข้าใจ โดยไม่ต้องตัดสินกัน',
+    detail: 'พูดความต้องการของเรา โดยไม่โยนความผิด',
   },
   {
     title: 'คุยเรื่องเดียวให้ชัด',
-    detail: 'ไม่ต้องเคลียร์ทุกอย่างในครั้งเดียว',
+    detail: 'หยิบแค่เรื่องเดียวมาคุยให้จบ',
   },
 ] as const;
 
@@ -74,13 +74,13 @@ export function PlanChecklist({ plan, reportId }: PlanChecklistProps) {
     <section id="report-plan-section" aria-labelledby="report-plan" className="scroll-mt-32 min-[1120px]:scroll-mt-20">
       <SectionHeading
         id="report-plan"
-        title="ชวนกันใกล้ขึ้นทีละนิด"
-        sub="เลือกแค่ 1 โมเมนต์ที่อยากลองใน 7 วันนี้ก็พอ"
+        title="ค่อย ๆ กลับมาใกล้กัน"
+        sub="เลือกหนึ่งอย่างที่อยากลอง เมื่อรู้สึกพร้อม"
       />
       <div className={`${REPORT_CARD} mt-4 overflow-hidden`}>
         <div className="border-b border-edge px-5 py-4 sm:px-7">
-          <p className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">วันนี้อยากให้ความสัมพันธ์ดีขึ้นแบบไหน</p>
-          <p className="mt-1 text-sm leading-relaxed text-inkMuted">ไม่มีข้อไหนต้องทำให้ครบ เลือกสิ่งที่ตรงกับใจตอนนี้ได้เลย</p>
+          <p className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">ตอนนี้อยากดูแลความสัมพันธ์แบบไหน</p>
+          <p className="mt-1 text-sm leading-relaxed text-inkMuted">ไม่ต้องรีบแก้ทุกอย่างพร้อมกัน เลือกเรื่องที่คุณอยากเริ่มได้เลย</p>
         </div>
         <ol className="divide-y divide-edge">
           {plan.map((step, index) => {
@@ -113,17 +113,18 @@ export function PlanChecklist({ plan, reportId }: PlanChecklistProps) {
                 {isOpen && (
                   <div id={detailId} className="border-t border-edge px-5 pb-5 pt-4 sm:px-7">
                     <div className="max-w-[62ch]">
-                      <p className="font-heading text-sm font-semibold text-inkMuted">ลองแบบนี้</p>
+                      <p className="font-heading text-sm font-semibold text-inkMuted">แม่หมอชวนมองแบบนี้</p>
+                      <p className="mt-1 text-sm leading-relaxed text-inkMuted">หยิบไปใช้เท่าที่ไหว แล้วปรับให้เป็นแบบที่คุณพูดจริงได้</p>
                       <p className="mt-1.5 text-[0.9375rem] leading-[1.7] text-ink">
                         <ThaiText>{step.action}</ThaiText>
                       </p>
                     </div>
                     <div className="mt-4 max-w-[62ch] border-t border-edge pt-4">
-                      <p className="font-heading text-sm font-semibold text-inkMuted">ถ้าอยากพูด ลองเปิดแบบนี้</p>
+                      <p className="font-heading text-sm font-semibold text-inkMuted">ถ้าคำพูดช่วยให้เริ่มง่ายขึ้น</p>
                       <p className="mt-1.5 font-oracle text-lg font-light leading-[1.65] text-ink">“<ThaiText>{step.conversationStarter}</ThaiText>”</p>
                     </div>
                     <div className="mt-4 max-w-[62ch] border-t border-edge pt-4">
-                      <p className="font-heading text-sm font-semibold text-inkMuted">หลังจากนั้น แค่สังเกต</p>
+                      <p className="font-heading text-sm font-semibold text-inkMuted">แล้วค่อยดูว่าอะไรเกิดขึ้น</p>
                       <p className="mt-1.5 text-[0.9375rem] leading-[1.7] text-ink">
                         <ThaiText>{step.watchFor}</ThaiText>
                       </p>
@@ -134,7 +135,7 @@ export function PlanChecklist({ plan, reportId }: PlanChecklistProps) {
                       className={`mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 font-heading text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${hasTried ? 'border-success/30 bg-success/10 text-success hover:bg-success/15' : 'border-edge bg-surface text-ink hover:bg-surface2'}`}
                     >
                       {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <Heart className="size-4" aria-hidden="true" />}
-                      {hasTried ? 'วันนี้ได้ลองแล้ว' : 'เก็บไว้ลองวันนี้'}
+                      {hasTried ? 'เก็บไอเดียนี้ไว้แล้ว' : 'เก็บไอเดียนี้ไว้'}
                     </button>
                   </div>
                 )}

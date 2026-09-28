@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { RelationshipClayImage } from '@/features/compatibility/relationship-clay-image';
 import { motion } from 'framer-motion';
-import { Button } from '@/lib-packages/ui';
+import { Button, buttonVariants, cn } from '@/lib-packages/ui';
 import { type RelationshipType, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
 import { Loader2, ChevronRight, Stars } from 'lucide-react';
 import {
@@ -14,25 +16,27 @@ interface CompatibilityHistoryProps {
   items: HistoryItem[];
   totalHistory: number;
   isLoading: boolean;
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
-  onLoadMore: () => void;
+  isError: boolean;
+  onRetry: () => void;
   onViewHistory: (id: string) => void;
+  /** Where the full list lives; linked from the header when `totalHistory` is more than `items` shows. */
+  seeAllHref: string;
 }
 
+/** The dashboard's history section: the newest checks, with a link to the full list when there are more. */
 export function CompatibilityHistory({
   items,
   totalHistory,
   isLoading,
-  hasNextPage,
-  isFetchingNextPage,
-  onLoadMore,
+  isError,
+  onRetry,
   onViewHistory,
+  seeAllHref,
 }: CompatibilityHistoryProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <h2 className="text-lg md:text-xl font-heading text-ink flex items-center gap-2">
             <Stars className="w-5 h-5 text-accentBright" />
             ดวงคู่ที่เคยดู
@@ -42,81 +46,126 @@ export function CompatibilityHistory({
               </span>
             )}
           </h2>
+          {totalHistory > items.length && (
+            <Link
+              href={seeAllHref}
+              className={cn(buttonVariants({ variant: 'ghost' }), '-mr-3 gap-1 px-3 text-accentBright')}
+            >
+              ดูทั้งหมด
+              <ChevronRight className="size-4" aria-hidden="true" />
+            </Link>
+          )}
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center py-8">
-            {/* Stays a plain spinner, not MainLoader: this is a fast paginated
-                fetch, and the mascot holds each pose for 500ms — a sub-second
-                load would show one arbitrary pose (sleeping, "LOADING...",
-                a Saturn flourish) that differs on every refresh. */}
-            <Loader2 className="w-6 h-6 text-inkMuted animate-spin" />
-          </div>
+          <HistorySpinner />
+        ) : isError ? (
+          <CompatibilityHistoryError onRetry={onRetry} />
         ) : items.length === 0 ? (
-          // Empty state
-          <div className="text-center py-8 space-y-3">
-            <Image src="/assets/clay/little-oracle-mark-v1.webp" alt="" width={480} height={480} sizes="80px" className="mx-auto size-20 object-contain" />
-            <p className="text-inkMuted text-base md:text-lg">ดวงคู่ครั้งแรก เริ่มที่ใครดี</p>
-            <p className="text-inkMuted/60 text-sm md:text-base">ลองดูดวงคู่กับคนที่อยากรู้จักให้มากขึ้น</p>
-          </div>
+          <CompatibilityHistoryEmpty />
         ) : (
-          <div className="space-y-2">
-            {items.map((item, index) => {
-              const itemConfig = RELATIONSHIP_CONFIG[item.relationshipType as RelationshipType];
-              if (!itemConfig) return null;
-
-              return (
-                <motion.button
-                  key={item.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  onClick={() => onViewHistory(item.id)}
-                  className="w-full bg-surface/50 border border-surface2/30 rounded-xl p-4 hover:border-accent/30 transition-all text-left flex items-center gap-3"
-                >
-                  <RelationshipClayImage relationshipType={item.relationshipType} />
-
-                  <div className="flex-1 min-w-0">
-                    <p className="text-ink font-medium truncate text-base md:text-lg">{item.partnerName}</p>
-                    <div className="flex items-center gap-2 text-xs md:text-sm">
-                      <span className={itemConfig.accent}>{RELATIONSHIP_LABELS[item.relationshipType as RelationshipType]}</span>
-                      {item.userElement && item.partnerElement && (
-                        <>
-                          <span className="text-inkMuted/40">&#x2022;</span>
-                          <span className="text-inkMuted">{toThaiElement(item.userElement)} x {toThaiElement(item.partnerElement)}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs md:text-sm text-inkMuted">
-                      {formatRelativeDate(item.createdAt)}
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-inkMuted/50" />
-                  </div>
-                </motion.button>
-              );
-            })}
-
-            {/* Load more */}
-            {hasNextPage && (
-              <Button
-                variant="ghost"
-                className="w-full text-inkMuted"
-                onClick={onLoadMore}
-                disabled={isFetchingNextPage}
-              >
-                {isFetchingNextPage ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : null}
-                โหลดเพิ่ม
-              </Button>
-            )}
-          </div>
+          <CompatibilityHistoryList items={items} onViewHistory={onViewHistory} />
         )}
       </div>
     </motion.div>
+  );
+}
+
+/** Rows of past checks; every history surface renders them through here. */
+export function CompatibilityHistoryList({
+  items,
+  onViewHistory,
+}: {
+  items: HistoryItem[];
+  onViewHistory: (id: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      {items.map((item, index) => (
+        <CompatibilityHistoryRow key={item.id} item={item} index={index} onViewHistory={onViewHistory} />
+      ))}
+    </div>
+  );
+}
+
+function CompatibilityHistoryRow({
+  item,
+  index,
+  onViewHistory,
+}: {
+  item: HistoryItem;
+  index: number;
+  onViewHistory: (id: string) => void;
+}) {
+  const itemConfig = RELATIONSHIP_CONFIG[item.relationshipType as RelationshipType];
+  if (!itemConfig) return null;
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      // Capped so the last row of a 20-row page does not wait a full second.
+      transition={{ delay: Math.min(index, 6) * 0.05 }}
+      onClick={() => onViewHistory(item.id)}
+      className="w-full bg-surface/50 border border-surface2/30 rounded-xl p-4 hover:border-accent/30 transition-all text-left flex items-center gap-3"
+    >
+      <RelationshipClayImage relationshipType={item.relationshipType} />
+
+      <div className="flex-1 min-w-0">
+        <p className="text-ink font-medium truncate text-base md:text-lg">{item.partnerName}</p>
+        <div className="flex items-center gap-2 text-xs md:text-sm">
+          <span className={itemConfig.accent}>{RELATIONSHIP_LABELS[item.relationshipType as RelationshipType]}</span>
+          {item.userElement && item.partnerElement && (
+            <>
+              <span className="text-inkMuted/40">&#x2022;</span>
+              <span className="text-inkMuted">{toThaiElement(item.userElement)} x {toThaiElement(item.partnerElement)}</span>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <span className="text-xs md:text-sm text-inkMuted">
+          {formatRelativeDate(item.createdAt)}
+        </span>
+        <ChevronRight className="w-4 h-4 text-inkMuted/50" />
+      </div>
+    </motion.button>
+  );
+}
+
+export function HistorySpinner() {
+  return (
+    <div className="flex justify-center py-8">
+      {/* Stays a plain spinner, not MainLoader: this is a fast paginated
+          fetch, and the mascot holds each pose for 500ms — a sub-second
+          load would show one arbitrary pose (sleeping, "LOADING...",
+          a Saturn flourish) that differs on every refresh. */}
+      <Loader2 className="w-6 h-6 text-inkMuted animate-spin" aria-label="กำลังโหลด" />
+    </div>
+  );
+}
+
+/** No checks yet. `children` adds an action under the invitation. */
+export function CompatibilityHistoryEmpty({ children }: { children?: ReactNode }) {
+  return (
+    <div className="text-center py-8 space-y-3">
+      <Image src="/assets/clay/little-oracle-mark-v1.webp" alt="" width={480} height={480} sizes="80px" className="mx-auto size-20 object-contain" />
+      <p className="text-inkMuted text-base md:text-lg">ดวงคู่ครั้งแรก เริ่มที่ใครดี</p>
+      <p className="text-inkMuted/60 text-sm md:text-base">ลองดูดวงคู่กับคนที่อยากรู้จักให้มากขึ้น</p>
+      {children}
+    </div>
+  );
+}
+
+export function CompatibilityHistoryError({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="rounded-xl border border-edge bg-surface px-4 py-5">
+      <p className="text-ink">โหลดดวงคู่ที่เคยดูไม่สำเร็จ</p>
+      <Button type="button" variant="soft" onClick={onRetry} className="mt-3">
+        ลองอีกครั้ง
+      </Button>
+    </div>
   );
 }
 

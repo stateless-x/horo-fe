@@ -13,7 +13,7 @@ import {
   type CompatibilityResultOrigin,
   type RelationshipType,
 } from '@/lib-packages/shared';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, type ApiError } from '@/lib/api';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { classifyCompatibilityFailure, useTrackEvent } from '@/lib/analytics';
@@ -27,9 +27,11 @@ import { CompatibilityLoading } from '@/features/compatibility/compatibility-loa
 import { CompatibilityHistory } from '@/features/compatibility/compatibility-history';
 import { MainLoader } from '@/components/ui/main-loader';
 import {
+  compatibilityHistoryPath,
   compatibilityResultOriginKey,
   compatibilityResultPath,
 } from '@/features/compatibility/compatibility-routes';
+import { HISTORY_PREVIEW_LIMIT } from '@/features/compatibility/history-paging';
 
 /** The history route also says whether a new check writes the teaser alone (locked mode). */
 type HistoryPage = HistoryResponse & { lockEnabled?: boolean };
@@ -92,16 +94,10 @@ export function CompatibilityDashboard() {
     return () => clearInterval(timer);
   }, [rateLimitCountdown]);
 
-  // History query
-  const historyQuery = useInfiniteQuery<HistoryPage>({
-    queryKey: ['compatibility', 'history'],
-    queryFn: async ({ pageParam }) => {
-      const params = new URLSearchParams({ limit: '20' });
-      if (pageParam) params.set('cursor', pageParam as string);
-      return api.get<HistoryPage>(`/api/fortune/compatibility/history?${params}`);
-    },
-    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-    initialPageParam: undefined as string | undefined,
+  // The newest few checks; the full list lives on the history route.
+  const historyQuery = useQuery<HistoryPage>({
+    queryKey: ['compatibility', 'history', 'recent'],
+    queryFn: () => api.get<HistoryPage>(`/api/fortune/compatibility/history?limit=${HISTORY_PREVIEW_LIMIT}`),
     enabled: !!session,
     staleTime: 60_000,
   });
@@ -211,14 +207,12 @@ export function CompatibilityDashboard() {
     return (
       <CompatibilityLoading
         startedAt={calculationStartedAt}
-        lockEnabled={historyQuery.data?.pages[0]?.lockEnabled}
+        lockEnabled={historyQuery.data?.lockEnabled}
       />
     );
   }
 
   // --- Form view (default) ---
-  const allHistoryItems = historyQuery.data?.pages.flatMap(p => p.data) || [];
-  const totalHistory = historyQuery.data?.pages[0]?.total || 0;
   const isRateLimited = rateLimitCountdown > 0;
 
   return (
@@ -270,13 +264,13 @@ export function CompatibilityDashboard() {
 
         {/* History Section */}
         <CompatibilityHistory
-          items={allHistoryItems}
-          totalHistory={totalHistory}
+          items={historyQuery.data?.data ?? []}
+          totalHistory={historyQuery.data?.total ?? 0}
           isLoading={historyQuery.isLoading}
-          hasNextPage={!!historyQuery.hasNextPage}
-          isFetchingNextPage={historyQuery.isFetchingNextPage}
-          onLoadMore={() => historyQuery.fetchNextPage()}
+          isError={historyQuery.isError}
+          onRetry={() => historyQuery.refetch()}
           onViewHistory={handleViewHistory}
+          seeAllHref={compatibilityHistoryPath()}
         />
 
       </div>

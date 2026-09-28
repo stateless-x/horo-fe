@@ -1,8 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import {
   COMPATIBILITY_DASHBOARD_PATH,
+  compatibilityHistoryPath,
   compatibilityResultFailureKind,
   compatibilityResultPath,
+  parseHistoryPage,
+  parseHistoryType,
 } from './compatibility-routes';
 
 describe('compatibility routes', () => {
@@ -25,5 +28,25 @@ describe('compatibility routes', () => {
     expect(compatibilityResultFailureKind({ status: 404 })).toBe('unavailable');
     expect(compatibilityResultFailureKind({ status: 500 })).toBe('transient');
     expect(compatibilityResultFailureKind(new TypeError('offline'))).toBe('transient');
+  });
+
+  test('keeps the full history at a bare path for page 1 and no filter', () => {
+    expect(compatibilityHistoryPath()).toBe('/dashboard/compatibility/history');
+    expect(compatibilityHistoryPath({ page: 1 })).toBe('/dashboard/compatibility/history');
+    expect(compatibilityHistoryPath({ page: 3, type: 'boss' })).toBe(
+      '/dashboard/compatibility/history?type=boss&page=3',
+    );
+  });
+
+  test('reads ?page= and ?type= defensively', () => {
+    expect(parseHistoryPage('2')).toBe(2);
+    expect(parseHistoryPage(undefined)).toBe(1);
+    expect(parseHistoryPage('0')).toBe(1);
+    expect(parseHistoryPage('-4')).toBe(1);
+    expect(parseHistoryPage('1.5')).toBe(1);
+    expect(parseHistoryPage('abc')).toBe(1);
+    expect(parseHistoryType('family')).toBe('family');
+    expect(parseHistoryType('enemy')).toBeUndefined();
+    expect(parseHistoryType(undefined)).toBeUndefined();
   });
 });

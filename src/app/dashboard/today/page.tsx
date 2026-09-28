@@ -134,6 +134,9 @@ export default function TodayPage() {
     : null;
   const dailyElementNameThai = dailyElementKey ? ELEMENT_NAMES_THAI[dailyElementKey] : null;
   const structured = dailyReading?.structuredContent;
+  const strongestDailyScore = structured?.categories
+    ? Math.max(...DAILY_CATEGORY_KEYS.map((key) => clampScore(structured.categories[key].score)))
+    : null;
   // No fabricated default: a legacy reading without a structured score simply
   // shows no bar. The old `?? 3` was a 1-to-5 era value and rendered as 3%.
   const overallPercent =
@@ -284,6 +287,7 @@ export default function TodayPage() {
                 const isExpanded = expandedCategory === key;
                 const panelId = `daily-category-panel-${key}`;
                 const percent = clampScore(data.score);
+                const isStrongest = percent === strongestDailyScore;
                 const accentClass = config.chartFillClass;
                 const textAccentClass = config.chartValueClass;
 
@@ -304,6 +308,9 @@ export default function TodayPage() {
                       <div className="min-w-0">
                         <p className="flex flex-wrap items-center gap-2 font-heading text-lg font-semibold text-ink">
                           {config.label}
+                          {isStrongest && (
+                            <span className="rounded-full bg-surface2 px-2 py-0.5 text-xs font-medium text-ink">เด่นเลย</span>
+                          )}
                           {continueFocusPill === key && (
                             <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs font-normal text-accentBright">
                               อ่านต่อจากที่ค้างไว้
@@ -315,14 +322,14 @@ export default function TodayPage() {
                       <div className="hidden md:block">
                         <div className="flex items-center justify-between gap-3 text-sm">
                           <span className="text-inkMuted">พลังวันนี้</span>
-                          <span className={`font-heading tabular-nums ${textAccentClass}`}>{percent}%</span>
+                          <span className={`font-heading tabular-nums ${textAccentClass} ${isStrongest ? 'text-2xl font-bold leading-none tracking-[-0.04em]' : ''}`}>{percent}%</span>
                         </div>
                         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-edgeSoft" aria-hidden="true">
                           <div className={`h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none ${accentClass}`} style={{ width: `${percent}%` }} />
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`font-heading text-lg tabular-nums md:hidden ${textAccentClass}`}>{percent}%</span>
+                        <span className={`font-heading tabular-nums md:hidden ${textAccentClass} ${isStrongest ? 'text-2xl font-bold leading-none tracking-[-0.04em]' : 'text-lg'}`}>{percent}%</span>
                         <ChevronDown className={`size-5 text-inkMuted transition-transform ${isExpanded ? 'rotate-180' : ''}`} aria-hidden="true" />
                       </div>
                     </button>

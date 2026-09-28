@@ -125,7 +125,11 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('ฉบับเต็ม');
     expect(html).toContain(content.overview.story);
     expect(html).toContain('บรรทัดความไว้ใจ');
-    expect(html.match(/อ่านเจาะลึก/g)).toHaveLength(6);
+    // Each closed chapter's toggle button reads "รายละเอียด" immediately before
+    // its chevron icon. The fixture's own detail text also starts with that
+    // word (e.g. "รายละเอียดเรื่องแรงดึงดูด"), so a bare substring match on the
+    // whole page double-counts; anchor to the button's own text instead.
+    expect(html.match(/>รายละเอียด<svg/g)).toHaveLength(6);
     expect(html).toContain('คำคมเรื่องแรงดึงดูด');
     // The attraction chapter's computed basis: both spouse palaces.
     expect(html).toContain('มะเมีย (ม้า)');

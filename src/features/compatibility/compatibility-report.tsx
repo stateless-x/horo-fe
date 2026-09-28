@@ -27,6 +27,7 @@ import { PlanChecklist } from './report/plan-checklist';
 import { ShareCard } from './report/share-card';
 import { MiniSeal, paragraphs, SectionHeading, ThaiText, type ReportElement } from './report/report-kit';
 import { relationshipReportCopy, type ReportSectionId } from './report/report-copy';
+import { relationshipReportVisuals } from './report/report-visuals';
 
 interface CompatibilityReportProps {
   score: number;
@@ -61,13 +62,6 @@ const CHAPTER_KEYS: V4ChapterKey[] = ['attraction', 'partner', 'you', 'communica
 type ReportSection = ReportSectionId;
 
 const REPORT_SECTION_IDS = new Set<ReportSection>(['overview', 'people', 'conversation', 'next']);
-const SECTION_ART: Record<ReportSection, string> = {
-  overview: '/assets/clay/chart-scroll-oracle.webp',
-  people: '/assets/clay/compatibility-sections/two-mirrors.webp',
-  conversation: '/assets/clay/relationships/talking.webp',
-  next: '/assets/clay/categories/life-overview.webp',
-};
-
 function isReportSection(value: string | null): value is ReportSection {
   return value !== null && REPORT_SECTION_IDS.has(value as ReportSection);
 }
@@ -101,10 +95,11 @@ export function CompatibilityReport({
   const reader = readerName ?? 'คุณ';
   const relationshipLabel = relationshipType ? `ดวง${RELATIONSHIP_LABELS[relationshipType]}` : 'ดวงคู่';
   const reportCopy = relationshipReportCopy(relationshipType);
+  const reportVisuals = relationshipReportVisuals(relationshipType);
   const reportSections = (['overview', 'people', 'conversation', 'next'] as const).map((id) => ({
     id,
     ...reportCopy.sections[id],
-    art: SECTION_ART[id],
+    art: reportVisuals.sections[id],
   }));
   const sectionLabelOf = (key: V4ChapterKey) => reportCopy.sections[sectionForTarget(`ch-${key}`)].label;
   const doorRef = useRef<HTMLDivElement>(null);
@@ -364,7 +359,7 @@ export function CompatibilityReport({
                     alt=""
                     width={128}
                     height={128}
-                    src={section.id === 'conversation' ? '/assets/clay/relationships/listening.webp' : section.art}
+                    src={section.art}
                     sizes={section.id === 'conversation' ? '(min-width: 640px) 96px, 80px' : '64px'}
                     className={`${section.id === 'conversation' ? 'size-20 sm:size-24' : 'size-16'} shrink-0 object-contain`}
                   />
@@ -429,9 +424,9 @@ export function CompatibilityReport({
                         helper="เลือกข้อที่ตรงกับใจตอนนี้"
                         onChoose={jump}
                         actions={[
-                          { id: 'ch-future', ...reportCopy.nextActions.future, icon: HeartHandshake, tone: 'romance', art: '/assets/clay/relationships/next-signal.webp' },
-                          { id: 'report-calendar-section', ...reportCopy.nextActions.calendar, icon: CalendarDays, tone: 'warn', art: '/assets/clay/relationships/next-timing.webp' },
-                          { id: 'report-plan-section', ...reportCopy.nextActions.plan, icon: ListChecks, tone: 'success', art: '/assets/clay/relationships/next-step.webp' },
+                          { id: 'ch-future', ...reportCopy.nextActions.future, icon: HeartHandshake, ...reportVisuals.next.future },
+                          { id: 'report-calendar-section', ...reportCopy.nextActions.calendar, icon: CalendarDays, tone: 'warn', art: reportVisuals.next.calendar.art },
+                          { id: 'report-plan-section', ...reportCopy.nextActions.plan, icon: ListChecks, tone: 'success', art: reportVisuals.next.plan.art },
                         ]}
                       />
                     </div>

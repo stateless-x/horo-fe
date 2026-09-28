@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { HeartHandshake, MessageCircleMore } from 'lucide-react';
 import type { RelationshipType } from '@/lib-packages/shared';
 import { relationshipReportCopy } from './report-copy';
+import { relationshipReportVisuals } from './report-visuals';
 
 type ConversationMoment = 'communication' | 'friction';
 
@@ -17,6 +18,7 @@ interface ConversationMomentMapProps {
  */
 export function ConversationMomentMap({ onChoose, relationshipType }: ConversationMomentMapProps) {
   const copy = relationshipReportCopy(relationshipType).conversation;
+  const visuals = relationshipReportVisuals(relationshipType).conversation;
 
   return (
     <section aria-labelledby="conversation-moment-map" className="border-y border-edge py-4 sm:py-5">
@@ -33,7 +35,7 @@ export function ConversationMomentMap({ onChoose, relationshipType }: Conversati
           className="group relative min-h-[142px] overflow-clip rounded-2xl border border-edge bg-surface px-3 pb-3 pt-4 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accentBright/30 hover:bg-surface2/55 hover:shadow-[0_12px_24px_rgba(107,33,168,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[154px] sm:px-4"
         >
           <Image
-            src="/assets/clay/relationships/talking.webp"
+            src={visuals.open}
             alt=""
             width={480}
             height={480}
@@ -58,7 +60,7 @@ export function ConversationMomentMap({ onChoose, relationshipType }: Conversati
           className="group relative min-h-[142px] overflow-clip rounded-2xl border border-romance/20 bg-romance/[0.045] px-3 pb-3 pt-4 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-romance/35 hover:bg-romance/[0.08] hover:shadow-[0_12px_24px_rgba(232,93,117,0.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[154px] sm:px-4"
         >
           <Image
-            src="/assets/clay/relationships/reconnect.webp"
+            src={visuals.tension}
             alt=""
             width={1254}
             height={1254}

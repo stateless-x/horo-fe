@@ -6,6 +6,7 @@ import type { CompatibilityV4Content, RelationshipType } from '@/lib-packages/sh
 import { CompatibilityReading } from './compatibility-reading';
 import { compatibilityTalismanBand } from './report/compatibility-talisman';
 import { planFrameFor, relationshipReportCopy } from './report/report-copy';
+import { relationshipReportVisuals } from './report/report-visuals';
 
 const chapter = (key: CompatibilityV4Content['chapters'][number]['key'], title: string) => ({
   key,
@@ -221,9 +222,22 @@ describe('CompatibilityReport', () => {
     for (const visibleCopy of ['ทำไมถึงเป็นแบบนี้', 'เข้าใจกันมากขึ้น', 'คุยกันให้ใจเย็น', 'อยู่ด้วยกันยังไงดี', 'ต่อยอดพื้นที่ปลอดภัยในบ้าน']) {
       expect(family).toContain(visibleCopy);
     }
+    expect(family).toContain('family.webp');
+    expect(family).not.toContain('next-signal.webp');
     const boss = render('full', undefined, 'หัวหน้า', 'boss');
     for (const visibleCopy of ['ทำงานกับหัวหน้าไหวไหม', 'อ่านสไตล์หัวหน้า', 'คุยงานให้เข้าใจ', 'ทำงานต่อยังไงดี', 'ต่อยอดจังหวะงานที่เข้ากัน']) {
       expect(boss).toContain(visibleCopy);
     }
+    expect(boss).toContain('career.webp');
+    expect(boss).toContain('coworker.webp');
+    expect(boss).not.toContain('next-signal.webp');
+  });
+
+  test('each context assigns imagery by relationship meaning, not a default romance treatment', () => {
+    expect(relationshipReportVisuals('friend').sections.people).toContain('relationships/friend.webp');
+    expect(relationshipReportVisuals('family').conversation.open).toContain('categories/family.webp');
+    expect(relationshipReportVisuals('coworker').sections.people).toContain('relationships/coworker.webp');
+    expect(relationshipReportVisuals('boss').next.future.tone).toBe('accent');
+    expect(relationshipReportVisuals('romantic').next.future.tone).toBe('romance');
   });
 });

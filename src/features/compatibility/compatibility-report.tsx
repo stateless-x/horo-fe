@@ -454,13 +454,13 @@ export function CompatibilityReport({
                   <>
                     <div className="mt-7">
                       <SectionActionMap
-                        title="อยากขยับเรื่องไหนก่อน"
-                        helper="เลือกจากสิ่งที่กำลังลังเล"
+                        title="ตอนนี้อยากทำอะไรต่อ"
+                        helper="เลือกข้อที่ตรงกับใจตอนนี้"
                         onChoose={jump}
                         actions={[
-                          { id: 'ch-future', tag: 'เช็กสัญญาณ', title: 'ควรไปต่อไหม', detail: 'ดูอะไรบอกให้ลุย หรือควรชะลอก่อน', icon: HeartHandshake, tone: 'romance' },
-                          { id: 'report-calendar-section', tag: 'ดูจังหวะ', title: 'เดือนไหนเหมาะสุด', detail: 'เปิดปฏิทิน 3 เดือนของคู่นี้', icon: CalendarDays, tone: 'warn' },
-                          { id: 'report-plan-section', tag: 'เริ่มแบบเบา ๆ', title: 'มีอะไรให้ทำตอนนี้', detail: 'เลือก 1 ก้าวใน 7 วันที่พอไหว', icon: ListChecks, tone: 'success' },
+                          { id: 'ch-future', tag: 'กำลังชั่งใจ', title: 'ไปต่อดีไหม', detail: 'มีอะไรให้ดูก่อนตัดสินใจต่อ', icon: HeartHandshake, tone: 'romance', art: '/assets/clay/relationships/next-signal.webp' },
+                          { id: 'report-calendar-section', tag: 'อยากดูจังหวะ', title: 'เดือนไหนค่อยขยับ', detail: 'เช็กจังหวะ 3 เดือนข้างหน้า', icon: CalendarDays, tone: 'warn', art: '/assets/clay/relationships/next-timing.webp' },
+                          { id: 'report-plan-section', tag: 'พร้อมลองขยับ', title: 'เริ่มอะไรได้บ้าง', detail: 'หยิบ 1 ก้าวเล็ก ๆ ที่ทำได้จริง', icon: ListChecks, tone: 'success', art: '/assets/clay/relationships/next-step.webp' },
                         ]}
                       />
                     </div>

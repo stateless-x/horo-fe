@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import Image from 'next/image';
 
 type ActionTone = 'accent' | 'romance' | 'success' | 'warn';
 
@@ -9,6 +10,8 @@ export interface SectionAction {
   detail: string;
   icon: LucideIcon;
   tone: ActionTone;
+  /** Optional clay cue. It reinforces the choice without replacing its label. */
+  art?: string;
 }
 
 interface SectionActionMapProps {
@@ -47,11 +50,11 @@ export function SectionActionMap({ title, helper, actions, onChoose }: SectionAc
 
   return (
     <section aria-labelledby={`action-map-${title}`} className="border-y border-edge py-4 sm:py-5">
-      <div className="flex items-baseline justify-between gap-3">
+      <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
         <h3 id={`action-map-${title}`} className="font-heading text-lg font-semibold leading-snug text-ink">
           {title}
         </h3>
-        <p className="shrink-0 text-xs leading-relaxed text-inkMuted">{helper}</p>
+        <p className="text-sm leading-relaxed text-inkMuted sm:shrink-0 sm:text-xs">{helper}</p>
       </div>
       <div className={`mt-3 grid grid-cols-2 gap-3 sm:gap-4 ${hasThreeActions ? 'min-[720px]:grid-cols-3' : ''}`}>
         {actions.map((action, index) => {
@@ -65,8 +68,20 @@ export function SectionActionMap({ title, helper, actions, onChoose }: SectionAc
               onClick={() => onChoose(action.id)}
               className={`group min-h-[140px] rounded-2xl border px-3 py-3.5 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(107,33,168,0.09)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[152px] sm:px-4 ${tone.card} ${spansPhoneRow ? 'col-span-2 min-[720px]:col-span-1' : ''}`}
             >
-              <span className={`grid size-8 place-items-center rounded-xl ${tone.icon}`}>
-                <Icon className="size-4" aria-hidden="true" />
+              <span className="flex items-start justify-between gap-3">
+                <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${tone.icon}`}>
+                  <Icon className="size-4" aria-hidden="true" />
+                </span>
+                {action.art && (
+                  <Image
+                    alt=""
+                    width={96}
+                    height={96}
+                    src={action.art}
+                    sizes="(min-width: 720px) 64px, 56px"
+                    className="size-14 shrink-0 object-contain sm:size-16"
+                  />
+                )}
               </span>
               <span className={`mt-3 block font-heading text-xs font-semibold ${tone.chip}`}>{action.tag}</span>
               <span className="mt-1.5 block text-balance font-heading text-base font-semibold leading-snug text-ink sm:text-lg">

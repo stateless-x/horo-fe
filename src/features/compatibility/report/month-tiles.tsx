@@ -1,6 +1,12 @@
 import { ArrowUp } from 'lucide-react';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
-import { MONTH_TONE, MONTH_WORD, monthName, MoonGlyph, REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
+import { MONTH_TONE, monthName, MoonGlyph, REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
+
+const CALENDAR_STATE = {
+  good: 'เหมาะกับการขยับ',
+  mixed: 'ค่อย ๆ ไป',
+  caution: 'พักจังหวะก่อน',
+} as const;
 
 interface MonthTilesProps {
   calendar: CompatibilityV4Content['calendar'];
@@ -18,15 +24,11 @@ interface MonthTilesProps {
 export function MonthTiles({ calendar, nextStepMonth, futureTitle, onJumpToFuture }: MonthTilesProps) {
   return (
     <section id="report-calendar-section" aria-labelledby="report-calendar" className="scroll-mt-32 min-[1120px]:scroll-mt-20">
-      <SectionHeading id="report-calendar" title="ปฏิทินความสัมพันธ์ 3 เดือน" sub="นับจากเดือนที่อ่าน เมื่อถึงแต่ละเดือนกลับมาเปิดอ่านซ้ำได้" />
-      <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5 text-[0.8125rem] text-inkMuted" aria-label="ความหมายของสัญลักษณ์">
-        {(['good', 'mixed', 'caution'] as const).map((label) => (
-          <li key={label} className="inline-flex items-center gap-1.5">
-            <MoonGlyph label={label} className={`size-4 ${MONTH_TONE[label]}`} />
-            {MONTH_WORD[label]}
-          </li>
-        ))}
-      </ul>
+      <SectionHeading
+        id="report-calendar"
+        title="จังหวะ 3 เดือนข้างหน้า"
+        sub="ดูว่าเดือนไหนน่าลองขยับ และเดือนไหนค่อย ๆ ไปก่อน"
+      />
       <ol className="mt-4 grid gap-3 min-[720px]:grid-cols-3">
         {calendar.map((month) => (
           <li key={month.month} className={`${REPORT_CARD} px-[18px] pb-[18px] pt-4`}>
@@ -36,7 +38,8 @@ export function MonthTiles({ calendar, nextStepMonth, futureTitle, onJumpToFutur
               <span
                 className={`ml-auto whitespace-nowrap rounded-full border border-current/40 bg-current/5 px-2.5 font-heading text-[0.8125rem] font-semibold leading-relaxed ${MONTH_TONE[month.label]}`}
               >
-                {MONTH_WORD[month.label]}
+                <MoonGlyph label={month.label} className="mr-1 inline-block size-3.5 align-[-0.15em]" />
+                {CALENDAR_STATE[month.label]}
               </span>
             </div>
             <p className="mt-2.5 text-[0.9375rem] leading-[1.7] text-ink">

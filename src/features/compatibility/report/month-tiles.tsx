@@ -3,9 +3,9 @@ import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compati
 import { MONTH_TONE, monthName, REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
 
 const CALENDAR_STATE = {
-  good: 'พร้อมขยับ',
-  mixed: 'ไปแบบสบาย ๆ',
-  caution: 'ยังไม่ต้องรีบ',
+  good: 'คุยเรื่องสำคัญได้',
+  mixed: 'ไปทีละเรื่อง',
+  caution: 'เลี่ยงการตัดสินใจใหญ่',
 } as const;
 
 interface MonthTilesProps {
@@ -32,17 +32,16 @@ export function MonthTiles({ calendar, nextStepMonth, futureTitle, onJumpToFutur
       <ol
         tabIndex={0}
         aria-label="เลื่อนดูจังหวะความสัมพันธ์ในแต่ละเดือน"
-        className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 pr-4 [-webkit-overflow-scrolling:touch] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+        className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 pr-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
       >
         {calendar.map((month) => (
           <li key={month.month} className={`${REPORT_CARD} w-72 shrink-0 snap-start px-[18px] pb-[18px] pt-4 sm:w-80`}>
             <span className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{monthName(month.month)}</span>
-            <span
-              className={`mt-3 inline-flex min-h-7 w-fit items-center whitespace-nowrap rounded-full border border-current/40 bg-current/5 px-2.5 font-heading text-[0.8125rem] font-semibold leading-relaxed ${MONTH_TONE[month.label]}`}
-            >
+            <p className={`mt-2.5 font-heading text-[0.9375rem] font-semibold leading-snug ${MONTH_TONE[month.label]}`}>
+              <span className="text-inkMuted">เดือนนี้: </span>
               {CALENDAR_STATE[month.label]}
-            </span>
-            <p className="mt-3 text-[0.9375rem] leading-[1.7] text-ink">
+            </p>
+            <p className="mt-3.5 text-[0.9375rem] leading-[1.7] text-ink">
               <ThaiText>{month.text}</ThaiText>
             </p>
             {month.month === nextStepMonth && (

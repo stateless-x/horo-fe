@@ -157,6 +157,7 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('role="tablist"');
     expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
     expect(html).toContain('snap-x snap-mandatory');
+    expect(html).toContain('md:overflow-visible md:pr-0 md:snap-none');
     expect(html).toContain('chevron-right');
     for (const label of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยให้เข้าใจกัน', 'ไปต่อยังไงดี']) expect(html).toContain(`aria-label="${label}"`);
     expect(html).toContain('id="report-tab-overview"');

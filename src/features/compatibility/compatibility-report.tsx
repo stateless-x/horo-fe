@@ -315,7 +315,7 @@ export function CompatibilityReport({
                 aria-label="ส่วนของคำตอบฉบับเต็ม"
                 ref={tabListRef}
                 onKeyDown={handleTabsKeyDown}
-                className="flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain py-1 pr-12 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className="flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain py-1 pr-12 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:overflow-visible md:pr-0 md:snap-none"
               >
                 {reportSections.map((section) => {
                   const selected = activeSection === section.id;
@@ -339,7 +339,7 @@ export function CompatibilityReport({
               </div>
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 right-0 flex w-9 items-center justify-end bg-gradient-to-l from-ground via-ground/95 to-transparent text-inkMuted sm:hidden"
+                className="pointer-events-none absolute inset-y-0 right-0 flex w-9 items-center justify-end bg-gradient-to-l from-ground via-ground/95 to-transparent text-inkMuted md:hidden"
               >
                 <ChevronRight className="size-4" />
               </span>

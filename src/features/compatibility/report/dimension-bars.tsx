@@ -10,17 +10,17 @@ interface DimensionBarsProps {
   hideLockNote?: boolean;
 }
 
-const DIMENSION_TONES: Record<V4DimensionKey, { fill: string; dot: string; strongest: string }> = {
-  chemistry: { fill: 'bg-romance', dot: 'bg-romance', strongest: 'border-romance/30 bg-romance/10 text-romanceText' },
-  communication: { fill: 'bg-accentBright', dot: 'bg-accentBright', strongest: 'border-edge bg-surface2 text-ink' },
-  trust: { fill: 'bg-success', dot: 'bg-success', strongest: 'border-success/30 bg-success/10 text-success' },
-  rhythm: { fill: 'bg-warn', dot: 'bg-warn', strongest: 'border-warn/30 bg-warn/10 text-warn' },
+const DIMENSION_TONES: Record<V4DimensionKey, { fill: string; dot: string; strongest: string; highlight: string }> = {
+  chemistry: { fill: 'bg-romance', dot: 'bg-romance', strongest: 'border-romance/30 bg-romance/10 text-romanceText', highlight: 'เคมีมา' },
+  communication: { fill: 'bg-accentBright', dot: 'bg-accentBright', strongest: 'border-edge bg-surface2 text-ink', highlight: 'คุยกันติด' },
+  trust: { fill: 'bg-success', dot: 'bg-success', strongest: 'border-success/30 bg-success/10 text-success', highlight: 'ไว้ใจกันได้' },
+  rhythm: { fill: 'bg-warn', dot: 'bg-warn', strongest: 'border-warn/30 bg-warn/10 text-warn', highlight: 'จังหวะตรงกัน' },
 };
 
 /** DimensionBars: the four computed scores. Numbers are free; the line under each is paid. */
 export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBarsProps) {
   const locked = !lines && !hideLockNote;
-  // Every score tied for the highest gets the "จุดแข็ง" tag — a tie shouldn't
+  // Every score tied for the highest gets its own natural-language tag — a tie shouldn't
   // pick one arbitrarily. Text + icon, not color alone, so it still reads for
   // colorblind viewers (the same principle MoonGlyph uses for month states).
   const topScore = Math.max(...dimensions.map((d) => d.score));
@@ -47,7 +47,7 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
                   {isTop && (
                     <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-heading text-xs font-medium ${tone.strongest}`}>
                       <Sparkles className="size-3" aria-hidden="true" />
-                      จุดแข็ง
+                      {tone.highlight}
                     </span>
                   )}
                   <span className="ml-auto font-mono font-medium tabular-nums text-ink">

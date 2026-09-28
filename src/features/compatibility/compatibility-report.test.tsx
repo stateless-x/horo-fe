@@ -136,8 +136,8 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('ประโยคพร้อมส่ง');
     expect(html).toContain('สัญญาณว่าควรชะลอ');
     expect(html).toContain('ก้าวต่อไปเหมาะกับเดือนตุลาคม 2569');
-    // Month states explain the next move beside a moon glyph, not only by color or a legend.
-    for (const word of ['เหมาะกับการขยับ', 'ค่อย ๆ ไป', 'พักจังหวะก่อน']) expect(html).toContain(word);
+    // Month states explain the next move in words, never only through color or a repeated symbol.
+    for (const word of ['พร้อมขยับ', 'ไปแบบสบาย ๆ', 'ยังไม่ต้องรีบ']) expect(html).toContain(word);
     expect(html).toContain('ข้อความเดือนธันวา');
     expect(html).toContain('วันที่ <span class="font-mono">3</span>');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');

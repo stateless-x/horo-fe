@@ -32,6 +32,8 @@ describe('DimensionBars', () => {
     const nextLabelIndex = html.indexOf('การสื่อสาร');
     expect(tagIndex).toBeGreaterThan(chemistryIndex);
     expect(tagIndex).toBeLessThan(nextLabelIndex);
+    // The leading dimension earns a visible score reward, not only a colored tag.
+    expect(html).toMatch(/text-2xl font-bold leading-none tracking-\[-0\.04em\][^>]*>82</);
   });
 
   test('a tie tags every top dimension in its own words, not one arbitrarily', () => {

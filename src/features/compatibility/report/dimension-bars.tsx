@@ -50,7 +50,7 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
                       {tone.highlight}
                     </span>
                   )}
-                  <span className="ml-auto font-mono font-medium tabular-nums text-ink">
+                  <span className={`ml-auto font-mono tabular-nums text-ink ${isTop ? 'text-2xl font-bold leading-none tracking-[-0.04em]' : 'font-medium'}`}>
                     {dimension.score}
                     <span className="sr-only">{isTop ? 'จาก 100 ด้านที่โดดเด่นที่สุดของคู่นี้' : 'จาก 100'}</span>
                   </span>

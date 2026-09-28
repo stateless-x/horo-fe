@@ -156,6 +156,8 @@ describe('CompatibilityReport', () => {
     const html = render('full');
     expect(html).toContain('role="tablist"');
     expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
+    expect(html).toContain('snap-x snap-mandatory');
+    expect(html).toContain('เลื่อนดู');
     for (const label of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยให้เข้าใจกัน', 'ไปต่อยังไงดี']) expect(html).toContain(`aria-label="${label}"`);
     expect(html).toContain('id="report-tab-overview"');
     expect(html).toContain('id="report-panel-next"');

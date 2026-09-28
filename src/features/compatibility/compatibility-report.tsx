@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowLeft, ArrowRight, CalendarDays, ChartNoAxesCombined, CircleUserRound, HeartHandshake, ListChecks, MessageCircleMore, Sparkles, UserRound, Share2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, ChartNoAxesCombined, ChevronRight, CircleUserRound, HeartHandshake, ListChecks, MessageCircleMore, Sparkles, UserRound, Share2 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
@@ -104,6 +104,7 @@ export function CompatibilityReport({
   const sectionLabelOf = (key: V4ChapterKey) => reportCopy.sections[sectionForTarget(`ch-${key}`)].label;
   const doorRef = useRef<HTMLDivElement>(null);
   const sectionNavRef = useRef<HTMLDivElement>(null);
+  const tabListRef = useRef<HTMLDivElement>(null);
   const [openChapters, setOpenChapters] = useState<Set<V4ChapterKey>>(new Set());
   const [activeSection, setActiveSection] = useState<ReportSection>('overview');
 
@@ -151,6 +152,12 @@ export function CompatibilityReport({
     window.addEventListener('popstate', readUrl);
     return () => window.removeEventListener('popstate', readUrl);
   }, [full, embedded]);
+
+  // A shared link can open directly on a later section; keep its active pill in view.
+  useEffect(() => {
+    const activeTab = tabListRef.current?.querySelector<HTMLElement>('[aria-selected="true"]');
+    activeTab?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
+  }, [activeSection, reduce]);
 
   const jump = useCallback(
     (id: string) => {
@@ -302,31 +309,38 @@ export function CompatibilityReport({
               </div>
             </div>
 
-            <div
-              role="tablist"
-              aria-label="ส่วนของคำตอบฉบับเต็ม"
-              onKeyDown={handleTabsKeyDown}
-              className="mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-2xl bg-surface2 p-1.5 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {reportSections.map((section) => {
-                const selected = activeSection === section.id;
-                return (
-                  <button
-                    key={section.id}
-                    id={`report-tab-${section.id}`}
-                    type="button"
-                    role="tab"
-                    aria-selected={selected}
-                    aria-controls={`report-panel-${section.id}`}
-                    aria-label={section.label}
-                    tabIndex={selected ? 0 : -1}
-                    onClick={() => chooseSection(section.id, false)}
-                    className={`min-h-11 shrink-0 snap-start whitespace-nowrap rounded-xl px-3.5 font-heading text-sm font-semibold leading-none transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${selected ? 'bg-surface text-ink shadow-[0_4px_14px_-8px_rgba(23,12,38,0.45)]' : 'text-inkMuted hover:bg-edgeSoft hover:text-ink'}`}
-                  >
-                    {section.label}
-                  </button>
-                );
-              })}
+            <div className="relative mt-4">
+              <div
+                role="tablist"
+                aria-label="ส่วนของคำตอบฉบับเต็ม"
+                ref={tabListRef}
+                onKeyDown={handleTabsKeyDown}
+                className="flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain py-1 pr-12 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {reportSections.map((section) => {
+                  const selected = activeSection === section.id;
+                  return (
+                    <button
+                      key={section.id}
+                      id={`report-tab-${section.id}`}
+                      type="button"
+                      role="tab"
+                      aria-selected={selected}
+                      aria-controls={`report-panel-${section.id}`}
+                      aria-label={section.label}
+                      tabIndex={selected ? 0 : -1}
+                      onClick={() => chooseSection(section.id, false)}
+                      className={`min-h-11 shrink-0 snap-start whitespace-nowrap rounded-full border px-4 font-heading text-sm font-semibold leading-none transition-[background-color,border-color,color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:scale-[0.98] ${selected ? 'border-ink bg-ink text-surface shadow-[0_8px_18px_-12px_rgba(28,18,38,0.5)]' : 'border-edge bg-surface text-inkMuted hover:border-ink/20 hover:text-ink'}`}
+                    >
+                      {section.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 flex items-center gap-0.5 bg-gradient-to-l from-ground via-ground/95 to-transparent pl-5 text-xs font-medium text-inkMuted sm:hidden">
+                เลื่อนดู
+                <ChevronRight className="size-4" />
+              </span>
             </div>
           </div>
 

@@ -1,3 +1,4 @@
+import { Sparkles } from 'lucide-react';
 import type { CompatibilityV4Teaser, V4DimensionKey } from '@/lib-packages/shared/types/compatibility';
 import { SectionHeading, ThaiText } from './report-kit';
 
@@ -12,6 +13,10 @@ interface DimensionBarsProps {
 /** DimensionBars: the four computed scores. Numbers are free; the line under each is paid. */
 export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBarsProps) {
   const locked = !lines && !hideLockNote;
+  // Every score tied for the highest gets the "จุดแข็ง" tag — a tie shouldn't
+  // pick one arbitrarily. Text + icon, not color alone, so it still reads for
+  // colorblind viewers (the same principle MoonGlyph uses for month states).
+  const topScore = Math.max(...dimensions.map((d) => d.score));
   return (
     <section aria-labelledby="report-dimensions" id="report-dimensions-section" className="scroll-mt-32">
       <SectionHeading
@@ -21,25 +26,42 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
       />
       <div className="mt-4 border-y border-edge px-1 sm:px-2">
         <ol className="divide-y divide-edge">
-          {dimensions.map((dimension) => (
-            <li key={dimension.key} className="pb-4 pt-3.5">
-              <div className="flex items-center gap-2">
-                <span className="font-heading text-base font-semibold leading-snug text-ink">{dimension.label}</span>
-                <span className="ml-auto font-mono font-medium tabular-nums text-ink">
-                  {dimension.score}
-                  <span className="sr-only">จาก 100</span>
-                </span>
-              </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-edge" aria-hidden="true">
-                <div className="h-full rounded-full bg-romance" style={{ width: `${dimension.score}%` }} />
-              </div>
-              {lines && (
-                <p className="mt-2.5 font-oracle text-base font-light leading-[1.75] text-ink">
-                  <ThaiText>{lines[dimension.key]}</ThaiText>
-                </p>
-              )}
-            </li>
-          ))}
+          {dimensions.map((dimension) => {
+            const isTop = dimension.score === topScore;
+            return (
+              <li
+                key={dimension.key}
+                className={`-mx-1 rounded-xl px-1 pb-4 pt-3.5 sm:-mx-2 sm:px-2 ${
+                  isTop ? 'bg-romance/[0.06] ring-1 ring-inset ring-romance/25' : ''
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-heading text-base font-semibold leading-snug text-ink">{dimension.label}</span>
+                  {isTop && (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-romance/30 bg-romance/10 px-2 py-0.5 font-heading text-xs font-medium text-romanceText">
+                      <Sparkles className="size-3" aria-hidden="true" />
+                      จุดแข็ง
+                    </span>
+                  )}
+                  <span className="ml-auto font-mono font-medium tabular-nums text-ink">
+                    {dimension.score}
+                    <span className="sr-only">{isTop ? 'จาก 100 ด้านที่โดดเด่นที่สุดของคู่นี้' : 'จาก 100'}</span>
+                  </span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-edge" aria-hidden="true">
+                  <div
+                    className={`h-full rounded-full ${isTop ? 'bg-romanceText' : 'bg-romance'}`}
+                    style={{ width: `${dimension.score}%` }}
+                  />
+                </div>
+                {lines && (
+                  <p className="mt-2.5 font-oracle text-base font-light leading-[1.75] text-ink">
+                    <ThaiText>{lines[dimension.key]}</ThaiText>
+                  </p>
+                )}
+              </li>
+            );
+          })}
         </ol>
       </div>
       {locked && (

@@ -17,7 +17,7 @@ import { MainLoader } from '@/components/ui/main-loader';
 import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
 import { ReportCover } from '@/features/compatibility/report/report-cover';
 import { DimensionBars } from '@/features/compatibility/report/dimension-bars';
-import type { CompatibilityV4Share } from '@/lib-packages/shared/types/compatibility-v4';
+import type { CompatibilityV4Share } from '@/lib-packages/shared/types/compatibility';
 
 
 const ELEMENT_NAMES_THAI: Record<string, string> = {
@@ -151,7 +151,6 @@ export default function CompatibilitySharePage() {
             readerName="เจ้าของดวง"
             partnerName={result.partnerName}
             relationshipLabel={relationship.success ? `ดวง${RELATIONSHIP_LABELS[relationship.data]}` : 'ดวงคู่'}
-            eyebrow={relationship.success ? `ดวงคู่ · ${RELATIONSHIP_LABELS[relationship.data]}` : 'ดวงคู่'}
             full={false}
           />
           <DimensionBars dimensions={shared.dimensions} hideLockNote />

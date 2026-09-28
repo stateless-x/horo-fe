@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { ArrowDown, CircleCheck, CircleMinus, CirclePause, CornerDownRight } from 'lucide-react';
-import type { CompatibilityV4Content, V4Chapter, V4MonthLabel } from '@/lib-packages/shared/types/compatibility-v4';
+import type { CompatibilityV4Content, V4Chapter, V4MonthLabel } from '@/lib-packages/shared/types/compatibility';
 import { CopyLine } from './copy-button';
 import { ELEMENT_TH, MONTH_TONE, monthName, MoonGlyph, ThaiText } from './report-kit';
 

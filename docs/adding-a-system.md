@@ -30,7 +30,7 @@ for marketing-only sections. Adding a system touches both repos:
    stay on the purple ladder (element hues are user-data payloads only, never
    decoration), illustrative imagery is clay-cast renders on the purple
    ladder (`MediaPlaceholder` until real assets land), and copy follows the
-   Two Voices rule (คุณ on marketing, เจ้า/ข้า inside the reading experience).
+   Grounded Voice rule (contemporary Thai everywhere; use supplied names in readings and never เจ้า/ข้า or กู/มึง).
 
 ## Worked example
 

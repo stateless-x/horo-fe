@@ -1,9 +1,10 @@
 import { Fragment, type ReactNode } from 'react';
-import type { V4MonthLabel } from '@/lib-packages/shared/types/compatibility-v4';
+import type { V4MonthLabel } from '@/lib-packages/shared/types/compatibility';
 
 /**
  * Small shared pieces of the v4 report: Thai text helpers, the seal marks
- * and the moon-phase month glyph. Type-only imports from compatibility-v4 so
+ * and the moon-phase month glyph. Type-only imports from the canonical
+ * compatibility contract so
  * no zod reaches the page bundle.
  */
 
@@ -167,34 +168,14 @@ export function MiniSeal({ className = 'size-10' }: { className?: string }) {
   );
 }
 
-/** The seal ring around the score medallion once the full report is open. */
-export function SealRing({ id }: { id: string }) {
-  return (
-    <svg
-      viewBox="0 0 112 112"
-      className="pointer-events-none absolute inset-0 size-full -rotate-[8deg] text-inkMuted"
-      aria-hidden="true"
-    >
-      <defs>
-        <path id={id} d="M56,56 m-47.5,0 a47.5,47.5 0 1,1 95,0 a47.5,47.5 0 1,1 -95,0" />
-      </defs>
-      <circle cx="56" cy="56" r="54.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <circle cx="56" cy="56" r="41.5" fill="none" stroke="currentColor" strokeWidth=".7" strokeDasharray="1.6 2.2" />
-      <text className="font-heading" fontSize="8.6" fontWeight={600} fill="currentColor">
-        <textPath href={`#${id}`}>ฉบับเต็ม · ดวงคู่ · สายมู · ฉบับเต็ม · ดวงคู่ · สายมู ·</textPath>
-      </text>
-    </svg>
-  );
-}
-
 /** Section heading with its one-line subtitle, the report's repeated rhythm. */
 export function SectionHeading({ id, title, sub }: { id: string; title: ReactNode; sub?: ReactNode }) {
   return (
     <>
-      <h2 id={id} tabIndex={-1} className="font-heading text-2xl font-semibold leading-snug text-ink focus:outline-none">
+      <h2 id={id} tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink focus:outline-none">
         {title}
       </h2>
-      {sub && <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-inkMuted">{sub}</p>}
+      {sub && <p className="mt-1.5 text-pretty text-[0.9375rem] leading-relaxed text-inkMuted">{sub}</p>}
     </>
   );
 }

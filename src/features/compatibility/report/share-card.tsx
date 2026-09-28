@@ -1,8 +1,9 @@
 import { Share2, Users } from 'lucide-react';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 import { Button } from '@/lib-packages/ui';
-import type { CompatibilityV4Teaser } from '@/lib-packages/shared/types/compatibility-v4';
+import type { CompatibilityV4Teaser } from '@/lib-packages/shared/types/compatibility';
 import { DisplayLine, ELEMENT_TH, elementText, SectionHeading } from './report-kit';
+import { CompatibilityTalisman, compatibilityTalismanBand } from './compatibility-talisman';
 
 interface ShareCardProps {
   content: Pick<CompatibilityV4Teaser, 'archetype' | 'people'>;
@@ -20,6 +21,7 @@ interface ShareCardProps {
  * the Midnight Room: a data-theme="dark" island, so the tokens resolve dark.
  */
 export function ShareCard({ content, score, readerName, partnerName, relationshipLabel, onShare, onNewCheck }: ShareCardProps) {
+  const talisman = compatibilityTalismanBand(score);
   const people = [
     { name: readerName, person: content.people.reader },
     { name: partnerName, person: content.people.partner },
@@ -41,28 +43,32 @@ export function ShareCard({ content, score, readerName, partnerName, relationshi
           <span className="font-heading text-base font-bold text-ink">สายมู</span>
           <span className="font-heading font-semibold text-romanceText">{relationshipLabel}</span>
         </div>
-        <div className="mt-auto grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-1">
+        <div className="mt-auto grid grid-cols-[minmax(0,1fr)_92px_minmax(0,1fr)] items-center gap-x-1">
           {people.map(({ name, person }, i) => (
             <div key={i} className={`flex min-w-0 flex-col items-center text-center ${i === 1 ? 'col-start-3' : ''}`}>
-              <ElementClayImage element={person.element} alt="" sizes="62px" className="size-[62px]" />
-              <span className="mt-1 max-w-full truncate font-heading text-[0.9375rem] font-semibold">{name}</span>
+              <ElementClayImage element={person.element} alt="" sizes="56px" className="size-14" />
+              <span title={name} className="mt-1 block w-full overflow-hidden text-ellipsis whitespace-nowrap font-heading text-xs font-semibold leading-snug">{name}</span>
               <b className="text-xs font-semibold" style={elementText(person.element)}>
                 ธาตุ{ELEMENT_TH[person.element]}
               </b>
             </div>
           ))}
-          <div className="col-start-2 row-start-1 -mt-3.5 grid size-[92px] place-items-center">
-            <div className="flex size-[70px] flex-col items-center justify-center rounded-full border border-romance/45 bg-surface shadow-[0_10px_28px_-10px_rgba(232,93,117,0.5)]">
-              <span className="font-heading text-[1.75rem] font-bold leading-none tabular-nums">{score}</span>
-              <span className="mt-0.5 text-[0.625rem] text-inkMuted">ความเข้ากัน</span>
+          <div className="col-start-2 row-start-1 -mt-2 flex min-w-0 flex-col items-center text-center">
+            <div className="w-[88px]">
+              <CompatibilityTalisman score={score} />
             </div>
+            <p className="-mt-3 flex items-baseline justify-center gap-1">
+              <strong className="font-heading text-3xl font-bold leading-none tabular-nums">{score}</strong>
+              <span className="font-mono text-xs text-inkMuted">/100</span>
+            </p>
+            <span className="mt-1 font-heading text-xs font-semibold leading-snug text-romanceText">{talisman.label}</span>
           </div>
         </div>
-        <p className="mt-[18px] text-center font-heading text-[1.75rem] font-bold leading-tight">{content.archetype.name}</p>
-        <p className="mt-1 text-balance text-center font-oracle text-[0.9375rem] leading-normal text-accentFaint">
+        <p className="mt-4 text-center font-heading text-3xl font-bold leading-tight">{content.archetype.name}</p>
+        <p className="mt-1 text-balance text-center font-oracle text-base leading-normal text-accentFaint">
           <DisplayLine text={content.archetype.tagline} />
         </p>
-        <div className="mt-auto flex justify-between border-t border-edge pt-2.5 text-[0.6875rem] text-inkMuted">
+        <div className="mt-auto flex justify-between border-t border-edge pt-2.5 text-xs text-inkMuted">
           <span>ดูดวงคู่ของคุณ</span>
           <span>สายมู.com</span>
         </div>

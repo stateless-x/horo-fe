@@ -37,8 +37,10 @@ describe('CompatibilityReading next steps', () => {
   test('keeps saved v2 content compact when next steps are absent', () => {
     const html = renderReading(savedV2Content, 'romantic');
 
-    expect(html).not.toContain('ลองทำต่อจากนี้');
-    expect(html).not.toContain('<details');
+    expect(html).toContain('ถ้าอยากไปต่อ ควรรู้อะไรบ้าง');
+    expect(html.match(/<details/g)).toHaveLength(3);
+    expect(html).toContain('ไปต่อได้สวย ถ้ารักษาจังหวะนี้ไว้');
+    expect(html).not.toContain('เริ่มจากเรื่องนี้ก่อน');
   });
 
   test.each([
@@ -52,11 +54,11 @@ describe('CompatibilityReading next steps', () => {
     const html = renderReading(newContent, relationshipType);
 
     expect(html).toContain(heading);
-    expect(html).toContain('ลองทำต่อจากนี้');
+    expect(html).toContain('เริ่มจากเรื่องนี้ก่อน');
     expect(html).toContain(newContent.nextSteps!.action);
     expect(html).toContain(newContent.nextSteps!.conversationStarter);
     expect(html).toContain(newContent.nextSteps!.watchFor);
     expect(html).toContain('<details');
-    expect(html).not.toContain('<details open');
+    expect(html).toContain('<details open=""');
   });
 });

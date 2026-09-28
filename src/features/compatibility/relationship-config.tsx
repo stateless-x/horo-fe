@@ -1,4 +1,4 @@
-import type { CompatibilityV4Shaped } from '@/lib-packages/shared/types/compatibility-v4';
+import type { CompatibilityV4Shaped } from '@/lib-packages/shared/types/compatibility';
 import { type RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
 

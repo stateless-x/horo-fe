@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { compatibilityResultPath } from '@/features/compatibility/compatibility-routes';
 import type { LedgerEntry } from '@/lib-packages/shared/types/wallet';
 import { entryLabel, signed } from './wallet-copy';
 
@@ -17,7 +18,7 @@ export function LedgerList({ entries }: { entries: LedgerEntry[] }) {
             <p className="text-[0.9375rem] leading-snug text-ink">
               {entry.refName && entry.refId ? (
                 <Link
-                  href={`/dashboard/compatibility?id=${entry.refId}`}
+                  href={compatibilityResultPath(entry.refId)}
                   className="underline decoration-edge underline-offset-4 hover:decoration-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
                 >
                   {entryLabel(entry)}

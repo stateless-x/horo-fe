@@ -1,12 +1,10 @@
 import { z } from 'zod';
 import { RELATIONSHIP_LABELS, RELATIONSHIP_TYPES } from '@/lib-packages/shared';
-import { CompatibilityStructuredContentSchema } from '@/lib-packages/shared/types/reading';
 import {
   COMPATIBILITY_VIEWS,
-  CompatibilityV3ContentSchema,
   shapeCompatibilityView,
-} from '@/lib-packages/shared/types/compatibility-v3';
-import { CompatibilityV4ContentSchema } from '@/lib-packages/shared/types/compatibility-v4';
+  CompatibilityV4ContentSchema,
+} from '@/lib-packages/shared/types/compatibility';
 import {
   COMPATIBILITY_DEV_FIXTURES,
   type DevCompatibilityRequest,
@@ -21,13 +19,7 @@ const OutputSchema = z.object({
   partnerName: z.string(),
   qualityFlags: z.array(z.string()).optional(),
 });
-const ContentSchema = z.union([CompatibilityStructuredContentSchema, CompatibilityV3ContentSchema, CompatibilityV4ContentSchema]);
-// No version numbers in the UI: v4 is the live report (ฉบับเต็ม), v2 the older reading (แบบเดิม).
-const VERSION_OPTIONS = [
-  { value: 'v4', label: 'ฉบับเต็ม' },
-  { value: 'v3', label: 'ต้นแบบ' },
-  { value: 'v2', label: 'แบบเดิม' },
-];
+const ContentSchema = CompatibilityV4ContentSchema;
 const VIEW_OPTIONS = [
   { value: 'full', label: 'ทั้งหมด' },
   { value: 'teaser', label: 'ส่วนฟรี' },
@@ -67,11 +59,7 @@ export const compatibilityGenerator: DevGeneratorConfig = {
       relationshipType: fixture.relationshipType,
     },
   })),
-  variants: [
-    { key: 'version', label: 'เนื้อหา', options: VERSION_OPTIONS },
-    { key: 'view', label: 'มุมมอง', options: VIEW_OPTIONS },
-  ],
-  compareVariant: 'version',
+  variants: [{ key: 'view', label: 'มุมมอง', options: VIEW_OPTIONS }],
   presentationVariants: ['view'],
   buildRequest: (values, variants): DevCompatibilityRequest => ({
     reader: {
@@ -87,15 +75,13 @@ export const compatibilityGenerator: DevGeneratorConfig = {
       mbti: optional(values.partnerMbti),
     },
     relationshipType: z.enum(RELATIONSHIP_TYPES).parse(values.relationshipType),
-    version: z.enum(['v2', 'v3', 'v4']).parse(variants.version),
     view: z.enum(COMPATIBILITY_VIEWS).parse(variants.view),
   }),
   summary: (values, variants) =>
     [
       RELATIONSHIP_LABELS[z.enum(RELATIONSHIP_TYPES).parse(values.relationshipType)],
       values.partnerName,
-      labelOf(VERSION_OPTIONS, variants.version),
-      variants.version === 'v2' ? null : labelOf(VIEW_OPTIONS, variants.view),
+      labelOf(VIEW_OPTIONS, variants.view),
     ]
       .filter(Boolean)
       .join(' · '),
@@ -103,15 +89,9 @@ export const compatibilityGenerator: DevGeneratorConfig = {
     const output = OutputSchema.parse(response.output);
     const content = ContentSchema.parse(response.content);
     const view = z.enum(COMPATIBILITY_VIEWS).parse(variants.view);
-    // v3 and v4: re-shape the stored reading for the current view, the same
-    // way the server does, so switching views never needs another generation.
-    // Separate branches so each call resolves to its version's overload.
-    const structuredContent =
-      content.contentVersion === 4
-        ? shapeCompatibilityView(content, view)
-        : content.contentVersion === 3
-          ? shapeCompatibilityView(content, view)
-          : content;
+    // Re-shape the stored reading for the current view, the same way the
+    // server does, so switching views never needs another generation.
+    const structuredContent = shapeCompatibilityView(content, view);
     return (
       <>
         {output.qualityFlags && output.qualityFlags.length > 0 && (

@@ -1,5 +1,5 @@
 import { ArrowUp } from 'lucide-react';
-import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility-v4';
+import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
 import { MONTH_TONE, MONTH_WORD, monthName, MoonGlyph, REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
 
 interface MonthTilesProps {

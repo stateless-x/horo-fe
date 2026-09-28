@@ -8,6 +8,7 @@ import { Button } from '@/lib-packages/ui';
 import { RELATIONSHIP_LABELS, RELATIONSHIP_TYPES } from '@/lib-packages/shared';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
+import { compatibilityResultPath } from '@/features/compatibility/compatibility-routes';
 import { FieldInput, StatusPill, controlClass, describeError, type Status } from './dev-generator';
 import type { DevField } from './types';
 
@@ -109,7 +110,7 @@ function RegenerateShell({
   );
 }
 
-/** Refreshes a real page's data and goes there (path may carry a query, e.g. ?id=), so the new reading is on screen. */
+/** Refreshes a real page's data and goes to its canonical URL, so the new reading is on screen. */
 function useShowOnPage() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -178,13 +179,7 @@ const ResultSchema = z.object({
   qualityFlags: z.array(z.string()),
 });
 
-const readingPath = (id: string) => `/dashboard/compatibility?id=${id}`;
-
-const KINDS = [
-  { value: 'full', label: 'ฉบับเต็ม' },
-  { value: 'classic', label: 'แบบเดิม' },
-] as const;
-type Kind = (typeof KINDS)[number]['value'];
+const readingPath = compatibilityResultPath;
 
 const NEW_PARTNER = 'new';
 const NEW_FIELDS: ReadonlyArray<DevField> = [
@@ -210,7 +205,6 @@ export function RegenerateCompatibility() {
   // '' = follow the latest row; the choice sticks once made.
   const [picked, setPicked] = useState('');
   const target = picked || rows[0]?.id || NEW_PARTNER;
-  const [kind, setKind] = useState<Kind>('full');
   const [values, setValues] = useState<Record<string, string>>({ newName: '', newBirthDate: '', newMbti: '', newRelationship: 'romantic' });
   const [note, setNote] = useState('');
 
@@ -219,7 +213,6 @@ export function RegenerateCompatibility() {
 
   async function onRun() {
     const body = {
-      kind,
       target: isNew
         ? {
             type: 'new',
@@ -317,21 +310,6 @@ export function RegenerateCompatibility() {
           ? 'วันเกิดและความสัมพันธ์ตรงกับแถวเดิม = เขียนทับแถวนั้น'
           : 'MBTI อีกฝ่ายใช้ค่าจากฉบับเต็มเดิม (แบบเดิมไม่มีเก็บไว้) · อยากกำหนดเอง เลือก + คนใหม่'}
       </p>
-
-      <div className="flex gap-1" role="group" aria-label="เนื้อหา">
-        {KINDS.map((option) => (
-          <Button
-            key={option.value}
-            type="button"
-            variant={kind === option.value ? 'default' : 'soft'}
-            aria-pressed={kind === option.value}
-            className="h-7 flex-1 px-2 text-xs"
-            onClick={() => setKind(option.value)}
-          >
-            {option.label}
-          </Button>
-        ))}
-      </div>
     </RegenerateShell>
   );
 }

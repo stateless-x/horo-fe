@@ -1,7 +1,7 @@
 import { RelationshipClayImage } from '@/features/compatibility/relationship-clay-image';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Button } from '@/lib-packages/ui';
+import { Button } from '@/lib-packages/ui';
 import { type RelationshipType, RelationshipTypeSchema, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
 import { ArrowLeft, ArrowLeftRight, Share2, Stars } from 'lucide-react';
 import { ShareSheet } from '@/components/share/share-sheet';
@@ -49,6 +49,8 @@ export function CompatibilityResultView({
   const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
   const resultOpenTracked = useRef(false);
   const { data: userProfile } = useUserProfile();
+  const isStructuredV2 = result.structuredContent?.contentVersion === 2;
+  const readerName = userProfile ? userProfile.user.displayName || userProfile.user.name : null;
 
   useEffect(() => {
     trackMountedResultOnce(resultOpenTracked, onResultOpen);
@@ -74,7 +76,7 @@ export function CompatibilityResultView({
   if (result.structuredContent?.contentVersion === 4) {
     return (
       <div className="min-h-[calc(100vh-3.5rem)] px-4 pb-24 md:px-6">
-        <div className="mx-auto max-w-[680px] pb-2 pt-3">
+        <div className={`mx-auto pb-2 pt-3 ${result.locked ? 'max-w-[1080px]' : 'max-w-[720px]'}`}>
           <Button variant="ghost" onClick={onBackToForm} className="-ml-3 min-h-11 gap-2 text-inkMuted hover:text-ink">
             <ArrowLeft className="size-4" aria-hidden="true" />
             ดูดวงคู่อีกครั้ง
@@ -85,7 +87,7 @@ export function CompatibilityResultView({
           score={result.score}
           content={result.structuredContent}
           relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
-          readerName={userProfile ? userProfile.user.displayName || userProfile.user.name : null}
+          readerName={readerName}
           partnerName={result.partnerName}
           onUnlock={result.locked ? onUnlock : undefined}
           onShare={onOpenShareSheet}
@@ -95,7 +97,6 @@ export function CompatibilityResultView({
       </div>
     );
   }
-
 
   // v1 and v2 rows always carry their text; a v4 row takes the branch above.
   const analysis = result.analysis;
@@ -115,29 +116,30 @@ export function CompatibilityResultView({
             ดูดวงคู่อีกครั้ง
           </Button>
 
-          <div className="text-center space-y-3">
-<RelationshipClayImage relationshipType={result.relationshipType} className="mx-auto size-24" sizes="96px" />
-            {/* Relationship type label */}
-            <div className="flex justify-center">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm ${resultConfig.accentBg} ${resultConfig.accentBorder} border ${resultConfig.accent}`}>
-                {RELATIONSHIP_LABELS[result.relationshipType as RelationshipType]}
-              </span>
+          {!isStructuredV2 && (
+            <div className="space-y-3 text-center">
+              <RelationshipClayImage relationshipType={result.relationshipType} className="mx-auto size-24" sizes="96px" />
+              <div className="flex justify-center">
+                <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm ${resultConfig.accentBg} ${resultConfig.accentBorder} ${resultConfig.accent}`}>
+                  {RELATIONSHIP_LABELS[result.relationshipType as RelationshipType]}
+                </span>
+              </div>
+
+              <h1 className="font-heading text-3xl text-ink md:text-4xl">
+                {resultConfig.resultTitle(result.partnerName)}
+              </h1>
+
+              {result.userElement && result.partnerElement && (
+                <p className="text-sm text-inkMuted md:text-base">
+                  ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
+                </p>
+              )}
             </div>
-
-            <h1 className="text-3xl md:text-4xl font-heading text-ink">
-              {resultConfig.resultTitle(result.partnerName)}
-            </h1>
-
-            {result.userElement && result.partnerElement && (
-              <p className="text-inkMuted text-sm md:text-base">
-                ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
-              </p>
-            )}
-          </div>
+          )}
         </motion.div>
 
         {/* Element visualization */}
-        {result.userElement && result.partnerElement && (
+        {!isStructuredV2 && result.userElement && result.partnerElement && (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
             <section aria-labelledby="compatibility-elements-title" className="rounded-2xl border border-edge bg-surface px-5 py-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)] md:px-7 md:py-7">
               <h2 id="compatibility-elements-title" className="flex items-center justify-center gap-2 font-heading text-lg font-semibold text-ink">
@@ -190,6 +192,14 @@ export function CompatibilityResultView({
             structuredContent={result.structuredContent}
             relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
             onGuidanceOpen={onGuidanceOpen}
+            readerName={readerName}
+            partnerName={result.partnerName}
+            readerElement={result.userElement}
+            readerDayMaster={result.userDayMaster}
+            partnerElement={result.partnerElement}
+            partnerDayMaster={result.partnerDayMaster}
+            relationshipTitle={resultConfig.resultTitle(result.partnerName)}
+            relationshipLabel={RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType}
           />
         </motion.div>
 
@@ -201,10 +211,10 @@ export function CompatibilityResultView({
             onClick={onOpenShareSheet}
           >
             <Share2 className="w-5 h-5 mr-2" />
-            แชร์ผลดวง
+            {isStructuredV2 ? 'ส่งการ์ดคู่นี้' : 'แชร์ผลดวง'}
           </Button>
           <Button size="lg" variant="outline" className="w-full" onClick={onBackToForm}>
-            ดูดวงคู่อีกครั้ง
+            {isStructuredV2 ? 'ลองดูอีกความสัมพันธ์' : 'ดูดวงคู่อีกครั้ง'}
           </Button>
         </motion.div>
 

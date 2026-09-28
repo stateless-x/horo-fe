@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { ChevronDown, Sprout } from 'lucide-react';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
-import type { V4Chapter } from '@/lib-packages/shared/types/compatibility-v4';
-import { ELEMENT_TH, paragraphs, REPORT_CARD, ThaiText, type ReportElement } from './report-kit';
+import type { V4Chapter } from '@/lib-packages/shared/types/compatibility';
+import { DisplayLine, ELEMENT_TH, paragraphs, REPORT_CARD, ThaiText, type ReportElement } from './report-kit';
 
 interface ChapterCardProps {
   chapter: V4Chapter;
@@ -33,7 +33,7 @@ export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCa
       <header className="flex items-center gap-3">
         <span
           aria-hidden="true"
-          className="grid size-[34px] shrink-0 place-items-center rounded-full border font-mono text-[0.8125rem] tabular-nums"
+          className="grid size-[34px] shrink-0 place-items-center rounded-full border font-mono text-xs tabular-nums"
           style={{
             color: toneText,
             borderColor: `color-mix(in srgb, ${toneFill} 40%, transparent)`,
@@ -48,7 +48,7 @@ export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCa
           className="min-w-0 flex-1 font-heading text-xl font-semibold leading-snug text-ink focus:outline-none"
         >
           <span className="sr-only">บทที่ {n} </span>
-          {chapter.title}
+          <DisplayLine text={chapter.title} />
         </h2>
         {tone !== 'romance' && (
           <ElementClayImage element={tone} alt={`ธาตุ${ELEMENT_TH[tone]}`} sizes="30px" className="size-[30px] shrink-0" />
@@ -57,14 +57,6 @@ export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCa
       <p className="mt-3 leading-[1.75] text-ink">
         <ThaiText>{chapter.summary}</ThaiText>
       </p>
-      <blockquote className="relative mt-[18px] pl-[30px] font-oracle text-[1.3125rem] font-light leading-[1.6] text-ink">
-        <span aria-hidden="true" className="absolute -top-[0.08em] left-0 font-oracle text-[2.75rem] font-normal leading-none" style={{ color: toneText }}>
-          &ldquo;
-        </span>
-        <p>
-          <ThaiText>{chapter.pullQuote}</ThaiText>
-        </p>
-      </blockquote>
       <button
         type="button"
         aria-expanded={open}
@@ -82,6 +74,14 @@ export function ChapterCard({ chapter, n, tone, open, onToggle, kit }: ChapterCa
       >
         <div className="min-h-0 overflow-hidden">
           <div className="pt-5">
+            <blockquote className="relative mb-5 pl-[30px] font-oracle text-xl font-light leading-[1.6] text-ink">
+              <span aria-hidden="true" className="absolute -top-[0.08em] left-0 font-oracle text-4xl font-normal leading-none" style={{ color: toneText }}>
+                &ldquo;
+              </span>
+              <p>
+                <ThaiText>{chapter.pullQuote}</ThaiText>
+              </p>
+            </blockquote>
             {paragraphs(chapter.detail).map((paragraph, i) => (
               <p key={i} className="mb-[1em] max-w-[62ch] font-oracle text-lg font-light leading-[1.8] text-ink last:mb-0">
                 <ThaiText>{paragraph}</ThaiText>

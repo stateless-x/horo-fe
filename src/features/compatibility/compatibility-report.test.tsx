@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { shapeCompatibilityView } from '@/lib-packages/shared/types/compatibility-v3';
-import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility-v4';
+import { shapeCompatibilityView } from '@/lib-packages/shared/types/compatibility';
+import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
 import { CompatibilityReading } from './compatibility-reading';
+import { compatibilityTalismanBand } from './report/compatibility-talisman';
 
 const chapter = (key: CompatibilityV4Content['chapters'][number]['key'], title: string) => ({
   key,
@@ -88,29 +89,38 @@ const render = (view: 'teaser' | 'full', onUnlock?: () => void) =>
   );
 
 describe('CompatibilityReport', () => {
+  test('every score band receives its own equally complete talisman state', () => {
+    expect(compatibilityTalismanBand(0).label).toBe('จังหวะต่างกัน');
+    expect(compatibilityTalismanBand(39).src).toContain('different-rhythms');
+    expect(compatibilityTalismanBand(40).label).toBe('ค่อย ๆ จูนกัน');
+    expect(compatibilityTalismanBand(60).label).toBe('เข้ากันได้ดี');
+    expect(compatibilityTalismanBand(80).label).toBe('จังหวะร่วมเด่น');
+    expect(compatibilityTalismanBand(100).src).toContain('shared-momentum');
+  });
+
   test('the teaser shows the cover, bars, questions and the locked door, and holds no paid text', () => {
     const html = render('teaser', () => {});
     expect(html).toContain('คู่ไฟหลอมทอง');
-    // The reading's kind, above the archetype.
-    expect(html).toMatch(/ดวงคู่ · ความรัก\s*<\/p><h1/);
+    expect(html).toContain('balanced-fit.webp');
+    expect(html).toContain('เข้ากันได้ดี');
+    expect(html).toContain('aria-label="ความเข้ากัน 72 จาก 100"');
     expect(html).toContain('มิ้นท์');
     expect(html).toContain('เจ้าวันทองหยาง');
     expect(html).toContain(content.cover.verdict);
     for (const dimension of content.dimensions) expect(html).toContain(`${dimension.score}<span class="sr-only">จาก 100`);
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);
     // No balance or price until the wallet loads: never a made-up number.
-    expect(html).toContain('ปลดล็อกฉบับเต็ม');
-    expect(html).toContain('อ่านราว <b class="font-semibold text-ink">11 นาที</b>');
+    expect(html).toContain('เปิดคำตอบทั้งหมด');
+    expect(html).toContain('ฉบับเต็มช่วยให้เห็นทั้งใจเขา จุดที่ติด และก้าวต่อไป');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดบท', 'คำคมบท', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
     }
-    // No seal before the report is open.
-    expect(html).not.toContain('ฉบับเต็ม · ดวงคู่ · สายมู');
+    expect(html).not.toContain('ฉบับเต็มนี้เก็บอยู่ในประวัติ');
   });
 
-  test('the full view has the seal, meanings, six chapters with their kits, moon-phase months and the plan', () => {
+  test('the full view has the edition mark, meanings, six chapters with their kits, moon-phase months and the plan', () => {
     const html = render('full');
-    expect(html).toContain('ฉบับเต็ม · ดวงคู่ · สายมู');
+    expect(html).toContain('ฉบับเต็ม');
     expect(html).toContain(content.overview.story);
     expect(html).toContain('บรรทัดความไว้ใจ');
     expect(html.match(/อ่านเจาะลึก/g)).toHaveLength(6);
@@ -126,15 +136,34 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('ข้อความเดือนธันวา');
     expect(html).toContain('วันที่ <span class="font-mono">3</span>');
     expect(html).toContain('การ์ดคู่สำหรับแชร์');
-    expect(html).not.toContain('ปลดล็อกฉบับเต็ม');
+    expect(html).not.toContain('เปิดคำตอบทั้งหมด');
     // Owner rule: no purple text inside the report (fills, focus rings and controls may stay purple).
     expect(html).not.toMatch(/(?<![\w-])text-accent(Bright|Soft)\b/);
+  });
+
+  test('the full view groups the reading into four focused sections instead of one long contents rail', () => {
+    const html = render('full');
+    expect(html).toContain('role="tablist"');
+    expect(html).toContain('aria-label="ส่วนของคำตอบฉบับเต็ม"');
+    for (const label of ['ภาพรวม', 'เข้าใจเราสองคน', 'คุยให้เข้าใจ', 'ก้าวต่อไป']) expect(html).toContain(label);
+    expect(html).toContain('id="report-tab-overview"');
+    expect(html).toContain('id="report-panel-next"');
+    expect(html).toContain('อ่านราว 11 นาที · แบ่งเป็น 4 ส่วน เลือกทีละเรื่องได้เลย');
+    expect(html).toContain('two-mirrors.webp');
+  });
+
+  test('the locked offer summarizes value without repeating a lock for every chapter', () => {
+    const html = render('teaser', () => {});
+    for (const value of ['เข้าใจว่าเขารู้สึกยังไง', 'รู้ว่าควรคุยเรื่องไหน', 'เห็นจังหวะ 3 เดือนข้างหน้า', 'มีก้าวต่อไปที่ทำได้จริง']) expect(html).toContain(value);
+    expect(html).not.toContain('ตัวตนของต้นในความสัมพันธ์นี้');
   });
 
   test('the share card carries free fields only', () => {
     const html = render('full');
     const card = html.slice(html.indexOf('การ์ดแชร์'), html.indexOf('ดูดวงคู่ของคุณ'));
     expect(card).toContain('คู่ไฟหลอมทอง');
+    expect(card).toContain('balanced-fit.webp');
+    expect(card).toContain('เข้ากันได้ดี');
     for (const paid of ['สรุปบท', 'คำคมบท', content.cover.verdict, content.cover.lockedHints[0].text]) expect(card).not.toContain(paid);
   });
 });

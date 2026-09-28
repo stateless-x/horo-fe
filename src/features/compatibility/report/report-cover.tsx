@@ -1,7 +1,7 @@
 import { Heart } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
-import type { CompatibilityV4Teaser } from '@/lib-packages/shared/types/compatibility-v4';
+import type { CompatibilityV4Teaser } from '@/lib-packages/shared/types/compatibility';
 import {
   BOUND_FRAME,
   coverDate,
@@ -11,16 +11,16 @@ import {
   elementText,
   MiniSeal,
   REPORT_CARD,
-  SealRing,
   ThaiText,
 } from './report-kit';
+import { CompatibilityTalisman, compatibilityTalismanBand } from './compatibility-talisman';
 
 type Person = CompatibilityV4Teaser['people']['reader'];
 
-function PersonColumn({ name, person }: { name: string; person: Person }) {
+function PersonColumn({ name, person, className = '' }: { name: string; person: Person; className?: string }) {
   const glow = `color-mix(in srgb, var(--el-${person.element}) 22%, transparent)`;
   return (
-    <div className="relative flex min-w-0 flex-col items-center text-center">
+    <div className={`relative flex min-w-0 flex-col items-center text-center ${className}`}>
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -top-5 left-1/2 size-32 -translate-x-1/2 rounded-full"
@@ -29,22 +29,22 @@ function PersonColumn({ name, person }: { name: string; person: Person }) {
       <ElementClayImage
         element={person.element}
         alt={`โมเดลดินปั้นธาตุ${ELEMENT_TH[person.element]}`}
-        sizes="88px"
-        className="relative size-[76px] sm:size-[88px]"
+        sizes="(min-width: 640px) 88px, 56px"
+        className="relative size-14 sm:size-[88px]"
       />
-      <span className="relative mt-1.5 max-w-full truncate font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{name}</span>
-      <span className="relative text-[0.8125rem] leading-normal text-inkMuted">
+      <span title={name} className="relative mt-1.5 max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-heading text-sm font-semibold leading-snug text-ink sm:text-base">{name}</span>
+      <span className="relative whitespace-nowrap text-xs leading-normal text-inkMuted sm:text-sm">
         <b className="font-semibold" style={elementText(person.element)}>
           ธาตุ{ELEMENT_TH[person.element]}
         </b>
         {person.mbti && (
-          <>
+          <span className="hidden sm:inline">
             {' · '}
             <span className="font-english font-medium">{person.mbti}</span>
-          </>
+          </span>
         )}
       </span>
-      <span className="relative text-xs leading-snug text-inkMuted">{dayMasterTh(person.element, person.yinYang)}</span>
+      <span className="relative hidden whitespace-nowrap text-xs leading-snug text-inkMuted sm:block">{dayMasterTh(person.element, person.yinYang)}</span>
     </div>
   );
 }
@@ -56,19 +56,19 @@ interface ReportCoverProps {
   readerName: string;
   partnerName: string;
   relationshipLabel: string;
-  /** The kind of reading above the archetype, e.g. "ดวงคู่ · ความรัก". */
-  eyebrow: string;
-  /** Full report open: the seal ring, the bound frame and the ฉบับเต็ม flag appear. */
+  /** Full report open: the bound frame and the ฉบับเต็ม flag appear. */
   full: boolean;
 }
 
 /**
- * ReportCover: the pair, the score medallion (sealed once the full report is
- * open), the archetype as the page title, its tagline and the verdict. Free.
+ * ReportCover: the pair, their score-responsive talisman, the archetype as the
+ * page title, its tagline and the verdict. The number stays accessible HTML
+ * outside the artwork and never becomes an exam-like circular badge.
  */
-export function ReportCover({ content, score, readerName, partnerName, relationshipLabel, eyebrow, full }: ReportCoverProps) {
+export function ReportCover({ content, score, readerName, partnerName, relationshipLabel, full }: ReportCoverProps) {
   const reduce = useReducedMotion();
   const { reader, partner } = content.people;
+  const talisman = compatibilityTalismanBand(score);
   return (
     <section
       aria-labelledby="report-archetype"
@@ -77,57 +77,43 @@ export function ReportCover({ content, score, readerName, partnerName, relations
       <div
         role="group"
         aria-label={`${readerName} ธาตุ${ELEMENT_TH[reader.element]} กับ ${partnerName} ธาตุ${ELEMENT_TH[partner.element]}`}
-        className="mx-auto grid max-w-[440px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-1"
+        className="mx-auto grid max-w-[520px] grid-cols-2 items-start gap-x-4 gap-y-3 sm:grid-cols-[minmax(0,1fr)_minmax(132px,170px)_minmax(0,1fr)] sm:gap-x-3 sm:gap-y-0"
       >
-        <PersonColumn name={readerName} person={reader} />
-        <div
-          role="img"
-          aria-label={`ความเข้ากัน ${score} จาก 100`}
-          className="relative -mt-[18px] grid size-28 place-items-center sm:size-[124px]"
+        <PersonColumn name={readerName} person={reader} className="col-start-1 row-start-2 sm:col-start-1 sm:row-start-1" />
+        <motion.div
+          className="relative col-span-2 row-start-1 mx-auto w-[132px] text-center sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:w-auto sm:-mt-9"
+          initial={reduce ? false : { opacity: 0, y: 8, scale: 0.94 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
         >
-          {full && (
-            <motion.div
-              className="absolute inset-0"
-              initial={reduce ? false : { opacity: 0, scale: 0.8, rotate: -40 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <SealRing id="report-seal-path" />
-            </motion.div>
-          )}
-          <div className="relative z-10 flex size-[84px] flex-col items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--color-romance)_38%,var(--edge))] bg-surface shadow-[0_10px_26px_-10px_rgba(107,33,168,0.35)] dark:shadow-[0_12px_32px_-10px_rgba(232,93,117,0.45)] sm:size-[92px]">
-            <span className="font-heading text-[2.125rem] font-bold leading-none tracking-tight text-ink tabular-nums">
-              {score}
-              <small className="ml-px font-mono text-[0.6875rem] font-medium tracking-normal text-inkMuted">/100</small>
-            </span>
-            <span className="mt-[3px] text-[0.6875rem] leading-tight text-inkMuted">ความเข้ากัน</span>
-          </div>
-        </div>
-        <PersonColumn name={partnerName} person={partner} />
+          <CompatibilityTalisman score={score} priority />
+          <p className="-mt-3 flex items-baseline justify-center gap-1" aria-label={`ความเข้ากัน ${score} จาก 100`}>
+            <strong className="font-heading text-5xl font-bold leading-none tracking-[-0.04em] text-ink tabular-nums">{score}</strong>
+            <span className="font-mono text-xs font-medium text-inkMuted">/100</span>
+          </p>
+          <p className="mt-1 font-heading text-sm font-semibold leading-snug text-romanceText">{talisman.label}</p>
+        </motion.div>
+        <PersonColumn name={partnerName} person={partner} className="col-start-2 row-start-2 sm:col-start-3 sm:row-start-1" />
       </div>
 
-      {/* JetBrains Mono for the Latin and the dot; Thai from the body face, since mono's generic Thai fallback is spaced out. */}
-      <p className="mt-[18px] text-center text-xs font-medium text-inkMuted" style={{ fontFamily: 'var(--font-jetbrains-mono), var(--font-noto-thai), sans-serif' }}>
-        {eyebrow}
-      </p>
       <h1
         id="report-archetype"
-        className="mt-1 text-balance text-center font-heading text-[clamp(2rem,8.6vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-ink"
+        className="mt-6 text-balance text-center font-heading text-[clamp(2rem,8.6vw,2.75rem)] font-bold leading-tight tracking-[-0.01em] text-ink"
       >
         {content.archetype.name}
       </h1>
-      <p className="mx-auto mt-1 max-w-[30ch] text-balance text-center font-oracle text-[1.0625rem] leading-relaxed text-inkMuted">
+      <p className="mx-auto mt-1 max-w-[30ch] text-balance text-center font-oracle text-base leading-relaxed text-inkMuted">
         <DisplayLine text={content.archetype.tagline} />
       </p>
-      <p className="mt-5 text-balance border-t border-edge pt-[18px] font-oracle text-[1.1875rem] leading-[1.7] text-ink">
+      <p className="mt-5 text-pretty border-t border-edge pt-[18px] font-oracle text-lg leading-[1.7] text-ink">
         <ThaiText>{content.verdict}</ThaiText>
       </p>
-      <div className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.8125rem] text-inkMuted">
+      <div className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-inkMuted">
         <span className="inline-flex items-center gap-1.5 font-heading font-semibold text-romanceText">
           <Heart className="size-4" aria-hidden="true" />
           {relationshipLabel}
         </span>
-        {content.generatedOn && <span>{coverDate(content.generatedOn)}</span>}
+        {full && content.generatedOn && <span>{coverDate(content.generatedOn)}</span>}
         {full && (
           <span className="inline-flex items-center gap-1.5 font-heading font-semibold text-ink">
             <MiniSeal className="size-4" />

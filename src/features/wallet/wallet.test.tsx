@@ -91,7 +91,7 @@ describe('PackList', () => {
 describe('LedgerList', () => {
   test('rows show what, when and a signed amount', () => {
     const html = renderToStaticMarkup(<LedgerList entries={wallet.ledger} />);
-    expect(html).toContain('href="/dashboard/compatibility?id=row"');
+    expect(html).toContain('href="/dashboard/compatibility/row"');
     expect(html).toContain('ปลดล็อกดวงคู่ · ต้น');
     // A deleted reading keeps the bare label and no link.
     const gone = renderToStaticMarkup(<LedgerList entries={[{ ...wallet.ledger[0], refName: null }]} />);
@@ -133,7 +133,7 @@ describe('wallet off (nothing sellable)', () => {
     );
     expect(chip).toBe('');
     const html = door({ enabled: false });
-    expect(html).toContain('ปลดล็อกฉบับเต็ม');
+    expect(html).toContain('เปิดคำตอบทั้งหมด');
     expect(html).not.toContain('มี ');
     expect(html).not.toContain('<dialog');
   });
@@ -148,17 +148,18 @@ describe('wallet off (nothing sellable)', () => {
 describe('ReportDoor with a known balance', () => {
   test('short of the price, the primary button buys and unlocks in one flow, with packs as a secondary link', () => {
     const html = door({ ...wallet, balance: 0 });
-    expect(html).toContain('ปลดล็อก ฿49');
+    expect(html).toContain('เติมมูและเปิดคำตอบ · ฿49');
     expect(html).toContain('ซื้อแพ็กคุ้มกว่า');
     expect(html).toContain('ยอดไม่พอ มี 0 มู ต้องใช้ 49 มู (฿49)');
-    expect(html).not.toContain('ใช้ 49 มู ปลดล็อก');
+    expect(html).not.toContain('ใช้ 49 มู (฿49) ปลดล็อก');
     expect(html).not.toMatch(PURPLE_TEXT);
   });
 
   test('the CTA spends from the real wallet: price and balance', () => {
     const html = door(wallet);
     expect(html).not.toContain('ซื้อแพ็กคุ้มกว่า');
-    expect(html).toContain('ใช้ 49 มู ปลดล็อก (มี 49 มู)');
+    expect(html).toContain('เปิดคำตอบทั้งหมด · 49 มู (฿49)');
+    expect(html).toContain('ยอดคงเหลือ 49 มู');
     expect(html).toContain('1 มู = ฿1');
     expect(html).not.toMatch(PURPLE_TEXT);
   });

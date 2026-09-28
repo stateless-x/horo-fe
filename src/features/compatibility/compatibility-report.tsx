@@ -318,11 +318,13 @@ export function CompatibilityReport({
                     role="tab"
                     aria-selected={selected}
                     aria-controls={`report-panel-${section.id}`}
+                    aria-label={section.label}
                     tabIndex={selected ? 0 : -1}
                     onClick={() => chooseSection(section.id, false)}
-                    className={`min-h-11 whitespace-nowrap rounded-xl px-2 font-heading text-sm font-semibold leading-none transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${selected ? 'bg-surface text-ink shadow-[0_4px_14px_-8px_rgba(23,12,38,0.45)]' : 'text-inkMuted hover:bg-edgeSoft hover:text-ink'}`}
+                    className={`min-h-11 min-w-0 overflow-hidden rounded-xl px-2 font-heading text-sm font-semibold leading-none transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${selected ? 'bg-surface text-ink shadow-[0_4px_14px_-8px_rgba(23,12,38,0.45)]' : 'text-inkMuted hover:bg-edgeSoft hover:text-ink'}`}
                   >
-                    {section.label}
+                    <span className="block truncate sm:hidden">{section.tabLabel ?? section.label}</span>
+                    <span className="hidden truncate sm:block">{section.label}</span>
                   </button>
                 );
               })}

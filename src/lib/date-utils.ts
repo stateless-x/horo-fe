@@ -109,16 +109,24 @@ export interface ChartReadingPeriod {
  * renewal note can disagree: a legacy chart has no readingPeriod and falls
  * back to the clock, which names the current month rather than the month the
  * narrative was actually written for.
+ *
+ * isCurrentMonth compares the resolved period to the real Bangkok clock, not
+ * to isRegeneratingForNewMonth's transient check: that one only covers the
+ * few minutes a chart is actively being rewritten, so a settled chart can
+ * still be showing a month that has since passed (not yet refetched). A
+ * legacy chart with no stamped period always resolves to the clock's own
+ * month, so it is always isCurrentMonth: true.
  */
 export function resolveChartReadingPeriod(readingPeriod?: ChartReadingPeriod): {
   monthTh: string;
   yearBe: number;
   renewsOn: string;
+  isCurrentMonth: boolean;
 } {
   const fallback = getChartReadingPeriod();
 
   if (!readingPeriod) {
-    return { monthTh: fallback.currentMonth, yearBe: fallback.yearBe, renewsOn: fallback.renewsOn };
+    return { monthTh: fallback.currentMonth, yearBe: fallback.yearBe, renewsOn: fallback.renewsOn, isCurrentMonth: true };
   }
 
   // renewsOn follows the stamped month, not the clock, so a chart still
@@ -130,5 +138,6 @@ export function resolveChartReadingPeriod(readingPeriod?: ChartReadingPeriod): {
     monthTh: readingPeriod.monthTh,
     yearBe: readingPeriod.yearBe,
     renewsOn: `1 ${THAI_MONTHS[next.getMonth()]}`,
+    isCurrentMonth: readingPeriod.yearMonth === fallback.yearMonth,
   };
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { HoroSessionUser } from '@/lib/auth-client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Sparkles } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFortuneGeneration } from '@/features/fortune/hooks/use-fortune-generation';
 import { useFortuneData } from '@/features/fortune/hooks/use-fortune-data';
@@ -252,11 +252,29 @@ export default function FortuneChartPage() {
           {/* Which month this narrative was written for. Stated outright rather
               than left to the reader's clock: the chart regenerates at the
               Bangkok month boundary, and a legacy row can predate its own
-              period stamp, so the two must never be guessed at. */}
+              period stamp, so the two must never be guessed at.
+              isCurrentMonth (from resolveChartReadingPeriod, compared against
+              the real Bangkok clock) decides the treatment: a filled accent
+              pill with a renewal date says "this is now, and here's how long
+              it lasts"; the rare case of a settled-but-not-yet-refetched
+              older month keeps the plain neutral pill so it never falsely
+              claims to be current. */}
           <p className="mt-4 flex justify-center sm:justify-start">
-            <span className="rounded-full border border-edge bg-surface2 px-4 py-1.5 font-thai text-sm text-inkMuted">
-              คำทำนายประจำเดือน{readingPeriod.monthTh} พ.ศ. {readingPeriod.yearBe}
-            </span>
+            {readingPeriod.isCurrentMonth ? (
+              <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 shadow-md shadow-accent/20 dark:shadow-accent/40">
+                <Sparkles className="size-3.5 shrink-0 text-accentInk" aria-hidden="true" />
+                <span className="font-thai text-sm font-medium text-accentInk">
+                  ดวงเดือนนี้ · {readingPeriod.monthTh} พ.ศ. {readingPeriod.yearBe}
+                </span>
+                <span className="hidden font-thai text-sm text-accentInk/70 sm:inline">
+                  · ต่ออายุ {readingPeriod.renewsOn}
+                </span>
+              </span>
+            ) : (
+              <span className="rounded-full border border-edge bg-surface2 px-4 py-1.5 font-thai text-sm text-inkMuted">
+                คำทำนายประจำเดือน{readingPeriod.monthTh} พ.ศ. {readingPeriod.yearBe}
+              </span>
+            )}
           </p>
         </motion.div>
       </div>

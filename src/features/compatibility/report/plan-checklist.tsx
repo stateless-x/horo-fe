@@ -88,7 +88,7 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
             const hasTried = tried.includes(step.day);
             const detailId = `relationship-moment-${step.day}`;
             const art = practiceArts[index];
-            const artSize = index === 0 ? 'h-10 w-12' : 'size-10';
+            const artSize = index === 0 ? 'h-14 w-16' : 'size-14';
 
             return (
               <li key={step.day} className={isOpen ? 'bg-surface2/45' : ''}>
@@ -97,10 +97,10 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
                   aria-expanded={isOpen}
                   aria-controls={detailId}
                   onClick={() => setOpenDay(isOpen ? null : step.day)}
-                  className="flex min-h-[76px] w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-surface2/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright sm:px-7"
+                  className="flex min-h-[100px] w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-surface2/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright sm:px-7"
                 >
                   <span className={`relative grid shrink-0 place-items-center ${artSize}`}>
-                    {art ? <Image alt="" width={80} height={80} src={art} sizes="48px" className="size-full object-contain" /> : <MomentIcon className="size-4 text-inkMuted" aria-hidden="true" />}
+                    {art ? <Image alt="" width={128} height={112} src={art} sizes="64px" className="size-full object-contain" /> : <MomentIcon className="size-4 text-inkMuted" aria-hidden="true" />}
                     {hasTried && (
                       <span className="absolute -bottom-0.5 -right-0.5 grid size-4 place-items-center rounded-full bg-success text-onAccent ring-2 ring-surface">
                         <Check className="size-3 stroke-[3]" aria-hidden="true" />

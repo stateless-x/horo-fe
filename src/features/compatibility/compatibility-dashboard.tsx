@@ -26,12 +26,23 @@ import { CompatibilityForm } from '@/features/compatibility/compatibility-form';
 import { CompatibilityLoading } from '@/features/compatibility/compatibility-loading';
 import { CompatibilityHistory } from '@/features/compatibility/compatibility-history';
 import { MainLoader } from '@/components/ui/main-loader';
+import { failureReference } from '@/components/ui/failure-notice';
 import {
   compatibilityHistoryPath,
   compatibilityResultOriginKey,
   compatibilityResultPath,
 } from '@/features/compatibility/compatibility-routes';
 import { HISTORY_PREVIEW_LIMIT } from '@/features/compatibility/history-paging';
+
+/** A server failure on the check (teaser). Pronoun-free; a teaser is free, so no charge line. */
+export const TEASER_FAILED = 'เขียนดวงคู่ไม่สำเร็จ ลองใหม่ได้เลย';
+
+/** The notice for a 5xx on the check, with the server's reference when sent; null for any other failure. */
+export function teaserFailure(error: unknown): { message: string; reference?: string } | null {
+  const status = (error as ApiError | null)?.status;
+  if (typeof status !== 'number' || status < 500) return null;
+  return { message: TEASER_FAILED, reference: failureReference(error) };
+}
 
 /** The history route also says whether a new check writes the teaser alone (locked mode). */
 type HistoryPage = HistoryResponse & { lockEnabled?: boolean };
@@ -61,6 +72,9 @@ export function CompatibilityDashboard() {
   // Floor the calculating screen at 3s so its copy and sponsored card are seen.
   const showCalculating = useMinLoading(calculating);
   const [error, setError] = useState('');
+  const [errorReference, setErrorReference] = useState<string | undefined>();
+  /** Bumped per teaser failure so a repeat failure shows the toast again. */
+  const [failureToast, setFailureToast] = useState(0);
 
   // Rate limit state
   const [rateLimitInfo, setRateLimitInfo] = useState<{
@@ -106,6 +120,8 @@ export function CompatibilityDashboard() {
     if (calculationInFlight.current) return;
     if (!partnerName.trim()) {
       setError('ใส่ชื่ออีกฝ่ายก่อนนะ');
+      setErrorReference(undefined);
+      setFailureToast(0);
       return;
     }
 
@@ -117,6 +133,8 @@ export function CompatibilityDashboard() {
     track({ event: 'calculation_started', relationshipType });
     setCalculating(true);
     setError('');
+    setErrorReference(undefined);
+    setFailureToast(0);
     // The request goes out now; the loading screen counts from here (no scripted steps before it).
     const startedAt = Date.now();
     setCalculationStartedAt(startedAt);
@@ -173,6 +191,13 @@ export function CompatibilityDashboard() {
         setRateLimitInfo({ remaining: 0, resetAt, retryAfter });
         setRateLimitCountdown(retryAfter);
         setError(err.body?.error || 'ครบจำนวนครั้งที่ดูได้แล้ว รอสักพักแล้วลองใหม่');
+        return;
+      }
+      const failure = teaserFailure(err);
+      if (failure) {
+        setError(failure.message);
+        setErrorReference(failure.reference);
+        setFailureToast((count) => count + 1);
         return;
       }
       setError(err?.code === 'TIMEOUT'
@@ -255,6 +280,9 @@ export function CompatibilityDashboard() {
           onPartnerMbtiChange={setPartnerMbti}
           currentYear={currentYear}
           error={error}
+          errorReference={errorReference}
+          failureToast={failureToast}
+          onFailureToastDismiss={() => setFailureToast(0)}
           calculating={calculating}
           isRateLimited={isRateLimited}
           rateLimitCountdown={rateLimitCountdown}

@@ -16,6 +16,7 @@ import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { useTrackEvent } from '@/lib/analytics';
 import { MainLoader } from '@/components/ui/main-loader';
 import { CompatibilityResultView } from '@/features/compatibility/compatibility-result';
+import { UNLOCK_FAILED } from '@/features/compatibility/report/report-door';
 import {
   RELATIONSHIP_CONFIG,
   type CompatibilityResult,
@@ -25,6 +26,19 @@ import {
   compatibilityResultFailureKind,
   compatibilityResultOriginKey,
 } from '@/features/compatibility/compatibility-routes';
+
+/**
+ * What the door receives when an unlock fails. A 402 (top up) and a client
+ * TIMEOUT pass through as they are, so the door can tell a timeout (no charge
+ * claim) from a server failure; any other failure becomes the door's
+ * no-charge copy and keeps the body, whose `reference` the door shows.
+ */
+export function unlockFailure(error: unknown): unknown {
+  if ((error as ApiError).status === 402 || (error as ApiError).code === 'TIMEOUT') return error;
+  const failure = new Error(UNLOCK_FAILED) as ApiError;
+  failure.body = (error as ApiError).body;
+  return failure;
+}
 
 interface CompatibilityResultPageProps {
   resultId: string;
@@ -72,9 +86,7 @@ export function CompatibilityResultPage({ resultId }: CompatibilityResultPagePro
       await queryClient.invalidateQueries({ queryKey: ['compatibility', 'history'] });
     } catch (error) {
       console.error('Compatibility unlock failed:', error);
-      if ((error as ApiError).status === 402) throw error;
-      const message = (error as ApiError).body?.error;
-      throw new Error(typeof message === 'string' ? message : 'เขียนฉบับเต็มไม่สำเร็จ ลองอีกครั้งนะ');
+      throw unlockFailure(error);
     }
   }, [queryClient, result]);
 

@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent, Button, Input } from '@/lib-p
 import { THAI_MONTHS, MBTI_TYPES, type RelationshipType, RELATIONSHIP_TYPES, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
 import { Loader2, Moon } from 'lucide-react';
 import { RELATIONSHIP_CONFIG, type RelationshipConfig } from '@/features/compatibility/relationship-config';
+import { FailureNotice } from '@/components/ui/failure-notice';
 
 interface CompatibilityFormProps {
   config: RelationshipConfig;
@@ -21,6 +22,11 @@ interface CompatibilityFormProps {
   onPartnerMbtiChange: (mbti: string) => void;
   currentYear: number;
   error: string;
+  /** Support reference for a server failure; no line without one. */
+  errorReference?: string;
+  /** Bumped per server failure to show the toast; 0 shows none. */
+  failureToast: number;
+  onFailureToastDismiss: () => void;
   calculating: boolean;
   isRateLimited: boolean;
   rateLimitCountdown: number;
@@ -44,6 +50,9 @@ export function CompatibilityForm({
   onPartnerMbtiChange,
   currentYear,
   error,
+  errorReference,
+  failureToast,
+  onFailureToastDismiss,
   calculating,
   isRateLimited,
   rateLimitCountdown,
@@ -90,7 +99,13 @@ export function CompatibilityForm({
             exit={{ opacity: 0, y: -10 }}
             className="bg-danger/10 border border-danger/30 rounded-xl p-4"
           >
-            <p className="text-danger text-center text-base md:text-lg">{error}</p>
+            <FailureNotice
+              message={error}
+              reference={errorReference}
+              toastKey={failureToast}
+              onToastDismiss={onFailureToastDismiss}
+              messageClassName="text-danger text-center text-base md:text-lg"
+            />
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, BookOpen, CalendarDays, Check, ChevronDown, Copy, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
+import { ArrowRight, BookOpen, CalendarDays, ChevronDown, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
+import { FailureNotice, failureReference } from '@/components/ui/failure-notice';
 import type { ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import type { RelationshipType } from '@/lib-packages/shared';
@@ -43,84 +43,6 @@ export const UNLOCK_TIMED_OUT = 'ใช้เวลานานกว่าป�
 
 type UnlockFailure = 'error' | 'timeout';
 const FAILURE_COPY: Record<UnlockFailure, string> = { error: UNLOCK_FAILED, timeout: UNLOCK_TIMED_OUT };
-const TOAST_MS = 6_000;
-const COPIED_MS = 2_000;
-
-/**
- * A transient notice at the bottom of the screen, portaled to <body> (the
- * door's CTA sits in a clipped, transformed box). role="alert" announces it.
- */
-function FailureToast({ message, onDismiss }: { message: string; onDismiss: () => void }) {
-  const reduce = useReducedMotion();
-  // One timer per toast: the door re-renders (busy, wallet refetch) must not restart it.
-  const dismiss = useRef(onDismiss);
-  dismiss.current = onDismiss;
-  useEffect(() => {
-    const timer = setTimeout(() => dismiss.current(), TOAST_MS);
-    return () => clearTimeout(timer);
-  }, []);
-  return createPortal(
-    <div className="pointer-events-none fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 flex justify-center">
-      <motion.p
-        role="alert"
-        initial={reduce ? false : { opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-sm rounded-xl border border-edge bg-overlay px-4 py-3 text-center text-sm leading-relaxed text-ink shadow-[0_8px_24px_rgb(0_0_0/0.25)]"
-      >
-        {message}
-      </motion.p>
-    </div>,
-    document.body,
-  );
-}
-
-/**
- * "รหัสอ้างอิง 1a2b3c4d" with a copy button for support: shows the short id,
- * copies the full compatibility result id.
- */
-export function ReferenceLine({ id }: { id: string }) {
-  const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  useEffect(() => () => clearTimeout(timer.current), []);
-
-  const copy = async () => {
-    clearTimeout(timer.current);
-    try {
-      await navigator.clipboard.writeText(id);
-    } catch (failure) {
-      // No clipboard (an in-app browser without permission): the full id is shown to copy by hand.
-      console.error('Copying the reference id failed:', failure);
-      setState('failed');
-      return;
-    }
-    setState('copied');
-    timer.current = setTimeout(() => setState('idle'), COPIED_MS);
-  };
-
-  return (
-    <p className="flex flex-wrap items-center justify-center gap-x-1 text-xs text-inkMuted">
-      <span>
-        รหัสอ้างอิง <span className="font-mono tabular-nums text-ink">{id.slice(0, 8)}</span>
-      </span>
-      <button
-        type="button"
-        onClick={copy}
-        aria-label="คัดลอกรหัสอ้างอิง"
-        className="grid size-11 place-items-center rounded-lg text-inkMuted transition-colors hover:bg-edgeSoft hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
-      >
-        {state === 'copied' ? <Check className="size-4 text-success" aria-hidden="true" /> : <Copy className="size-4" aria-hidden="true" />}
-      </button>
-      <span role="status" className="empty:hidden">
-        {state === 'copied' ? 'คัดลอกแล้ว' : ''}
-      </span>
-      {state === 'failed' && (
-        <span className="basis-full select-all break-all font-mono text-ink">{id}</span>
-      )}
-    </p>
-  );
-}
-
 export function EntryMark({ entry }: { entry: ReportContentsEntry }) {
   if (!entry.icon) return <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />;
   const Icon = ENTRY_ICON[entry.icon];
@@ -142,8 +64,8 @@ interface ReportDoorProps {
   /**
    * Teaser only: unlocks the report. A rejection with HTTP 402
    * `insufficient_balance` (the ApiError itself, rethrown) turns the button
-   * into "เติมมู"; any other
-   * rejection's message is shown in the door.
+   * into "เติมมู"; a TIMEOUT shows the timeout copy; any other rejection
+   * shows UNLOCK_FAILED with the body's `reference` (else `unlockRef`).
    */
   onUnlock?: () => void | Promise<void>;
 }
@@ -160,6 +82,8 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const wallet = enabledWallet(walletQuery.data);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState<UnlockFailure | null>(null);
+  /** The server's reference for this failure, else the row id; none when neither exists. */
+  const [failedRef, setFailedRef] = useState<string | undefined>();
   /** Bumped per failure so a repeat failure shows the toast again. */
   const [toast, setToast] = useState(0);
   const [insufficient, setInsufficient] = useState(false);
@@ -211,6 +135,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
         // timeout (lib/api: code TIMEOUT, status 408) says nothing about the server's outcome.
         console.error('Unlock failed:', failure);
         setFailed(refused.code === 'TIMEOUT' || refused.status === 408 ? 'timeout' : 'error');
+        setFailedRef(failureReference(failure) ?? unlockRef);
         setToast((count) => count + 1);
       }
     } finally {
@@ -345,10 +270,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
                 {busy ? 'เสร็จแล้วคำตอบจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
               </p>
               {failed && (
-                <div className="grid justify-items-center gap-1 text-center">
-                  <p className="text-sm leading-relaxed text-danger">{FAILURE_COPY[failed]}</p>
-                  {unlockRef && <ReferenceLine id={unlockRef} />}
-                </div>
+                <FailureNotice message={FAILURE_COPY[failed]} reference={failedRef} toastKey={toast} onToastDismiss={() => setToast(0)} />
               )}
               {!short && price !== undefined && balance !== undefined && (
                 <p className="text-center text-sm leading-relaxed text-inkMuted">ยอดคงเหลือ {units(balance)}</p>
@@ -357,7 +279,6 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           </motion.div>
         )}
       </AnimatePresence>
-      {toast > 0 && failed && <FailureToast key={toast} message={FAILURE_COPY[failed]} onDismiss={() => setToast(0)} />}
       {wallet && price !== undefined && (
         <PackSheet
           open={sheetOpen}

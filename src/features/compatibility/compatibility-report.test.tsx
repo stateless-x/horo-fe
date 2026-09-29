@@ -116,7 +116,7 @@ describe('CompatibilityReport', () => {
     // No balance or price until the wallet loads: never a made-up number.
     expect(html).toContain('เปิดคำตอบทั้งหมด');
     expect(html).toContain('เห็นทางของความสัมพันธ์นี้ให้ชัดขึ้น');
-    expect(html).toContain('คำตอบฉบับเต็มเรียงให้เห็นใจของทั้งคู่ เรื่องที่ควรคุย และจังหวะที่เหมาะกับตอนนี้');
+    expect(html).toContain('เข้าใจนิสัยของทั้งคู่ พร้อมวิธีคุยและคำแนะนำที่เหมาะกับความสัมพันธ์ตอนนี้');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดเรื่อง', 'คำคมเรื่อง', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
     }

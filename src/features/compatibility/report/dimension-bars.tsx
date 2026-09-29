@@ -29,7 +29,7 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
       <SectionHeading
         id="report-dimensions"
         title={`${dimensions.length} มิติของคู่นี้`}
-        sub={lines ? 'ตัวเลขจากดวงของคุณสองคน พร้อมความหมายของแต่ละมิติ' : 'ตัวเลขจากดวงของคุณสองคน ยิ่งสูงยิ่งไหลลื่น'}
+        sub={lines ? 'ดูว่าเข้ากันตรงไหน และมีเรื่องไหนที่ควรคุยกัน' : 'ดูว่าคุณสองคนเข้ากันแค่ไหนในแต่ละด้าน'}
       />
       <div className="mt-4 border-y border-edge px-1 sm:px-2">
         <ol className="divide-y divide-edge">
@@ -73,7 +73,7 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
       </div>
       {locked && (
         <p className="mt-3 text-sm leading-relaxed text-inkMuted">
-          ฉบับเต็มอธิบายความหมายและที่มาของแต่ละคะแนน
+          อยากรู้ว่าคะแนนนี้บอกอะไร อ่านต่อได้ในฉบับเต็ม
         </p>
       )}
     </section>

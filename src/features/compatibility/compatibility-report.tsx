@@ -395,10 +395,10 @@ export function CompatibilityReport({
                     </div>
                     <SectionActionMap
                       title="อยากเห็นมุมไหนของคู่นี้"
-                      helper="เลือกแล้วพาไปดูต่อ"
+                      helper="เลือกเรื่องที่อยากรู้ได้เลย"
                       onChoose={jump}
                       actions={[
-                        { id: 'report-dimensions-section', tag: 'เช็กจุดแข็ง', title: 'ดู 4 มิติของคู่นี้', detail: 'เคมี การสื่อสาร ความไว้ใจ และจังหวะชีวิต', icon: ChartNoAxesCombined, tone: 'accent', art: reportVisuals.overview.dimensions },
+                        { id: 'report-dimensions-section', tag: 'เข้ากันตรงไหน', title: 'ดู 4 มิติของคู่นี้', detail: 'เคมี การสื่อสาร ความไว้ใจ และจังหวะชีวิต', icon: ChartNoAxesCombined, tone: 'accent', art: reportVisuals.overview.dimensions },
                         { id: 'report-overview-section', tag: 'เริ่มจากภาพใหญ่', title: 'อ่านเรื่องของคู่นี้', detail: 'ดูภาพรวมว่าอะไรพาให้มาเจอกัน', icon: Sparkles, tone: 'accent', art: reportVisuals.overview.story },
                         { id: 'ch-attraction', ...reportCopy.overviewAction, icon: relationshipActionIcon(relationshipType), tone: relationshipTone, art: reportVisuals.overview.attraction },
                       ]}
@@ -421,7 +421,7 @@ export function CompatibilityReport({
                   <div className="mt-7">
                     <SectionActionMap
                       title="อยากเข้าใจใครก่อน"
-                      helper="เลือกแล้วดูต่อได้เลย"
+                      helper="เลือกเรื่องที่อยากรู้ได้เลย"
                       onChoose={jump}
                       actions={[
                         { id: 'ch-partner', ...reportCopy.peopleActions.partner, icon: UserRound, tone: 'accent', art: reportVisuals.people.partner },

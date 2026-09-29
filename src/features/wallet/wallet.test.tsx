@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { WalletResponse, WalletState } from '@/lib-packages/shared/types/wallet';
 import { ReportDoor } from '@/features/compatibility/report/report-door';
-import { BalanceChip } from './balance-chip';
+import { BalanceChip, WalletMenuRow } from './balance-chip';
 import { LedgerList } from './ledger-list';
 import { PackList } from './pack-list';
 import { WALLET_QUERY_KEY } from './use-wallet';
@@ -143,6 +143,30 @@ const door = (data: WalletResponse) => {
   );
 };
 
+const withWallet = (node: React.ReactNode, state: WalletState = { ...wallet, balance: 71 }) => {
+  const client = new QueryClient();
+  client.setQueryData(WALLET_QUERY_KEY, state);
+  return renderToStaticMarkup(<QueryClientProvider client={client}>{node}</QueryClientProvider>);
+};
+
+describe('header wallet (on)', () => {
+  test('the chip shows the crystal and the number only, and keeps its accessible name', () => {
+    const html = withWallet(<BalanceChip />);
+    expect(html).toContain('href="/dashboard/wallet"');
+    expect(html).toContain('aria-label="ยอด 71 มู เปิดหน้ามูของคุณ"');
+    expect(html).toContain('mu-gem-clay-48.webp');
+    const visible = html.replace(/<[^>]*>/g, '');
+    expect(visible).toBe('71');
+  });
+
+  test('the menu row links to the wallet with มูของคุณ and the balance', () => {
+    const html = withWallet(<WalletMenuRow className="row" />);
+    expect(html).toContain('href="/dashboard/wallet"');
+    expect(html).toContain('mu-gem-clay');
+    expect(html.replace(/<[^>]*>/g, '')).toBe('มูของคุณ71');
+  });
+});
+
 describe('wallet off (nothing sellable)', () => {
   test('no chip, and the door shows no balance, price or packs', () => {
     const client = new QueryClient();
@@ -153,6 +177,12 @@ describe('wallet off (nothing sellable)', () => {
       </QueryClientProvider>,
     );
     expect(chip).toBe('');
+    const row = renderToStaticMarkup(
+      <QueryClientProvider client={client}>
+        <WalletMenuRow className="" />
+      </QueryClientProvider>,
+    );
+    expect(row).toBe('');
     const html = door({ enabled: false });
     expect(html).toContain('เปิดคำตอบทั้งหมด');
     expect(html).not.toContain('มี ');

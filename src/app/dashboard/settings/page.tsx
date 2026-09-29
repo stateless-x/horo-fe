@@ -12,6 +12,7 @@ import type { Gender } from '@/lib-packages/shared';
 import { MBTI_HINT_SETTINGS } from '@/lib/mbti-copy';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { useAppLogout } from '@/hooks/use-app-logout';
+import { ThemeSetting } from '@/components/ui/theme-toggle';
 
 /**
  * Settings Page - Redesigned with View/Edit Mode
@@ -582,6 +583,11 @@ export default function SettingsPage() {
             </div>
           </Card>
         </motion.div>
+
+        {/* Display */}
+        <Card className="rounded-2xl p-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)]">
+          <ThemeSetting />
+        </Card>
 
         {/* Action Buttons */}
         {isEditMode ? (

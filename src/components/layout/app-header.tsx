@@ -1,16 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Menu, X, Settings, Sun, Moon, LogOut } from 'lucide-react';
+import { Menu, X, Settings, LogOut } from 'lucide-react';
 import { useAppLogout } from '@/hooks/use-app-logout';
 import { SYSTEMS, type DashboardTab } from '@/lib/systems';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { BalanceChip } from '@/features/wallet/balance-chip';
+import { BalanceChip, WalletMenuRow } from '@/features/wallet/balance-chip';
 
 // Settings is dashboard chrome, not a fortune-telling system, so it isn't
 // part of the systems registry — it's appended here as a fixed last tab.
@@ -29,12 +27,7 @@ export function AppHeader() {
   const shouldReduceMotion = useReducedMotion();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const { logout, isLoggingOut } = useAppLogout();
-
-  useEffect(() => setMounted(true), []);
-  const isDark = resolvedTheme !== 'light';
 
   // Close on route change
   useEffect(() => {
@@ -100,9 +93,6 @@ export function AppHeader() {
 
         <div className="ml-auto flex items-center gap-1.5 shrink-0">
           <BalanceChip />
-          <div className="hidden md:flex">
-            <ThemeToggle />
-          </div>
 
           {/* Hamburger — mobile only */}
           <button
@@ -134,44 +124,38 @@ export function AppHeader() {
       >
         <nav className="max-w-5xl mx-auto px-4 py-2 flex flex-col">
           {NAV_TABS.map(({ key, href, label, icon: Icon }) => (
-            <Link
-              key={key}
-              href={href}
-              className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${
-                pathname.startsWith(href) ? LINK_ACTIVE : LINK_REST
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </Link>
+            <Fragment key={key}>
+              {key === SETTINGS_TAB.key && (
+                <WalletMenuRow
+                  className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${
+                    pathname.startsWith('/dashboard/wallet') ? LINK_ACTIVE : LINK_REST
+                  }`}
+                />
+              )}
+              <Link
+                href={href}
+                className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${
+                  pathname.startsWith(href) ? LINK_ACTIVE : LINK_REST
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+              </Link>
+            </Fragment>
           ))}
 
-          {/* Theme toggle row */}
+          {/* Sign out row */}
           <div className="mt-2 pt-2 border-t border-edge">
             <button
               type="button"
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              onClick={logout}
+              disabled={isLoggingOut}
               className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${LINK_REST}`}
             >
-              {mounted ? (
-                isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />
-              ) : (
-                <span className="w-4 h-4" />
-              )}
-              สลับโหมดสี
+              <LogOut className="w-4 h-4" />
+              {isLoggingOut ? 'กำลังออกจากระบบ...' : 'ออกจากระบบ'}
             </button>
           </div>
-
-          {/* Sign out row */}
-          <button
-            type="button"
-            onClick={logout}
-            disabled={isLoggingOut}
-            className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${LINK_REST}`}
-          >
-            <LogOut className="w-4 h-4" />
-            {isLoggingOut ? 'กำลังออกจากระบบ...' : 'ออกจากระบบ'}
-          </button>
         </nav>
       </motion.div>
     </header>

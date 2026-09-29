@@ -5,7 +5,7 @@ import { CurrencyImage } from '@/components/ui/currency-image';
 import { enabledWallet, useWallet } from './use-wallet';
 import { UNIT } from './wallet-copy';
 
-/** "มู 49" in the app header, linking to /dashboard/wallet. Nothing until the balance is known, or while the wallet is off. */
+/** Crystal + "49" in the app header, linking to /dashboard/wallet. Nothing until the balance is known, or while the wallet is off. */
 export function BalanceChip() {
   const data = enabledWallet(useWallet().data);
   if (!data) return null;
@@ -17,9 +17,21 @@ export function BalanceChip() {
     >
       <span className="flex h-8 items-center gap-1.5 rounded-full border border-edge bg-surface2 px-3 font-thai text-sm text-ink transition-colors hover:bg-edge">
         <CurrencyImage size={24} className="-ml-1.5" />
-        {UNIT}
         <span className="font-mono tabular-nums">{data.balance.toLocaleString('th-TH')}</span>
       </span>
+    </Link>
+  );
+}
+
+/** "มูของคุณ" row in the header's mobile menu, balance right-aligned; same cache entry as the chip. Nothing while the wallet is off. */
+export function WalletMenuRow({ className }: { className: string }) {
+  const data = enabledWallet(useWallet().data);
+  if (!data) return null;
+  return (
+    <Link href="/dashboard/wallet" className={className}>
+      <CurrencyImage size={16} />
+      {`${UNIT}ของคุณ`}
+      <span className="ml-auto font-mono tabular-nums">{data.balance.toLocaleString('th-TH')}</span>
     </Link>
   );
 }

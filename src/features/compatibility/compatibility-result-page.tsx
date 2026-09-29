@@ -69,6 +69,7 @@ export function CompatibilityResultPage({ resultId }: CompatibilityResultPagePro
         { timeout: 270_000 },
       );
       queryClient.setQueryData(['compatibility', unlocked.id], unlocked);
+      await queryClient.invalidateQueries({ queryKey: ['compatibility', 'history'] });
     } catch (error) {
       console.error('Compatibility unlock failed:', error);
       if ((error as ApiError).status === 402) throw error;

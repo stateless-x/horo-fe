@@ -5,10 +5,9 @@ import { RelationshipClayImage } from '@/features/compatibility/relationship-cla
 import { motion } from 'framer-motion';
 import { Button, buttonVariants, cn } from '@/lib-packages/ui';
 import { type RelationshipType, RELATIONSHIP_LABELS } from '@/lib-packages/shared';
-import { Loader2, ChevronRight, Stars } from 'lucide-react';
+import { Loader2, ChevronRight, Stars, LockKeyhole } from 'lucide-react';
 import {
   RELATIONSHIP_CONFIG,
-  toThaiElement,
   type HistoryItem,
 } from '@/features/compatibility/relationship-config';
 
@@ -107,29 +106,31 @@ function CompatibilityHistoryRow({
       // Capped so the last row of a 20-row page does not wait a full second.
       transition={{ delay: Math.min(index, 6) * 0.05 }}
       onClick={() => onViewHistory(item.id)}
-      className="w-full bg-surface/50 border border-surface2/30 rounded-xl p-4 hover:border-accent/30 transition-all text-left flex items-center gap-3"
+      className="group w-full bg-surface/50 border border-edge rounded-2xl p-4 hover:border-accent/30 hover:bg-surface transition-colors text-left flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
     >
-      <RelationshipClayImage relationshipType={item.relationshipType} />
+      <RelationshipClayImage relationshipType={item.relationshipType} className="size-16" sizes="64px" />
 
-      <div className="flex-1 min-w-0">
-        <p className="text-ink font-medium truncate text-base md:text-lg">{item.partnerName}</p>
-        <div className="flex items-center gap-2 text-xs md:text-sm">
+      <div className="min-w-0 flex-1 space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <p className="min-w-0 break-words text-base font-semibold text-ink md:text-lg">{item.partnerName}</p>
+          {item.locked === false && <span className="sr-only">อ่านฉบับเต็มได้</span>}
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm">
           <span className={itemConfig.accent}>{RELATIONSHIP_LABELS[item.relationshipType as RelationshipType]}</span>
-          {item.userElement && item.partnerElement && (
-            <>
-              <span className="text-inkMuted/40">&#x2022;</span>
-              <span className="text-inkMuted">{toThaiElement(item.userElement)} x {toThaiElement(item.partnerElement)}</span>
-            </>
-          )}
+          <span className="text-inkMuted/40" aria-hidden="true">·</span>
+          <span className="text-inkMuted">{formatRelativeDate(item.createdAt)}</span>
+          </div>
         </div>
       </div>
-
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <span className="text-xs md:text-sm text-inkMuted">
-          {formatRelativeDate(item.createdAt)}
+      {item.locked === true ? (
+        <span className="shrink-0 text-inkMuted" title="ยังไม่เปิดฉบับเต็ม">
+          <LockKeyhole className="size-4" aria-hidden="true" />
+          <span className="sr-only">ยังไม่เปิดฉบับเต็ม</span>
         </span>
-        <ChevronRight className="w-4 h-4 text-inkMuted/50" />
-      </div>
+      ) : (
+        <ChevronRight className="size-4 shrink-0 text-inkMuted transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      )}
     </motion.button>
   );
 }

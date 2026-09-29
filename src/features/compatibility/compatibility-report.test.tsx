@@ -91,6 +91,25 @@ const render = (view: 'teaser' | 'full', onUnlock?: () => void, partnerName = '�
   );
 
 describe('CompatibilityReport', () => {
+  test('locked previews sell the right relationship value rather than a task count', () => {
+    const promises: Record<RelationshipType, string> = {
+      romantic: 'ดูแลความรักให้สบายใจทั้งคู่',
+      talking: 'ค่อย ๆ รู้จักกัน ไม่ต้องรีบเป็นอะไร',
+      friend: 'ดูแลมิตรภาพแบบที่ไม่ฝืนใคร',
+      boss: 'ทำงานกับเขาให้ลงตัวขึ้น',
+      coworker: 'ทำงานด้วยกันแบบไม่ฝืนกัน',
+      family: 'ดูแลกัน โดยยังมีพื้นที่ของตัวเอง',
+    };
+    for (const type of RELATIONSHIP_TYPES) {
+      const html = render('teaser', () => {}, 'ต้น', type);
+      expect(html).toContain(promises[type]);
+      expect(html).not.toContain('มีไอเดียให้ลอง 3 อย่าง');
+      if (type === 'boss' || type === 'coworker' || type === 'family' || type === 'friend') {
+        expect(html).not.toContain('วิธีรัก');
+        expect(html).not.toContain('ดูใจ');
+      }
+    }
+  });
   test('every score band receives its own equally complete talisman state', () => {
     expect(compatibilityTalismanBand(0).label).toBe('จังหวะต่างกัน');
     expect(compatibilityTalismanBand(39).src).toContain('different-rhythms');

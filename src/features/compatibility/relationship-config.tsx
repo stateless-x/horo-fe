@@ -104,6 +104,8 @@ export interface HistoryItem {
   partnerBirthDate: string;
   relationshipType: string;
   score: number;
+  /** Absent on older API responses; only an explicit true displays the lock. */
+  locked?: boolean;
   userElement?: string;
   partnerElement?: string;
   createdAt: string;

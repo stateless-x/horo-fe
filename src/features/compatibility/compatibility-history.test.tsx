@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { CompatibilityHistory } from './compatibility-history';
+import { CompatibilityHistory, CompatibilityHistoryList } from './compatibility-history';
 import { compatibilityHistoryPath } from './compatibility-routes';
 import { historyItems } from './history-test-fixtures';
 
@@ -21,6 +21,18 @@ function renderSection(itemCount: number, totalHistory: number, state: { isLoadi
 }
 
 describe('CompatibilityHistory (dashboard preview)', () => {
+  test('marks only locked previews, without hiding their history navigation', () => {
+    const items = historyItems('p', 3);
+    items[0].locked = true;
+    items[1].locked = false;
+    const html = renderToStaticMarkup(<CompatibilityHistoryList items={items} onViewHistory={noop} />);
+    expect(html).toContain('class="sr-only">ยังไม่เปิดฉบับเต็ม');
+    expect(html.match(/lucide-lock-keyhole/g)).toHaveLength(1);
+    expect(html.match(/<button/g)).toHaveLength(3);
+    expect(html).toContain('class="sr-only">อ่านฉบับเต็มได้');
+    expect(html).not.toContain('ไฟ x น้ำ');
+  });
+
   test('shows the three newest rows and links to the full history when there are more', () => {
     const html = renderSection(3, 12);
 

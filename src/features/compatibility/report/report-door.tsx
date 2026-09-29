@@ -14,7 +14,7 @@ import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/us
 import { baht, smallestPackCovering, units } from '@/features/wallet/wallet-copy';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
-import { lockedOfferCopy, relationshipReportCopy } from './report-copy';
+import { lockedOfferCopy, lockedPreviewCopy, relationshipReportCopy } from './report-copy';
 import { relationshipReportVisuals } from './report-visuals';
 
 export interface ReportContentsEntry {
@@ -81,14 +81,15 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const price = wallet?.prices.compat_unlock;
   const balance = wallet?.balance;
   const offer = lockedOfferCopy(relationshipType);
+  const preview = lockedPreviewCopy(relationshipType);
   const copy = relationshipReportCopy(relationshipType);
   const visuals = relationshipReportVisuals(relationshipType);
   const romance = !relationshipType || relationshipType === 'romantic' || relationshipType === 'talking';
   const lockedSections = [
-    { id: 'overview', title: copy.sections.overview.label, detail: 'อ่านความหมายของทั้ง 4 คะแนน พร้อมที่มาจากดวงของคุณสองคน', art: visuals.overview.dimensions },
-    { id: 'people', title: copy.sections.people.label, detail: offer.values[0].detail, art: visuals.sections.people },
-    { id: 'conversation', title: copy.sections.conversation.label, detail: `${offer.values[1].detail} รวมถึงวิธีกลับมาคุยเมื่อมีเรื่องค้างใจ`, art: visuals.sections.conversation },
-    { id: 'next', title: copy.sections.next.label, detail: `${offer.values[2].detail} พร้อมคำแนะนำ 3 อย่างที่เลือกลองได้ตามความพร้อม`, art: visuals.next.calendar.art },
+    { id: 'overview', title: copy.sections.overview.label, ...preview.sections.overview, art: visuals.overview.dimensions },
+    { id: 'people', title: copy.sections.people.label, ...preview.sections.people, art: visuals.sections.people },
+    { id: 'conversation', title: copy.sections.conversation.label, ...preview.sections.conversation, art: visuals.sections.conversation },
+    { id: 'next', title: copy.sections.next.label, ...preview.sections.next, art: visuals.next.calendar.art },
   ];
   // Short of the price: the primary button buys and unlocks in one flow instead of spending.
   const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
@@ -189,18 +190,18 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
         </details>
       ) : (
         <ul className="mt-5 divide-y divide-edge border-y border-edge" aria-label="ดูว่าแต่ละส่วนในฉบับเต็มมีอะไร">
-          {lockedSections.map(({ id, art, title, detail }) => (
+          {lockedSections.map(({ id, art, title, subtitle, detail }) => (
             <li key={id}>
               <details className="group">
                 <summary className="flex min-h-[88px] cursor-pointer list-none items-center gap-3 rounded-lg py-2 transition-colors hover:bg-edgeSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright [&::-webkit-details-marker]:hidden">
                   {art && <Image alt="" src={art} width={112} height={112} sizes="72px" className="size-[72px] shrink-0 object-contain" />}
                   <span className="min-w-0 flex-1">
                     <span className="block font-heading text-base font-semibold leading-snug text-ink">{title}</span>
-                    <span className="mt-1 block text-xs leading-relaxed text-inkMuted">{id === 'next' ? 'จังหวะ 3 เดือน และสิ่งที่ลองทำได้' : id === 'overview' ? 'เข้าใจคะแนนมากขึ้น' : id === 'people' ? 'มุมของเขา และมุมของคุณ' : 'วิธีเริ่มคุย และเคลียร์เรื่องค้างใจ'}</span>
+                    <span className="mt-1 block text-xs leading-relaxed text-inkMuted">{subtitle}</span>
                   </span>
                   <ChevronDown className="mr-1 size-4 shrink-0 text-inkMuted transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" />
                 </summary>
-                <p className="pb-4 pl-1 pr-2 text-pretty text-sm leading-relaxed text-inkMuted">{detail}</p>
+                <p className="px-2 pb-5 pt-3 text-pretty text-sm leading-7 text-inkMuted">{detail}</p>
               </details>
             </li>
           ))}
@@ -265,7 +266,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
                   {busy ? 'กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)' : unlockLabel}
                 </Button>
               )}
-              <p className="text-center text-xs leading-relaxed text-inkMuted">เปิดครบทั้ง 4 ส่วน · กลับมาอ่านในประวัติได้</p>
+              <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">{preview.reassurance}</p>
               <p aria-live="polite" className="empty:hidden text-sm leading-relaxed text-inkMuted">
                 {busy ? 'เสร็จแล้วคำตอบจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
               </p>

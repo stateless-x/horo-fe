@@ -293,30 +293,34 @@ describe('ขอ QR ใหม่ conflicts', () => {
   });
 });
 
+function renderFailingDoor(failure: Error) {
+  mockApi(() => ({ ...wallet, balance: 49 }));
+  const client = new RQ.QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return rtl.render(
+    <RQ.QueryClientProvider client={client}>
+      <ReportDoor
+        partnerName="ต้น"
+        readingMinutes={11}
+        contents={[]}
+        full={false}
+        unlockRef={ROW}
+        onJump={() => {}}
+        allOpen={false}
+        onToggleAll={() => {}}
+        onUnlock={() => Promise.reject(failure)}
+      />
+    </RQ.QueryClientProvider>,
+  );
+}
+
 describe('ReportDoor unlock failure', () => {
-  test('a toast says nothing was charged; the reference line copies the full result id', async () => {
-    mockApi(() => ({ ...wallet, balance: 49 }));
+  test('a server failure: the toast says nothing was charged; the reference line copies the full result id', async () => {
     const copied: string[] = [];
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText: async (text: string) => void copied.push(text) },
     });
-    const client = new RQ.QueryClient({ defaultOptions: { queries: { retry: false } } });
-    const view = rtl.render(
-      <RQ.QueryClientProvider client={client}>
-        <ReportDoor
-          partnerName="ต้น"
-          readingMinutes={11}
-          contents={[]}
-          full={false}
-          unlockRef={ROW}
-          onJump={() => {}}
-          allOpen={false}
-          onToggleAll={() => {}}
-          onUnlock={() => Promise.reject(new Error('เขียนฉบับเต็มไม่สำเร็จ'))}
-        />
-      </RQ.QueryClientProvider>,
-    );
+    const view = renderFailingDoor(new Error('เขียนฉบับเต็มไม่สำเร็จ'));
     rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
 
     const toast = await view.findByRole('alert');
@@ -327,5 +331,17 @@ describe('ReportDoor unlock failure', () => {
     rtl.fireEvent.click(view.getByRole('button', { name: 'คัดลอกรหัสอ้างอิง' }));
     await rtl.waitFor(() => expect(view.getByText('คัดลอกแล้ว')).toBeTruthy());
     expect(copied).toEqual([ROW]);
+  });
+
+  test('a client timeout: no charge claim, a refresh hint, and the reference line stays', async () => {
+    const timeout = Object.assign(new Error('Request timed out'), { status: 408, code: 'TIMEOUT' });
+    const view = renderFailingDoor(timeout);
+    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+
+    const toast = await view.findByRole('alert');
+    expect(toast.textContent).toBe('ใช้เวลานานกว่าปกติ คำตอบอาจกำลังเสร็จ ลองรีเฟรชหน้านี้');
+    expect(view.queryByText(/ยังไม่หักมู/)).toBeNull();
+    expect(view.getByText('11111111')).toBeTruthy();
+    expect(view.getByRole('button', { name: 'คัดลอกรหัสอ้างอิง' })).toBeTruthy();
   });
 });

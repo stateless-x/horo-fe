@@ -36,8 +36,13 @@ const ENTRY_ICON: Record<NonNullable<ReportContentsEntry['icon']>, LucideIcon> =
 
 const UNLOCK_ORACLE_ART = '/assets/clay/little-oracle-mark-v1.webp';
 
-/** Owner copy (2026-09-29): a failed unlock charges nothing. Pronoun-free. */
+/** Owner copy (2026-09-29), pronoun-free. The server answered with a failure: a failed generation charges nothing. */
 export const UNLOCK_FAILED = 'เขียนคำตอบไม่สำเร็จ ยังไม่หักมู ลองใหม่ได้เลย';
+/** The client gave up waiting (api TIMEOUT): the server may still finish and charge, so no charge claim. A reload re-reads the result. */
+export const UNLOCK_TIMED_OUT = 'ใช้เวลานานกว่าปกติ คำตอบอาจกำลังเสร็จ ลองรีเฟรชหน้านี้';
+
+type UnlockFailure = 'error' | 'timeout';
+const FAILURE_COPY: Record<UnlockFailure, string> = { error: UNLOCK_FAILED, timeout: UNLOCK_TIMED_OUT };
 const TOAST_MS = 6_000;
 const COPIED_MS = 2_000;
 
@@ -154,7 +159,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const walletQuery = useWallet();
   const wallet = enabledWallet(walletQuery.data);
   const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<UnlockFailure | null>(null);
   /** Bumped per failure so a repeat failure shows the toast again. */
   const [toast, setToast] = useState(0);
   const [insufficient, setInsufficient] = useState(false);
@@ -193,7 +198,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const unlock = async () => {
     if (!onUnlock || busy) return;
     setBusy(true);
-    setFailed(false);
+    setFailed(null);
     try {
       await onUnlock();
     } catch (failure) {
@@ -202,9 +207,10 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
         // The balance changed since it was read: offer the purchase, which unlocks after paying.
         setInsufficient(true);
       } else {
-        // A failed generation charges nothing (horo-be docs/wallet.md, "The ดวงคู่ unlock").
+        // A server failure charges nothing (horo-be docs/wallet.md, "The ดวงคู่ unlock"); a client
+        // timeout (lib/api: code TIMEOUT, status 408) says nothing about the server's outcome.
         console.error('Unlock failed:', failure);
-        setFailed(true);
+        setFailed(refused.code === 'TIMEOUT' || refused.status === 408 ? 'timeout' : 'error');
         setToast((count) => count + 1);
       }
     } finally {
@@ -340,7 +346,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
               </p>
               {failed && (
                 <div className="grid justify-items-center gap-1 text-center">
-                  <p className="text-sm leading-relaxed text-danger">{UNLOCK_FAILED}</p>
+                  <p className="text-sm leading-relaxed text-danger">{FAILURE_COPY[failed]}</p>
                   {unlockRef && <ReferenceLine id={unlockRef} />}
                 </div>
               )}
@@ -351,7 +357,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           </motion.div>
         )}
       </AnimatePresence>
-      {toast > 0 && <FailureToast key={toast} message={UNLOCK_FAILED} onDismiss={() => setToast(0)} />}
+      {toast > 0 && failed && <FailureToast key={toast} message={FAILURE_COPY[failed]} onDismiss={() => setToast(0)} />}
       {wallet && price !== undefined && (
         <PackSheet
           open={sheetOpen}

@@ -298,8 +298,12 @@ owner decision for this surface, set in Sarabun Light for the reading text.
   but damage, heartbreak, dullness and cheaper-looking art are not. Keep the celestial language
   abstract: no crown, royal regalia, vajra, yantra, lotus pedestal, or other sacred object. The
   score is accessible HTML below the art, never inside a circular badge on the cover or share
-  card. A small text-free `MuGemMark` is reusable in wallet and unlock contexts; the mini seal
-  marks an opened full edition only.
+  card. The mini seal marks an opened full edition only.
+- **The มู currency image (owner, 2026-09-29):** มู is shown only by the clay crystal
+  `public/assets/currency/mu-gem-clay-{size}.webp`, through `CurrencyImage`
+  (`src/components/ui/currency-image.tsx`). The file is at least 2× the display size, capped at 256
+  (24 px → 48, 32 → 64, 48 → 96, 64 → 128, 96–128 → 256). object-contain on a transparent
+  ground: no crop, tint, stretch, glow or sparkle, and `alt=""` beside a visible "มู" label.
 - **No purple text inside the report (owner, 2026-09-27):** edition marks, the ฉบับเต็ม flag, the
   active chapter chip and rail entry, jump links and list arrows are ink or ink-muted. Purple
   stays on real buttons, focus rings, controls and fills; the progress line is Romance Pink.

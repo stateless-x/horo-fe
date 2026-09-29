@@ -30,6 +30,8 @@ const wallet: WalletState = {
       note: null,
       expiresAt: null,
       createdAt: '2026-09-27T10:00:00.000Z',
+      by: 'you',
+      amountBaht: null,
     },
     {
       id: 'l1',
@@ -41,6 +43,8 @@ const wallet: WalletState = {
       note: 'ของขวัญต้อนรับ',
       expiresAt: null,
       createdAt: '2026-09-27T09:00:00.000Z',
+      by: 'horo',
+      amountBaht: null,
     },
   ],
 };

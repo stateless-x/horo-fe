@@ -9,7 +9,7 @@ import { ELEMENT_TH, MONTH_TONE, monthName, MoonGlyph, ThaiText } from './report
 function Kit({ title, sub, children }: { title?: string; sub?: string; children: ReactNode }) {
   return (
     <div className="mt-[22px] border-t border-edge pt-[18px] font-thai">
-      {title && <h3 className="mb-1 font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{title}</h3>}
+      {title && <h3 className="mb-1 font-heading text-base font-semibold leading-snug text-ink">{title}</h3>}
       {sub && <p className="mb-2 text-sm text-inkMuted">{sub}</p>}
       {children}
     </div>
@@ -30,7 +30,7 @@ export function BasisFacts({ reader, partner, partnerName }: { reader: Palace; p
         {rows.map(([label, palace]) => (
           <div key={label} className="grid gap-0 border-t border-edge py-2.5 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)] sm:gap-3">
             <dt className="text-sm text-inkMuted">{label}</dt>
-            <dd className="text-[0.9375rem] font-medium text-ink">
+            <dd className="text-base font-medium text-ink">
               <b className="font-semibold">
                 {palace.naksat} ({palace.animal})
               </b>{' '}
@@ -55,11 +55,11 @@ export function DoAvoid({ pairs }: { pairs: NonNullable<V4Chapter['pairs']> }) {
       <ol className="divide-y divide-edge border-y border-edge">
         {pairs.map((pair, i) => (
           <li key={i} className="grid gap-3 py-4 first:pt-3 last:pb-3 sm:grid-cols-2 sm:gap-6">
-            <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-[0.9375rem] leading-[1.7] text-ink">
+            <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-base leading-[1.7] text-ink">
               <ArrowUpRight className="mt-[3px] size-4 text-success" aria-hidden="true" />
               <p><span className="mb-0.5 block font-heading text-xs font-semibold text-success sm:hidden">ลองทำแบบนี้</span><ThaiText>{pair.do}</ThaiText></p>
             </div>
-            <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-[0.9375rem] leading-[1.7] text-inkMuted">
+            <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-base leading-[1.7] text-inkMuted">
               <Pause className="mt-[3px] size-4 text-warn" aria-hidden="true" />
               <p><span className="mb-0.5 block font-heading text-xs font-semibold text-warn sm:hidden">เรื่องนี้พักไว้ก่อน</span><ThaiText>{pair.avoid}</ThaiText></p>
             </div>
@@ -86,7 +86,8 @@ export function ReadyLines({ lines, idPrefix }: { lines: string[]; idPrefix: str
 }
 
 /** Scenarios: "ถ้า…" with the repair under each. */
-export function Scenarios({ scenarios }: { scenarios: NonNullable<V4Chapter['scenarios']> }) {
+export function Scenarios({ scenarios, tone = 'romance' }: { scenarios: NonNullable<V4Chapter['scenarios']>; tone?: 'accent' | 'romance' }) {
+  const toneClass = tone === 'romance' ? 'text-romanceText' : 'text-accent';
   return (
     <Kit title="ถ้าเกิดเรื่องนี้">
       <ol className="divide-y divide-edge">
@@ -96,9 +97,9 @@ export function Scenarios({ scenarios }: { scenarios: NonNullable<V4Chapter['sce
               <ThaiText>{item.scenario}</ThaiText>
             </p>
             <div className="mt-2 grid grid-cols-[22px_minmax(0,1fr)] gap-2.5">
-              <CornerDownRight className="mt-[3px] size-4 text-romanceText" aria-hidden="true" />
-              <p className="font-oracle text-[1.0625rem] leading-[1.7] text-ink">
-                <b className="block font-heading text-[0.8125rem] font-semibold text-romanceText">ซ่อมด้วย</b>
+              <CornerDownRight className={`mt-[3px] size-4 ${toneClass}`} aria-hidden="true" />
+              <p className="font-oracle text-lg leading-[1.7] text-ink">
+                <b className={`block font-heading text-sm font-semibold ${toneClass}`}>ซ่อมด้วย</b>
                 <ThaiText>{item.repair}</ThaiText>
               </p>
             </div>
@@ -114,7 +115,7 @@ export function Signals({ go, slow }: { go: string[]; slow: string[] }) {
   const list = (items: string[]) => (
     <ul className="mt-1.5">
       {items.map((item, i) => (
-        <li key={i} className="relative border-t border-edge py-2 pl-[18px] text-[0.9375rem] leading-[1.65] text-ink">
+        <li key={i} className="relative border-t border-edge py-2 pl-[18px] text-base leading-[1.65] text-ink">
           <span className="absolute left-0.5 top-[1.05em] size-1.5 rounded-full bg-current opacity-45" aria-hidden="true" />
           <ThaiText>{item}</ThaiText>
         </li>
@@ -125,14 +126,14 @@ export function Signals({ go, slow }: { go: string[]; slow: string[] }) {
     <Kit>
       <div className="grid gap-[18px] sm:grid-cols-2 sm:gap-6">
         <div>
-          <h3 className="flex items-center gap-2 font-heading text-[1.0625rem] font-semibold text-ink">
+          <h3 className="flex items-center gap-2 font-heading text-base font-semibold text-ink">
             <CircleCheck className="size-5 text-success" aria-hidden="true" />
             สัญญาณว่าไปต่อได้
           </h3>
           {list(go)}
         </div>
         <div>
-          <h3 className="flex items-center gap-2 font-heading text-[1.0625rem] font-semibold text-ink">
+          <h3 className="flex items-center gap-2 font-heading text-base font-semibold text-ink">
             <CirclePause className="size-5 text-warn" aria-hidden="true" />
             สัญญาณว่าควรชะลอ
           </h3>
@@ -158,8 +159,8 @@ export function NextMonth({
       <div className="mt-1.5 grid grid-cols-[28px_minmax(0,1fr)] gap-3">
         <MoonGlyph label={label} className={`size-6 ${MONTH_TONE[label]}`} />
         <div>
-          <h4 className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">ก้าวต่อไปเหมาะกับเดือน{monthName(nextStep.month)}</h4>
-          <p className="mt-1 text-[0.9375rem] leading-[1.7] text-ink">
+          <h4 className="font-heading text-base font-semibold leading-snug text-ink">ก้าวต่อไปเหมาะกับเดือน{monthName(nextStep.month)}</h4>
+          <p className="mt-1 text-base leading-[1.7] text-ink">
             <ThaiText>{nextStep.step}</ThaiText>
           </p>
           <a

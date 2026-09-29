@@ -1,6 +1,7 @@
 import { Share2, Users } from 'lucide-react';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 import { Button } from '@/lib-packages/ui';
+import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityV4Teaser } from '@/lib-packages/shared/types/compatibility';
 import { DisplayLine, ELEMENT_TH, elementText, SectionHeading } from './report-kit';
 import { CompatibilityTalisman, compatibilityTalismanBand } from './compatibility-talisman';
@@ -11,6 +12,7 @@ interface ShareCardProps {
   readerName: string;
   partnerName: string;
   relationshipLabel: string;
+  relationshipType?: RelationshipType;
   onShare?: () => void;
   onNewCheck?: () => void;
 }
@@ -20,8 +22,9 @@ interface ShareCardProps {
  * score, archetype, tagline, relationship), never report text. It is always
  * the Midnight Room: a data-theme="dark" island, so the tokens resolve dark.
  */
-export function ShareCard({ content, score, readerName, partnerName, relationshipLabel, onShare, onNewCheck }: ShareCardProps) {
+export function ShareCard({ content, score, readerName, partnerName, relationshipLabel, relationshipType, onShare, onNewCheck }: ShareCardProps) {
   const talisman = compatibilityTalismanBand(score);
+  const contextTone = relationshipType === 'romantic' || relationshipType === 'talking' || !relationshipType ? 'text-romanceText' : 'text-accentBright';
   const people = [
     { name: readerName, person: content.people.reader },
     { name: partnerName, person: content.people.partner },
@@ -41,7 +44,7 @@ export function ShareCard({ content, score, readerName, partnerName, relationshi
       >
         <div className="flex items-center justify-between text-xs">
           <span className="font-heading text-base font-bold text-ink">สายมู</span>
-          <span className="font-heading font-semibold text-romanceText">{relationshipLabel}</span>
+          <span className={`font-heading font-semibold ${contextTone}`}>{relationshipLabel}</span>
         </div>
         <div className="mt-auto grid grid-cols-[minmax(0,1fr)_92px_minmax(0,1fr)] items-center gap-x-1">
           {people.map(({ name, person }, i) => (
@@ -61,7 +64,7 @@ export function ShareCard({ content, score, readerName, partnerName, relationshi
               <strong className="font-heading text-3xl font-bold leading-none tabular-nums">{score}</strong>
               <span className="font-mono text-xs text-inkMuted">/100</span>
             </p>
-            <span className="mt-1 font-heading text-xs font-semibold leading-snug text-romanceText">{talisman.label}</span>
+            <span className={`mt-1 font-heading text-xs font-semibold leading-snug ${contextTone}`}>{talisman.label}</span>
           </div>
         </div>
         <p className="mt-4 text-center font-heading text-3xl font-bold leading-tight">{content.archetype.name}</p>

@@ -57,7 +57,9 @@ const friend: RelationshipReportVisuals = {
     tension: '/assets/clay/relationships/friend.webp',
   },
   next: {
-    future: { art: '/assets/clay/relationships/friend.webp', tone: 'accent' },
+    // The friend clay cue is already the section's hero. Repeating it in the
+    // first choice makes the page look copied rather than intentionally paced.
+    future: { tone: 'accent' },
     calendar: { art: '/assets/clay/relationships/next-timing.webp' },
     // No heart-plant here: the checklist icon says "small next step" more honestly.
     plan: {},
@@ -77,7 +79,8 @@ const work: RelationshipReportVisuals = {
     tension: '/assets/clay/relationships/talking.webp',
   },
   next: {
-    future: { art: '/assets/clay/categories/career.webp', tone: 'accent' },
+    // Career is already the section hero; the choice keeps its icon-led role.
+    future: { tone: 'accent' },
     calendar: { art: '/assets/clay/relationships/next-timing.webp' },
     plan: {},
   },
@@ -96,7 +99,8 @@ const family: RelationshipReportVisuals = {
     tension: '/assets/clay/relationships/talking.webp',
   },
   next: {
-    future: { art: '/assets/clay/categories/family.webp', tone: 'accent' },
+    // Family is already the section hero; avoid repeating it immediately below.
+    future: { tone: 'accent' },
     calendar: { art: '/assets/clay/relationships/next-timing.webp' },
     plan: {},
   },

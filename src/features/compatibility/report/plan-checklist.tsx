@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check, ChevronDown, Heart } from 'lucide-react';
+import { Check, ChevronDown, Heart, Sparkles } from 'lucide-react';
 import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
 import { REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
@@ -43,6 +43,8 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
   const [openDay, setOpenDay] = useState<number | null>(null);
   const [unsaved, setUnsaved] = useState(false);
   const frame = planFrameFor(relationshipType, score);
+  const isRomanticContext = relationshipType === 'romantic' || relationshipType === 'talking' || !relationshipType;
+  const MomentIcon = isRomanticContext ? Heart : Sparkles;
 
   useEffect(() => {
     if (reportId) setTried(readTried(reportId));
@@ -69,7 +71,7 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
       />
       <div className={`${REPORT_CARD} mt-4 overflow-hidden`}>
         <div className="border-b border-edge px-5 py-4 sm:px-7">
-          <p className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{frame.prompt}</p>
+          <p className="font-heading text-base font-semibold leading-snug text-ink">{frame.prompt}</p>
           <p className="mt-1 text-sm leading-relaxed text-inkMuted">{frame.helper}</p>
         </div>
         <ol className="divide-y divide-edge">
@@ -92,10 +94,10 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
                   className="flex min-h-[76px] w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-surface2/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright sm:px-7"
                 >
                   <span className={`grid size-9 shrink-0 place-items-center rounded-full border ${hasTried ? 'border-success/30 bg-success/10 text-success' : 'border-edge bg-surface text-inkMuted'}`}>
-                    {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <Heart className="size-4" aria-hidden="true" />}
+                    {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <MomentIcon className="size-4" aria-hidden="true" />}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{moment.title}</span>
+                    <span className="block font-heading text-base font-semibold leading-snug text-ink">{moment.title}</span>
                     <span className="mt-1 block text-sm leading-relaxed text-inkMuted">{moment.detail}</span>
                   </span>
                   <ChevronDown className={`size-5 shrink-0 text-inkMuted transition-transform ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
@@ -105,7 +107,7 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
                     <div className="max-w-[62ch]">
                       <p className="font-heading text-sm font-semibold text-inkMuted">แม่หมอชวนมองแบบนี้</p>
                       <p className="mt-1 text-sm leading-relaxed text-inkMuted">หยิบไปใช้เท่าที่ไหว แล้วปรับให้เป็นแบบที่คุณพูดจริงได้</p>
-                      <p className="mt-1.5 text-[0.9375rem] leading-[1.7] text-ink">
+                      <p className="mt-1.5 text-base leading-[1.7] text-ink">
                         <ThaiText>{step.action}</ThaiText>
                       </p>
                     </div>
@@ -115,7 +117,7 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
                     </div>
                     <div className="mt-4 max-w-[62ch] border-t border-edge pt-4">
                       <p className="font-heading text-sm font-semibold text-inkMuted">แล้วค่อยดูว่าอะไรเกิดขึ้น</p>
-                      <p className="mt-1.5 text-[0.9375rem] leading-[1.7] text-ink">
+                      <p className="mt-1.5 text-base leading-[1.7] text-ink">
                         <ThaiText>{step.watchFor}</ThaiText>
                       </p>
                     </div>
@@ -124,7 +126,7 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
                       onClick={() => toggleTried(step.day)}
                       className={`mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border px-4 font-heading text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${hasTried ? 'border-success/30 bg-success/10 text-success hover:bg-success/15' : 'border-edge bg-surface text-ink hover:bg-surface2'}`}
                     >
-                      {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <Heart className="size-4" aria-hidden="true" />}
+                      {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <MomentIcon className="size-4" aria-hidden="true" />}
                       {hasTried ? 'เก็บไอเดียนี้ไว้แล้ว' : 'เก็บไอเดียนี้ไว้'}
                     </button>
                   </div>

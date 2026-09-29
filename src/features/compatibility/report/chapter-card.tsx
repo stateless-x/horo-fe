@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { ChevronDown, Sprout } from 'lucide-react';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 import type { V4Chapter } from '@/lib-packages/shared/types/compatibility';
@@ -14,8 +14,8 @@ export interface ChapterCue {
 
 interface ChapterCardProps {
   chapter: V4Chapter;
-  /** partner and you chapters take that person's element; the others are romance pink. */
-  tone: ReportElement | 'romance';
+  /** Partner and reader chapters take their element; relationship chapters use the semantic context tone. */
+  tone: ReportElement | 'accent' | 'romance';
   open: boolean;
   onToggle: () => void;
   /** The kit parts under the detail (basis facts, do/avoid, lines, scenarios, signals, next month). */
@@ -30,7 +30,8 @@ interface ChapterCardProps {
  * sits in the card's foot.
  */
 export function ChapterCard({ chapter, tone, open, onToggle, kit, cue }: ChapterCardProps) {
-  const toneText = tone === 'romance' ? 'var(--romance-text)' : `var(--el-${tone})`;
+  const toneText = tone === 'romance' ? 'var(--romance-text)' : tone === 'accent' ? 'var(--accent)' : `var(--el-${tone})`;
+  const toneStyle = { '--chapter-tone': toneText } as CSSProperties;
   const regionId = `ch-${chapter.key}-more`;
   return (
     <article
@@ -47,12 +48,12 @@ export function ChapterCard({ chapter, tone, open, onToggle, kit, cue }: Chapter
           >
             <DisplayLine text={chapter.title} />
           </h2>
-          {tone !== 'romance' && (
+          {tone !== 'romance' && tone !== 'accent' && (
             <ElementClayImage element={tone} alt={`ธาตุ${ELEMENT_TH[tone]}`} sizes="30px" className="size-[30px] shrink-0" />
           )}
         </div>
         {cue && (
-          <span className="mt-2 inline-flex min-h-7 items-center gap-1.5 rounded-full border border-romance/25 bg-romance/[0.07] px-2.5 font-heading text-xs font-medium text-romanceText">
+          <span style={toneStyle} className="mt-2 inline-flex min-h-7 items-center gap-1.5 rounded-full border border-[color:color-mix(in_srgb,var(--chapter-tone)_25%,transparent)] bg-[color:color-mix(in_srgb,var(--chapter-tone)_7%,transparent)] px-2.5 font-heading text-xs font-medium text-[var(--chapter-tone)]">
             {cue.icon}
             {cue.label}
           </span>
@@ -95,10 +96,10 @@ export function ChapterCard({ chapter, tone, open, onToggle, kit, cue }: Chapter
           </div>
         </div>
       </div>
-      <footer className="-mx-5 mt-5 grid grid-cols-[24px_minmax(0,1fr)] gap-3 border-t border-edge bg-surface2/70 px-5 pb-[18px] pt-4 sm:-mx-7 sm:mt-[22px] sm:px-7 sm:pb-5 sm:pt-[18px]">
-        <Sprout className="mt-0.5 size-5 text-romanceText" aria-hidden="true" />
+      <footer style={toneStyle} className="-mx-5 mt-5 grid grid-cols-[24px_minmax(0,1fr)] gap-3 border-t border-edge bg-surface2/70 px-5 pb-[18px] pt-4 sm:-mx-7 sm:mt-[22px] sm:px-7 sm:pb-5 sm:pt-[18px]">
+        <Sprout className="mt-0.5 size-5 text-[var(--chapter-tone)]" aria-hidden="true" />
         <div>
-          <p className="font-heading text-sm font-semibold leading-snug text-romanceText">{cue?.actionLabel ?? 'ลองทำ'}</p>
+          <p className="font-heading text-sm font-semibold leading-snug text-[var(--chapter-tone)]">{cue?.actionLabel ?? 'ลองทำ'}</p>
           <p className="mt-0.5 font-medium leading-[1.7] text-ink">
             <ThaiText>{chapter.move}</ThaiText>
           </p>

@@ -1,7 +1,13 @@
 import type { LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 
-type ActionTone = 'accent' | 'romance' | 'success' | 'warn';
+/**
+ * Purple owns report structure. Pink is reserved for romantic / talking
+ * relationships, where the choice concerns the connection itself. Success and
+ * warning stay available to describe outcomes elsewhere in the report, but are
+ * deliberately not used as decorative route colors here.
+ */
+export type ActionTone = 'accent' | 'romance';
 
 export interface SectionAction {
   id: string;
@@ -23,24 +29,14 @@ interface SectionActionMapProps {
 
 const TONE_CLASSES: Record<ActionTone, { chip: string; icon: string; card: string }> = {
   accent: {
-    chip: 'text-ink',
-    icon: 'bg-surface2 text-ink',
-    card: 'border-edge bg-surface hover:border-ink/20 hover:bg-surface2/55',
+    chip: 'text-accent',
+    icon: 'bg-accent/10 text-accent',
+    card: 'hover:border-accent/30 hover:bg-surface2/70 hover:shadow-[0_12px_24px_rgba(107,33,168,0.09)]',
   },
   romance: {
     chip: 'text-romanceText',
     icon: 'bg-romance/10 text-romanceText',
-    card: 'border-romance/20 bg-romance/[0.035] hover:border-romance/40 hover:bg-romance/[0.07]',
-  },
-  success: {
-    chip: 'text-success',
-    icon: 'bg-success/[0.1] text-success',
-    card: 'border-success/20 bg-success/[0.035] hover:border-success/40 hover:bg-success/[0.07]',
-  },
-  warn: {
-    chip: 'text-warn',
-    icon: 'bg-warn/[0.1] text-warn',
-    card: 'border-warn/20 bg-warn/[0.035] hover:border-warn/40 hover:bg-warn/[0.07]',
+    card: 'hover:border-romance/35 hover:bg-romance/[0.045] hover:shadow-[0_12px_24px_rgba(232,93,117,0.1)]',
   },
 };
 
@@ -66,7 +62,7 @@ export function SectionActionMap({ title, helper, actions, onChoose }: SectionAc
               key={action.id}
               type="button"
               onClick={() => onChoose(action.id)}
-              className={`group min-h-[140px] rounded-2xl border px-3 py-3.5 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(107,33,168,0.09)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[152px] sm:px-4 ${tone.card} ${spansPhoneRow ? 'col-span-2 min-[720px]:col-span-1' : ''}`}
+              className={`group min-h-[140px] rounded-2xl border border-edge bg-surface px-3 py-3.5 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[152px] sm:px-4 ${tone.card} ${spansPhoneRow ? 'col-span-2 min-[720px]:col-span-1' : ''}`}
             >
               <span className="flex items-start justify-between gap-3">
                 <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${tone.icon}`}>

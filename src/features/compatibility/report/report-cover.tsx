@@ -1,6 +1,7 @@
-import { Heart } from 'lucide-react';
+import { BriefcaseBusiness, Heart, House, UsersRound, type LucideIcon } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
+import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityV4Teaser } from '@/lib-packages/shared/types/compatibility';
 import {
   BOUND_FRAME,
@@ -50,8 +51,16 @@ interface ReportCoverProps {
   readerName: string;
   partnerName: string;
   relationshipLabel: string;
+  relationshipType?: RelationshipType;
   /** Full report open: the bound frame and the ฉบับเต็ม flag appear. */
   full: boolean;
+}
+
+function relationshipMark(type?: RelationshipType): { Icon: LucideIcon; tone: string } {
+  if (type === 'friend') return { Icon: UsersRound, tone: 'text-accent' };
+  if (type === 'boss' || type === 'coworker') return { Icon: BriefcaseBusiness, tone: 'text-accent' };
+  if (type === 'family') return { Icon: House, tone: 'text-accent' };
+  return { Icon: Heart, tone: 'text-romanceText' };
 }
 
 /**
@@ -59,10 +68,11 @@ interface ReportCoverProps {
  * page title, its tagline and the verdict. The number stays accessible HTML
  * outside the artwork and never becomes an exam-like circular badge.
  */
-export function ReportCover({ content, score, readerName, partnerName, relationshipLabel, full }: ReportCoverProps) {
+export function ReportCover({ content, score, readerName, partnerName, relationshipLabel, relationshipType, full }: ReportCoverProps) {
   const reduce = useReducedMotion();
   const { reader, partner } = content.people;
   const talisman = compatibilityTalismanBand(score);
+  const relationship = relationshipMark(relationshipType);
   return (
     <section
       aria-labelledby="report-archetype"
@@ -85,7 +95,7 @@ export function ReportCover({ content, score, readerName, partnerName, relations
             <strong className="font-heading text-5xl font-bold leading-none tracking-[-0.04em] text-ink tabular-nums">{score}</strong>
             <span className="font-mono text-xs font-medium text-inkMuted">/100</span>
           </p>
-          <p className="mt-1 font-heading text-sm font-semibold leading-snug text-romanceText">{talisman.label}</p>
+          <p className={`mt-1 font-heading text-sm font-semibold leading-snug ${relationship.tone}`}>{talisman.label}</p>
         </motion.div>
         <PersonColumn name={partnerName} person={partner} className="col-start-2 row-start-2 sm:col-start-3 sm:row-start-1" />
       </div>
@@ -103,8 +113,8 @@ export function ReportCover({ content, score, readerName, partnerName, relations
         <ThaiText>{content.verdict}</ThaiText>
       </p>
       <div className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-inkMuted">
-        <span className="inline-flex items-center gap-1.5 font-heading font-semibold text-romanceText">
-          <Heart className="size-4" aria-hidden="true" />
+        <span className={`inline-flex items-center gap-1.5 font-heading font-semibold ${relationship.tone}`}>
+          <relationship.Icon className="size-4" aria-hidden="true" />
           {relationshipLabel}
         </span>
         {full && content.generatedOn && <span>{coverDate(content.generatedOn)}</span>}

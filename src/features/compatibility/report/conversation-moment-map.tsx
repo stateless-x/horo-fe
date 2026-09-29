@@ -1,8 +1,8 @@
-import Image from 'next/image';
-import { HeartHandshake, MessageCircleMore } from 'lucide-react';
+import { Handshake, HeartHandshake, MessageCircleMore } from 'lucide-react';
 import type { RelationshipType } from '@/lib-packages/shared';
 import { relationshipReportCopy } from './report-copy';
 import { relationshipReportVisuals } from './report-visuals';
+import { SectionActionMap, type ActionTone } from './section-action-map';
 
 type ConversationMoment = 'communication' | 'friction';
 
@@ -19,66 +19,18 @@ interface ConversationMomentMapProps {
 export function ConversationMomentMap({ onChoose, relationshipType }: ConversationMomentMapProps) {
   const copy = relationshipReportCopy(relationshipType).conversation;
   const visuals = relationshipReportVisuals(relationshipType).conversation;
+  const tone: ActionTone = relationshipType === 'romantic' || relationshipType === 'talking' || !relationshipType ? 'romance' : 'accent';
+  const repairIcon = tone === 'romance' ? HeartHandshake : Handshake;
 
   return (
-    <section aria-labelledby="conversation-moment-map" className="border-y border-edge py-4 sm:py-5">
-      <div className="flex items-baseline justify-between gap-3">
-        <h3 id="conversation-moment-map" className="font-heading text-lg font-semibold leading-snug text-ink">
-          {copy.title}
-        </h3>
-        <p className="shrink-0 text-xs leading-relaxed text-inkMuted">{copy.helper}</p>
-      </div>
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:gap-4">
-        <button
-          type="button"
-          onClick={() => onChoose('communication')}
-          className="group relative min-h-[142px] overflow-clip rounded-2xl border border-edge bg-surface px-3 pb-3 pt-4 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accentBright/30 hover:bg-surface2/55 hover:shadow-[0_12px_24px_rgba(107,33,168,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[154px] sm:px-4"
-        >
-          <Image
-            src={visuals.open}
-            alt=""
-            width={480}
-            height={480}
-            sizes="(min-width: 640px) 72px, 58px"
-            className="absolute right-1.5 top-1.5 size-[58px] object-contain transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none sm:right-3 sm:top-2 sm:size-[72px]"
-          />
-          <span className="inline-flex items-center gap-1.5 font-heading text-xs font-medium text-romanceText">
-            <MessageCircleMore className="size-3.5" aria-hidden="true" />
-            {copy.open.tag}
-          </span>
-          <span className="mt-7 block max-w-[14ch] font-heading text-base font-semibold leading-snug text-ink sm:mt-8 sm:text-lg">
-            {copy.open.title}
-          </span>
-          <span className="mt-1 block max-w-[17ch] text-xs leading-relaxed text-inkMuted sm:text-sm">
-            {copy.open.detail}
-          </span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => onChoose('friction')}
-          className="group relative min-h-[142px] overflow-clip rounded-2xl border border-romance/20 bg-romance/[0.045] px-3 pb-3 pt-4 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-romance/35 hover:bg-romance/[0.08] hover:shadow-[0_12px_24px_rgba(232,93,117,0.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[154px] sm:px-4"
-        >
-          <Image
-            src={visuals.tension}
-            alt=""
-            width={1254}
-            height={1254}
-            sizes="(min-width: 640px) 86px, 68px"
-            className="absolute -right-1 top-0.5 size-[68px] object-contain transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none sm:right-1 sm:size-[86px]"
-          />
-          <span className="inline-flex items-center gap-1.5 font-heading text-xs font-medium text-romanceText">
-            <HeartHandshake className="size-3.5" aria-hidden="true" />
-            {copy.tension.tag}
-          </span>
-          <span className="mt-7 block max-w-[14ch] font-heading text-base font-semibold leading-snug text-ink sm:mt-8 sm:text-lg">
-            {copy.tension.title}
-          </span>
-          <span className="mt-1 block max-w-[17ch] text-xs leading-relaxed text-inkMuted sm:text-sm">
-            {copy.tension.detail}
-          </span>
-        </button>
-      </div>
-    </section>
+    <SectionActionMap
+      title={copy.title}
+      helper={copy.helper}
+      onChoose={(id) => onChoose(id as ConversationMoment)}
+      actions={[
+        { id: 'communication', ...copy.open, icon: MessageCircleMore, tone, art: visuals.open },
+        { id: 'friction', ...copy.tension, icon: repairIcon, tone, art: visuals.tension },
+      ]}
+    />
   );
 }

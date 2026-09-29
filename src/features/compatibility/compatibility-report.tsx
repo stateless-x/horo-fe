@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowLeft, ArrowRight, CalendarDays, ChartNoAxesCombined, ChevronRight, CircleUserRound, HeartHandshake, ListChecks, MessageCircleMore, Sparkles, UserRound, Share2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BriefcaseBusiness, CalendarDays, ChartNoAxesCombined, ChevronRight, CircleUserRound, HeartHandshake, House, ListChecks, MessageCircleMore, Sparkles, UserRound, UsersRound, Share2 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
@@ -95,6 +95,7 @@ export function CompatibilityReport({
   const full = isFull(content) ? content : null;
   const reader = readerName ?? 'คุณ';
   const relationshipLabel = relationshipType ? `ดวง${RELATIONSHIP_LABELS[relationshipType]}` : 'ดวงคู่';
+  const relationshipTone = relationshipType === 'romantic' || relationshipType === 'talking' || !relationshipType ? 'romance' : 'accent';
   const reportCopy = relationshipReportCopy(relationshipType);
   const reportVisuals = relationshipReportVisuals(relationshipType);
   const reportSections = REPORT_SECTION_IDS.map((id) => ({
@@ -217,6 +218,7 @@ export function CompatibilityReport({
             readerName={reader}
             partnerName={partnerName}
             relationshipLabel={relationshipLabel}
+            relationshipType={relationshipType}
             full={false}
           />
           <div className="mt-12 sm:mt-16">
@@ -268,10 +270,10 @@ export function CompatibilityReport({
       <ChapterCard
         key={chapter.key}
         chapter={chapter}
-        tone={chapterTone(chapter.key, full)}
+        tone={chapterTone(chapter.key, full, relationshipTone)}
         open={openChapters.has(chapter.key)}
         onToggle={() => toggleChapter(chapter.key)}
-        kit={chapterKit(chapter, full, partnerName, jump)}
+        kit={chapterKit(chapter, full, partnerName, jump, relationshipTone)}
         cue={chapterCue(chapter.key)}
       />
     );
@@ -296,7 +298,7 @@ export function CompatibilityReport({
     <div className="mx-auto w-full min-w-0 max-w-[720px]">
       <ReportCover
         content={{ archetype: content.archetype, people: content.people, verdict: content.cover.verdict, generatedOn: content.generatedOn }}
-        score={score} readerName={reader} partnerName={partnerName} relationshipLabel={relationshipLabel} full={!!full} />
+        score={score} readerName={reader} partnerName={partnerName} relationshipLabel={relationshipLabel} relationshipType={relationshipType} full={!!full} />
 
       {full ? (
         <>
@@ -396,8 +398,8 @@ export function CompatibilityReport({
                       onChoose={jump}
                       actions={[
                         { id: 'report-dimensions-section', tag: 'เช็กจุดแข็ง', title: 'ดู 4 มิติของคู่นี้', detail: 'เคมี การสื่อสาร ความไว้ใจ และจังหวะชีวิต', icon: ChartNoAxesCombined, tone: 'accent' },
-                        { id: 'report-overview-section', tag: 'เริ่มจากภาพใหญ่', title: 'อ่านเรื่องของคู่นี้', detail: 'ดูภาพรวมว่าอะไรพาให้มาเจอกัน', icon: Sparkles, tone: 'success' },
-                        { id: 'ch-attraction', ...reportCopy.overviewAction, icon: HeartHandshake, tone: 'romance' },
+                        { id: 'report-overview-section', tag: 'เริ่มจากภาพใหญ่', title: 'อ่านเรื่องของคู่นี้', detail: 'ดูภาพรวมว่าอะไรพาให้มาเจอกัน', icon: Sparkles, tone: 'accent' },
+                        { id: 'ch-attraction', ...reportCopy.overviewAction, icon: relationshipActionIcon(relationshipType), tone: relationshipTone },
                       ]}
                       />
                     <section id="report-overview-section" aria-labelledby="report-overview" className="mt-8 scroll-mt-20">
@@ -422,7 +424,7 @@ export function CompatibilityReport({
                       onChoose={jump}
                       actions={[
                         { id: 'ch-partner', ...reportCopy.peopleActions.partner, icon: UserRound, tone: 'accent' },
-                        { id: 'ch-you', ...reportCopy.peopleActions.reader, icon: CircleUserRound, tone: 'success' },
+                        { id: 'ch-you', ...reportCopy.peopleActions.reader, icon: CircleUserRound, tone: 'accent' },
                       ]}
                     />
                     <div className="mt-5 space-y-4">{renderChapter('partner')}{renderChapter('you')}</div>
@@ -444,9 +446,9 @@ export function CompatibilityReport({
                         helper="เลือกข้อที่ตรงกับใจตอนนี้"
                         onChoose={jump}
                         actions={[
-                          { id: 'ch-future', ...reportCopy.nextActions.future, icon: HeartHandshake, ...reportVisuals.next.future },
-                          { id: 'report-calendar-section', ...reportCopy.nextActions.calendar, icon: CalendarDays, tone: 'warn', art: reportVisuals.next.calendar.art },
-                          { id: 'report-plan-section', ...reportCopy.nextActions.plan, icon: ListChecks, tone: 'success', art: reportVisuals.next.plan.art },
+                          { id: 'ch-future', ...reportCopy.nextActions.future, icon: relationshipActionIcon(relationshipType), ...reportVisuals.next.future },
+                          { id: 'report-calendar-section', ...reportCopy.nextActions.calendar, icon: CalendarDays, tone: 'accent', art: reportVisuals.next.calendar.art },
+                          { id: 'report-plan-section', ...reportCopy.nextActions.plan, icon: ListChecks, tone: 'accent', art: reportVisuals.next.plan.art },
                         ]}
                       />
                     </div>
@@ -469,6 +471,7 @@ export function CompatibilityReport({
                         readerName={reader}
                         partnerName={partnerName}
                         relationshipLabel={relationshipLabel}
+                        relationshipType={relationshipType}
                         onShare={onShare}
                         onNewCheck={onNewCheck}
                       />
@@ -561,10 +564,18 @@ function CHAPTER_TITLE_TEASER(key: V4ChapterKey, partnerName: string): string {
   }[key];
 }
 
-function chapterTone(key: V4ChapterKey, content: CompatibilityV4Content): ReportElement | 'romance' {
+function chapterTone(key: V4ChapterKey, content: CompatibilityV4Content, relationshipTone: 'accent' | 'romance'): ReportElement | 'accent' | 'romance' {
   if (key === 'partner') return content.people.partner.element;
   if (key === 'you') return content.people.reader.element;
-  return 'romance';
+  return relationshipTone;
+}
+
+/** Keep the action's icon as context-aware as its copy and clay cue. */
+function relationshipActionIcon(type?: RelationshipType) {
+  if (type === 'friend') return UsersRound;
+  if (type === 'boss' || type === 'coworker') return BriefcaseBusiness;
+  if (type === 'family') return House;
+  return HeartHandshake;
 }
 
 /** A small tag gives the two conversation tools a use-case before the reader opens either one. */
@@ -590,7 +601,13 @@ function chapterCue(key: V4ChapterKey) {
   return undefined;
 }
 
-function chapterKit(chapter: V4Chapter, content: CompatibilityV4Content, partnerName: string, jump: (id: string) => void) {
+function chapterKit(
+  chapter: V4Chapter,
+  content: CompatibilityV4Content,
+  partnerName: string,
+  jump: (id: string) => void,
+  relationshipTone: 'accent' | 'romance',
+) {
   switch (chapter.key) {
     case 'attraction':
       return <BasisFacts reader={content.palace.reader} partner={content.palace.partner} partnerName={partnerName} />;
@@ -602,7 +619,7 @@ function chapterKit(chapter: V4Chapter, content: CompatibilityV4Content, partner
         </>
       );
     case 'friction':
-      return chapter.scenarios ? <Scenarios scenarios={chapter.scenarios} /> : null;
+      return chapter.scenarios ? <Scenarios scenarios={chapter.scenarios} tone={relationshipTone} /> : null;
     case 'future': {
       if (!chapter.nextStep || !chapter.goSignals || !chapter.slowSignals) return null;
       const nextStep = chapter.nextStep;

@@ -28,6 +28,7 @@ import { ShareCard } from './report/share-card';
 import { MiniSeal, paragraphs, SectionHeading, ThaiText, type ReportElement } from './report/report-kit';
 import { REPORT_SECTION_IDS, relationshipReportCopy, type ReportSectionId } from './report/report-copy';
 import { relationshipReportVisuals } from './report/report-visuals';
+import { useHorizontalDragScroll } from './report/use-horizontal-drag-scroll';
 
 interface CompatibilityReportProps {
   score: number;
@@ -105,6 +106,7 @@ export function CompatibilityReport({
   const doorRef = useRef<HTMLDivElement>(null);
   const sectionNavRef = useRef<HTMLDivElement>(null);
   const tabListRef = useRef<HTMLDivElement>(null);
+  const tabRailDrag = useHorizontalDragScroll(tabListRef);
   const [openChapters, setOpenChapters] = useState<Set<V4ChapterKey>>(new Set());
   const [activeSection, setActiveSection] = useState<ReportSection>('overview');
 
@@ -315,7 +317,8 @@ export function CompatibilityReport({
                 aria-label="ส่วนของคำตอบฉบับเต็ม"
                 ref={tabListRef}
                 onKeyDown={handleTabsKeyDown}
-                className="flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain py-1 pr-12 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:overflow-visible md:pr-0 md:snap-none"
+                {...tabRailDrag}
+                className="flex snap-x snap-mandatory cursor-grab select-none gap-2 overflow-x-auto overscroll-x-contain py-1 pr-12 active:cursor-grabbing [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:cursor-default md:overflow-visible md:pr-0 md:snap-none"
               >
                 {reportSections.map((section) => {
                   const selected = activeSection === section.id;

@@ -1,6 +1,8 @@
 import { ArrowUp } from 'lucide-react';
+import { useRef } from 'react';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
 import { MONTH_TONE, monthName, REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
+import { useHorizontalDragScroll } from './use-horizontal-drag-scroll';
 
 const CALENDAR_STATE = {
   good: 'คุยเรื่องสำคัญได้',
@@ -22,6 +24,9 @@ interface MonthTilesProps {
  * label, so its meaning never depends on color or an icon alone.
  */
 export function MonthTiles({ calendar, nextStepMonth, futureTitle, onJumpToFuture }: MonthTilesProps) {
+  const monthRailRef = useRef<HTMLOListElement>(null);
+  const monthRailDrag = useHorizontalDragScroll(monthRailRef);
+
   return (
     <section id="report-calendar-section" aria-labelledby="report-calendar" className="scroll-mt-32 min-[1120px]:scroll-mt-20">
       <SectionHeading
@@ -32,16 +37,18 @@ export function MonthTiles({ calendar, nextStepMonth, futureTitle, onJumpToFutur
       <ol
         tabIndex={0}
         aria-label="เลื่อนดูจังหวะความสัมพันธ์ในแต่ละเดือน"
-        className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 pr-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+        ref={monthRailRef}
+        {...monthRailDrag}
+        className="mt-4 flex snap-x snap-mandatory cursor-grab select-none gap-3 overflow-x-auto overscroll-x-contain pb-3 pr-4 active:cursor-grabbing [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
       >
         {calendar.map((month) => (
           <li key={month.month} className={`${REPORT_CARD} w-72 shrink-0 snap-start px-[18px] pb-[18px] pt-4 sm:w-80`}>
-            <span className="font-heading text-[1.0625rem] font-semibold leading-snug text-ink">{monthName(month.month)}</span>
-            <p className={`mt-2.5 font-heading text-[0.9375rem] font-semibold leading-snug ${MONTH_TONE[month.label]}`}>
+            <span className="font-heading text-base font-semibold leading-snug text-ink">{monthName(month.month)}</span>
+            <p className={`mt-2.5 font-heading text-base font-semibold leading-snug ${MONTH_TONE[month.label]}`}>
               <span className="text-inkMuted">เดือนนี้: </span>
               {CALENDAR_STATE[month.label]}
             </p>
-            <p className="mt-3.5 text-[0.9375rem] leading-[1.7] text-ink">
+            <p className="mt-3.5 text-base leading-[1.7] text-ink">
               <ThaiText>{month.text}</ThaiText>
             </p>
             {month.month === nextStepMonth && (

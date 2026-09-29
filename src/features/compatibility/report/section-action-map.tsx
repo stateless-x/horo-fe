@@ -1,5 +1,9 @@
+'use client';
+
+import { useRef } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import Image from 'next/image';
+import { useHorizontalDragScroll } from './use-horizontal-drag-scroll';
 
 /**
  * Purple owns report structure. Pink is reserved for romantic / talking
@@ -43,6 +47,8 @@ const TONE_CLASSES: Record<ActionTone, { chip: string; icon: string; card: strin
 /** A lightweight decision point at the start of each report tab. It always scrolls to real reading content. */
 export function SectionActionMap({ title, helper, actions, onChoose }: SectionActionMapProps) {
   const hasThreeActions = actions.length === 3;
+  const actionRailRef = useRef<HTMLDivElement>(null);
+  const actionRailDrag = useHorizontalDragScroll(actionRailRef);
 
   return (
     <section aria-labelledby={`action-map-${title}`} className="border-y border-edge py-4 sm:py-5">
@@ -52,17 +58,20 @@ export function SectionActionMap({ title, helper, actions, onChoose }: SectionAc
         </h3>
         <p className="text-sm leading-relaxed text-inkMuted sm:shrink-0 sm:text-xs">{helper}</p>
       </div>
-      <div className={`mt-3 grid grid-cols-2 gap-3 sm:gap-4 ${hasThreeActions ? 'min-[720px]:grid-cols-3' : ''}`}>
-        {actions.map((action, index) => {
+      <div
+        ref={hasThreeActions ? actionRailRef : undefined}
+        {...(hasThreeActions ? actionRailDrag : {})}
+        className={`mt-3 gap-3 sm:gap-4 ${hasThreeActions ? 'flex snap-x snap-mandatory cursor-grab overflow-x-auto overscroll-x-contain pr-5 active:cursor-grabbing [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-3 sm:cursor-default sm:overflow-visible sm:pr-0 sm:snap-none' : 'grid grid-cols-2'}`}
+      >
+        {actions.map((action) => {
           const Icon = action.icon;
           const tone = TONE_CLASSES[action.tone];
-          const spansPhoneRow = hasThreeActions && index === 2;
           return (
             <button
               key={action.id}
               type="button"
               onClick={() => onChoose(action.id)}
-              className={`group min-h-[140px] rounded-2xl border border-edge bg-surface px-3 py-3.5 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[152px] sm:px-4 ${tone.card} ${spansPhoneRow ? 'col-span-2 min-[720px]:col-span-1' : ''}`}
+              className={`group min-h-[140px] rounded-2xl border border-edge bg-surface px-3 py-3.5 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[152px] sm:px-4 ${tone.card} ${hasThreeActions ? 'w-[calc((100vw-52px)/2)] min-w-[156px] shrink-0 snap-start sm:min-w-0 sm:w-auto' : ''}`}
             >
               <span className="flex items-start justify-between gap-3">
                 <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${tone.icon}`}>

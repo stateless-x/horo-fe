@@ -37,14 +37,18 @@ export function useHorizontalDragScroll<T extends HTMLElement>(ref: RefObject<T 
         startScrollLeft: element.scrollLeft,
         didDrag: false,
       };
-      element.setPointerCapture(event.pointerId);
     },
     onPointerMove: (event: PointerEvent<T>) => {
       const current = drag.current;
       const element = ref.current;
       if (!current || !element || current.pointerId !== event.pointerId) return;
       const distance = event.clientX - current.startX;
-      if (Math.abs(distance) > 3) current.didDrag = true;
+      // Do not capture a simple click. Capturing immediately can make a child
+      // button lose its native click on some touchpads and WebViews.
+      if (Math.abs(distance) > 6) {
+        current.didDrag = true;
+        if (!element.hasPointerCapture(event.pointerId)) element.setPointerCapture(event.pointerId);
+      }
       if (!current.didDrag) return;
       event.preventDefault();
       element.scrollLeft = current.startScrollLeft - distance;

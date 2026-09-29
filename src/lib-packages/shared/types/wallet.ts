@@ -103,28 +103,29 @@ export const CheckoutRequestSchema = z.object({
   packId: z.enum(PACK_IDS),
   /** One-flow purchase: the ดวงคู่ row to unlock as soon as this order is paid. */
   unlockRef: z.string().uuid().optional(),
+  /** "ขอ QR ใหม่": the user's pending order whose QR this one replaces; its charge is canceled first. */
+  replaceOrderId: z.string().uuid().optional(),
 });
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
 
 /**
  * POST /api/wallet/checkout. `qr`: a PromptPay QR to show until `expiresAt`;
  * poll GET /api/wallet/orders/:id for the result. `unavailable`: no payment
- * provider can take the order.
+ * provider is configured, and no order was created.
  */
 export type CheckoutResponse =
   | {
       orderId: string;
       status: 'pending';
       payment: 'qr';
-      /** `data` is the PromptPay payload to render; `pngUrl` a ready image, when the provider gives one. */
-      qr: { data: string; pngUrl: string | null };
+      /** `data` is the PromptPay payload to render; `pngUrl` and `svgUrl` ready images, when the provider gives them. */
+      qr: { data: string; pngUrl: string | null; svgUrl: string | null };
       /** ISO date. Horo expires the order after this; a late scan still credits. */
       expiresAt: string;
       amountBaht: number;
     }
   | {
-      orderId: string;
-      status: 'pending';
+      /** No payment provider is configured (PAYMENT_PROVIDER unset or none); no order is created. */
       payment: 'unavailable';
       message: string;
     };

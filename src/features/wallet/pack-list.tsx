@@ -43,6 +43,7 @@ export function PackList({ packs, selected, onSelect }: PackListProps) {
             type="button"
             role="radio"
             aria-checked={checked}
+            aria-label={topupCopy.packName(pack)}
             tabIndex={checked ? 0 : -1}
             onClick={() => onSelect(pack.id)}
             onKeyDown={(event) => onKeyDown(event, index)}
@@ -64,7 +65,6 @@ export function PackList({ packs, selected, onSelect }: PackListProps) {
                   <span className="rounded-full bg-accent px-2 py-0.5 font-heading text-xs font-semibold text-accentInk">{topupCopy.bestValue}</span>
                 )}
               </span>
-              {pack.bonus > 0 && <span className="mt-0.5 block text-xs leading-relaxed text-inkMuted">{topupCopy.bonusExpiry(pack.bonus)}</span>}
             </span>
             <span className="font-heading text-lg font-semibold tabular-nums text-ink">{baht(pack.priceBaht)}</span>
             <span

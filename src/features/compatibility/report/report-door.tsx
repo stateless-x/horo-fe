@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, BookOpen, CalendarDays, ChevronDown, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
+import { ArrowRight, BookOpen, CalendarDays, Check, ChevronDown, Copy, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
 import type { ApiError } from '@/lib/api';
@@ -34,6 +35,86 @@ const ENTRY_ICON: Record<NonNullable<ReportContentsEntry['icon']>, LucideIcon> =
 };
 
 const UNLOCK_ORACLE_ART = '/assets/clay/little-oracle-mark-v1.webp';
+
+/** Owner copy (2026-09-29): a failed unlock charges nothing. Pronoun-free. */
+export const UNLOCK_FAILED = 'เขียนคำตอบไม่สำเร็จ ยังไม่หักมู ลองใหม่ได้เลย';
+const TOAST_MS = 6_000;
+const COPIED_MS = 2_000;
+
+/**
+ * A transient notice at the bottom of the screen, portaled to <body> (the
+ * door's CTA sits in a clipped, transformed box). role="alert" announces it.
+ */
+function FailureToast({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+  const reduce = useReducedMotion();
+  // One timer per toast: the door re-renders (busy, wallet refetch) must not restart it.
+  const dismiss = useRef(onDismiss);
+  dismiss.current = onDismiss;
+  useEffect(() => {
+    const timer = setTimeout(() => dismiss.current(), TOAST_MS);
+    return () => clearTimeout(timer);
+  }, []);
+  return createPortal(
+    <div className="pointer-events-none fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 flex justify-center">
+      <motion.p
+        role="alert"
+        initial={reduce ? false : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-sm rounded-xl border border-edge bg-overlay px-4 py-3 text-center text-sm leading-relaxed text-ink shadow-[0_8px_24px_rgb(0_0_0/0.25)]"
+      >
+        {message}
+      </motion.p>
+    </div>,
+    document.body,
+  );
+}
+
+/**
+ * "รหัสอ้างอิง 1a2b3c4d" with a copy button for support: shows the short id,
+ * copies the full compatibility result id.
+ */
+export function ReferenceLine({ id }: { id: string }) {
+  const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const copy = async () => {
+    clearTimeout(timer.current);
+    try {
+      await navigator.clipboard.writeText(id);
+    } catch (failure) {
+      // No clipboard (an in-app browser without permission): the full id is shown to copy by hand.
+      console.error('Copying the reference id failed:', failure);
+      setState('failed');
+      return;
+    }
+    setState('copied');
+    timer.current = setTimeout(() => setState('idle'), COPIED_MS);
+  };
+
+  return (
+    <p className="flex flex-wrap items-center justify-center gap-x-1 text-xs text-inkMuted">
+      <span>
+        รหัสอ้างอิง <span className="font-mono tabular-nums text-ink">{id.slice(0, 8)}</span>
+      </span>
+      <button
+        type="button"
+        onClick={copy}
+        aria-label="คัดลอกรหัสอ้างอิง"
+        className="grid size-11 place-items-center rounded-lg text-inkMuted transition-colors hover:bg-edgeSoft hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+      >
+        {state === 'copied' ? <Check className="size-4 text-success" aria-hidden="true" /> : <Copy className="size-4" aria-hidden="true" />}
+      </button>
+      <span role="status" className="empty:hidden">
+        {state === 'copied' ? 'คัดลอกแล้ว' : ''}
+      </span>
+      {state === 'failed' && (
+        <span className="basis-full select-all break-all font-mono text-ink">{id}</span>
+      )}
+    </p>
+  );
+}
 
 export function EntryMark({ entry }: { entry: ReportContentsEntry }) {
   if (!entry.icon) return <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />;
@@ -73,7 +154,9 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const walletQuery = useWallet();
   const wallet = enabledWallet(walletQuery.data);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
+  /** Bumped per failure so a repeat failure shows the toast again. */
+  const [toast, setToast] = useState(0);
   const [insufficient, setInsufficient] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -96,12 +179,12 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const pack = wallet && price !== undefined && balance !== undefined ? doorPacks(wallet.packs, price - balance)[0] : undefined;
 
   /**
-   * A one-flow order is paid and credited: close the sheet and run the same
-   * unlock as the button. The backend's own unlock of this row may be running;
-   * the unlock route joins it and charges the row once.
+   * A one-flow order is paid and credited: run the same unlock as the button
+   * while the sheet shows "+49 มู · กำลังเปิดคำตอบ…"; the sheet closes once
+   * this settles. The backend's own unlock of this row may be running; the
+   * unlock route joins it and charges the row once.
    */
   const unlockAfterPayment = async () => {
-    setSheetOpen(false);
     setInsufficient(false);
     await queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
     await unlock();
@@ -110,7 +193,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const unlock = async () => {
     if (!onUnlock || busy) return;
     setBusy(true);
-    setError(null);
+    setFailed(false);
     try {
       await onUnlock();
     } catch (failure) {
@@ -119,8 +202,10 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
         // The balance changed since it was read: offer the purchase, which unlocks after paying.
         setInsufficient(true);
       } else {
-        // The caller turns a failed request into a message for the reader.
-        setError(failure instanceof Error ? failure.message : String(failure));
+        // A failed generation charges nothing (horo-be docs/wallet.md, "The ดวงคู่ unlock").
+        console.error('Unlock failed:', failure);
+        setFailed(true);
+        setToast((count) => count + 1);
       }
     } finally {
       setBusy(false);
@@ -253,10 +338,11 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
               <p aria-live="polite" className="empty:hidden text-sm leading-relaxed text-inkMuted">
                 {busy ? 'เสร็จแล้วคำตอบจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
               </p>
-              {error && (
-                <p role="alert" className="text-sm leading-relaxed text-danger">
-                  {error}
-                </p>
+              {failed && (
+                <div className="grid justify-items-center gap-1 text-center">
+                  <p className="text-sm leading-relaxed text-danger">{UNLOCK_FAILED}</p>
+                  {unlockRef && <ReferenceLine id={unlockRef} />}
+                </div>
               )}
               {!short && price !== undefined && balance !== undefined && (
                 <p className="text-center text-sm leading-relaxed text-inkMuted">ยอดคงเหลือ {units(balance)}</p>
@@ -265,6 +351,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           </motion.div>
         )}
       </AnimatePresence>
+      {toast > 0 && <FailureToast key={toast} message={UNLOCK_FAILED} onDismiss={() => setToast(0)} />}
       {wallet && price !== undefined && (
         <PackSheet
           open={sheetOpen}

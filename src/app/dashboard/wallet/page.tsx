@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
+import { CurrencyImage } from '@/components/ui/currency-image';
 import { LedgerList } from '@/features/wallet/ledger-list';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { enabledWallet, useWallet } from '@/features/wallet/use-wallet';
@@ -41,7 +41,7 @@ export default function WalletPage() {
           <>
             <section aria-labelledby="wallet-balance" className="rounded-2xl border border-edge bg-surface px-5 py-5">
               <h2 id="wallet-balance" className="flex items-center gap-2 text-sm text-inkMuted">
-                <Sparkles className="size-4" aria-hidden="true" />
+                <CurrencyImage size={24} />
                 ยอดคงเหลือ
               </h2>
               <p className="mt-1 font-heading text-4xl font-semibold text-ink">

@@ -12,6 +12,7 @@ import type { TopupContext } from './pack-sheet';
 let rtl: typeof import('@testing-library/react');
 let RQ: typeof import('@tanstack/react-query');
 let PackSheet: typeof import('./pack-sheet').PackSheet;
+let ReportDoor: typeof import('@/features/compatibility/report/report-door').ReportDoor;
 let PENDING_ORDER_KEY: string;
 
 beforeAll(async () => {
@@ -19,6 +20,7 @@ beforeAll(async () => {
   rtl = await import('@testing-library/react');
   RQ = await import('@tanstack/react-query');
   PackSheet = (await import('./pack-sheet')).PackSheet;
+  ReportDoor = (await import('@/features/compatibility/report/report-door')).ReportDoor;
   PENDING_ORDER_KEY = (await import('./pending-order')).PENDING_ORDER_KEY;
 });
 
@@ -49,13 +51,23 @@ const ROW = '11111111-1111-4111-8111-111111111111';
 
 type Call = { method: string; url: string; body?: unknown };
 
-/** Replaces fetch with a router over the wallet routes; records every call. */
+/** A non-200 answer from the mocked API. */
+class Refusal {
+  constructor(
+    readonly status: number,
+    readonly body: unknown,
+  ) {}
+}
+
+/** Replaces fetch with a router over the wallet routes; records every call. A `Refusal` answers with its status. */
 function mockApi(route: (call: Call) => unknown) {
   const calls: Call[] = [];
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const call: Call = { method: init?.method ?? 'GET', url: String(input), body: init?.body ? JSON.parse(String(init.body)) : undefined };
     calls.push(call);
-    return new Response(JSON.stringify(route(call)), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    const answer = route(call);
+    const [status, body] = answer instanceof Refusal ? [answer.status, answer.body] : [200, answer];
+    return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
   }) as typeof fetch;
   return calls;
 }
@@ -64,7 +76,7 @@ const qr = (orderId: string, expiresInMs: number, amountBaht: number) => ({
   orderId,
   status: 'pending',
   payment: 'qr',
-  qr: { data: `fake:${orderId}`, pngUrl: null },
+  qr: { data: `fake:${orderId}`, pngUrl: null, svgUrl: null },
   expiresAt: new Date(Date.now() + expiresInMs).toISOString(),
   amountBaht,
 });
@@ -82,21 +94,23 @@ const order = (orderId: string, status: string, extra: Record<string, unknown> =
   ...extra,
 });
 
-function Host({ context, initiallyOpen }: { context: TopupContext; initiallyOpen: boolean }) {
+type OnPaid = (order: unknown) => Promise<void>;
+
+function Host({ context, initiallyOpen, onPaid }: { context: TopupContext; initiallyOpen: boolean; onPaid?: OnPaid }) {
   const [open, setOpen] = useState(initiallyOpen);
   return (
     <>
       <output data-testid="open">{String(open)}</output>
-      <PackSheet open={open} onOpenChange={setOpen} wallet={wallet} context={context} pollMs={30} />
+      <PackSheet open={open} onOpenChange={setOpen} wallet={wallet} context={context} onPaid={onPaid} pollMs={30} />
     </>
   );
 }
 
-function renderSheet(context: TopupContext, initiallyOpen = true) {
+function renderSheet(context: TopupContext, initiallyOpen = true, onPaid?: OnPaid) {
   const client = new RQ.QueryClient({ defaultOptions: { queries: { retry: false } } });
   return rtl.render(
     <RQ.QueryClientProvider client={client}>
-      <Host context={context} initiallyOpen={initiallyOpen} />
+      <Host context={context} initiallyOpen={initiallyOpen} onPaid={onPaid} />
     </RQ.QueryClientProvider>,
   );
 }
@@ -111,7 +125,11 @@ describe('pack step', () => {
     expect(checked(radios)[0].textContent).toContain('฿99');
     expect(view.getByText('จ่าย ฿99 ด้วย PromptPay')).toBeTruthy();
     expect(view.getByText('ยอดคงเหลือ 0 มู · 1 มู = ฿1')).toBeTruthy();
-    expect(view.getByText('จ่ายครั้งเดียว ไม่ตัดเงินอัตโนมัติ · มูไม่หมดอายุ')).toBeTruthy();
+    expect(view.getByText('จ่ายครั้งเดียว ไม่ตัดเงินอัตโนมัติ')).toBeTruthy();
+    expect(view.getByText('มูที่เติมไม่หมดอายุ · โบนัสใช้ได้ 180 วัน')).toBeTruthy();
+    expect(view.queryByText(/รวมโบนัส/)).toBeNull();
+    expect(radios.map((radio) => radio.getAttribute('aria-label'))).toEqual(['49 มู ฿49', '109 มู +10% ฿99', '229 มู +15% คุ้มสุด ฿199', '479 มู +20% ฿399']);
+    expect(view.getByRole('radio', { name: '109 มู +10% ฿99', hidden: true }).getAttribute('aria-checked')).toBe('true');
 
     rtl.fireEvent.click(radios[2]);
     expect(view.getByText('จ่าย ฿199 ด้วย PromptPay')).toBeTruthy();
@@ -135,7 +153,7 @@ describe('pack step', () => {
 });
 
 describe('pay step', () => {
-  test('the countdown reaches expiry, verifies once, and ขอ QR ใหม่ starts a new checkout for the same pack and row', async () => {
+  test('the countdown reaches expiry, verifies once, and ขอ QR ใหม่ replaces that order for the same pack and row', async () => {
     let checkouts = 0;
     const calls = mockApi((call) => {
       if (call.url.endsWith('/api/wallet/checkout')) return qr(`o${++checkouts}`, checkouts === 1 ? 1_200 : 60_000, 49);
@@ -155,8 +173,9 @@ describe('pay step', () => {
     const posts = calls.filter((call) => call.method === 'POST');
     expect(posts.map((call) => call.body)).toEqual([
       { packId: 'p49', unlockRef: ROW },
-      { packId: 'p49', unlockRef: ROW },
+      { packId: 'p49', unlockRef: ROW, replaceOrderId: 'o1' },
     ]);
+    expect(JSON.parse(window.localStorage.getItem(PENDING_ORDER_KEY)!).orderId).toBe('o2');
   });
 
   test('polling stops once the order is paid; the store shows +109 มู and the next pack up', async () => {
@@ -203,5 +222,110 @@ describe('resume after a reload', () => {
     const view = renderSheet({ kind: 'store' }, false);
     await rtl.waitFor(() => expect(window.localStorage.getItem(PENDING_ORDER_KEY)).toBeNull());
     expect(view.getByTestId('open').textContent).toBe('false');
+  });
+});
+
+/** A promise the test settles by hand. */
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>((settle) => {
+    resolve = settle;
+  });
+  return { promise, resolve };
+}
+
+describe('ขอ QR ใหม่ conflicts', () => {
+  test('from the resume state it names the pending order; 409 already_paid runs the paid path and the door unlock', async () => {
+    window.localStorage.setItem(PENDING_ORDER_KEY, JSON.stringify({ orderId: 'o9', packId: 'p49', unlockRef: ROW }));
+    let paidNow = false;
+    const calls = mockApi((call) => {
+      if (call.url.endsWith('/api/wallet/checkout')) {
+        paidNow = true;
+        return new Refusal(409, { error: 'already_paid', orderId: 'o9' });
+      }
+      return order('o9', paidNow ? 'paid' : 'pending', { packId: 'p49', units: 49, balance: 49 });
+    });
+    const unlocking = deferred();
+    const paidOrders: unknown[] = [];
+    const view = renderSheet({ kind: 'door', price: 49, unlockRef: ROW }, false, (paid) => {
+      paidOrders.push(paid);
+      return unlocking.promise;
+    });
+    await rtl.waitFor(() => expect(view.getByText('กำลังตรวจสอบการชำระ')).toBeTruthy());
+
+    rtl.fireEvent.click(view.getByText('ขอ QR ใหม่'));
+    // One state until the unlock settles: "+49 มู · กำลังเปิดคำตอบ…" with the ~20 s hint.
+    await rtl.waitFor(() => expect(view.getByText('+49 มู · กำลังเปิดคำตอบ…')).toBeTruthy());
+    expect(view.getByText('กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)')).toBeTruthy();
+    expect(calls.find((call) => call.method === 'POST')?.body).toEqual({ packId: 'p49', unlockRef: ROW, replaceOrderId: 'o9' });
+    expect(window.localStorage.getItem(PENDING_ORDER_KEY)).toBeNull();
+    expect(paidOrders).toHaveLength(1);
+    expect(view.getByTestId('open').textContent).toBe('true');
+
+    unlocking.resolve();
+    await rtl.waitFor(() => expect(view.getByTestId('open').textContent).toBe('false'));
+    expect(paidOrders).toHaveLength(1);
+  });
+
+  test('409 order_not_pending clears the pending order and starts a fresh checkout without replaceOrderId', async () => {
+    let checkouts = 0;
+    const calls = mockApi((call) => {
+      if (call.url.endsWith('/api/wallet/checkout')) {
+        checkouts += 1;
+        if (checkouts === 1) return qr('o1', 1_000, 99);
+        if (checkouts === 2) return new Refusal(409, { error: 'order_not_pending', orderId: 'o1', status: 'expired' });
+        return qr('o2', 60_000, 99);
+      }
+      return order('o1', 'pending');
+    });
+    const view = renderSheet({ kind: 'store' });
+    rtl.fireEvent.click(view.getByText('จ่าย ฿99 ด้วย PromptPay'));
+    await rtl.waitFor(() => expect(view.getByText('QR หมดอายุ')).toBeTruthy(), { timeout: 4_000 });
+
+    rtl.fireEvent.click(view.getByText('ขอ QR ใหม่'));
+    await rtl.waitFor(() => expect(view.getByText(/QR ใช้ได้อีก/)).toBeTruthy());
+    expect(calls.filter((call) => call.method === 'POST').map((call) => call.body)).toEqual([
+      { packId: 'p99' },
+      { packId: 'p99', replaceOrderId: 'o1' },
+      { packId: 'p99' },
+    ]);
+    expect(JSON.parse(window.localStorage.getItem(PENDING_ORDER_KEY)!)).toEqual({ orderId: 'o2', packId: 'p99' });
+  });
+});
+
+describe('ReportDoor unlock failure', () => {
+  test('a toast says nothing was charged; the reference line copies the full result id', async () => {
+    mockApi(() => ({ ...wallet, balance: 49 }));
+    const copied: string[] = [];
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: async (text: string) => void copied.push(text) },
+    });
+    const client = new RQ.QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const view = rtl.render(
+      <RQ.QueryClientProvider client={client}>
+        <ReportDoor
+          partnerName="ต้น"
+          readingMinutes={11}
+          contents={[]}
+          full={false}
+          unlockRef={ROW}
+          onJump={() => {}}
+          allOpen={false}
+          onToggleAll={() => {}}
+          onUnlock={() => Promise.reject(new Error('เขียนฉบับเต็มไม่สำเร็จ'))}
+        />
+      </RQ.QueryClientProvider>,
+    );
+    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+
+    const toast = await view.findByRole('alert');
+    expect(toast.textContent).toBe('เขียนคำตอบไม่สำเร็จ ยังไม่หักมู ลองใหม่ได้เลย');
+    expect(view.getByText('11111111')).toBeTruthy();
+    expect(view.queryByText('เขียนฉบับเต็มไม่สำเร็จ')).toBeNull();
+
+    rtl.fireEvent.click(view.getByRole('button', { name: 'คัดลอกรหัสอ้างอิง' }));
+    await rtl.waitFor(() => expect(view.getByText('คัดลอกแล้ว')).toBeTruthy());
+    expect(copied).toEqual([ROW]);
   });
 });

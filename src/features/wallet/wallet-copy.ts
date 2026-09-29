@@ -1,4 +1,4 @@
-import type { LedgerEntry, LedgerKind, PackId, ProductId, WalletPack } from '@/lib-packages/shared/types/wallet';
+import type { LedgerEntry, LedgerKind, PackId, ProductId, WalletPack, WalletPackOffer } from '@/lib-packages/shared/types/wallet';
 
 /**
  * Wallet copy: transactional and pronoun-free. The unit มู is pegged
@@ -60,9 +60,14 @@ export const topupCopy = {
   balance: (balance: number) => `ยอดคงเหลือ ${units(balance)} · 1 ${UNIT} = ฿1`,
   purpose: 'ใช้ได้กับทุกอย่างใน Horo: ดวงคู่ วอลเปเปอร์ ถามแม่หมอ',
   pay: (priceBaht: number) => `จ่าย ${baht(priceBaht)} ด้วย PromptPay`,
-  trust: `จ่ายครั้งเดียว ไม่ตัดเงินอัตโนมัติ · ${UNIT}ไม่หมดอายุ`,
+  /** Two lines under the pay button. */
+  trust: ['จ่ายครั้งเดียว ไม่ตัดเงินอัตโนมัติ', `${UNIT}ที่เติมไม่หมดอายุ · โบนัสใช้ได้ 180 วัน`],
   bestValue: 'คุ้มสุด',
-  bonusExpiry: (bonus: number) => `รวมโบนัส ${units(bonus)} ใช้ได้ 180 วัน`,
+  /** A pack radio's accessible name: "109 มู +10% ฿99". */
+  packName: (pack: WalletPackOffer) =>
+    [units(pack.base + pack.bonus), pack.bonusPercent > 0 && `+${pack.bonusPercent}%`, pack.id === BEST_VALUE && 'คุ้มสุด', baht(pack.priceBaht)]
+      .filter(Boolean)
+      .join(' '),
   /** "฿99 · 109 มู" */
   amount: (priceBaht: number, total: number) => `${baht(priceBaht)} · ${units(total)}`,
   save: 'บันทึก QR',
@@ -80,7 +85,9 @@ export const topupCopy = {
   credited: (amount: number) => `+${number(amount)} ${UNIT}`,
   newBalance: (balance: number) => `ยอดคงเหลือ ${units(balance)}`,
   upsell: (pack: WalletPack) => `ครั้งหน้าเติม ${baht(pack.priceBaht)} ได้ ${units(pack.base + pack.bonus)}`,
-  opening: 'กำลังเปิดคำตอบ',
+  /** Door, after payment, until the unlock settles: one state, "+49 มู · กำลังเปิดคำตอบ…". */
+  opening: (amount: number) => `+${number(amount)} ${UNIT} · กำลังเปิดคำตอบ…`,
+  openingHint: 'กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)',
   failed: 'การชำระไม่สำเร็จ',
   retry: 'ลองอีกครั้ง',
   close: 'ปิด',

@@ -32,8 +32,6 @@ type Step =
 
 type Notice = 'unavailable' | 'email' | 'cap' | 'start';
 
-/** How long the door shows "+49 มู" before the sheet closes and the report opens. */
-const DOOR_SUCCESS_MS = 1_200;
 const EMAIL_SETTINGS_PATH = '/dashboard/settings';
 
 interface PackSheetProps {
@@ -41,8 +39,11 @@ interface PackSheetProps {
   onOpenChange: (open: boolean) => void;
   wallet: WalletState;
   context: TopupContext;
-  /** Door only: the order is paid and credited; close and open the report. */
-  onPaid?: (order: OrderStatusResponse) => void;
+  /**
+   * Door only: the order is paid and credited; run the unlock. The sheet
+   * shows "+49 มู · กำลังเปิดคำตอบ…" until this settles, then closes.
+   */
+  onPaid?: (order: OrderStatusResponse) => Promise<void>;
   pollMs?: number;
 }
 
@@ -107,6 +108,16 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /** A paid order (the poll, or a 409 already_paid): show the มู landing and refresh the wallet. */
+  const markPaid = useCallback(
+    (packId: PackId, paid: OrderStatusResponse) => {
+      clearPendingOrder(paid.orderId);
+      setStep({ kind: 'paid', packId, order: paid, from: wallet.balance });
+      void queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
+    },
+    [wallet.balance, queryClient],
+  );
+
   const orderId = step.kind === 'pay' ? step.checkout.orderId : step.kind === 'checking' ? step.orderId : null;
   const order = useOrderStatus(open ? orderId : null, pollMs).data;
   const current = order && order.orderId === orderId ? order : undefined;
@@ -114,50 +125,84 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
   useEffect(() => {
     if (!current || (step.kind !== 'pay' && step.kind !== 'checking')) return;
     if (current.status === 'pending') return;
-    clearPendingOrder(current.orderId);
     if (current.status === 'paid') {
-      setStep({ kind: 'paid', packId: step.packId, order: current, from: wallet.balance });
-      void queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
+      markPaid(step.packId, current);
     } else if (current.status === 'failed') {
+      clearPendingOrder(current.orderId);
       setStep({ kind: 'failed', packId: step.packId });
+    } else {
+      // expired (and refunded) stay on the step, which shows ขอ QR ใหม่.
+      clearPendingOrder(current.orderId);
     }
-    // expired (and refunded) stay on the step, which shows ขอ QR ใหม่.
-  }, [current, step, wallet.balance, queryClient]);
+  }, [current, step, markPaid]);
 
-  // Door: after a short "+49 มู", hand over once to the door, which opens the report.
+  // Door: hand the paid order over once; the sheet stays on "+49 มู · กำลังเปิดคำตอบ…"
+  // until the door's unlock settles, then closes on the opened report.
   const onPaidRef = useRef(onPaid);
   useEffect(() => {
     onPaidRef.current = onPaid;
   }, [onPaid]);
+  const handedOver = useRef<string | null>(null);
   useEffect(() => {
-    if (step.kind !== 'paid' || context.kind !== 'door') return;
-    const paid = step.order;
-    const timer = setTimeout(() => {
+    if (step.kind !== 'paid' || context.kind !== 'door' || handedOver.current === step.order.orderId) return;
+    handedOver.current = step.order.orderId;
+    void (async () => {
+      await onPaidRef.current?.(step.order);
       setStep({ kind: 'packs' });
-      onPaidRef.current?.(paid);
-    }, DOOR_SUCCESS_MS);
-    return () => clearTimeout(timer);
-  }, [step, context.kind]);
+      onOpenChange(false);
+    })();
+  }, [step, context.kind, onOpenChange]);
 
-  const checkout = async (packId: PackId) => {
+  /**
+   * POST /api/wallet/checkout. `replaceOrderId` ("ขอ QR ใหม่") cancels that
+   * pending order's QR first. 409 already_paid: that order (or the row's
+   * earlier one) was paid meanwhile, so it takes the paid path. 409
+   * order_not_pending: it ended already, so it is forgotten and a fresh
+   * checkout runs once.
+   */
+  const checkout = async (packId: PackId, replaceOrderId?: string) => {
     if (busy) return;
     setBusy(true);
     setNotice(null);
+    let replace = replaceOrderId;
     try {
-      const response = await api.post<CheckoutResponse>('/api/wallet/checkout', { packId, unlockRef });
-      if (response.payment === 'unavailable') {
-        setStep({ kind: 'packs' });
-        setNotice('unavailable');
-        return;
+      for (;;) {
+        try {
+          const response = await api.post<CheckoutResponse>('/api/wallet/checkout', { packId, unlockRef, replaceOrderId: replace });
+          if (response.payment === 'unavailable') {
+            setStep({ kind: 'packs' });
+            setNotice('unavailable');
+            return;
+          }
+          writePendingOrder({ orderId: response.orderId, packId, unlockRef });
+          setStep({ kind: 'pay', packId, checkout: response });
+          return;
+        } catch (error) {
+          const refused = error as ApiError;
+          const code = refused.status === 409 ? refused.body?.error : undefined;
+          if (code === 'order_not_pending' && replace) {
+            clearPendingOrder(replace);
+            replace = undefined;
+            continue;
+          }
+          if (code === 'already_paid') {
+            const paidId = paidOrderId(refused) ?? replace;
+            if (paidId) {
+              markPaid(packId, await fetchOrder(paidId));
+              return;
+            }
+          }
+          setStep({ kind: 'packs' });
+          setNotice(code === 'email_required' ? 'email' : code === 'balance_cap' ? 'cap' : 'start');
+          if (code !== 'email_required' && code !== 'balance_cap') console.error('Checkout failed:', error);
+          return;
+        }
       }
-      writePendingOrder({ orderId: response.orderId, packId, unlockRef });
-      setStep({ kind: 'pay', packId, checkout: response });
     } catch (error) {
-      const refused = error as ApiError;
-      const code = refused.status === 409 ? refused.body?.error : undefined;
+      // Only the already_paid order read lands here.
+      console.error('Reading the paid order failed:', error);
       setStep({ kind: 'packs' });
-      setNotice(code === 'email_required' ? 'email' : code === 'balance_cap' ? 'cap' : 'start');
-      if (!code) console.error('Checkout failed:', error);
+      setNotice('start');
     } finally {
       setBusy(false);
     }
@@ -169,8 +214,7 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
   }, [verify]);
 
   const close = () => {
-    // Closed during the door's "+49 มู" moment: hand over now, or the unlock would be lost with the timer.
-    if (step.kind === 'paid' && context.kind === 'door') onPaidRef.current?.(step.order);
+    // Closed while the door's unlock runs: it carries on behind the sheet (handed over once, above).
     onOpenChange(false);
     // A finished step starts over next time; a pending one reopens where it was.
     if (step.kind === 'paid' || step.kind === 'failed') setStep({ kind: 'packs' });
@@ -221,7 +265,13 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
                 {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
                 {notice === 'unavailable' ? topupCopy.unavailable : topupCopy.pay(selected.priceBaht)}
               </Button>
-              <p className="mt-2 text-center text-[0.8125rem] leading-relaxed text-inkMuted">{topupCopy.trust}</p>
+              <p className="mt-2 text-center text-[0.8125rem] leading-relaxed text-inkMuted">
+                {topupCopy.trust.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </p>
               {notice && notice !== 'unavailable' && (
                 <p role="alert" className="mt-3 text-sm leading-relaxed text-danger">
                   {notice === 'email' ? topupCopy.emailRequired : notice === 'cap' ? topupCopy.cap(wallet.cap) : topupCopy.startFailed}
@@ -246,7 +296,7 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
                 total={totalOf(packOf(step.packId))}
                 serverExpired={current?.status === 'expired'}
                 onExpire={verifyOnExpire}
-                onNewQr={() => checkout(step.packId)}
+                onNewQr={() => checkout(step.packId, step.checkout.orderId)}
                 busy={busy}
                 onVerify={verify}
               />
@@ -266,7 +316,7 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
               <Button
                 type="button"
                 variant={current?.status === 'expired' ? 'default' : 'soft'}
-                onClick={() => checkout(step.packId)}
+                onClick={() => checkout(step.packId, step.orderId)}
                 disabled={busy}
                 className="min-h-11 font-heading"
               >
@@ -298,6 +348,12 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
       )}
     </dialog>
   );
+}
+
+/** The paid order a 409 already_paid names (`{ error, orderId }`). */
+function paidOrderId(error: ApiError): string | undefined {
+  const body: Record<string, unknown> | undefined = error.body;
+  return typeof body?.orderId === 'string' ? body.orderId : undefined;
 }
 
 const totalOf = (pack: { base: number; bonus: number } | undefined) => (pack ? pack.base + pack.bonus : 0);
@@ -336,23 +392,25 @@ function PaidStep({
   onClose: () => void;
 }) {
   const balance = useCountUp(from, order.balance);
+  if (door) {
+    return (
+      <div className="mt-4 grid justify-items-center gap-2 text-center" role="status">
+        <p className="flex items-center gap-2 font-heading text-2xl font-semibold tabular-nums text-ink">
+          <Loader2 className="size-5 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+          {topupCopy.opening(order.units)}
+        </p>
+        <p className="text-sm leading-relaxed text-inkMuted">{topupCopy.openingHint}</p>
+      </div>
+    );
+  }
   return (
     <div className="mt-4 grid justify-items-center gap-2 text-center" role="status">
       <p className="font-heading text-4xl font-semibold tabular-nums text-success">{topupCopy.credited(order.units)}</p>
       <p className="text-base tabular-nums text-ink">{topupCopy.newBalance(balance)}</p>
-      {door ? (
-        <p className="mt-2 flex items-center gap-2 text-sm text-inkMuted">
-          <Loader2 className="size-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
-          {topupCopy.opening}
-        </p>
-      ) : (
-        <>
-          {upsell && <p className="mt-2 text-sm leading-relaxed text-inkMuted">{topupCopy.upsell(upsell)}</p>}
-          <Button type="button" variant="soft" onClick={onClose} className="mt-3 min-h-11 w-full font-heading">
-            {topupCopy.close}
-          </Button>
-        </>
-      )}
+      {upsell && <p className="mt-2 text-sm leading-relaxed text-inkMuted">{topupCopy.upsell(upsell)}</p>}
+      <Button type="button" variant="soft" onClick={onClose} className="mt-3 min-h-11 w-full font-heading">
+        {topupCopy.close}
+      </Button>
     </div>
   );
 }

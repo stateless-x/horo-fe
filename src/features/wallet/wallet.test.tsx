@@ -98,7 +98,10 @@ describe('PackList', () => {
     expect(html).toContain('+10%');
     expect(html).toContain('+15%');
     expect(html).not.toContain('+0%');
-    expect(html.match(/คุ้มสุด/g)).toHaveLength(1);
+    expect(html.match(/>คุ้มสุด</g)).toHaveLength(1);
+    // Each radio is named by its amount, bonus, tag and price; rows carry no bonus-expiry line.
+    for (const name of ['49 มู ฿49', '109 มู +10% ฿99', '229 มู +15% คุ้มสุด ฿199', '479 มู +20% ฿399']) expect(html).toContain(`aria-label="${name}"`);
+    expect(html).not.toContain('รวมโบนัส');
     expect(html).not.toContain('ยอดนิยม');
     expect(html.match(/role="radio"/g)).toHaveLength(4);
     expect(html.match(/aria-checked="true"/g)).toHaveLength(1);

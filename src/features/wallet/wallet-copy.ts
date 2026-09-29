@@ -8,6 +8,8 @@ import type { LedgerEntry, LedgerKind, PackId, ProductId, WalletPack, WalletPack
  */
 
 export const UNIT = 'มู';
+/** What the product calls the wallet: page heading, menu row, chip label. */
+export const WALLET_NAME = 'กระเป๋าตัง';
 
 /** Where a payment problem goes: the one contact address the app already shows (/contact). */
 export const SUPPORT_EMAIL = 'askpurin@pm.me';

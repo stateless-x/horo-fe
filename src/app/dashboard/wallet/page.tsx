@@ -6,7 +6,7 @@ import { CurrencyImage } from '@/components/ui/currency-image';
 import { LedgerList } from '@/features/wallet/ledger-list';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { enabledWallet, useWallet } from '@/features/wallet/use-wallet';
-import { UNIT, baht, units } from '@/features/wallet/wallet-copy';
+import { UNIT, WALLET_NAME, baht, units } from '@/features/wallet/wallet-copy';
 
 /** /dashboard/wallet: the มู balance, เติมมู (the sheet in store context), and the newest ledger rows. */
 export default function WalletPage() {
@@ -18,7 +18,7 @@ export default function WalletPage() {
     <div className="min-h-[calc(100vh-3.5rem)] bg-ground pb-10">
       <div className="border-b border-edge bg-surface">
         <div className="mx-auto max-w-2xl px-4 py-5">
-          <h1 className="font-heading text-2xl font-semibold text-ink">{UNIT}ของคุณ</h1>
+          <h1 className="font-heading text-2xl font-semibold text-ink">{WALLET_NAME}</h1>
           <p className="mt-1 text-sm text-inkMuted">1 {UNIT} = ฿1 · ใช้ได้ในสายมูเท่านั้น ถอนเป็นเงินหรือโอนให้คนอื่นไม่ได้</p>
         </div>
       </div>

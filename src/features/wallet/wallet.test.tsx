@@ -153,17 +153,17 @@ describe('header wallet (on)', () => {
   test('the chip shows the crystal and the number only, and keeps its accessible name', () => {
     const html = withWallet(<BalanceChip />);
     expect(html).toContain('href="/dashboard/wallet"');
-    expect(html).toContain('aria-label="ยอด 71 มู เปิดหน้ามูของคุณ"');
+    expect(html).toContain('aria-label="ยอด 71 มู เปิดกระเป๋าตัง"');
     expect(html).toContain('mu-gem-clay-48.webp');
     const visible = html.replace(/<[^>]*>/g, '');
     expect(visible).toBe('71');
   });
 
-  test('the menu row links to the wallet with มูของคุณ and the balance', () => {
+  test('the menu row links to the wallet with กระเป๋าตัง and the balance', () => {
     const html = withWallet(<WalletMenuRow className="row" />);
     expect(html).toContain('href="/dashboard/wallet"');
     expect(html).toContain('mu-gem-clay');
-    expect(html.replace(/<[^>]*>/g, '')).toBe('มูของคุณ71');
+    expect(html.replace(/<[^>]*>/g, '')).toBe('กระเป๋าตัง71');
   });
 });
 

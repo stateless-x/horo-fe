@@ -6,7 +6,6 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BookOpen, CalendarDays, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
-import { MuGemMark } from '@/components/ui/mu-gem-mark';
 import { api, type ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE, type CheckoutResponse } from '@/lib-packages/shared/types/wallet';
 import type { RelationshipType } from '@/lib-packages/shared';
@@ -33,6 +32,8 @@ const ENTRY_ICON: Record<NonNullable<ReportContentsEntry['icon']>, LucideIcon> =
   calendar: CalendarDays,
   plan: ListChecks,
 };
+
+const UNLOCK_ORACLE_ART = '/assets/clay/little-oracle-mark-v1.webp';
 
 export function EntryMark({ entry }: { entry: ReportContentsEntry }) {
   if (!entry.icon) return <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />;
@@ -135,12 +136,12 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           : 'rounded-2xl border border-romance/25 bg-[linear-gradient(145deg,var(--surface),color-mix(in_srgb,var(--color-romance)_8%,var(--surface2)))] px-5 pb-5 pt-[22px] shadow-[0_18px_44px_-30px_rgba(107,33,168,0.35)] sm:px-7 sm:pb-6 sm:pt-[26px]'
       }
     >
-      <div className="flex items-center gap-3">
-        <span
-          className={`grid size-10 shrink-0 place-items-center ${full ? 'text-ink' : 'text-romanceText'}`}
-        >
-          {full ? <MiniSeal /> : <MuGemMark className="size-9" />}
-        </span>
+      <div className={full ? 'flex items-center gap-3' : undefined}>
+        {full && (
+          <span className="grid size-10 shrink-0 place-items-center text-ink">
+            <MiniSeal />
+          </span>
+        )}
         <h2 id="report-door" tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink focus:outline-none">
           {full ? spaceLatinName(`คำตอบของคุณกับ${partnerName}`, partnerName) : offer.title}
         </h2>
@@ -231,7 +232,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
                     disabled={busy || checkout !== null}
                     className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading"
                   >
-                    {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <MuGemMark className="size-5" />}
+                    {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Image alt="" src={UNLOCK_ORACLE_ART} width={48} height={48} sizes="24px" className="size-6 object-contain" />}
                     {checkout?.payment === 'unavailable' ? 'PromptPay เร็ว ๆ นี้' : `เปิดคำตอบทั้งหมด · ${baht(pack.priceBaht)}`}
                   </Button>
                   <button
@@ -250,7 +251,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
               )}
               {onUnlock && !(short && pack) && (
                 <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
-                  {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <MuGemMark className="size-5" />}
+                  {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Image alt="" src={UNLOCK_ORACLE_ART} width={48} height={48} sizes="24px" className="size-6 object-contain" />}
                   {busy ? 'กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)' : unlockLabel}
                 </Button>
               )}

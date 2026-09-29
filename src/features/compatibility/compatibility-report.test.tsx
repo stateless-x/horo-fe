@@ -199,7 +199,7 @@ describe('CompatibilityReport', () => {
   test('the locked offer summarizes value without repeating a lock for every chapter', () => {
     const html = render('teaser', () => {});
     for (const value of ['อ่านนิสัยกันให้ชัด', 'คุยเรื่องยากให้ง่ายขึ้น', 'ดูจังหวะ 3 เดือนล่วงหน้า', 'เลือกก้าวต่อไปที่พอดี']) expect(html).toContain(value);
-    for (const asset of ['two-mirrors.webp', 'listening.webp', 'next-timing.webp', 'next-step.webp']) expect(html).toContain(asset);
+    for (const asset of ['little-oracle-mark-v1.webp', 'two-mirrors.webp', 'listening.webp', 'next-timing.webp', 'next-step.webp']) expect(html).toContain(asset);
     expect(html).not.toContain('ตัวตนของต้นในความสัมพันธ์นี้');
   });
 

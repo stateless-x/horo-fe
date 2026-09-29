@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, BookOpen, CalendarDays, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
+import { ArrowRight, BookOpen, CalendarDays, ChevronDown, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
 import { api, type ApiError } from '@/lib/api';
@@ -11,10 +11,10 @@ import { INSUFFICIENT_BALANCE, type CheckoutResponse } from '@/lib-packages/shar
 import type { RelationshipType } from '@/lib-packages/shared';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
-import { baht, shortfallLine, smallestPackCovering, units } from '@/features/wallet/wallet-copy';
+import { baht, smallestPackCovering, units } from '@/features/wallet/wallet-copy';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
-import { lockedOfferCopy } from './report-copy';
+import { lockedOfferCopy, relationshipReportCopy } from './report-copy';
 import { relationshipReportVisuals } from './report-visuals';
 
 export interface ReportContentsEntry {
@@ -70,7 +70,8 @@ interface ReportDoorProps {
 export function ReportDoor({ partnerName, relationshipType, readingMinutes, contents, full, unlockRef, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
   const reduce = useReducedMotion();
   const queryClient = useQueryClient();
-  const wallet = enabledWallet(useWallet().data);
+  const walletQuery = useWallet();
+  const wallet = enabledWallet(walletQuery.data);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [insufficient, setInsufficient] = useState(false);
@@ -80,11 +81,15 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const price = wallet?.prices.compat_unlock;
   const balance = wallet?.balance;
   const offer = lockedOfferCopy(relationshipType);
+  const copy = relationshipReportCopy(relationshipType);
   const visuals = relationshipReportVisuals(relationshipType);
-  const lockedValues = offer.values.map((value, index) => ({
-    ...value,
-    art: [visuals.sections.people, visuals.sections.conversation, visuals.next.calendar.art, visuals.next.plan.art][index],
-  }));
+  const romance = !relationshipType || relationshipType === 'romantic' || relationshipType === 'talking';
+  const lockedSections = [
+    { id: 'overview', title: copy.sections.overview.label, detail: 'อ่านความหมายของทั้ง 4 คะแนน พร้อมที่มาจากดวงของคุณสองคน', art: visuals.overview.dimensions },
+    { id: 'people', title: copy.sections.people.label, detail: offer.values[0].detail, art: visuals.sections.people },
+    { id: 'conversation', title: copy.sections.conversation.label, detail: `${offer.values[1].detail} รวมถึงวิธีกลับมาคุยเมื่อมีเรื่องค้างใจ`, art: visuals.sections.conversation },
+    { id: 'next', title: copy.sections.next.label, detail: `${offer.values[2].detail} พร้อมคำแนะนำ 3 อย่างที่เลือกลองได้ตามความพร้อม`, art: visuals.next.calendar.art },
+  ];
   // Short of the price: the primary button buys and unlocks in one flow instead of spending.
   const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
   const pack = wallet && price !== undefined && balance !== undefined ? smallestPackCovering(wallet.packs, price - balance) : undefined;
@@ -130,10 +135,11 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   return (
     <section
       aria-labelledby="report-door"
+      id="report-unlock-section"
       className={
         full
           ? `${REPORT_CARD} px-5 pb-5 pt-[22px] sm:px-7 sm:pb-6 sm:pt-[26px] ${BOUND_FRAME}`
-          : 'rounded-2xl border border-romance/25 bg-[linear-gradient(145deg,var(--surface),color-mix(in_srgb,var(--color-romance)_8%,var(--surface2)))] px-5 pb-5 pt-[22px] shadow-[0_18px_44px_-30px_rgba(107,33,168,0.35)] sm:px-7 sm:pb-6 sm:pt-[26px]'
+          : `scroll-mt-20 rounded-2xl border bg-surface px-5 pb-5 pt-6 sm:px-6 sm:pb-6 sm:pt-7 ${romance ? 'border-romance/25' : 'border-edge'} ${BOUND_FRAME}`
       }
     >
       <div className={full ? 'flex items-center gap-3' : undefined}>
@@ -142,15 +148,15 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
             <MiniSeal />
           </span>
         )}
-        <h2 id="report-door" tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink focus:outline-none">
-          {full ? spaceLatinName(`คำตอบของคุณกับ${partnerName}`, partnerName) : offer.title}
+        <h2 id="report-door" tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink [overflow-wrap:anywhere] focus:outline-none">
+          {spaceLatinName(`${full ? 'คำตอบ' : 'ฉบับเต็ม'}ของคุณกับ${partnerName}`, partnerName)}
         </h2>
       </div>
       <p className="mt-2.5 text-base leading-relaxed text-inkMuted">
         {full ? (
           <>อ่านราว <b className="font-semibold text-ink">{readingMinutes} นาที</b> · 4 ส่วน · ปฏิทิน 3 เดือน · 3 ก้าวเล็ก ๆ ใน 7 วัน</>
         ) : (
-          <>{offer.description}</>
+          <>{offer.title}</>
         )}
       </p>
 
@@ -182,16 +188,20 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           </ol>
         </details>
       ) : (
-        <ul className="mt-5 divide-y divide-edge border-y border-edge">
-          {lockedValues.map(({ art, title, detail }) => (
-            <li key={title} className="flex min-h-[76px] items-center gap-3 py-3 first:pt-3.5 last:pb-3.5">
-              <span className="grid size-[54px] shrink-0 place-items-center rounded-2xl bg-surface2/80 ring-1 ring-edge">
-                {art && <Image alt="" src={art} width={96} height={96} sizes="54px" className="size-[52px] object-contain" />}
-              </span>
-              <span className="min-w-0 text-sm leading-relaxed text-inkMuted">
-                <b className="block font-heading text-[0.9375rem] font-semibold leading-snug text-ink">{title}</b>
-                {detail}
-              </span>
+        <ul className="mt-5 divide-y divide-edge border-y border-edge" aria-label="ดูว่าแต่ละส่วนในฉบับเต็มมีอะไร">
+          {lockedSections.map(({ id, art, title, detail }) => (
+            <li key={id}>
+              <details className="group">
+                <summary className="flex min-h-[88px] cursor-pointer list-none items-center gap-3 rounded-lg py-2 transition-colors hover:bg-edgeSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright [&::-webkit-details-marker]:hidden">
+                  {art && <Image alt="" src={art} width={112} height={112} sizes="72px" className="size-[72px] shrink-0 object-contain" />}
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-heading text-base font-semibold leading-snug text-ink">{title}</span>
+                    <span className="mt-1 block text-xs leading-relaxed text-inkMuted">{id === 'next' ? 'จังหวะ 3 เดือน และสิ่งที่ลองทำได้' : id === 'overview' ? 'เข้าใจคะแนนมากขึ้น' : id === 'people' ? 'มุมของเขา และมุมของคุณ' : 'วิธีเริ่มคุย และเคลียร์เรื่องค้างใจ'}</span>
+                  </span>
+                  <ChevronDown className="mr-1 size-4 shrink-0 text-inkMuted transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" />
+                </summary>
+                <p className="pb-4 pl-1 pr-2 text-pretty text-sm leading-relaxed text-inkMuted">{detail}</p>
+              </details>
             </li>
           ))}
         </ul>
@@ -255,17 +265,13 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
                   {busy ? 'กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)' : unlockLabel}
                 </Button>
               )}
+              <p className="text-center text-xs leading-relaxed text-inkMuted">เปิดครบทั้ง 4 ส่วน · กลับมาอ่านในประวัติได้</p>
               <p aria-live="polite" className="empty:hidden text-sm leading-relaxed text-inkMuted">
                 {busy ? 'เสร็จแล้วคำตอบจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
               </p>
               {error && (
                 <p role="alert" className="text-sm leading-relaxed text-danger">
                   {error}
-                </p>
-              )}
-              {short && price !== undefined && balance !== undefined && (
-                <p className="text-sm leading-relaxed text-inkMuted">
-                  {shortfallLine(balance, price)}
                 </p>
               )}
               {!short && price !== undefined && balance !== undefined && (

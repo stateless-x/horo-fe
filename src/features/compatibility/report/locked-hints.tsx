@@ -22,7 +22,7 @@ export function LockedHints({ hints, partnerName, sectionLabel, onJump }: Locked
     <section aria-labelledby="report-hints">
       <SectionHeading
         id="report-hints"
-        title="3 คำถามที่ฉบับเต็มตอบ"
+        title={open ? 'เรื่องที่อยากเข้าใจมากขึ้น' : 'มีเรื่องไหนที่คุณสงสัยอยู่ไหม'}
         sub={open ? 'แตะเพื่อไปที่คำตอบได้เลย' : spaceLatinName(`เรื่องที่คุณน่าจะเคยเจอกับ${partnerName}`, partnerName)}
       />
       <ol className="mt-4 divide-y divide-edge border-y border-edge">
@@ -34,7 +34,7 @@ export function LockedHints({ hints, partnerName, sectionLabel, onJump }: Locked
                 <ThaiText>{hint.text}</ThaiText>
               </span>
               <span className="mt-1 block text-sm leading-normal text-inkMuted">
-                {open ? `ไปที่คำตอบในส่วน ‘${section}’` : `คำตอบอยู่ในส่วน ‘${section}’ ของฉบับเต็ม`}
+                {open ? `ไปที่คำตอบในส่วน ‘${section}’` : `อ่านต่อในฉบับเต็ม · ${section}`}
               </span>
             </span>
           );

@@ -116,7 +116,7 @@ describe('CompatibilityReport', () => {
     // No balance or price until the wallet loads: never a made-up number.
     expect(html).toContain('เปิดคำตอบทั้งหมด');
     expect(html).toContain('เห็นทางของความสัมพันธ์นี้ให้ชัดขึ้น');
-    expect(html).toContain('เข้าใจนิสัยของทั้งคู่ พร้อมวิธีคุยและคำแนะนำที่เหมาะกับความสัมพันธ์ตอนนี้');
+    expect(html).toContain('ดูว่าแต่ละส่วนในฉบับเต็มมีอะไร');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดเรื่อง', 'คำคมเรื่อง', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
     }
@@ -181,8 +181,8 @@ describe('CompatibilityReport', () => {
     const teaser = render('teaser', () => {});
     const full = render('full');
     for (const html of [teaser, full]) expect(html).not.toMatch(unitWord);
-    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘อ่านนิสัยเขา’ ของฉบับเต็ม');
-    expect(teaser).toContain('คำตอบอยู่ในส่วน ‘คุยให้เข้าใจกัน’ ของฉบับเต็ม');
+    expect(teaser).toContain('อ่านต่อในฉบับเต็ม · อ่านนิสัยเขา');
+    expect(teaser).toContain('อ่านต่อในฉบับเต็ม · คุยให้เข้าใจกัน');
     expect(teaser).not.toContain('จ่ายครั้งเดียว');
     expect(full).toContain('เหมาะกับก้าวต่อไป ดู ‘สิ่งที่ทำให้อยู่ยาว’');
     // No numbered chapter badge beside a chapter title.
@@ -198,8 +198,8 @@ describe('CompatibilityReport', () => {
 
   test('the locked offer summarizes value without repeating a lock for every chapter', () => {
     const html = render('teaser', () => {});
-    for (const value of ['อ่านนิสัยกันให้ชัด', 'คุยเรื่องยากให้ง่ายขึ้น', 'ดูจังหวะ 3 เดือนล่วงหน้า', 'เลือกก้าวต่อไปที่พอดี']) expect(html).toContain(value);
-    for (const asset of ['little-oracle-mark-v1.webp', 'two-mirrors.webp', 'listening.webp', 'next-timing.webp', 'next-step.webp']) expect(html).toContain(asset);
+    for (const value of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยให้เข้าใจกัน', 'ไปต่อยังไงดี']) expect(html).toContain(value);
+    for (const asset of ['little-oracle-mark-v1.webp', 'four-dimensions.webp', 'two-mirrors.webp', 'listening.webp', 'next-timing.webp']) expect(html).toContain(asset);
     expect(html).not.toContain('ตัวตนของต้นในความสัมพันธ์นี้');
   });
 

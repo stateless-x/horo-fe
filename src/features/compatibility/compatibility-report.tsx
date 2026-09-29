@@ -226,7 +226,11 @@ export function CompatibilityReport({
           </div>
         </div>
 
-        <div ref={doorRef} className="mt-12 scroll-mt-20 sm:mt-16 lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:mt-0">
+        <div className="mt-8 min-w-0 sm:mt-10 lg:col-start-1 lg:row-start-2">
+          <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
+        </div>
+
+        <div ref={doorRef} className="mt-8 scroll-mt-20 sm:mt-10 lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:row-span-3 lg:mt-0">
           <ReportDoor
             partnerName={partnerName}
             relationshipType={relationshipType}
@@ -241,8 +245,7 @@ export function CompatibilityReport({
           />
         </div>
 
-        <div className="mt-12 min-w-0 sm:mt-16 lg:col-start-1 lg:row-start-2">
-          <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
+        <div className="mt-6 min-w-0 lg:col-start-1 lg:row-start-3">
           {(onShare || onNewCheck) && (
             <div className="mt-6 flex flex-wrap gap-2.5">
               {onShare && (
@@ -490,7 +493,10 @@ export function CompatibilityReport({
           <div className="mt-14 sm:mt-[72px]">
             <DimensionBars dimensions={content.dimensions} />
           </div>
-          <div ref={doorRef} className="mt-14 scroll-mt-20 sm:mt-[72px]">
+          <div className="mt-8 sm:mt-10">
+            <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
+          </div>
+          <div ref={doorRef} className="mt-8 scroll-mt-20 sm:mt-10">
             <ReportDoor
               partnerName={partnerName}
               relationshipType={relationshipType}
@@ -503,9 +509,6 @@ export function CompatibilityReport({
               onToggleAll={() => {}}
               onUnlock={onUnlock}
             />
-          </div>
-          <div className="mt-14 sm:mt-[72px]">
-            <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
           </div>
         </>
       )}

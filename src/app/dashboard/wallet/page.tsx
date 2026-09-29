@@ -1,16 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { Button } from '@/lib-packages/ui';
 import { LedgerList } from '@/features/wallet/ledger-list';
-import { PackList } from '@/features/wallet/pack-list';
+import { PackSheet } from '@/features/wallet/pack-sheet';
 import { enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 import { UNIT, baht, units } from '@/features/wallet/wallet-copy';
 
-/** /dashboard/wallet: the มู balance, the packs, and the newest ledger rows. */
+/** /dashboard/wallet: the มู balance, เติมมู (the sheet in store context), and the newest ledger rows. */
 export default function WalletPage() {
   const query = useWallet();
   const wallet = enabledWallet(query.data);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-ground pb-10">
@@ -48,14 +50,11 @@ export default function WalletPage() {
               <p className="mt-1 text-sm text-inkMuted">
                 เท่ากับ {baht(wallet.balance)} · ปลดล็อกดวงคู่ 1 คนใช้ {units(wallet.prices.compat_unlock)}
               </p>
-            </section>
-
-            <section aria-labelledby="wallet-packs">
-              <h2 id="wallet-packs" className="mb-3 font-heading text-lg font-semibold text-ink">
+              <Button type="button" size="lg" onClick={() => setSheetOpen(true)} aria-haspopup="dialog" className="mt-4 min-h-12 w-full font-heading sm:w-auto">
                 เติม{UNIT}
-              </h2>
-              <PackList packs={wallet.packs} />
+              </Button>
             </section>
+            <PackSheet open={sheetOpen} onOpenChange={setSheetOpen} wallet={wallet} context={{ kind: 'store' }} />
 
             <section aria-labelledby="wallet-ledger">
               <h2 id="wallet-ledger" className="mb-3 font-heading text-lg font-semibold text-ink">

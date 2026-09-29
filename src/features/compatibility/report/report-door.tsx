@@ -6,12 +6,12 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BookOpen, CalendarDays, ChevronDown, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
-import { api, type ApiError } from '@/lib/api';
-import { INSUFFICIENT_BALANCE, type CheckoutResponse } from '@/lib-packages/shared/types/wallet';
+import type { ApiError } from '@/lib/api';
+import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import type { RelationshipType } from '@/lib-packages/shared';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
-import { baht, smallestPackCovering, units } from '@/features/wallet/wallet-copy';
+import { baht, doorPacks, units } from '@/features/wallet/wallet-copy';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 import { lockedOfferCopy, lockedPreviewCopy, relationshipReportCopy } from './report-copy';
@@ -76,7 +76,6 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const [error, setError] = useState<string | null>(null);
   const [insufficient, setInsufficient] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [checkout, setCheckout] = useState<CheckoutResponse | null>(null);
 
   const price = wallet?.prices.compat_unlock;
   const balance = wallet?.balance;
@@ -93,20 +92,19 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   ];
   // Short of the price: the primary button buys and unlocks in one flow instead of spending.
   const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
-  const pack = wallet && price !== undefined && balance !== undefined ? smallestPackCovering(wallet.packs, price - balance) : undefined;
+  // The pack the sheet preselects: the smallest that covers the shortfall. Its price is the button's baht.
+  const pack = wallet && price !== undefined && balance !== undefined ? doorPacks(wallet.packs, price - balance)[0] : undefined;
 
-  /** One-flow purchase: an order for the smallest pack that covers this unlock, which unlocks this row once paid. */
-  const buy = async () => {
-    if (!pack || busy) return;
-    setBusy(true);
-    setError(null);
-    try {
-      setCheckout(await api.post<CheckoutResponse>('/api/wallet/checkout', { packId: pack.id, unlockRef }));
-    } catch (failure) {
-      setError(failure instanceof Error ? failure.message : String(failure));
-    } finally {
-      setBusy(false);
-    }
+  /**
+   * A one-flow order is paid and credited: close the sheet and run the same
+   * unlock as the button. The backend's own unlock of this row may be running;
+   * the unlock route joins it and charges the row once.
+   */
+  const unlockAfterPayment = async () => {
+    setSheetOpen(false);
+    setInsufficient(false);
+    await queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
+    await unlock();
   };
 
   const unlock = async () => {
@@ -233,34 +231,19 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
             className="overflow-hidden"
           >
             <div className="grid grid-cols-[minmax(0,1fr)] gap-2.5 pt-5">
-              {onUnlock && short && pack && (
-                <>
-                  <Button
-                    type="button"
-                    size="lg"
-                    onClick={buy}
-                    aria-busy={busy}
-                    disabled={busy || checkout !== null}
-                    className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading"
-                  >
-                    {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Image alt="" src={UNLOCK_ORACLE_ART} width={48} height={48} sizes="24px" className="size-6 object-contain" />}
-                    {checkout?.payment === 'unavailable' ? 'PromptPay เร็ว ๆ นี้' : `เปิดคำตอบทั้งหมด · ${baht(pack.priceBaht)}`}
-                  </Button>
-                  <button
-                    type="button"
-                    onClick={() => setSheetOpen(true)}
-                    className="mx-auto min-h-11 rounded-lg px-3 text-sm text-ink underline decoration-edge underline-offset-4 transition-colors hover:decoration-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
-                  >
-                    ดูแพ็กมูทั้งหมด
-                  </button>
-                  {checkout && (
-                    <p role="status" className="text-sm leading-relaxed text-inkMuted">
-                      {checkout.message}
-                    </p>
-                  )}
-                </>
+              {onUnlock && short && pack && !busy && (
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={() => setSheetOpen(true)}
+                  aria-haspopup="dialog"
+                  className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading"
+                >
+                  <Image alt="" src={UNLOCK_ORACLE_ART} width={48} height={48} sizes="24px" className="size-6 object-contain" />
+                  {`เปิดคำตอบทั้งหมด · ${baht(pack.priceBaht)}`}
+                </Button>
               )}
-              {onUnlock && !(short && pack) && (
+              {onUnlock && !(short && pack && !busy) && (
                 <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
                   {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Image alt="" src={UNLOCK_ORACLE_ART} width={48} height={48} sizes="24px" className="size-6 object-contain" />}
                   {busy ? 'กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)' : unlockLabel}
@@ -282,12 +265,13 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           </motion.div>
         )}
       </AnimatePresence>
-      {wallet && (
+      {wallet && price !== undefined && (
         <PackSheet
           open={sheetOpen}
-          onClose={() => setSheetOpen(false)}
-          packs={wallet.packs}
-          shortfall={short && price !== undefined && balance !== undefined ? { balance, price } : undefined}
+          onOpenChange={setSheetOpen}
+          wallet={wallet}
+          context={{ kind: 'door', price, unlockRef }}
+          onPaid={unlockAfterPayment}
         />
       )}
     </section>

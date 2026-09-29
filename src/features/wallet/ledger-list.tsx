@@ -30,6 +30,7 @@ export function LedgerList({ entries }: { entries: LedgerEntry[] }) {
             <p className="mt-0.5 text-[0.8125rem] text-inkMuted">
               {DATE.format(new Date(entry.createdAt))}
               {entry.expiresAt && ` · ใช้ได้ถึง ${DATE.format(new Date(entry.expiresAt))}`}
+              {entry.by === 'team' && entry.kind !== 'admin_adjust' && ' · โดยทีมงาน'}
             </p>
           </div>
           <span className={`shrink-0 font-mono text-base tabular-nums ${entry.delta > 0 ? 'text-success' : 'text-ink'}`}>

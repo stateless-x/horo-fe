@@ -7,16 +7,17 @@ import { BalanceChip } from './balance-chip';
 import { LedgerList } from './ledger-list';
 import { PackList } from './pack-list';
 import { WALLET_QUERY_KEY } from './use-wallet';
-import { entryLabel, shortfallLine, signed, smallestPackCovering, unitsWithBaht } from './wallet-copy';
+import { doorPacks, entryLabel, nextPackUp, shortfallLine, signed } from './wallet-copy';
 
 const wallet: WalletState = {
   enabled: true,
   balance: 49,
   cap: 2000,
   packs: [
-    { id: 'p49', priceBaht: 49, base: 49, bonus: 0 },
-    { id: 'p99', priceBaht: 99, base: 99, bonus: 10 },
-    { id: 'p199', priceBaht: 199, base: 199, bonus: 30 },
+    { id: 'p49', priceBaht: 49, base: 49, bonus: 0, bonusPercent: 0 },
+    { id: 'p99', priceBaht: 99, base: 99, bonus: 10, bonusPercent: 10 },
+    { id: 'p199', priceBaht: 199, base: 199, bonus: 30, bonusPercent: 15 },
+    { id: 'p399', priceBaht: 399, base: 399, bonus: 80, bonusPercent: 20 },
   ],
   prices: { compat_unlock: 49, month_pass: 29, year_reading: 99, wallpaper: 39 },
   ledger: [
@@ -53,41 +54,54 @@ const wallet: WalletState = {
 const PURPLE_TEXT = /(?<![\w-])text-accent(Bright|Soft)?\b/;
 
 describe('wallet copy', () => {
-  test('amounts carry their baht, deltas their sign', () => {
-    expect(unitsWithBaht(49)).toBe('49 มู (฿49)');
-    expect(shortfallLine(0, 49)).toBe('ยอดไม่พอ มี 0 มู ต้องใช้ 49 มู (฿49)');
+  test('shortfall, deltas and ledger labels', () => {
+    expect(shortfallLine(0, 49)).toBe('ยอดไม่พอ มี 0 มู ต้องใช้ 49 มู');
     expect(signed(49)).toBe('+49');
     expect(signed(-49)).toBe('−49');
     expect(entryLabel(wallet.ledger[0])).toBe('ปลดล็อกดวงคู่ · ต้น');
     expect(entryLabel({ ...wallet.ledger[0], refName: null })).toBe('ปลดล็อกดวงคู่');
     expect(entryLabel(wallet.ledger[1])).toBe('ของขวัญต้อนรับ');
+    const purchase = { ...wallet.ledger[1], kind: 'purchase' as const, delta: 99, amountBaht: 99, by: 'you' as const };
+    expect(entryLabel(purchase)).toBe('เติมมู ฿99 → +99 มู');
+    const adjust = { ...wallet.ledger[1], kind: 'admin_adjust' as const, delta: 10 };
+    expect(entryLabel({ ...adjust, by: 'team' })).toBe('ปรับยอดโดยทีมงาน');
+    expect(entryLabel({ ...adjust, by: 'horo' })).toBe('ปรับยอด');
   });
 });
 
-describe('smallestPackCovering', () => {
-  test('picks the cheapest pack that covers the shortfall', () => {
-    expect(smallestPackCovering(wallet.packs, 49)?.id).toBe('p49');
-    expect(smallestPackCovering(wallet.packs, 60)?.id).toBe('p99');
-    expect(smallestPackCovering(wallet.packs, 5000)?.id).toBe('p199');
+describe('doorPacks', () => {
+  test('the smallest covering pack plus one step up, never p399', () => {
+    expect(doorPacks(wallet.packs, 49).map((pack) => pack.id)).toEqual(['p49', 'p99']);
+    expect(doorPacks(wallet.packs, 60).map((pack) => pack.id)).toEqual(['p99', 'p199']);
+    expect(doorPacks(wallet.packs, 200).map((pack) => pack.id)).toEqual(['p199']);
+    expect(doorPacks(wallet.packs, 5000).map((pack) => pack.id)).toEqual(['p199']);
+  });
+
+  test('the next pack up for the line after a purchase', () => {
+    expect(nextPackUp(wallet.packs, 'p99')?.id).toBe('p199');
+    expect(nextPackUp(wallet.packs, 'p399')).toBeUndefined();
   });
 });
 
 describe('PackList', () => {
-  test('three packs with baht and bonus, each with a disabled PromptPay button and one honest line', () => {
-    const html = renderToStaticMarkup(<PackList packs={wallet.packs} />);
+  test('rows show มู, the bonus chip, คุ้มสุด on p199, baht and a radio mark; no ยอดนิยม', () => {
+    const html = renderToStaticMarkup(<PackList packs={wallet.packs} selected="p99" onSelect={() => {}} />);
     for (const [total, price] of [
       ['49', '฿49'],
       ['109', '฿99'],
       ['229', '฿199'],
+      ['479', '฿399'],
     ]) {
       expect(html).toContain(`>${total}</span> มู`);
       expect(html).toContain(price);
     }
-    expect(html).toContain('99 + โบนัส 10');
-    expect(html).toContain('199 + โบนัส 30');
-    expect(html.match(/disabled=""/g)).toHaveLength(3);
-    expect(html.match(/PromptPay เร็ว ๆ นี้/g)).toHaveLength(3);
-    expect(html).toContain('ยังเติมมูไม่ได้ตอนนี้');
+    expect(html).toContain('+10%');
+    expect(html).toContain('+15%');
+    expect(html).not.toContain('+0%');
+    expect(html.match(/คุ้มสุด/g)).toHaveLength(1);
+    expect(html).not.toContain('ยอดนิยม');
+    expect(html.match(/role="radio"/g)).toHaveLength(4);
+    expect(html.match(/aria-checked="true"/g)).toHaveLength(1);
     expect(html).not.toMatch(PURPLE_TEXT);
   });
 });
@@ -150,19 +164,19 @@ describe('wallet off (nothing sellable)', () => {
 });
 
 describe('ReportDoor with a known balance', () => {
-  test('short of the price, the primary button buys and unlocks in one flow, with packs as a secondary link', () => {
+  test('short of the price, the primary button reads baht-first and opens the เติมมู sheet', () => {
     const html = door({ ...wallet, balance: 0 });
-    expect(html).toContain('เติมมูและเปิดคำตอบ · ฿49');
-    expect(html).toContain('ซื้อแพ็กคุ้มกว่า');
-    expect(html).toContain('ยอดไม่พอ มี 0 มู ต้องใช้ 49 มู (฿49)');
-    expect(html).not.toContain('ใช้ 49 มู (฿49) ปลดล็อก');
+    expect(html).toContain('เปิดคำตอบทั้งหมด · ฿49');
+    expect(html).toContain('aria-haspopup="dialog"');
+    expect(html).not.toContain('49 มู');
     expect(html).not.toMatch(PURPLE_TEXT);
   });
 
   test('the CTA spends from the real wallet: price and balance', () => {
     const html = door(wallet);
     expect(html).not.toContain('ซื้อแพ็กคุ้มกว่า');
-    expect(html).toContain('เปิดคำตอบทั้งหมด · 49 มู (฿49)');
+    expect(html).toContain('เปิดคำตอบทั้งหมด · 49 มู');
+    expect(html).not.toContain('(฿49)');
     expect(html).toContain('ยอดคงเหลือ 49 มู');
     // Owner, 2026-09-28: the pay-once line waits for the payment system.
     expect(html).not.toContain('จ่ายครั้งเดียว');

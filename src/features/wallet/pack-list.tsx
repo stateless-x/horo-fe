@@ -1,37 +1,81 @@
-import { Button } from '@/lib-packages/ui';
-import type { WalletPack } from '@/lib-packages/shared/types/wallet';
-import { UNIT, baht } from './wallet-copy';
+'use client';
+
+import { useRef, type KeyboardEvent } from 'react';
+import type { PackId, WalletPackOffer } from '@/lib-packages/shared/types/wallet';
+import { BEST_VALUE, UNIT, baht, topupCopy } from './wallet-copy';
+
+interface PackListProps {
+  packs: WalletPackOffer[];
+  selected: PackId;
+  onSelect: (id: PackId) => void;
+}
+
+const NEXT_KEYS = ['ArrowDown', 'ArrowRight'];
+const PREV_KEYS = ['ArrowUp', 'ArrowLeft'];
 
 /**
- * The three มู packs with their baht price and bonus. Payment is not
- * wired yet (monetization T5), so each pack's button is disabled and one line
- * says why. No purple text: ink, ink-muted and the disabled button only.
+ * The มู packs as one radio group: amount, bonus chip, คุ้มสุด on p199, baht
+ * price and a radio mark. Arrow keys move the selection (roving tabindex).
+ * No purple text: the mark and the selected edge are fills and borders.
  */
-export function PackList({ packs }: { packs: WalletPack[] }) {
+export function PackList({ packs, selected, onSelect }: PackListProps) {
+  const refs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const onKeyDown = (event: KeyboardEvent, index: number) => {
+    const step = NEXT_KEYS.includes(event.key) ? 1 : PREV_KEYS.includes(event.key) ? -1 : 0;
+    if (!step) return;
+    event.preventDefault();
+    const next = (index + step + packs.length) % packs.length;
+    onSelect(packs[next].id);
+    refs.current[next]?.focus();
+  };
+
   return (
-    <div>
-      <ul className="grid gap-2.5">
-        {packs.map((pack) => (
-          <li
+    <div role="radiogroup" aria-label={`แพ็ก${UNIT}`} className="grid gap-2">
+      {packs.map((pack, index) => {
+        const checked = pack.id === selected;
+        return (
+          <button
             key={pack.id}
-            className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 rounded-xl border border-edge bg-surface px-4 py-3"
+            ref={(node) => {
+              refs.current[index] = node;
+            }}
+            type="button"
+            role="radio"
+            aria-checked={checked}
+            tabIndex={checked ? 0 : -1}
+            onClick={() => onSelect(pack.id)}
+            onKeyDown={(event) => onKeyDown(event, index)}
+            className={`grid min-h-16 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 rounded-xl border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${
+              checked ? 'border-accent bg-accent/[0.06]' : 'border-edge bg-surface hover:bg-edgeSoft'
+            }`}
           >
-            <p className="font-heading text-lg font-semibold leading-snug text-ink">
-              <span className="font-mono tabular-nums">{pack.base + pack.bonus}</span> {UNIT}
-            </p>
-            <p className="text-right font-heading text-lg font-semibold leading-snug text-ink">{baht(pack.priceBaht)}</p>
-            <p className="text-[0.8125rem] leading-relaxed text-inkMuted">
-              {pack.bonus > 0 ? `${pack.base} + โบนัส ${pack.bonus} (โบนัสใช้ได้ 180 วัน)` : 'ไม่มีวันหมดอายุ'}
-            </p>
-            <Button type="button" variant="soft" size="sm" disabled className="h-9 px-3 text-xs">
-              PromptPay เร็ว ๆ นี้
-            </Button>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-3 text-[0.8125rem] leading-relaxed text-inkMuted">
-        ยังเติม{UNIT}ไม่ได้ตอนนี้ การจ่ายด้วย PromptPay กำลังจะเปิด
-      </p>
+            <span className="min-w-0">
+              <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="font-heading text-lg font-semibold leading-snug text-ink">
+                  <span className="font-mono tabular-nums">{(pack.base + pack.bonus).toLocaleString('th-TH')}</span> {UNIT}
+                </span>
+                {pack.bonusPercent > 0 && (
+                  <span className="rounded-full border border-edge bg-surface2 px-2 py-0.5 font-mono text-xs tabular-nums text-ink">
+                    +{pack.bonusPercent}%
+                  </span>
+                )}
+                {pack.id === BEST_VALUE && (
+                  <span className="rounded-full bg-accent px-2 py-0.5 font-heading text-xs font-semibold text-accentInk">{topupCopy.bestValue}</span>
+                )}
+              </span>
+              {pack.bonus > 0 && <span className="mt-0.5 block text-xs leading-relaxed text-inkMuted">{topupCopy.bonusExpiry(pack.bonus)}</span>}
+            </span>
+            <span className="font-heading text-lg font-semibold tabular-nums text-ink">{baht(pack.priceBaht)}</span>
+            <span
+              aria-hidden="true"
+              className={`grid size-5 place-items-center rounded-full border-2 transition-colors ${checked ? 'border-accent' : 'border-edge'}`}
+            >
+              {checked && <span className="size-2.5 rounded-full bg-accent" />}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

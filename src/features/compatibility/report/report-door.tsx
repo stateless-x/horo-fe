@@ -3,16 +3,20 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, BookOpen, CalendarDays, History, ListChecks, Loader2, MessageCircle, Sparkles, type LucideIcon } from 'lucide-react';
+import { ArrowRight, BookOpen, CalendarDays, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
 import { MuGemMark } from '@/components/ui/mu-gem-mark';
 import { api, type ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE, type CheckoutResponse } from '@/lib-packages/shared/types/wallet';
+import type { RelationshipType } from '@/lib-packages/shared';
 import { PackSheet } from '@/features/wallet/pack-sheet';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
-import { baht, shortfallLine, smallestPackCovering, units, unitsWithBaht } from '@/features/wallet/wallet-copy';
+import { baht, shortfallLine, smallestPackCovering, units } from '@/features/wallet/wallet-copy';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
+import { lockedOfferCopy } from './report-copy';
+import { relationshipReportVisuals } from './report-visuals';
 
 export interface ReportContentsEntry {
   /** Element id the entry jumps to. */
@@ -30,13 +34,6 @@ const ENTRY_ICON: Record<NonNullable<ReportContentsEntry['icon']>, LucideIcon> =
   plan: ListChecks,
 };
 
-const LOCKED_VALUE_GROUPS = [
-  { icon: BookOpen, title: 'เข้าใจว่าเขารู้สึกยังไง', detail: 'พร้อมเห็นมุมของคุณในความสัมพันธ์นี้' },
-  { icon: MessageCircle, title: 'รู้ว่าควรคุยเรื่องไหน', detail: 'และเริ่มด้วยประโยคอะไร' },
-  { icon: CalendarDays, title: 'เห็นจังหวะ 3 เดือนข้างหน้า', detail: 'ช่วงไหนควรคุย ช่วงไหนควรรอ' },
-  { icon: ListChecks, title: 'มีแนวทางที่เลือกลองได้จริง', detail: '3 แนวทางเล็ก ๆ ที่เลือกหยิบไปใช้ได้' },
-] as const;
-
 export function EntryMark({ entry }: { entry: ReportContentsEntry }) {
   if (!entry.icon) return <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />;
   const Icon = ENTRY_ICON[entry.icon];
@@ -45,6 +42,7 @@ export function EntryMark({ entry }: { entry: ReportContentsEntry }) {
 
 interface ReportDoorProps {
   partnerName: string;
+  relationshipType?: RelationshipType;
   readingMinutes: number;
   contents: ReportContentsEntry[];
   /** Full report: the contents become links and the foot offers "open everything". */
@@ -68,7 +66,7 @@ interface ReportDoorProps {
  * it summarizes four benefits with the unlock button; open, it becomes the
  * detailed table of contents, framed as the bound ฉบับเต็ม.
  */
-export function ReportDoor({ partnerName, readingMinutes, contents, full, unlockRef, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
+export function ReportDoor({ partnerName, relationshipType, readingMinutes, contents, full, unlockRef, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
   const reduce = useReducedMotion();
   const queryClient = useQueryClient();
   const wallet = enabledWallet(useWallet().data);
@@ -80,6 +78,12 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
 
   const price = wallet?.prices.compat_unlock;
   const balance = wallet?.balance;
+  const offer = lockedOfferCopy(relationshipType);
+  const visuals = relationshipReportVisuals(relationshipType);
+  const lockedValues = offer.values.map((value, index) => ({
+    ...value,
+    art: [visuals.sections.people, visuals.sections.conversation, visuals.next.calendar.art, visuals.next.plan.art][index],
+  }));
   // Short of the price: the primary button buys and unlocks in one flow instead of spending.
   const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
   const pack = wallet && price !== undefined && balance !== undefined ? smallestPackCovering(wallet.packs, price - balance) : undefined;
@@ -120,7 +124,7 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
     }
   };
 
-  const unlockLabel = price !== undefined ? `เปิดคำตอบทั้งหมด · ${unitsWithBaht(price)}` : 'เปิดคำตอบทั้งหมด';
+  const unlockLabel = price !== undefined ? `เปิดคำตอบทั้งหมด · ${balance !== undefined && balance >= price ? units(price) : baht(price)}` : 'เปิดคำตอบทั้งหมด';
 
   return (
     <section
@@ -138,14 +142,14 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
           {full ? <MiniSeal /> : <MuGemMark className="size-9" />}
         </span>
         <h2 id="report-door" tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink focus:outline-none">
-          {full ? spaceLatinName(`คำตอบของคุณกับ${partnerName}`, partnerName) : 'ถ้ายังไม่แน่ใจว่าควรไปต่อยังไง'}
+          {full ? spaceLatinName(`คำตอบของคุณกับ${partnerName}`, partnerName) : offer.title}
         </h2>
       </div>
       <p className="mt-2.5 text-base leading-relaxed text-inkMuted">
         {full ? (
           <>อ่านราว <b className="font-semibold text-ink">{readingMinutes} นาที</b> · 4 ส่วน · ปฏิทิน 3 เดือน · 3 ก้าวเล็ก ๆ ใน 7 วัน</>
         ) : (
-          <>ฉบับเต็มช่วยให้เห็นทั้งใจเขา จุดที่ติด และก้าวต่อไป เขียนจากข้อมูลของคุณสองคนโดยเฉพาะ</>
+          <>{offer.description}</>
         )}
       </p>
 
@@ -177,15 +181,14 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
           </ol>
         </details>
       ) : (
-        <ul className="mt-4 divide-y divide-edge border-y border-edge">
-          {LOCKED_VALUE_GROUPS.map(({ icon: Icon, title, detail }) => (
-            <li key={title} className="grid grid-cols-[22px_minmax(0,1fr)] gap-2.5 py-2.5">
-              <span className="pt-0.5 text-romanceText" aria-hidden="true">
-                <Icon className="size-4" />
+        <ul className="mt-5 divide-y divide-edge border-y border-edge">
+          {lockedValues.map(({ art, title, detail }) => (
+            <li key={title} className="flex min-h-[76px] items-center gap-3 py-3 first:pt-3.5 last:pb-3.5">
+              <span className="grid size-[54px] shrink-0 place-items-center rounded-2xl bg-surface2/80 ring-1 ring-edge">
+                {art && <Image alt="" src={art} width={96} height={96} sizes="54px" className="size-[52px] object-contain" />}
               </span>
-              <span className="text-sm leading-relaxed text-inkMuted">
-                <b className="font-heading font-semibold text-ink">{title}</b>
-                {' · '}
+              <span className="min-w-0 text-sm leading-relaxed text-inkMuted">
+                <b className="block font-heading text-[0.9375rem] font-semibold leading-snug text-ink">{title}</b>
                 {detail}
               </span>
             </li>
@@ -229,14 +232,14 @@ export function ReportDoor({ partnerName, readingMinutes, contents, full, unlock
                     className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading"
                   >
                     {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <MuGemMark className="size-5" />}
-                    {checkout?.payment === 'unavailable' ? 'PromptPay เร็ว ๆ นี้' : `เติมมูและเปิดคำตอบ · ${baht(pack.priceBaht)}`}
+                    {checkout?.payment === 'unavailable' ? 'PromptPay เร็ว ๆ นี้' : `เปิดคำตอบทั้งหมด · ${baht(pack.priceBaht)}`}
                   </Button>
                   <button
                     type="button"
                     onClick={() => setSheetOpen(true)}
                     className="mx-auto min-h-11 rounded-lg px-3 text-sm text-ink underline decoration-edge underline-offset-4 transition-colors hover:decoration-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
                   >
-                    ซื้อแพ็กคุ้มกว่า
+                    ดูแพ็กมูทั้งหมด
                   </button>
                   {checkout && (
                     <p role="status" className="text-sm leading-relaxed text-inkMuted">

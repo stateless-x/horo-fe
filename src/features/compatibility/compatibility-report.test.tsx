@@ -115,7 +115,8 @@ describe('CompatibilityReport', () => {
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);
     // No balance or price until the wallet loads: never a made-up number.
     expect(html).toContain('เปิดคำตอบทั้งหมด');
-    expect(html).toContain('ฉบับเต็มช่วยให้เห็นทั้งใจเขา จุดที่ติด และก้าวต่อไป');
+    expect(html).toContain('เห็นทางของความสัมพันธ์นี้ให้ชัดขึ้น');
+    expect(html).toContain('คำตอบฉบับเต็มเรียงให้เห็นใจของทั้งคู่ เรื่องที่ควรคุย และจังหวะที่เหมาะกับตอนนี้');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดเรื่อง', 'คำคมเรื่อง', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
     }
@@ -197,8 +198,22 @@ describe('CompatibilityReport', () => {
 
   test('the locked offer summarizes value without repeating a lock for every chapter', () => {
     const html = render('teaser', () => {});
-    for (const value of ['เข้าใจว่าเขารู้สึกยังไง', 'รู้ว่าควรคุยเรื่องไหน', 'เห็นจังหวะ 3 เดือนข้างหน้า', 'มีแนวทางที่เลือกลองได้จริง']) expect(html).toContain(value);
+    for (const value of ['อ่านนิสัยกันให้ชัด', 'คุยเรื่องยากให้ง่ายขึ้น', 'ดูจังหวะ 3 เดือนล่วงหน้า', 'เลือกก้าวต่อไปที่พอดี']) expect(html).toContain(value);
+    for (const asset of ['two-mirrors.webp', 'listening.webp', 'next-timing.webp', 'next-step.webp']) expect(html).toContain(asset);
     expect(html).not.toContain('ตัวตนของต้นในความสัมพันธ์นี้');
+  });
+
+  test('the locked offer adapts its promise and its first visual to each relationship type', () => {
+    const friend = render('teaser', () => {}, 'มีน', 'friend');
+    const boss = render('teaser', () => {}, 'หัวหน้า', 'boss');
+    const family = render('teaser', () => {}, 'แม่', 'family');
+
+    expect(friend).toContain('รักษามิตรภาพให้สบายใจทั้งสองฝ่าย');
+    expect(friend).toContain('friend.webp');
+    expect(boss).toContain('ทำงานกับเขาให้ลื่นขึ้น');
+    expect(boss).toContain('coworker.webp');
+    expect(family).toContain('อยู่ด้วยกันให้สบายใจขึ้น');
+    expect(family).toContain('family.webp');
   });
 
   test('the share card carries free fields only', () => {

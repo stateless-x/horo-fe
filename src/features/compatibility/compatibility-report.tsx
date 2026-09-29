@@ -229,6 +229,7 @@ export function CompatibilityReport({
         <div ref={doorRef} className="mt-12 scroll-mt-20 sm:mt-16 lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:mt-0">
           <ReportDoor
             partnerName={partnerName}
+            relationshipType={relationshipType}
             readingMinutes={content.readingMinutes}
             contents={contents}
             full={false}
@@ -492,6 +493,7 @@ export function CompatibilityReport({
           <div ref={doorRef} className="mt-14 scroll-mt-20 sm:mt-[72px]">
             <ReportDoor
               partnerName={partnerName}
+              relationshipType={relationshipType}
               readingMinutes={content.readingMinutes}
               contents={contents}
               full={false}

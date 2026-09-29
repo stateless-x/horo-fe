@@ -6,8 +6,8 @@ type ActionTone = 'accent' | 'romance';
 /**
  * Clay cues are a small semantic layer, deliberately separate from report copy.
  * A report can change its words without accidentally inheriting couple-coded art
- * in a family or work context. Assets stay optional when an illustration would
- * repeat a nearby cue or make a weaker claim than the label already does.
+ * in a family or work context. The three next-move cards receive distinct cues
+ * so equal choices have equal visual weight without reusing the section hero.
  */
 export interface RelationshipReportVisuals {
   sections: Record<ReportSectionId, string>;
@@ -57,12 +57,9 @@ const friend: RelationshipReportVisuals = {
     tension: '/assets/clay/relationships/friend.webp',
   },
   next: {
-    // The friend clay cue is already the section's hero. Repeating it in the
-    // first choice makes the page look copied rather than intentionally paced.
-    future: { tone: 'accent' },
+    future: { art: '/assets/clay/relationships/next-check-in.webp', tone: 'accent' },
     calendar: { art: '/assets/clay/relationships/next-timing.webp' },
-    // No heart-plant here: the checklist icon says "small next step" more honestly.
-    plan: {},
+    plan: { art: '/assets/clay/relationships/next-gentle-step.webp' },
   },
 };
 
@@ -79,10 +76,9 @@ const work: RelationshipReportVisuals = {
     tension: '/assets/clay/relationships/talking.webp',
   },
   next: {
-    // Career is already the section hero; the choice keeps its icon-led role.
-    future: { tone: 'accent' },
+    future: { art: '/assets/clay/relationships/next-check-in.webp', tone: 'accent' },
     calendar: { art: '/assets/clay/relationships/next-timing.webp' },
-    plan: {},
+    plan: { art: '/assets/clay/relationships/next-gentle-step.webp' },
   },
 };
 
@@ -99,10 +95,9 @@ const family: RelationshipReportVisuals = {
     tension: '/assets/clay/relationships/talking.webp',
   },
   next: {
-    // Family is already the section hero; avoid repeating it immediately below.
-    future: { tone: 'accent' },
+    future: { art: '/assets/clay/relationships/next-check-in.webp', tone: 'accent' },
     calendar: { art: '/assets/clay/relationships/next-timing.webp' },
-    plan: {},
+    plan: { art: '/assets/clay/relationships/next-gentle-step.webp' },
   },
 };
 

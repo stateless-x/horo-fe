@@ -71,7 +71,7 @@ export function SectionActionMap({ title, helper, actions, onChoose }: SectionAc
               key={action.id}
               type="button"
               onClick={() => onChoose(action.id)}
-              className={`group min-h-[140px] rounded-2xl border border-edge bg-surface px-3 py-3.5 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[152px] sm:px-4 ${tone.card} ${hasThreeActions ? 'w-[calc((100vw-52px)/2)] min-w-[156px] shrink-0 snap-start sm:min-w-0 sm:w-auto' : ''}`}
+              className={`group min-h-[140px] rounded-2xl border border-edge bg-surface px-3 py-3.5 text-left transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright active:translate-y-0 sm:min-h-[152px] sm:px-4 ${tone.card} ${hasThreeActions ? 'w-[calc((100vw-78px)/2)] min-w-[144px] shrink-0 snap-start sm:min-w-0 sm:w-auto' : ''}`}
             >
               <span className="flex items-start justify-between gap-3">
                 <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${tone.icon}`}>

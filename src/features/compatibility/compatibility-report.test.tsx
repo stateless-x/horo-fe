@@ -242,6 +242,13 @@ describe('CompatibilityReport', () => {
     expect(relationshipReportVisuals('coworker').sections.people).toContain('relationships/coworker.webp');
     expect(relationshipReportVisuals('boss').next.future.tone).toBe('accent');
     expect(relationshipReportVisuals('romantic').next.future.tone).toBe('romance');
+    // Non-romantic next moves stay equally illustrated without borrowing heart-coded art.
+    for (const relationshipType of ['friend', 'boss', 'coworker', 'family'] as const) {
+      const next = relationshipReportVisuals(relationshipType).next;
+      expect(next.future.art).toContain('next-check-in.webp');
+      expect(next.calendar.art).toContain('next-timing.webp');
+      expect(next.plan.art).toContain('next-gentle-step.webp');
+    }
   });
 
   test('every compatibility type has complete natural-language labels for the swipeable tab rail', () => {

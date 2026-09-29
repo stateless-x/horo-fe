@@ -397,9 +397,9 @@ export function CompatibilityReport({
                       helper="เลือกแล้วพาไปดูต่อ"
                       onChoose={jump}
                       actions={[
-                        { id: 'report-dimensions-section', tag: 'เช็กจุดแข็ง', title: 'ดู 4 มิติของคู่นี้', detail: 'เคมี การสื่อสาร ความไว้ใจ และจังหวะชีวิต', icon: ChartNoAxesCombined, tone: 'accent' },
-                        { id: 'report-overview-section', tag: 'เริ่มจากภาพใหญ่', title: 'อ่านเรื่องของคู่นี้', detail: 'ดูภาพรวมว่าอะไรพาให้มาเจอกัน', icon: Sparkles, tone: 'accent' },
-                        { id: 'ch-attraction', ...reportCopy.overviewAction, icon: relationshipActionIcon(relationshipType), tone: relationshipTone },
+                        { id: 'report-dimensions-section', tag: 'เช็กจุดแข็ง', title: 'ดู 4 มิติของคู่นี้', detail: 'เคมี การสื่อสาร ความไว้ใจ และจังหวะชีวิต', icon: ChartNoAxesCombined, tone: 'accent', art: reportVisuals.overview.dimensions },
+                        { id: 'report-overview-section', tag: 'เริ่มจากภาพใหญ่', title: 'อ่านเรื่องของคู่นี้', detail: 'ดูภาพรวมว่าอะไรพาให้มาเจอกัน', icon: Sparkles, tone: 'accent', art: reportVisuals.overview.story },
+                        { id: 'ch-attraction', ...reportCopy.overviewAction, icon: relationshipActionIcon(relationshipType), tone: relationshipTone, art: reportVisuals.overview.attraction },
                       ]}
                       />
                     <section id="report-overview-section" aria-labelledby="report-overview" className="mt-8 scroll-mt-20">
@@ -423,8 +423,8 @@ export function CompatibilityReport({
                       helper="เลือกแล้วดูต่อได้เลย"
                       onChoose={jump}
                       actions={[
-                        { id: 'ch-partner', ...reportCopy.peopleActions.partner, icon: UserRound, tone: 'accent' },
-                        { id: 'ch-you', ...reportCopy.peopleActions.reader, icon: CircleUserRound, tone: 'accent' },
+                        { id: 'ch-partner', ...reportCopy.peopleActions.partner, icon: UserRound, tone: 'accent', art: reportVisuals.people.partner },
+                        { id: 'ch-you', ...reportCopy.peopleActions.reader, icon: CircleUserRound, tone: 'accent', art: reportVisuals.people.reader },
                       ]}
                     />
                     <div className="mt-5 space-y-4">{renderChapter('partner')}{renderChapter('you')}</div>

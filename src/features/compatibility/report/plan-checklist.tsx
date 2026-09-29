@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { Check, ChevronDown, Heart, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
 import { REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
 import { planFrameFor } from './report-copy';
+import { relationshipReportVisuals } from './report-visuals';
 
 const storageKey = (reportId: string) => `saimu.compat.moments.${reportId}`;
 
@@ -43,6 +45,8 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
   const [openDay, setOpenDay] = useState<number | null>(null);
   const [unsaved, setUnsaved] = useState(false);
   const frame = planFrameFor(relationshipType, score);
+  const practiceVisuals = relationshipReportVisuals(relationshipType).practices;
+  const practiceArts = [practiceVisuals.space, practiceVisuals.voice, practiceVisuals.focus];
   const isRomanticContext = relationshipType === 'romantic' || relationshipType === 'talking' || !relationshipType;
   const MomentIcon = isRomanticContext ? Heart : Sparkles;
 
@@ -83,6 +87,8 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
             const isOpen = openDay === step.day;
             const hasTried = tried.includes(step.day);
             const detailId = `relationship-moment-${step.day}`;
+            const art = practiceArts[index];
+            const artSize = index === 0 ? 'h-10 w-12' : 'size-10';
 
             return (
               <li key={step.day} className={isOpen ? 'bg-surface2/45' : ''}>
@@ -93,8 +99,13 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
                   onClick={() => setOpenDay(isOpen ? null : step.day)}
                   className="flex min-h-[76px] w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-surface2/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accentBright sm:px-7"
                 >
-                  <span className={`grid size-9 shrink-0 place-items-center rounded-full border ${hasTried ? 'border-success/30 bg-success/10 text-success' : 'border-edge bg-surface text-inkMuted'}`}>
-                    {hasTried ? <Check className="size-4 stroke-[3]" aria-hidden="true" /> : <MomentIcon className="size-4" aria-hidden="true" />}
+                  <span className={`relative grid shrink-0 place-items-center ${artSize}`}>
+                    {art ? <Image alt="" width={80} height={80} src={art} sizes="48px" className="size-full object-contain" /> : <MomentIcon className="size-4 text-inkMuted" aria-hidden="true" />}
+                    {hasTried && (
+                      <span className="absolute -bottom-0.5 -right-0.5 grid size-4 place-items-center rounded-full bg-success text-onAccent ring-2 ring-surface">
+                        <Check className="size-3 stroke-[3]" aria-hidden="true" />
+                      </span>
+                    )}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-heading text-base font-semibold leading-snug text-ink">{moment.title}</span>

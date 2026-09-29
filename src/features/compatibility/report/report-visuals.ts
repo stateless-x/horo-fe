@@ -11,9 +11,23 @@ type ActionTone = 'accent' | 'romance';
  */
 export interface RelationshipReportVisuals {
   sections: Record<ReportSectionId, string>;
+  overview: {
+    dimensions: string;
+    story: string;
+    attraction: string;
+  };
+  people: {
+    partner: string;
+    reader: string;
+  };
   conversation: {
     open: string;
     tension: string;
+  };
+  practices: {
+    space: string;
+    voice: string;
+    focus: string;
   };
   next: {
     future: { art?: string; tone: ActionTone };
@@ -22,10 +36,24 @@ export interface RelationshipReportVisuals {
   };
 }
 
-const shared: Pick<RelationshipReportVisuals, 'conversation'> = {
+/** Cues that describe a reading or a gentle practice, not a relationship role. */
+const shared = {
+  overview: {
+    dimensions: '/assets/clay/compatibility-sections/four-dimensions.webp',
+    story: '/assets/clay/categories/life-overview.webp',
+  },
+  people: {
+    partner: '/assets/clay/relationships/listening.webp',
+    reader: '/assets/clay/compatibility-sections/two-mirrors.webp',
+  },
   conversation: {
     open: '/assets/clay/relationships/talking.webp',
     tension: '/assets/clay/relationships/reconnect.webp',
+  },
+  practices: {
+    space: '/assets/clay/relationships/comfortable-space.webp',
+    voice: '/assets/clay/relationships/next-check-in.webp',
+    focus: '/assets/clay/relationships/next-gentle-step.webp',
   },
 };
 
@@ -37,6 +65,7 @@ const romantic: RelationshipReportVisuals = {
     conversation: '/assets/clay/relationships/listening.webp',
     next: '/assets/clay/categories/life-overview.webp',
   },
+  overview: { ...shared.overview, attraction: '/assets/clay/categories/love.webp' },
   next: {
     future: { art: '/assets/clay/relationships/next-signal.webp', tone: 'romance' },
     calendar: { art: '/assets/clay/relationships/next-timing.webp' },
@@ -52,6 +81,7 @@ const friend: RelationshipReportVisuals = {
     conversation: '/assets/clay/relationships/listening.webp',
     next: '/assets/clay/relationships/friend.webp',
   },
+  overview: { ...shared.overview, attraction: '/assets/clay/relationships/friend.webp' },
   conversation: {
     open: '/assets/clay/relationships/talking.webp',
     tension: '/assets/clay/relationships/friend.webp',
@@ -71,6 +101,7 @@ const work: RelationshipReportVisuals = {
     conversation: '/assets/clay/relationships/listening.webp',
     next: '/assets/clay/categories/career.webp',
   },
+  overview: { ...shared.overview, attraction: '/assets/clay/relationships/coworker.webp' },
   conversation: {
     open: '/assets/clay/relationships/coworker.webp',
     tension: '/assets/clay/relationships/talking.webp',
@@ -90,6 +121,7 @@ const family: RelationshipReportVisuals = {
     conversation: '/assets/clay/relationships/listening.webp',
     next: '/assets/clay/categories/family.webp',
   },
+  overview: { ...shared.overview, attraction: '/assets/clay/categories/family.webp' },
   conversation: {
     open: '/assets/clay/categories/family.webp',
     tension: '/assets/clay/relationships/talking.webp',

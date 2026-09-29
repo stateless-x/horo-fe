@@ -242,9 +242,20 @@ describe('CompatibilityReport', () => {
     expect(relationshipReportVisuals('coworker').sections.people).toContain('relationships/coworker.webp');
     expect(relationshipReportVisuals('boss').next.future.tone).toBe('accent');
     expect(relationshipReportVisuals('romantic').next.future.tone).toBe('romance');
+    expect(relationshipReportVisuals('romantic').overview.attraction).toContain('categories/love.webp');
+    expect(relationshipReportVisuals('friend').overview.attraction).toContain('relationships/friend.webp');
+    expect(relationshipReportVisuals('boss').overview.attraction).toContain('relationships/coworker.webp');
+    expect(relationshipReportVisuals('family').overview.attraction).toContain('categories/family.webp');
     // Non-romantic next moves stay equally illustrated without borrowing heart-coded art.
     for (const relationshipType of ['friend', 'boss', 'coworker', 'family'] as const) {
-      const next = relationshipReportVisuals(relationshipType).next;
+      const visuals = relationshipReportVisuals(relationshipType);
+      const next = visuals.next;
+      expect(visuals.overview.dimensions).toContain('four-dimensions.webp');
+      expect(visuals.people.partner).toContain('relationships/listening.webp');
+      expect(visuals.people.reader).toContain('two-mirrors.webp');
+      expect(visuals.practices.space).toContain('comfortable-space.webp');
+      expect(visuals.practices.voice).toContain('next-check-in.webp');
+      expect(visuals.practices.focus).toContain('next-gentle-step.webp');
       expect(next.future.art).toContain('next-check-in.webp');
       expect(next.calendar.art).toContain('next-timing.webp');
       expect(next.plan.art).toContain('next-gentle-step.webp');

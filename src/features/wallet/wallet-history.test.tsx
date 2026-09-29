@@ -109,9 +109,23 @@ describe('WalletHistory', () => {
     expect(topup.has('cursor')).toBe(false);
     expect(view.getByRole('button', { name: 'เติมมู' }).getAttribute('aria-pressed')).toBe('true');
 
+    // Back to ทั้งหมด: its loaded pages come from cache, with no new request.
+    const before = calls.length;
     rtl.fireEvent.click(view.getByRole('button', { name: 'ทั้งหมด' }));
+    await rtl.waitFor(() => expect(view.getAllByRole('listitem')).toHaveLength(21));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(calls.length).toBe(before);
+  });
+
+  test('mounting fetches only the active filter: one request, no kind', async () => {
+    const calls = mockHistory({ '|': { entries: firstPage, nextCursor: CURSOR } });
+    const { view } = mount();
     await rtl.waitFor(() => expect(view.getAllByRole('listitem')).toHaveLength(20));
-    expect(calls.at(-1)!.has('cursor')).toBe(false);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(calls).toHaveLength(1);
+    expect(calls[0].has('kind')).toBe(false);
+    const pills = view.getAllByRole('button', { pressed: false }).map((b) => b.textContent);
+    expect(pills).toEqual(['เติมมู', 'ใช้มู', 'คืนยอด', 'ปรับยอด']);
   });
 
   test('no rows: the empty state, no ดูเพิ่ม and no ครบแล้ว', async () => {

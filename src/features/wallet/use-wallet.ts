@@ -28,9 +28,10 @@ export const WALLET_HISTORY_PAGE_SIZE = 20;
 
 /**
  * GET /api/wallet/history, newest first, one page of 20 per `fetchNextPage`.
- * The key sits under WALLET_QUERY_KEY, so every existing wallet invalidation
- * (after a top-up or an unlock) refetches the history too. `gcTime: 0` drops a
- * filter's pages once it is left, so switching filters starts again at page one.
+ * One key per filter, fetched only while that filter is shown; a filter seen
+ * in the last 30 s comes back from cache. The key sits under WALLET_QUERY_KEY,
+ * so every existing wallet invalidation (after a top-up or an unlock) refetches
+ * the history too.
  * Only call it while the wallet is on: the route answers 404 otherwise.
  */
 export function useWalletHistory(kind: HistoryKind | undefined) {
@@ -44,6 +45,6 @@ export function useWalletHistory(kind: HistoryKind | undefined) {
     },
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.nextCursor,
-    gcTime: 0,
+    staleTime: 30_000,
   });
 }

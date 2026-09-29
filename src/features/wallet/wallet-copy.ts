@@ -1,4 +1,4 @@
-import type { LedgerEntry, LedgerKind, PackId, ProductId, WalletPack, WalletPackOffer } from '@/lib-packages/shared/types/wallet';
+import type { HistoryKind, LedgerEntry, LedgerKind, PackId, ProductId, WalletPack, WalletPackOffer } from '@/lib-packages/shared/types/wallet';
 
 /**
  * Wallet copy: transactional and pronoun-free. The unit มู is pegged
@@ -98,6 +98,23 @@ export const topupCopy = {
   emailLink: 'ไปที่ตั้งค่า',
   cap: (cap: number) => `ยอดสูงสุดต่อบัญชีคือ ${units(cap)} ตอนนี้เติมเพิ่มไม่ได้`,
   startFailed: 'เริ่มการชำระไม่สำเร็จ ลองอีกครั้ง',
+};
+
+/** /dashboard/wallet history: the kind filter pills (ทั้งหมด = no kind) and the list's paging lines. */
+export const HISTORY_FILTERS: { kind: HistoryKind | undefined; label: string }[] = [
+  { kind: undefined, label: 'ทั้งหมด' },
+  { kind: 'topup', label: `เติม${UNIT}` },
+  { kind: 'spend', label: `ใช้${UNIT}` },
+  { kind: 'refund', label: 'คืนยอด' },
+  { kind: 'adjust', label: 'ปรับยอด' },
+];
+
+export const HISTORY_COPY = {
+  more: 'ดูเพิ่ม',
+  loading: 'กำลังโหลด…',
+  end: 'ครบแล้ว',
+  failed: 'โหลดรายการไม่สำเร็จ',
+  retry: 'ลองอีกครั้ง',
 };
 
 const PRODUCT_LABELS: Record<ProductId, string> = {

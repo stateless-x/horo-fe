@@ -159,11 +159,11 @@ describe('header wallet (on)', () => {
     expect(visible).toBe('71');
   });
 
-  test('the menu row links to the wallet with กระเป๋าตัง and the balance', () => {
+  test('the menu row links to the wallet with the crystal and กระเป๋าตัง, no balance', () => {
     const html = withWallet(<WalletMenuRow className="row" />);
     expect(html).toContain('href="/dashboard/wallet"');
     expect(html).toContain('mu-gem-clay');
-    expect(html.replace(/<[^>]*>/g, '')).toBe('กระเป๋าตัง71');
+    expect(html.replace(/<[^>]*>/g, '')).toBe('กระเป๋าตัง');
   });
 });
 

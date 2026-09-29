@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { Button } from '@/lib-packages/ui';
 import { CurrencyImage } from '@/components/ui/currency-image';
-import { LedgerList } from '@/features/wallet/ledger-list';
 import { PackSheet } from '@/features/wallet/pack-sheet';
+import { WalletHistory } from '@/features/wallet/wallet-history';
 import { enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 import { UNIT, WALLET_NAME, baht, units } from '@/features/wallet/wallet-copy';
 
-/** /dashboard/wallet: the มู balance, เติมมู (the sheet in store context), and the newest ledger rows. */
+/** /dashboard/wallet: the มู balance, เติมมู (the sheet in store context), and the paginated history. */
 export default function WalletPage() {
   const query = useWallet();
   const wallet = enabledWallet(query.data);
@@ -60,7 +60,7 @@ export default function WalletPage() {
               <h2 id="wallet-ledger" className="mb-3 font-heading text-lg font-semibold text-ink">
                 ความเคลื่อนไหว
               </h2>
-              <LedgerList entries={wallet.ledger} />
+              <WalletHistory />
             </section>
           </>
         )}

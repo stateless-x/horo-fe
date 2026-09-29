@@ -23,7 +23,7 @@ export function BalanceChip() {
   );
 }
 
-/** "กระเป๋าตัง" row in the header's mobile menu, balance right-aligned; same cache entry as the chip. Nothing while the wallet is off. */
+/** "กระเป๋าตัง" row in the header's mobile menu: crystal and label, no balance (the chip shows it). Nothing while the wallet is off. */
 export function WalletMenuRow({ className }: { className: string }) {
   const data = enabledWallet(useWallet().data);
   if (!data) return null;
@@ -31,7 +31,6 @@ export function WalletMenuRow({ className }: { className: string }) {
     <Link href="/dashboard/wallet" className={className}>
       <CurrencyImage size={16} />
       {WALLET_NAME}
-      <span className="ml-auto font-mono tabular-nums">{data.balance.toLocaleString('th-TH')}</span>
     </Link>
   );
 }

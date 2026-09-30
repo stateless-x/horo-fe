@@ -23,7 +23,7 @@ export type TrackedSurface = (typeof TRACKED_SURFACES)[number];
  * TRACKED_SURFACES — `surface_viewed` covers the whole dashboard, while
  * category/tab/share events only make sense on the reading surfaces.
  */
-export const TRACKED_EVENT_SURFACES = ['today', 'fortune', 'compatibility', 'settings'] as const;
+export const TRACKED_EVENT_SURFACES = ['today', 'fortune', 'compatibility', 'settings', 'shop', 'wallet'] as const;
 
 export type TrackedEventSurface = (typeof TRACKED_EVENT_SURFACES)[number];
 
@@ -150,6 +150,9 @@ export const TRACKED_EVENT_NAMES = [
   'guidance_opened',
   'compatibility_share_initiated',
   'reading_shared',
+  'shop_viewed',
+  'product_viewed',
+  'offer_selected',
 ] as const;
 
 export type TrackedEventName = (typeof TRACKED_EVENT_NAMES)[number];
@@ -197,7 +200,45 @@ export type TrackedEvent =
        * so the funnel open -> pick stays visible.
        */
       platform?: CompatibilitySharePlatform;
-    };
+    }
+  // The Shop (docs/shop-catalog-plan.md §9). Catalog ids are a–z, 0–9, _ (≤ 32 for products, ≤ 64 for offers).
+  | { event: 'shop_viewed'; surface: 'shop'; entry: ShopEntry }
+  | { event: 'product_viewed'; surface: 'shop'; productId: string; entry: ProductViewEntry }
+  | { event: 'offer_selected'; surface: 'shop'; productId: string; offerId: string };
+
+/** Where a reader came into the Shop from (pass `?from=` on links to it). */
+export const SHOP_ENTRIES = ['nav', 'door', 'wallet', 'link'] as const;
+export type ShopEntry = (typeof SHOP_ENTRIES)[number];
+
+/** Where a product sheet was opened: the Shop page, or a mini-shop on another page. */
+export const PRODUCT_VIEW_ENTRIES = ['shop', 'mini_shop'] as const;
+export type ProductViewEntry = (typeof PRODUCT_VIEW_ENTRIES)[number];
+
+/**
+ * Events only the server records, where the truth lives (a payment, an
+ * exchange, a ticket use). The public analytics route never accepts them.
+ * Each carries the id of what happened as its dedup key, so a replayed webhook
+ * counts once.
+ */
+export const SERVER_EVENT_NAMES = [
+  'topup_started',
+  'topup_completed',
+  'catalog_purchase_completed',
+  'ticket_consumed',
+  'fulfilment_failed',
+  'refund_requested',
+  'refund_completed',
+] as const;
+export type ServerEventName = (typeof SERVER_EVENT_NAMES)[number];
+
+export type ServerEvent =
+  | { event: 'topup_started'; orderId: string; packId: string; offerId: string | null }
+  | { event: 'topup_completed'; orderId: string; packId: string; offerId: string | null }
+  | { event: 'catalog_purchase_completed'; purchaseId: string; offerId: string; source: 'wallet' | 'order' }
+  | { event: 'ticket_consumed'; useId: string; grantSource: 'purchase' | 'admin' | 'promotion' | 'gift' }
+  | { event: 'fulfilment_failed'; failureId: string; offerId: string; reason: string }
+  | { event: 'refund_requested'; purchaseId: string; offerId: string }
+  | { event: 'refund_completed'; purchaseId: string; offerId: string };
 
 /**
  * The dedup identity of an event within one Bangkok day, or null when every
@@ -223,6 +264,11 @@ export function dedupKeyFor(event: TrackedEvent): string | null {
       return event.relationshipType;
     case 'guidance_opened':
       return `next_steps:${event.relationshipType}`;
+    // One Shop visit and one look per product per day are the funnel's units.
+    case 'shop_viewed':
+      return 'shop';
+    case 'product_viewed':
+      return event.productId;
     // Every check, share, CTA click, and affiliate open is a distinct action
     // worth counting, so these deliberately opt out of dedup.
     case 'cta_clicked':
@@ -233,6 +279,7 @@ export function dedupKeyFor(event: TrackedEvent): string | null {
     case 'result_opened':
     case 'compatibility_share_initiated':
     case 'reading_shared':
+    case 'offer_selected':
       return null;
   }
 }

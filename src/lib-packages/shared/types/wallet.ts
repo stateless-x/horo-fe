@@ -1,5 +1,6 @@
 // GENERATED from horo-be/lib/shared/types — do not edit. Run `bun run sync:types` in horo-be.
 import { z } from 'zod';
+import type { OfferId, TicketsSummary } from './shop';
 
 /**
  * มู wallet (1 มู = ฿1): the vocabulary and response shapes shared by the
@@ -8,16 +9,16 @@ import { z } from 'zod';
  * GET /api/wallet. Design: horo-be/docs/wallet.md.
  */
 
-/** Everything มู can buy. Only compat_unlock is spendable today. */
-export const PRODUCT_IDS = ['compat_unlock', 'compat_ticket_1', 'compat_ticket_3', 'month_pass', 'year_reading', 'wallpaper'] as const;
+/**
+ * Fixed-price things มู could pay for directly (pricing.ts). Shop items are
+ * catalog offers instead (lib/shared/types/shop.ts). compat_unlock stays so
+ * rows unlocked with มู before tickets still read as paid.
+ */
+export const PRODUCT_IDS = ['compat_unlock', 'month_pass', 'year_reading', 'wallpaper'] as const;
 export type ProductId = (typeof PRODUCT_IDS)[number];
 
-/** Compatibility-only ticket bundles purchased with มู. */
-export const TICKET_PASS_IDS = ['compat_ticket_1', 'compat_ticket_3'] as const;
-export type TicketPassId = (typeof TICKET_PASS_IDS)[number];
-
 /** Packs sold for baht. */
-export const PACK_IDS = ['p49', 'p99', 'p199', 'p399'] as const;
+export const PACK_IDS = ['p50', 'p100', 'p300', 'p500', 'p1000'] as const;
 export type PackId = (typeof PACK_IDS)[number];
 
 /** Why a ledger row exists. The ledger is append-only; a correction is a new row. */
@@ -53,7 +54,7 @@ export interface WalletPack {
   priceBaht: number;
   /** มู that never expire. */
   base: number;
-  /** Extra มู that expire 180 days after purchase. */
+  /** Extra มู on top of the base. Never expire. */
   bonus: number;
 }
 
@@ -66,37 +67,19 @@ export interface LedgerEntry {
   id: string;
   delta: number;
   kind: LedgerKind;
-  productId: ProductId | null;
+  /** A ProductId, or the catalog offer id of an exchange (e.g. 'heart_ticket_3'). */
+  productId: ProductId | OfferId | null;
   refId: string | null;
-  /** What refId points at, for a ดวงคู่ unlock the partner's name; null once that row is gone. */
+  /** What refId points at: the partner's name for a ดวงคู่ unlock, "ตั๋วรู้ใจ 2 ใบ แถม 1" for an exchange. */
   refName: string | null;
   note: string | null;
-  /** ISO date; set on bonus rows only. */
+  /** ISO date. Null on every row written since 2026-09-30 (all มู are permanent). */
   expiresAt: string | null;
   createdAt: string;
   /** Who caused the row, as the user sees it. Never the admin's identity. */
   by: LedgerBy;
   /** Purchase rows: the baht paid for the order, for "฿99 → +99 มู". Null on every other kind. */
   amountBaht: number | null;
-}
-
-/** A feature-specific right shown separately from the fungible มู balance. */
-export interface FeatureCreditSummary {
-  featureId: 'compat_unlock';
-  /** Uses that can still open this feature. */
-  usesLeft: number;
-  /** Null for a purchased ตั๋วรู้ใจ; a date only for a promotional gift or credit. */
-  expiresAt: string | null;
-}
-
-/** A wallet-visible event for a compatibility ticket. It never changes the มู balance. */
-export interface FeatureCreditEvent {
-  id: string;
-  kind: 'granted' | 'used';
-  uses: number;
-  refName: string | null;
-  createdAt: string;
-  expiresAt: string | null;
 }
 
 /**
@@ -108,17 +91,12 @@ export type WalletResponse = { enabled: false } | WalletState;
 export interface WalletState {
   enabled: true;
   balance: number;
-  cap: number;
   packs: WalletPackOffer[];
   prices: Record<ProductId, number>;
   /** The newest 20 rows, newest first. */
   ledger: LedgerEntry[];
-  /** Omitted until feature-credit grants are live; never included in the มู balance. */
-  featureCredits?: FeatureCreditSummary[];
-}
-
-export interface FeatureCreditHistoryResponse {
-  entries: FeatureCreditEvent[];
+  /** ตั๋วรู้ใจ, never part of the มู balance. */
+  tickets: TicketsSummary;
 }
 
 /** GET /api/wallet/history. Newest first; pass `nextCursor` back as `cursor` for the next page. */
@@ -130,10 +108,10 @@ export interface WalletHistoryResponse {
 /** POST /api/wallet/checkout body. */
 export const CheckoutRequestSchema = z.object({
   packId: z.enum(PACK_IDS),
-  /** One-flow purchase: the ดวงคู่ row to unlock as soon as this order is paid. */
+  /** One-flow purchase: the offer to exchange from the credited balance once paid. Checked (404/409) before any charge. */
+  offer: z.object({ offerId: z.string().min(1).max(64), expectedPriceMoo: z.number().int().positive() }).optional(),
+  /** One-flow purchase: the ดวงคู่ row to unlock after the exchange. Requires `offer` (400 offer_required). */
   unlockRef: z.string().uuid().optional(),
-  /** Optional ticket bundle to buy from the credited balance before opening unlockRef. */
-  ticketPassId: z.enum(TICKET_PASS_IDS).optional(),
   /** "ขอ QR ใหม่": the user's pending order whose QR this one replaces; its charge is canceled first. */
   replaceOrderId: z.string().uuid().optional(),
 });
@@ -175,6 +153,13 @@ export interface OrderStatusResponse {
   expiresAt: string | null;
   /** The owner's มู balance now, so a paid order can show the new total. */
   balance: number;
+  /**
+   * The one-flow exchange: null when the order carries no offer, or is not paid
+   * and exchanged yet; 'failed' = the มู arrived but the exchange didn't (retry
+   * with POST /api/shop/purchases and a new key).
+   */
+  fulfilment: 'done' | 'failed' | null;
+  tickets: TicketsSummary;
 }
 
 /**

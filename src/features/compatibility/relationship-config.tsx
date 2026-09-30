@@ -10,7 +10,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
   cardTitle: string;
   placeholder: string;
   cta: string;
-  resultTitle: (name: string) => string;
 }> = {
   talking: {
     accent: 'text-pink-600 dark:text-pink-400',
@@ -19,7 +18,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     cardTitle: 'คนที่คุยอยู่ ชื่ออะไรนะ',
     placeholder: 'ชื่อคนที่คุณคุยอยู่',
     cta: 'ส่องดวงคนคุย',
-    resultTitle: (name: string) => `ดวงระหว่างคุณกับ ${name}`,
   },
   romantic: {
     accent: 'text-pink-600 dark:text-pink-400',
@@ -28,7 +26,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     cardTitle: 'มาดูดวงคนรักกัน',
     placeholder: 'ชื่อคนรักของคุณ',
     cta: 'ส่องดวงคู่รัก',
-    resultTitle: (name: string) => `ดวงรักระหว่างคุณกับ ${name}`,
   },
   boss: {
     accent: 'text-accentBright',
@@ -37,7 +34,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     cardTitle: 'ทำงานกับหัวหน้า เข้าขากันแค่ไหน',
     placeholder: 'ชื่อหัวหน้าของคุณ',
     cta: 'ส่องดวงหัวหน้า',
-    resultTitle: (name: string) => `ดวงการงานกับ ${name}`,
   },
   coworker: {
     accent: 'text-accentBright',
@@ -46,7 +42,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     cardTitle: 'เลือกเพื่อนร่วมงานมาดูดวงด้วยกัน',
     placeholder: 'ชื่อเพื่อนร่วมงาน',
     cta: 'ส่องดวงเพื่อนร่วมงาน',
-    resultTitle: (name: string) => `ดวงการงานกับ ${name}`,
   },
   friend: {
     accent: 'text-accentBright',
@@ -55,7 +50,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     cardTitle: 'เพื่อนคนไหนที่อยากดูดวงด้วย',
     placeholder: 'ชื่อเพื่อนของคุณ',
     cta: 'ส่องดวงเพื่อน',
-    resultTitle: (name: string) => `ดวงมิตรภาพกับ ${name}`,
   },
   family: {
     accent: 'text-accentBright',
@@ -64,7 +58,6 @@ export const RELATIONSHIP_CONFIG: Record<RelationshipType, {
     cardTitle: 'วันนี้อยากรู้จักใครในบ้านมากขึ้น',
     placeholder: 'ชื่อคนในครอบครัว',
     cta: 'ส่องดวงครอบครัว',
-    resultTitle: (name: string) => `ดวงครอบครัวกับ ${name}`,
   },
 };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Download, Loader2 } from 'lucide-react';
+import { Download, Loader2, ShieldCheck } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Button } from '@/lib-packages/ui';
 import type { CheckoutResponse } from '@/lib-packages/shared/types/wallet';
@@ -100,22 +100,34 @@ export function PayStep({ checkout, total, serverExpired, onExpire, onNewQr, bus
         </div>
       ) : (
         <>
-          <div className="w-full max-w-[280px] rounded-xl bg-white p-1 sm:max-w-[208px]">
-            {checkout.qr.pngUrl ? (
-              // A provider image: next/image would need its host allow-listed for no gain.
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={checkout.qr.pngUrl} alt={`QR PromptPay ${topupCopy.amount(checkout.amountBaht, total)}`} className="aspect-square w-full" />
-            ) : (
-              <QRCodeCanvas
-                ref={canvas}
-                value={checkout.qr.data}
-                size={512}
-                marginSize={4}
-                role="img"
-                aria-label={`QR PromptPay ${topupCopy.amount(checkout.amountBaht, total)}`}
-                style={{ width: '100%', height: 'auto' }}
-              />
-            )}
+          <div className="w-full max-w-[280px] rounded-2xl border border-edge bg-white p-3 shadow-[0_14px_40px_rgb(107_33_168/0.12)] sm:max-w-[224px]">
+            <div className="mb-2 flex items-center gap-2 rounded-xl bg-[#f5f1fb] px-3 py-2 text-left">
+              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white text-accent shadow-[0_3px_10px_rgb(107_33_168/0.12)]" aria-hidden="true">
+                <ShieldCheck className="size-4" />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-heading text-sm font-semibold leading-snug text-[#24162f]">สแกนด้วยแอปธนาคาร</span>
+                <span className="block text-xs leading-relaxed text-[#665b70]">ตรวจสอบยอดก่อนกดยืนยัน</span>
+              </span>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-[#e8e3ec] p-1">
+              {checkout.qr.pngUrl ? (
+                // A provider image: next/image would need its host allow-listed for no gain.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={checkout.qr.pngUrl} alt={`QR PromptPay ${topupCopy.amount(checkout.amountBaht, total)}`} className="aspect-square w-full" />
+              ) : (
+                <QRCodeCanvas
+                  ref={canvas}
+                  value={checkout.qr.data}
+                  size={512}
+                  marginSize={4}
+                  role="img"
+                  aria-label={`QR PromptPay ${topupCopy.amount(checkout.amountBaht, total)}`}
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              )}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-[#665b70]">ระบบจะยืนยันยอดให้อัตโนมัติหลังชำระสำเร็จ</p>
           </div>
           <p className="font-mono text-sm tabular-nums text-inkMuted">{topupCopy.countdown(left)}</p>
           <div className="grid w-full gap-2 sm:hidden">

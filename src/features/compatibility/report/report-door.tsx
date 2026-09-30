@@ -7,11 +7,13 @@ import { ArrowRight, BookOpen, CalendarDays, ChevronDown, History, ListChecks, L
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
 import { FailureNotice, failureReference } from '@/components/ui/failure-notice';
+import { StatusToast } from '@/components/ui/status-toast';
 import { CurrencyImage } from '@/components/ui/currency-image';
 import type { ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import type { RelationshipType } from '@/lib-packages/shared';
 import { PackSheet } from '@/features/wallet/pack-sheet';
+import { MiniShopDialog } from '@/features/wallet/mini-shop-dialog';
 import { SpendConfirmSheet } from '@/features/wallet/spend-confirm-sheet';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 import { baht, doorPacks, units } from '@/features/wallet/wallet-copy';
@@ -20,6 +22,7 @@ import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 import { lockedPreviewCopy, relationshipReportCopy, type ReportSectionId } from './report-copy';
 import { relationshipReportVisuals } from './report-visuals';
 import { unlockPresentation } from './unlock-presentation';
+import { UnlockProgressDialog } from './unlock-progress-dialog';
 
 export interface ReportContentsEntry {
   /** Element id the entry jumps to. */
@@ -89,8 +92,10 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const [failedRef, setFailedRef] = useState<string | undefined>();
   /** Bumped per failure so a repeat failure shows the toast again. */
   const [toast, setToast] = useState(0);
+  const [successToast, setSuccessToast] = useState(0);
   const [insufficient, setInsufficient] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [miniShopOpen, setMiniShopOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -107,11 +112,13 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
     { id: 'next', title: copy.sections.next.label, ...preview.sections.next, art: visuals.next.calendar.art },
   ];
   // Short of the price: the primary button buys and unlocks in one flow instead of spending.
-  const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
+  // Compatibility no longer spends the fungible มู balance directly. The API
+  // tells a reader without a ticket to continue in the shop.
+  const short = false;
   // The pack the sheet preselects: the smallest that covers the shortfall. Its price is the button's baht.
   const pack = wallet && price !== undefined && balance !== undefined ? doorPacks(wallet.packs, price - balance)[0] : undefined;
   // A spend from balance asks first; with the wallet off (lock off) the unlock is free and opens directly.
-  const spends = price !== undefined && balance !== undefined && !short;
+  const spends = false;
   const presentation = unlockPresentation(relationshipType, selectedIntent, busy ? 'generating' : short ? 'short' : 'balance');
   const selectedArt = lockedSections.find((section) => section.id === presentation.artSection)?.art;
 
@@ -138,9 +145,12 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
     setFailed(null);
     try {
       await onUnlock();
+      setSuccessToast((count) => count + 1);
     } catch (failure) {
       const refused = failure as ApiError;
-      if (refused.status === 402 && refused.body?.error === INSUFFICIENT_BALANCE) {
+      if (refused.status === 402 && refused.body?.error === 'ticket_required' && unlockRef) {
+        setMiniShopOpen(true);
+      } else if (refused.status === 402 && refused.body?.error === INSUFFICIENT_BALANCE) {
         // The balance changed since it was read: offer the purchase, which unlocks after paying.
         setInsufficient(true);
       } else {
@@ -274,11 +284,11 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
               {onUnlock && !(short && pack && !busy) && (
                 <Button type="button" size="lg" onClick={spends ? () => setConfirmOpen(true) : unlock} aria-haspopup={spends ? 'dialog' : undefined} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
                   {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <CurrencyImage size={24} />}
-                  {busy ? 'กำลังเปิดคำอ่าน' : price !== undefined ? `เปิดคำอ่านฉบับเต็มด้วย ${units(price)}` : 'เปิดคำอ่านฉบับเต็ม'}
+                  {busy ? 'กำลังเปิดคำอ่าน' : 'เปิดคำอ่านฉบับเต็ม'}
                 </Button>
               )}
               {presentation.status && <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">{presentation.status}</p>}
-              {!short && price !== undefined && <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">{units(price)} เท่ากับ {baht(price)}</p>}
+              {!short && <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">ใช้ตั๋วรู้ใจ 1 ใบ</p>}
               <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">เปิดครั้งเดียว กลับมาอ่านได้ตลอด</p>
               <p aria-live="polite" className="empty:hidden text-sm leading-relaxed text-inkMuted">
                 {busy ? 'เสร็จแล้วคำตอบจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
@@ -318,8 +328,8 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
         <SpendConfirmSheet
           open={confirmOpen}
           onOpenChange={setConfirmOpen}
-          price={price}
-          balance={balance}
+          price={price!}
+          balance={balance!}
           purpose={spaceLatinName(`เปิดคำอ่านฉบับเต็มของคุณกับ${partnerName} อ่านซ้ำได้ตลอด`, partnerName)}
           onConfirm={unlock}
         />
@@ -333,6 +343,9 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           onPaid={unlockAfterPayment}
         />
       )}
+      {wallet && unlockRef && <MiniShopDialog open={miniShopOpen} onOpenChange={setMiniShopOpen} wallet={wallet} unlockRef={unlockRef} onPurchased={unlock} />}
+      {busy && <UnlockProgressDialog open partnerName={partnerName} />}
+      {successToast > 0 && <StatusToast key={successToast} message="คำอ่านฉบับเต็มพร้อมแล้ว" onDismiss={() => setSuccessToast(0)} />}
     </section>
   );
 }

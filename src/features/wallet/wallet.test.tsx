@@ -6,6 +6,7 @@ import { ReportDoor } from '@/features/compatibility/report/report-door';
 import { BalanceChip, WalletMenuRow } from './balance-chip';
 import { LedgerList } from './ledger-list';
 import { PackList } from './pack-list';
+import { FeatureCreditCard } from './feature-credit-card';
 import { WALLET_QUERY_KEY } from './use-wallet';
 import { doorPacks, entryLabel, nextPackUp, shortfallLine, signed } from './wallet-copy';
 
@@ -19,7 +20,7 @@ const wallet: WalletState = {
     { id: 'p199', priceBaht: 199, base: 199, bonus: 30, bonusPercent: 15 },
     { id: 'p399', priceBaht: 399, base: 399, bonus: 80, bonusPercent: 20 },
   ],
-  prices: { compat_unlock: 49, month_pass: 29, year_reading: 99, wallpaper: 39 },
+  prices: { compat_unlock: 49, compat_ticket_1: 49, compat_ticket_3: 98, month_pass: 29, year_reading: 99, wallpaper: 39 },
   ledger: [
     {
       id: 'l2',
@@ -121,6 +122,17 @@ describe('LedgerList', () => {
     expect(html).toContain('−49');
     expect(html).toContain('+49');
     expect(renderToStaticMarkup(<LedgerList entries={[]} />)).toContain('ยังไม่มีรายการ');
+  });
+});
+
+describe('FeatureCreditCard', () => {
+  test('keeps ตั๋วรู้ใจ separate from มู and uses the responsive ticket asset', () => {
+    const html = renderToStaticMarkup(<FeatureCreditCard credit={{ featureId: 'compat_unlock', usesLeft: 2, expiresAt: null }} />);
+    expect(html).toContain('ตั๋วรู้ใจ');
+    expect(html).toContain('เหลือ <span class="font-mono tabular-nums">2</span> ใบ');
+    expect(html).toContain('ใช้เปิดคำอ่านความสัมพันธ์');
+    expect(html).toContain('heart-knowing-ticket-512.webp');
+    expect(html).not.toContain('หมดอายุ');
   });
 });
 

@@ -7,9 +7,10 @@ import type { HistoryKind, LedgerEntry, LedgerKind, PackId, ProductId, WalletPac
  * reads as the verb.
  */
 
+/** Short form shown after a number. The defined customer product is แต้มมู. */
 export const UNIT = 'มู';
-/** What the product calls the wallet: page heading, menu row, chip label. */
-export const WALLET_NAME = 'กระเป๋าตัง';
+/** The separate, closed-loop points product used for Shop purchases. */
+export const WALLET_NAME = 'แต้มมู';
 
 /** Where a payment problem goes: the one contact address the app already shows (/contact). */
 export const SUPPORT_EMAIL = 'askpurin@pm.me';
@@ -60,10 +61,10 @@ export function nextPackUp<P extends WalletPack>(packs: P[], packId: PackId): P 
 
 export const topupCopy = {
   balance: (balance: number) => `ยอดคงเหลือ ${units(balance)} · 1 ${UNIT} = ฿1`,
-  purpose: 'ใช้ได้กับทุกอย่างใน Horo: ดวงคู่ วอลเปเปอร์ ถามแม่หมอ',
+  purpose: 'ใช้ซื้อสินค้าและบริการใน สายมู.com',
   pay: (priceBaht: number) => `จ่าย ${baht(priceBaht)} ด้วย PromptPay`,
   /** Two lines under the pay button. */
-  trust: ['จ่ายครั้งเดียว ไม่ตัดเงินอัตโนมัติ', `${UNIT}ที่เติมไม่หมดอายุ · โบนัสใช้ได้ 180 วัน`],
+  trust: ['จ่ายครั้งเดียว ไม่ตัดเงินอัตโนมัติ', `แต้มมูใช้ซื้อสินค้าในสายมู.com แลกเป็นเงินสดไม่ได้`, `${UNIT}ที่เติมไม่หมดอายุ · โบนัสใช้ได้ 180 วัน`],
   bestValue: 'คุ้มสุด',
   /** A pack radio's accessible name: "109 มู +10% ฿99". */
   packName: (pack: WalletPackOffer) =>
@@ -119,6 +120,8 @@ export const HISTORY_COPY = {
 
 const PRODUCT_LABELS: Record<ProductId, string> = {
   compat_unlock: 'ปลดล็อกดวงคู่',
+  compat_ticket_1: 'ตั๋วรู้ใจ',
+  compat_ticket_3: 'ตั๋วรู้ใจ 3 ใบ',
   month_pass: 'ดวงเดือนหน้า',
   year_reading: 'ดวงทั้งปี',
   wallpaper: 'วอลเปเปอร์เสริมดวง',

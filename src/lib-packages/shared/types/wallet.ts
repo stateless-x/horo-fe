@@ -9,8 +9,12 @@ import { z } from 'zod';
  */
 
 /** Everything มู can buy. Only compat_unlock is spendable today. */
-export const PRODUCT_IDS = ['compat_unlock', 'month_pass', 'year_reading', 'wallpaper'] as const;
+export const PRODUCT_IDS = ['compat_unlock', 'compat_ticket_1', 'compat_ticket_3', 'month_pass', 'year_reading', 'wallpaper'] as const;
 export type ProductId = (typeof PRODUCT_IDS)[number];
+
+/** Compatibility-only ticket bundles purchased with มู. */
+export const TICKET_PASS_IDS = ['compat_ticket_1', 'compat_ticket_3'] as const;
+export type TicketPassId = (typeof TICKET_PASS_IDS)[number];
 
 /** Packs sold for baht. */
 export const PACK_IDS = ['p49', 'p99', 'p199', 'p399'] as const;
@@ -76,6 +80,25 @@ export interface LedgerEntry {
   amountBaht: number | null;
 }
 
+/** A feature-specific right shown separately from the fungible มู balance. */
+export interface FeatureCreditSummary {
+  featureId: 'compat_unlock';
+  /** Uses that can still open this feature. */
+  usesLeft: number;
+  /** Null for a purchased ตั๋วรู้ใจ; a date only for a promotional gift or credit. */
+  expiresAt: string | null;
+}
+
+/** A wallet-visible event for a compatibility ticket. It never changes the มู balance. */
+export interface FeatureCreditEvent {
+  id: string;
+  kind: 'granted' | 'used';
+  uses: number;
+  refName: string | null;
+  createdAt: string;
+  expiresAt: string | null;
+}
+
 /**
  * GET /api/wallet. `enabled: false` while nothing is sellable (ดวงคู่ locked
  * mode off): no balance, no welcome gift, and the frontend shows no wallet.
@@ -90,6 +113,12 @@ export interface WalletState {
   prices: Record<ProductId, number>;
   /** The newest 20 rows, newest first. */
   ledger: LedgerEntry[];
+  /** Omitted until feature-credit grants are live; never included in the มู balance. */
+  featureCredits?: FeatureCreditSummary[];
+}
+
+export interface FeatureCreditHistoryResponse {
+  entries: FeatureCreditEvent[];
 }
 
 /** GET /api/wallet/history. Newest first; pass `nextCursor` back as `cursor` for the next page. */
@@ -103,6 +132,8 @@ export const CheckoutRequestSchema = z.object({
   packId: z.enum(PACK_IDS),
   /** One-flow purchase: the ดวงคู่ row to unlock as soon as this order is paid. */
   unlockRef: z.string().uuid().optional(),
+  /** Optional ticket bundle to buy from the credited balance before opening unlockRef. */
+  ticketPassId: z.enum(TICKET_PASS_IDS).optional(),
   /** "ขอ QR ใหม่": the user's pending order whose QR this one replaces; its charge is canceled first. */
   replaceOrderId: z.string().uuid().optional(),
 });

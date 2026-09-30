@@ -43,7 +43,7 @@ const wallet: WalletState = {
     { id: 'p199', priceBaht: 199, base: 199, bonus: 30, bonusPercent: 15 },
     { id: 'p399', priceBaht: 399, base: 399, bonus: 80, bonusPercent: 20 },
   ],
-  prices: { compat_unlock: 49, month_pass: 29, year_reading: 99, wallpaper: 39 },
+  prices: { compat_unlock: 49, compat_ticket_1: 49, compat_ticket_3: 98, month_pass: 29, year_reading: 99, wallpaper: 39 },
   ledger: [],
 };
 
@@ -160,6 +160,17 @@ describe('pack step', () => {
 });
 
 describe('pay step', () => {
+  test('the QR is presented with clear scanning and automatic-confirmation trust cues', async () => {
+    mockApi((call) => (call.url.endsWith('/api/wallet/checkout') ? qr('o-logo', 60_000, 49) : order('o-logo', 'pending')));
+    const view = renderSheet({ kind: 'door', price: 49, unlockRef: ROW });
+    rtl.fireEvent.click(view.getByText('จ่าย ฿49 ด้วย PromptPay'));
+
+    expect(await view.findByText('สแกนด้วยแอปธนาคาร')).toBeTruthy();
+    expect(view.getByText('ตรวจสอบยอดก่อนกดยืนยัน')).toBeTruthy();
+    expect(view.getByText('ระบบจะยืนยันยอดให้อัตโนมัติหลังชำระสำเร็จ')).toBeTruthy();
+    expect(view.getByRole('img', { name: 'QR PromptPay ฿49 · 49 มู' })).toBeTruthy();
+  });
+
   test('the countdown reaches expiry, verifies once, and ขอ QR ใหม่ replaces that order for the same pack and row', async () => {
     let checkouts = 0;
     const calls = mockApi((call) => {
@@ -383,4 +394,18 @@ describe('ReportDoor spend confirmation', () => {
     await spend(view);
     await rtl.waitFor(() => expect(unlocks).toBe(1));
   });
+
+  test('a confirmed spend moves into a protected progress modal and announces completion', async () => {
+    const unlocking = deferred();
+    const view = renderDoor(() => unlocking.promise);
+    await spend(view);
+
+    const progress = await view.findByRole('dialog', { hidden: true, name: 'กำลังเขียนคำอ่านฉบับเต็ม' });
+    expect(progress.textContent).toContain('กำลังเรียบเรียงคำตอบเฉพาะของคุณกับต้น');
+    expect(progress.textContent).toContain('เมื่อเสร็จแล้วคำอ่านจะเปิดให้เอง');
+
+    unlocking.resolve();
+    await rtl.waitFor(() => expect(view.queryByRole('dialog', { hidden: true, name: 'กำลังเขียนคำอ่านฉบับเต็ม' })).toBeNull());
+    expect((await view.findByRole('status')).textContent).toContain('คำอ่านฉบับเต็มพร้อมแล้ว');
+  }, 10_000);
 });

@@ -7,7 +7,7 @@ import { Loader2, X } from 'lucide-react';
 import { useReducedMotion } from 'framer-motion';
 import { Button } from '@/lib-packages/ui';
 import { api, type ApiError } from '@/lib/api';
-import type { CheckoutResponse, OrderStatusResponse, PackId, WalletPack, WalletState } from '@/lib-packages/shared/types/wallet';
+import type { CheckoutResponse, OrderStatusResponse, PackId, TicketPassId, WalletPack, WalletState } from '@/lib-packages/shared/types/wallet';
 import { PackList } from './pack-list';
 import { MissingPayment, PayStep, type QrCheckout } from './pay-step';
 import { clearPendingOrder, readPendingOrder, writePendingOrder } from './pending-order';
@@ -20,7 +20,7 @@ import { STORE_PRESELECT, UNIT, doorPacks, nextPackUp, shortfallLine, topupCopy 
  * two packs, paid as a one-flow order that unlocks `unlockRef`. `store`: the
  * wallet page; every pack.
  */
-export type TopupContext = { kind: 'door'; price: number; unlockRef?: string } | { kind: 'store' };
+export type TopupContext = { kind: 'door'; price: number; unlockRef?: string } | { kind: 'ticket'; price: number; passId: TicketPassId; unlockRef: string } | { kind: 'store' };
 
 type Step =
   | { kind: 'packs' }
@@ -59,11 +59,11 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
   const [step, setStep] = useState<Step>({ kind: 'packs' });
   const [notice, setNotice] = useState<Notice | null>(null);
   const [busy, setBusy] = useState(false);
-  const unlockRef = context.kind === 'door' ? context.unlockRef : undefined;
+  const unlockRef = context.kind === 'store' ? undefined : context.unlockRef;
 
   const offered =
-    context.kind === 'door' ? doorPacks(wallet.packs, context.price - wallet.balance) : [...wallet.packs].sort((a, b) => a.priceBaht - b.priceBaht);
-  const preselect = context.kind === 'door' ? offered[0]?.id : STORE_PRESELECT;
+    context.kind === 'store' ? [...wallet.packs].sort((a, b) => a.priceBaht - b.priceBaht) : doorPacks(wallet.packs, context.price - wallet.balance);
+  const preselect = context.kind === 'store' ? STORE_PRESELECT : offered[0]?.id;
   const [picked, setPicked] = useState<PackId | null>(null);
   const selected = offered.find((pack) => pack.id === picked) ?? offered.find((pack) => pack.id === preselect) ?? offered[0];
   const packOf = (id: PackId) => wallet.packs.find((pack) => pack.id === id);
@@ -80,7 +80,7 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
   useEffect(() => {
     const pending = readPendingOrder();
     if (!pending) return;
-    const mine = context.kind === 'door' ? unlockRef !== undefined && pending.unlockRef === unlockRef : pending.unlockRef === undefined;
+    const mine = context.kind === 'store' ? pending.unlockRef === undefined : unlockRef !== undefined && pending.unlockRef === unlockRef;
     if (!mine) return;
     let live = true;
     fetchOrder(pending.orderId).then(
@@ -168,7 +168,7 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
     try {
       for (;;) {
         try {
-          const response = await api.post<CheckoutResponse>('/api/wallet/checkout', { packId, unlockRef, replaceOrderId: replace });
+          const response = await api.post<CheckoutResponse>('/api/wallet/checkout', { packId, unlockRef, ticketPassId: context.kind === 'ticket' ? context.passId : undefined, replaceOrderId: replace });
           if (response.payment === 'unavailable') {
             setStep({ kind: 'packs' });
             setNotice('unavailable');
@@ -250,7 +250,7 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
           {step.kind === 'packs' && selected && (
             <>
               <p className="mt-1 text-[0.9375rem] leading-relaxed text-ink">
-                {context.kind === 'door' ? shortfallLine(wallet.balance, context.price) : topupCopy.balance(wallet.balance)}
+                {context.kind === 'store' ? topupCopy.balance(wallet.balance) : shortfallLine(wallet.balance, context.price)}
               </p>
               <p className="mb-4 mt-0.5 text-sm leading-relaxed text-inkMuted">{topupCopy.purpose}</p>
               <PackList packs={offered} selected={selected.id} onSelect={setPicked} />
@@ -330,7 +330,7 @@ export function PackSheet({ open, onOpenChange, wallet, context, onPaid, pollMs 
             <PaidStep
               order={step.order}
               from={step.from}
-              door={context.kind === 'door'}
+              door={context.kind !== 'store'}
               upsell={context.kind === 'store' ? nextPackUp(wallet.packs, step.packId) : undefined}
               onClose={close}
             />

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/lib-packages/ui';
 import { CurrencyImage } from '@/components/ui/currency-image';
 import { PackSheet } from '@/features/wallet/pack-sheet';
+import { FeatureCreditCard } from '@/features/wallet/feature-credit-card';
 import { WalletHistory } from '@/features/wallet/wallet-history';
 import { enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 import { UNIT, WALLET_NAME, baht, units } from '@/features/wallet/wallet-copy';
@@ -12,6 +13,7 @@ import { UNIT, WALLET_NAME, baht, units } from '@/features/wallet/wallet-copy';
 export default function WalletPage() {
   const query = useWallet();
   const wallet = enabledWallet(query.data);
+  const ticket = wallet?.featureCredits?.find((credit) => credit.featureId === 'compat_unlock' && credit.usesLeft > 0);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
@@ -55,6 +57,8 @@ export default function WalletPage() {
               </Button>
             </section>
             <PackSheet open={sheetOpen} onOpenChange={setSheetOpen} wallet={wallet} context={{ kind: 'store' }} />
+
+            {ticket && <FeatureCreditCard credit={ticket} />}
 
             <section aria-labelledby="wallet-ledger">
               <h2 id="wallet-ledger" className="mb-3 font-heading text-lg font-semibold text-ink">

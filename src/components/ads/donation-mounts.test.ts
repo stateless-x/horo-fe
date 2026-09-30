@@ -35,7 +35,7 @@ function sourceFilesUnder(dir: string): string[] {
 describe('donation UI: voluntary only', () => {
   test('no page under src/app mounts the auto-opening donation modal', () => {
     const pages = sourceFilesUnder('src/app');
-    expect(pages).toContain('src/app/dashboard/today/page.tsx');
+    expect(pages).toContain('src/app/dashboard/fortune/daily/page.tsx');
     expect(pages.filter((file) => read(file).includes(RETIRED_AUTO_MODAL))).toEqual([]);
   });
 

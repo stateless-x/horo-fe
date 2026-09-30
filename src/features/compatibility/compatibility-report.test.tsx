@@ -133,8 +133,8 @@ describe('CompatibilityReport', () => {
     for (const dimension of content.dimensions) expect(html).toContain(`${dimension.score}<span class="sr-only">จาก 100`);
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);
     // No balance or price until the wallet loads: never a made-up number.
-    expect(html).toContain('เปิดคำตอบทั้งหมด');
-    expect(html).toContain('เห็นทางของความสัมพันธ์นี้ให้ชัดขึ้น');
+    expect(html).toContain('เปิดคำอ่านฉบับเต็ม');
+    expect(html).toContain('เข้าใจเขา เข้าใจเรา แล้วคุยกันได้ง่ายขึ้น');
     expect(html).toContain('ดูว่าแต่ละส่วนในฉบับเต็มมีอะไร');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดเรื่อง', 'คำคมเรื่อง', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
       expect(html).not.toContain(paid);
@@ -167,7 +167,7 @@ describe('CompatibilityReport', () => {
     for (const prompt of ['อยากเห็นมุมไหนของคู่นี้', 'อยากเข้าใจใครก่อน', 'ตอนนี้อยากทำอะไรต่อ']) expect(html).toContain(prompt);
     for (const action of ['ดู 4 มิติของคู่นี้', 'เขาเป็นคนแบบไหน', 'เริ่มอะไรได้บ้าง']) expect(html).toContain(action);
     for (const asset of ['next-signal.webp', 'next-timing.webp', 'next-step.webp']) expect(html).toContain(asset);
-    expect(html).not.toContain('เปิดคำตอบทั้งหมด');
+    expect(html).not.toContain('เปิดคำอ่านฉบับเต็ม');
     // Owner rule: no purple text inside the report (fills, focus rings and controls may stay purple).
     expect(html).not.toMatch(/(?<![\w-])text-accent(Bright|Soft)\b/);
   });
@@ -200,8 +200,8 @@ describe('CompatibilityReport', () => {
     const teaser = render('teaser', () => {});
     const full = render('full');
     for (const html of [teaser, full]) expect(html).not.toMatch(unitWord);
-    expect(teaser).toContain('อ่านต่อในฉบับเต็ม · อ่านนิสัยเขา');
-    expect(teaser).toContain('อ่านต่อในฉบับเต็ม · คุยให้เข้าใจกัน');
+    expect(teaser).toContain('ดูคำตอบต่อในส่วน อ่านนิสัยเขา');
+    expect(teaser).toContain('ดูคำตอบต่อในส่วน คุยให้เข้าใจกัน');
     expect(teaser).not.toContain('จ่ายครั้งเดียว');
     expect(full).toContain('เหมาะกับก้าวต่อไป ดู ‘สิ่งที่ทำให้อยู่ยาว’');
     // No numbered chapter badge beside a chapter title.
@@ -215,10 +215,14 @@ describe('CompatibilityReport', () => {
     expect(render('full', undefined, 'Ice')).toContain('วังคู่ครองของ Ice');
   });
 
-  test('the locked offer summarizes value without repeating a lock for every chapter', () => {
+  test('the locked offer puts the relationship promise and CTA before optional details', () => {
     const html = render('teaser', () => {});
-    for (const value of ['ทำไมถึงใช่', 'อ่านนิสัยเขา', 'คุยให้เข้าใจกัน', 'ไปต่อยังไงดี']) expect(html).toContain(value);
-    for (const asset of ['little-oracle-mark-v1.webp', 'four-dimensions.webp', 'two-mirrors.webp', 'listening.webp', 'next-timing.webp']) expect(html).toContain(asset);
+    expect(html).toContain('สิ่งที่จะได้จากคำตอบฉบับเต็ม');
+    expect(html).toContain('ดูสิ่งที่จะได้อ่าน');
+    expect(html).toContain('เปิดครั้งเดียว กลับมาอ่านได้ตลอด');
+    expect(html).toContain('mu-gem-clay-48.webp');
+    for (const asset of ['four-dimensions.webp', 'two-mirrors.webp', 'listening.webp', 'next-timing.webp']) expect(html).toContain(asset);
+    expect(html).not.toContain('little-oracle-mark-v1.webp');
     expect(html).not.toContain('ตัวตนของต้นในความสัมพันธ์นี้');
   });
 
@@ -227,11 +231,11 @@ describe('CompatibilityReport', () => {
     const boss = render('teaser', () => {}, 'หัวหน้า', 'boss');
     const family = render('teaser', () => {}, 'แม่', 'family');
 
-    expect(friend).toContain('รักษามิตรภาพให้สบายใจทั้งสองฝ่าย');
+    expect(friend).toContain('รักษาความเป็นเพื่อน โดยไม่ต้องฝืนกัน');
     expect(friend).toContain('friend.webp');
-    expect(boss).toContain('ทำงานกับเขาให้ลื่นขึ้น');
+    expect(boss).toContain('เข้าใจสไตล์เขา แล้วทำงานให้ลงตัวขึ้น');
     expect(boss).toContain('coworker.webp');
-    expect(family).toContain('อยู่ด้วยกันให้สบายใจขึ้น');
+    expect(family).toContain('เข้าใจกันมากขึ้น โดยยังมีพื้นที่ของตัวเอง');
     expect(family).toContain('family.webp');
   });
 

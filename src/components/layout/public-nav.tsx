@@ -57,8 +57,8 @@ export function PublicNav() {
 
   // Same destination for both the CTA and the "ดูดวงวันนี้" nav link:
   // logged in goes straight to today's reading, logged out goes to login,
-  // which redirects to /dashboard/today after auth.
-  const todayHref = session ? '/dashboard/today' : '/login';
+  // which redirects to /dashboard/fortune/daily after auth.
+  const todayHref = session ? '/dashboard/fortune/daily' : '/login';
   const ctaLabel = session ? 'ดูดวงวันนี้' : 'เข้าสู่ระบบ';
 
   return (
@@ -87,7 +87,7 @@ export function PublicNav() {
           <Link
             href={todayHref}
             className={`flex items-center h-full px-3 font-thai text-sm border-b-2 -mb-px transition-colors ${
-              pathname === '/dashboard/today'
+              pathname === '/dashboard/fortune/daily'
                 ? 'border-accent text-ink font-medium'
                 : 'border-transparent text-inkMuted hover:text-ink'
             }`}
@@ -163,7 +163,7 @@ export function PublicNav() {
           <Link
             href={todayHref}
             className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${
-              pathname === '/dashboard/today' ? LINK_ACTIVE : LINK_REST
+              pathname === '/dashboard/fortune/daily' ? LINK_ACTIVE : LINK_REST
             }`}
           >
             <Sparkles className="w-4 h-4" />

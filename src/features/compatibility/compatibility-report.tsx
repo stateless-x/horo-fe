@@ -110,6 +110,7 @@ export function CompatibilityReport({
   const tabRailDrag = useHorizontalDragScroll(tabListRef);
   const [openChapters, setOpenChapters] = useState<Set<V4ChapterKey>>(new Set());
   const [activeSection, setActiveSection] = useState<ReportSection>('overview');
+  const [unlockIntent, setUnlockIntent] = useState<{ question: string; section: ReportSection } | null>(null);
 
   const contents: ReportContentsEntry[] = [
     { id: 'report-overview-section', title: 'ภาพรวม', short: 'ภาพรวม', icon: 'overview' },
@@ -185,6 +186,16 @@ export function CompatibilityReport({
     [activeSection, reduce, syncSectionToUrl],
   );
 
+  const chooseUnlockIntent = useCallback(
+    (hint: CompatibilityV4Shaped['cover']['lockedHints'][number]) => {
+      setUnlockIntent({ question: hint.text, section: sectionForTarget(`ch-${hint.chapter}`) });
+      requestAnimationFrame(() => {
+        doorRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      });
+    },
+    [reduce],
+  );
+
   // Unlock opens the report in place: the reveal plays from the render where
   // the content turns full (decided during render, so the first frame of the
   // opened report already animates), then the page lands on its front page.
@@ -199,6 +210,16 @@ export function CompatibilityReport({
     sectionNavRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     document.getElementById('report-panel-overview-heading')?.focus({ preventScroll: true });
   }, [revealed, reduce]);
+
+  useEffect(() => {
+    if (!full || !unlockIntent) return;
+    setActiveSection(unlockIntent.section);
+    syncSectionToUrl(unlockIntent.section);
+    requestAnimationFrame(() => {
+      document.getElementById(`report-panel-${unlockIntent.section}`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    setUnlockIntent(null);
+  }, [full, reduce, syncSectionToUrl, unlockIntent]);
 
   const toggleChapter = (key: V4ChapterKey) =>
     setOpenChapters((prev) => {
@@ -227,7 +248,7 @@ export function CompatibilityReport({
         </div>
 
         <div className="mt-8 min-w-0 sm:mt-10 lg:col-start-1 lg:row-start-2">
-          <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
+          <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} onSelect={chooseUnlockIntent} />
         </div>
 
         <div ref={doorRef} className="mt-8 scroll-mt-20 sm:mt-10 lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:row-span-3 lg:mt-0">
@@ -242,6 +263,8 @@ export function CompatibilityReport({
             allOpen={false}
             onToggleAll={() => {}}
             onUnlock={onUnlock}
+            selectedQuestion={unlockIntent?.question}
+            selectedIntent={unlockIntent?.section}
           />
         </div>
 
@@ -494,7 +517,7 @@ export function CompatibilityReport({
             <DimensionBars dimensions={content.dimensions} />
           </div>
           <div className="mt-8 sm:mt-10">
-            <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} />
+            <LockedHints hints={content.cover.lockedHints} partnerName={partnerName} sectionLabel={sectionLabelOf} onSelect={chooseUnlockIntent} />
           </div>
           <div ref={doorRef} className="mt-8 scroll-mt-20 sm:mt-10">
             <ReportDoor
@@ -508,6 +531,8 @@ export function CompatibilityReport({
               allOpen={false}
               onToggleAll={() => {}}
               onUnlock={onUnlock}
+              selectedQuestion={unlockIntent?.question}
+              selectedIntent={unlockIntent?.section}
             />
           </div>
         </>

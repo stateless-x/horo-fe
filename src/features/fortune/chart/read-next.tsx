@@ -139,7 +139,7 @@ export const READ_NEXT_READINGS: ReadNextItem[] = [
 export const READ_NEXT_DETAILS: ReadNextItem[] = [
   {
     type: 'link',
-    href: '/dashboard/today',
+    href: '/dashboard/fortune/daily',
     ctaId: 'fortune_today',
     icon: Sun,
     heading: 'ดวงวันนี้',

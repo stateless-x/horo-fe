@@ -254,9 +254,9 @@ describe('ขอ QR ใหม่ conflicts', () => {
     await rtl.waitFor(() => expect(view.getByText('กำลังตรวจสอบการชำระ')).toBeTruthy());
 
     rtl.fireEvent.click(view.getByText('ขอ QR ใหม่'));
-    // One state until the unlock settles: "+49 มู · กำลังเปิดคำตอบ…" with the ~20 s hint.
-    await rtl.waitFor(() => expect(view.getByText('+49 มู · กำลังเปิดคำตอบ…')).toBeTruthy());
-    expect(view.getByText('กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)')).toBeTruthy();
+    // One state until the unlock settles: the earned มู and next action stay clear together.
+    await rtl.waitFor(() => expect(view.getByText('เติมสำเร็จ ได้รับ +49 มู กำลังเปิดคำอ่าน')).toBeTruthy());
+    expect(view.getByText('กำลังเตรียมคำตอบให้คุณ')).toBeTruthy();
     expect(calls.find((call) => call.method === 'POST')?.body).toEqual({ packId: 'p49', unlockRef: ROW, replaceOrderId: 'o9' });
     expect(window.localStorage.getItem(PENDING_ORDER_KEY)).toBeNull();
     expect(paidOrders).toHaveLength(1);
@@ -321,10 +321,10 @@ describe('ReportDoor unlock failure', () => {
       value: { writeText: async (text: string) => void copied.push(text) },
     });
     const view = renderFailingDoor(new Error('เขียนฉบับเต็มไม่สำเร็จ'));
-    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
 
     const toast = await view.findByRole('alert');
-    expect(toast.textContent).toBe('เขียนคำตอบไม่สำเร็จ ยังไม่หักมู ลองใหม่ได้เลย');
+    expect(toast.textContent).toBe('เปิดคำอ่านไม่สำเร็จ มูของคุณยังอยู่ครบ ลองใหม่ได้เลย');
     expect(view.getByText('11111111')).toBeTruthy();
     expect(view.queryByText('เขียนฉบับเต็มไม่สำเร็จ')).toBeNull();
 
@@ -336,7 +336,7 @@ describe('ReportDoor unlock failure', () => {
   test('a client timeout: no charge claim, a refresh hint, and the reference line stays', async () => {
     const timeout = Object.assign(new Error('Request timed out'), { status: 408, code: 'TIMEOUT' });
     const view = renderFailingDoor(timeout);
-    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
 
     const toast = await view.findByRole('alert');
     expect(toast.textContent).toBe('ใช้เวลานานกว่าปกติ คำตอบอาจกำลังเสร็จ ลองรีเฟรชหน้านี้');

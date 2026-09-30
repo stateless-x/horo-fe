@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, BookOpen, CalendarDays, ChevronDown, History, ListChecks, Loader2, Sparkles, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
 import { FailureNotice, failureReference } from '@/components/ui/failure-notice';
+import { CurrencyImage } from '@/components/ui/currency-image';
 import type { ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import type { RelationshipType } from '@/lib-packages/shared';
@@ -15,8 +16,9 @@ import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/us
 import { baht, doorPacks, units } from '@/features/wallet/wallet-copy';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
-import { lockedOfferCopy, lockedPreviewCopy, relationshipReportCopy } from './report-copy';
+import { lockedPreviewCopy, relationshipReportCopy, type ReportSectionId } from './report-copy';
 import { relationshipReportVisuals } from './report-visuals';
+import { unlockPresentation } from './unlock-presentation';
 
 export interface ReportContentsEntry {
   /** Element id the entry jumps to. */
@@ -34,10 +36,8 @@ const ENTRY_ICON: Record<NonNullable<ReportContentsEntry['icon']>, LucideIcon> =
   plan: ListChecks,
 };
 
-const UNLOCK_ORACLE_ART = '/assets/clay/little-oracle-mark-v1.webp';
-
 /** Owner copy (2026-09-29), pronoun-free. The server answered with a failure: a failed generation charges nothing. */
-export const UNLOCK_FAILED = 'เขียนคำตอบไม่สำเร็จ ยังไม่หักมู ลองใหม่ได้เลย';
+export const UNLOCK_FAILED = 'เปิดคำอ่านไม่สำเร็จ มูของคุณยังอยู่ครบ ลองใหม่ได้เลย';
 /** The client gave up waiting (api TIMEOUT): the server may still finish and charge, so no charge claim. A reload re-reads the result. */
 export const UNLOCK_TIMED_OUT = 'ใช้เวลานานกว่าปกติ คำตอบอาจกำลังเสร็จ ลองรีเฟรชหน้านี้';
 
@@ -61,6 +61,8 @@ interface ReportDoorProps {
   onJump: (id: string) => void;
   allOpen: boolean;
   onToggleAll: () => void;
+  selectedQuestion?: string;
+  selectedIntent?: ReportSectionId;
   /**
    * Teaser only: unlocks the report. A rejection with HTTP 402
    * `insufficient_balance` (the ApiError itself, rethrown) turns the button
@@ -72,10 +74,10 @@ interface ReportDoorProps {
 
 /**
  * ReportDoor: the locked panel that becomes the report's front page. Locked,
- * it summarizes four benefits with the unlock button; open, it becomes the
- * detailed table of contents, framed as the bound ฉบับเต็ม.
+ * it reflects the reader's chosen question, relationship-specific value, and
+ * clear unlock state; open, it becomes the detailed table of contents.
  */
-export function ReportDoor({ partnerName, relationshipType, readingMinutes, contents, full, unlockRef, onJump, allOpen, onToggleAll, onUnlock }: ReportDoorProps) {
+export function ReportDoor({ partnerName, relationshipType, readingMinutes, contents, full, unlockRef, onJump, allOpen, onToggleAll, onUnlock, selectedQuestion, selectedIntent }: ReportDoorProps) {
   const reduce = useReducedMotion();
   const queryClient = useQueryClient();
   const walletQuery = useWallet();
@@ -88,10 +90,10 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const [toast, setToast] = useState(0);
   const [insufficient, setInsufficient] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   const price = wallet?.prices.compat_unlock;
   const balance = wallet?.balance;
-  const offer = lockedOfferCopy(relationshipType);
   const preview = lockedPreviewCopy(relationshipType);
   const copy = relationshipReportCopy(relationshipType);
   const visuals = relationshipReportVisuals(relationshipType);
@@ -106,10 +108,17 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
   // The pack the sheet preselects: the smallest that covers the shortfall. Its price is the button's baht.
   const pack = wallet && price !== undefined && balance !== undefined ? doorPacks(wallet.packs, price - balance)[0] : undefined;
+  const presentation = unlockPresentation(relationshipType, selectedIntent, busy ? 'generating' : short ? 'short' : 'balance');
+  const selectedArt = lockedSections.find((section) => section.id === presentation.artSection)?.art;
+
+  useEffect(() => {
+    if (!selectedQuestion || full) return;
+    headingRef.current?.focus({ preventScroll: true });
+  }, [full, selectedQuestion]);
 
   /**
    * A one-flow order is paid and credited: run the same unlock as the button
-   * while the sheet shows "+49 มู · กำลังเปิดคำตอบ…"; the sheet closes once
+   * while the sheet shows a clear credited-and-opening state; the sheet closes once
    * this settles. The backend's own unlock of this row may be running; the
    * unlock route joins it and charges the row once.
    */
@@ -145,8 +154,6 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
     }
   };
 
-  const unlockLabel = price !== undefined ? `เปิดคำตอบทั้งหมด · ${balance !== undefined && balance >= price ? units(price) : baht(price)}` : 'เปิดคำตอบทั้งหมด';
-
   return (
     <section
       aria-labelledby="report-door"
@@ -163,16 +170,14 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
             <MiniSeal />
           </span>
         )}
-        <h2 id="report-door" tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink [overflow-wrap:anywhere] focus:outline-none">
+        <h2 ref={headingRef} id="report-door" tabIndex={-1} className="text-balance font-heading text-2xl font-semibold leading-snug text-ink [overflow-wrap:anywhere] focus:outline-none">
           {spaceLatinName(`${full ? 'คำตอบ' : 'ฉบับเต็ม'}ของคุณกับ${partnerName}`, partnerName)}
         </h2>
       </div>
       <p className="mt-2.5 text-base leading-relaxed text-inkMuted">
         {full ? (
-          <>อ่านราว <b className="font-semibold text-ink">{readingMinutes} นาที</b> · 4 ส่วน · ปฏิทิน 3 เดือน · 3 ก้าวเล็ก ๆ ใน 7 วัน</>
-        ) : (
-          <>{offer.title}</>
-        )}
+          <>อ่านราว <b className="font-semibold text-ink">{readingMinutes} นาที</b> แบ่งเป็น 4 ส่วน พร้อมปฏิทิน 3 เดือนและแนวทางไปต่อ</>
+        ) : null}
       </p>
 
       {full ? (
@@ -202,25 +207,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
             ))}
           </ol>
         </details>
-      ) : (
-        <ul className="mt-5 divide-y divide-edge border-y border-edge" aria-label="ดูว่าแต่ละส่วนในฉบับเต็มมีอะไร">
-          {lockedSections.map(({ id, art, title, subtitle, detail }) => (
-            <li key={id}>
-              <details className="group">
-                <summary className="flex min-h-[88px] cursor-pointer list-none items-center gap-3 rounded-lg py-2 transition-colors hover:bg-edgeSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright [&::-webkit-details-marker]:hidden">
-                  {art && <Image alt="" src={art} width={112} height={112} sizes="72px" className="size-[72px] shrink-0 object-contain" />}
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-heading text-base font-semibold leading-snug text-ink">{title}</span>
-                    <span className="mt-1 block text-xs leading-relaxed text-inkMuted">{subtitle}</span>
-                  </span>
-                  <ChevronDown className="mr-1 size-4 shrink-0 text-inkMuted transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" />
-                </summary>
-                <p className="px-2 pb-5 pt-3 text-pretty text-sm leading-7 text-inkMuted">{detail}</p>
-              </details>
-            </li>
-          ))}
-        </ul>
-      )}
+      ) : null}
 
       <AnimatePresence initial={false} mode="wait">
         {full ? (
@@ -246,7 +233,29 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-[minmax(0,1fr)] gap-2.5 pt-5">
+            <div className="pt-5">
+              {selectedQuestion && (
+                <div className="border-y border-edge py-3.5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-inkMuted">อยากเข้าใจเรื่องนี้ต่อ</p>
+                  <p className="mt-1.5 font-heading text-base font-semibold leading-snug text-ink">{selectedQuestion}</p>
+                </div>
+              )}
+              <div className="mt-5 flex items-start gap-3">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-pretty font-heading text-xl font-semibold leading-snug text-ink">{presentation.headline}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-inkMuted">{presentation.support}</p>
+                </div>
+                {selectedArt && <Image alt="" src={selectedArt} width={112} height={112} sizes="64px" className="size-16 shrink-0 object-contain" />}
+              </div>
+              <ul className="mt-4 space-y-2.5" aria-label="สิ่งที่จะได้จากคำตอบฉบับเต็ม">
+                {presentation.outcomes.map((outcome) => (
+                  <li key={outcome} className="flex gap-2.5 text-sm leading-relaxed text-inkMuted">
+                    <span className="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-romance" aria-hidden="true" />
+                    {outcome}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-5 grid grid-cols-[minmax(0,1fr)] gap-2.5">
               {onUnlock && short && pack && !busy && (
                 <Button
                   type="button"
@@ -255,26 +264,48 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
                   aria-haspopup="dialog"
                   className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading"
                 >
-                  <Image alt="" src={UNLOCK_ORACLE_ART} width={48} height={48} sizes="24px" className="size-6 object-contain" />
-                  {`เปิดคำตอบทั้งหมด · ${baht(pack.priceBaht)}`}
+                  {`เติมมูแล้วเปิดคำอ่านฉบับเต็ม ${baht(pack.priceBaht)}`}
                 </Button>
               )}
               {onUnlock && !(short && pack && !busy) && (
                 <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
-                  {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Image alt="" src={UNLOCK_ORACLE_ART} width={48} height={48} sizes="24px" className="size-6 object-contain" />}
-                  {busy ? 'กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)' : unlockLabel}
+                  {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <CurrencyImage size={24} />}
+                  {busy ? 'กำลังเปิดคำอ่าน' : price !== undefined ? `เปิดคำอ่านฉบับเต็มด้วย ${units(price)}` : 'เปิดคำอ่านฉบับเต็ม'}
                 </Button>
               )}
-              <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">{preview.reassurance}</p>
+              {presentation.status && <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">{presentation.status}</p>}
+              {!short && price !== undefined && <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">{units(price)} เท่ากับ {baht(price)}</p>}
+              <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">เปิดครั้งเดียว กลับมาอ่านได้ตลอด</p>
               <p aria-live="polite" className="empty:hidden text-sm leading-relaxed text-inkMuted">
                 {busy ? 'เสร็จแล้วคำตอบจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
               </p>
               {failed && (
                 <FailureNotice message={FAILURE_COPY[failed]} reference={failedRef} toastKey={toast} onToastDismiss={() => setToast(0)} />
               )}
-              {!short && price !== undefined && balance !== undefined && (
-                <p className="text-center text-sm leading-relaxed text-inkMuted">ยอดคงเหลือ {units(balance)}</p>
-              )}
+              </div>
+              <details className="group mt-5 border-t border-edge pt-3.5">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-heading text-sm font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright [&::-webkit-details-marker]:hidden">
+                  ดูสิ่งที่จะได้อ่าน
+                  <ChevronDown className="size-4 text-inkMuted transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" />
+                </summary>
+                <ul className="mt-2 divide-y divide-edge border-y border-edge" aria-label="ดูว่าแต่ละส่วนในฉบับเต็มมีอะไร">
+                  {lockedSections.map(({ id, art, title, subtitle, detail }) => (
+                    <li key={id}>
+                      <details className="group/section">
+                        <summary className="flex min-h-[72px] cursor-pointer list-none items-center gap-3 rounded-lg py-2 transition-colors hover:bg-edgeSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright [&::-webkit-details-marker]:hidden">
+                          {art && <Image alt="" src={art} width={96} height={96} sizes="56px" className="size-14 shrink-0 object-contain" />}
+                          <span className="min-w-0 flex-1">
+                            <span className="block font-heading text-sm font-semibold leading-snug text-ink">{title}</span>
+                            <span className="mt-0.5 block text-xs leading-relaxed text-inkMuted">{subtitle}</span>
+                          </span>
+                          <ChevronDown className="mr-1 size-4 shrink-0 text-inkMuted transition-transform group-open/section:rotate-180 motion-reduce:transition-none" aria-hidden="true" />
+                        </summary>
+                        <p className="px-1 pb-4 pt-1 text-pretty text-sm leading-7 text-inkMuted">{detail}</p>
+                      </details>
+                    </li>
+                  ))}
+                </ul>
+              </details>
             </div>
           </motion.div>
         )}

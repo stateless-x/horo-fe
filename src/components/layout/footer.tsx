@@ -20,7 +20,7 @@ interface FooterContext {
 }
 
 const FOOTER_CONTEXT: Record<string, FooterContext> = {
-  "/dashboard/fortune": {
+  "/dashboard/fortune/monthly": {
     shareCta: "ชอบดวงชะตาของคุณหรือเปล่า? แชร์ให้เพื่อนได้เลย!",
     shareEnabled: true,
     crossLinks: [
@@ -29,14 +29,14 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
         href: "/dashboard/compatibility",
         icon: Heart,
       },
-      // { label: "ดูดวงรายวัน", href: "/dashboard/today", icon: Calendar },
+      // { label: "ดูดวงรายวัน", href: "/dashboard/fortune/daily", icon: Calendar },
     ],
   },
-  "/dashboard/today": {
+  "/dashboard/fortune/daily": {
     shareCta: "แชร์ดวงวันนี้ให้เพื่อน!",
     shareEnabled: true,
     crossLinks: [
-      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune/monthly", icon: Orbit },
       {
         label: "ดูดวงคู่",
         href: "/dashboard/compatibility",
@@ -48,7 +48,7 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareCta: "แชร์ดวงวันนี้ให้เพื่อน!",
     shareEnabled: true,
     crossLinks: [
-      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune/monthly", icon: Orbit },
       {
         label: "ดูดวงคู่",
         href: "/dashboard/compatibility",
@@ -60,8 +60,8 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareCta: "แชร์ผลดวงความสัมพันธ์ให้คนพิเศษ!",
     shareEnabled: true,
     crossLinks: [
-      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
-      // { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune/monthly", icon: Orbit },
+      // { label: 'ดูดวงรายวัน', href: '/dashboard/fortune/daily', icon: Calendar },
     ],
   },
 };

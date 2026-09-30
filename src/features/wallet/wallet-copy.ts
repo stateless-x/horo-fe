@@ -87,9 +87,9 @@ export const topupCopy = {
   credited: (amount: number) => `+${number(amount)} ${UNIT}`,
   newBalance: (balance: number) => `ยอดคงเหลือ ${units(balance)}`,
   upsell: (pack: WalletPack) => `ครั้งหน้าเติม ${baht(pack.priceBaht)} ได้ ${units(pack.base + pack.bonus)}`,
-  /** Door, after payment, until the unlock settles: one state, "+49 มู · กำลังเปิดคำตอบ…". */
-  opening: (amount: number) => `+${number(amount)} ${UNIT} · กำลังเปิดคำตอบ…`,
-  openingHint: 'กำลังเขียนคำตอบเฉพาะคู่นี้ (ราว 20 วินาที)',
+  /** Door, after payment, until the unlock settles. */
+  opening: (amount: number) => `เติมสำเร็จ ได้รับ +${number(amount)} ${UNIT} กำลังเปิดคำอ่าน`,
+  openingHint: 'กำลังเตรียมคำตอบให้คุณ',
   failed: 'การชำระไม่สำเร็จ',
   retry: 'ลองอีกครั้ง',
   close: 'ปิด',

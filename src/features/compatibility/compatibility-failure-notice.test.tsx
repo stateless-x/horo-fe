@@ -165,7 +165,7 @@ describe('the result page unlock failure, through the door', () => {
   test('a 500 with a reference: the no-charge copy and the server reference, not the row id', async () => {
     const copied = stubClipboard();
     const view = renderDoor(apiError(500, { error: 'ตอนนี้เขียนฉบับเต็มไม่สำเร็จ ลองอีกครั้งนะ', reference: 'a1b2c3d4' }));
-    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
 
     expect((await view.findByRole('alert')).textContent).toBe(door.UNLOCK_FAILED);
     expect(view.queryByText(/ลองอีกครั้งนะ/)).toBeNull();
@@ -177,21 +177,21 @@ describe('the result page unlock failure, through the door', () => {
 
   test('a 500 without a reference falls back to the row id', async () => {
     const view = renderDoor(apiError(500, { error: 'x' }));
-    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
     expect((await view.findByRole('alert')).textContent).toBe(door.UNLOCK_FAILED);
     expect(view.getByText('11111111')).toBeTruthy();
   });
 
   test('a client timeout passes through handleUnlock: the timeout copy, no charge claim', async () => {
     const view = renderDoor(timeout());
-    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
     expect((await view.findByRole('alert')).textContent).toBe(door.UNLOCK_TIMED_OUT);
     expect(view.queryByText(/ยังไม่หักมู/)).toBeNull();
   });
 
   test('neither a reference nor a row id: no reference line', async () => {
     const view = renderDoor(apiError(500), null);
-    rtl.fireEvent.click(await view.findByText('เปิดคำตอบทั้งหมด · 49 มู'));
+    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
     await view.findByRole('alert');
     expect(view.queryByText(/รหัสอ้างอิง/)).toBeNull();
   });

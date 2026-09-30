@@ -184,7 +184,7 @@ describe('wallet off (nothing sellable)', () => {
     );
     expect(row).toBe('');
     const html = door({ enabled: false });
-    expect(html).toContain('เปิดคำตอบทั้งหมด');
+    expect(html).toContain('เปิดคำอ่านฉบับเต็ม');
     expect(html).not.toContain('มี ');
     expect(html).not.toContain('<dialog');
   });
@@ -197,20 +197,20 @@ describe('wallet off (nothing sellable)', () => {
 });
 
 describe('ReportDoor with a known balance', () => {
-  test('short of the price, the primary button reads baht-first and opens the เติมมู sheet', () => {
+  test('short of the price, the primary button explains the top-up and opens the เติมมู sheet', () => {
     const html = door({ ...wallet, balance: 0 });
-    expect(html).toContain('เปิดคำตอบทั้งหมด · ฿49');
+    expect(html).toContain('เติมมูแล้วเปิดคำอ่านฉบับเต็ม ฿49');
     expect(html).toContain('aria-haspopup="dialog"');
-    expect(html).not.toContain('49 มู');
+    expect(html).not.toContain('เปิดคำอ่านฉบับเต็มด้วย 49 มู');
     expect(html).not.toMatch(PURPLE_TEXT);
   });
 
   test('the CTA spends from the real wallet: price and balance', () => {
     const html = door(wallet);
     expect(html).not.toContain('ซื้อแพ็กคุ้มกว่า');
-    expect(html).toContain('เปิดคำตอบทั้งหมด · 49 มู');
-    expect(html).not.toContain('(฿49)');
-    expect(html).toContain('ยอดคงเหลือ 49 มู');
+    expect(html).toContain('เปิดคำอ่านฉบับเต็มด้วย 49 มู');
+    expect(html).toContain('49 มู เท่ากับ ฿49');
+    expect(html).toContain('เปิดครั้งเดียว กลับมาอ่านได้ตลอด');
     // Owner, 2026-09-28: the pay-once line waits for the payment system.
     expect(html).not.toContain('จ่ายครั้งเดียว');
     expect(html).not.toContain('กลับมาอ่านได้ทุกเมื่อ');

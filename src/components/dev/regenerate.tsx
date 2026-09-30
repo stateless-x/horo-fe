@@ -129,13 +129,13 @@ const READINGS = {
     endpoint: '/api/dev/regenerate/daily',
     description: 'ลบดวงวันนี้ของผู้ใช้นี้ แล้วให้ระบบจริงเขียนใหม่',
     queryKey: ['fortune', 'daily'],
-    path: '/dashboard/today',
+    path: '/dashboard/fortune/daily',
   },
   chart: {
     endpoint: '/api/dev/regenerate/chart',
     description: 'ลบดวงเดือนนี้ของผู้ใช้นี้ แล้วให้ระบบจริงเขียนใหม่',
     queryKey: ['fortune', 'chart'],
-    path: '/dashboard/fortune',
+    path: '/dashboard/fortune/monthly',
   },
 } as const;
 

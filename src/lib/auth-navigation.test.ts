@@ -23,8 +23,8 @@ describe('authentication navigation wiring', () => {
   });
 
   test('adds a safe encoded destination to an auth or setup path', () => {
-    expect(withReturnTo('/login', '/dashboard/fortune?tab=work')).toBe(
-      '/login?returnTo=%2Fdashboard%2Ffortune%3Ftab%3Dwork',
+    expect(withReturnTo('/login', '/dashboard/fortune/monthly?tab=work')).toBe(
+      '/login?returnTo=%2Fdashboard%2Ffortune%2Fmonthly%3Ftab%3Dwork',
     );
     expect(withReturnTo('/fortune?setup=true', '/dashboard/settings')).toBe(
       '/fortune?setup=true&returnTo=%2Fdashboard%2Fsettings',
@@ -81,8 +81,8 @@ describe('resolvePostAuthDestination', () => {
 
   test('an explicit non-default returnTo always wins over the store intent', () => {
     expect(
-      resolvePostAuthDestination('/dashboard/fortune?tab=work', '/dashboard/compatibility'),
-    ).toBe('/dashboard/fortune?tab=work');
+      resolvePostAuthDestination('/dashboard/fortune/monthly?tab=work', '/dashboard/compatibility'),
+    ).toBe('/dashboard/fortune/monthly?tab=work');
     expect(resolvePostAuthDestination('/invite/abc-123', '/dashboard/compatibility')).toBe(
       '/invite/abc-123',
     );

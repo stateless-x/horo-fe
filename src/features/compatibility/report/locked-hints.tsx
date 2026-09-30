@@ -10,13 +10,15 @@ interface LockedHintsProps {
   sectionLabel: (key: V4ChapterKey) => string;
   /** Full report: each hint becomes a jump link to the chapter that answers it. */
   onJump?: (key: V4ChapterKey) => void;
+  /** Teaser: choosing a question sets the paid door's intent and moves focus to it. */
+  onSelect?: (hint: CompatibilityV4Teaser['cover']['lockedHints'][number]) => void;
 }
 
 /**
  * LockedHints: three questions about the reader's own life. Locked in the
  * teaser; in the full report they are jump links to their answers.
  */
-export function LockedHints({ hints, partnerName, sectionLabel, onJump }: LockedHintsProps) {
+export function LockedHints({ hints, partnerName, sectionLabel, onJump, onSelect }: LockedHintsProps) {
   const open = !!onJump;
   return (
     <section aria-labelledby="report-hints">
@@ -34,7 +36,7 @@ export function LockedHints({ hints, partnerName, sectionLabel, onJump }: Locked
                 <ThaiText>{hint.text}</ThaiText>
               </span>
               <span className="mt-1 block text-sm leading-normal text-inkMuted">
-                {open ? `ไปที่คำตอบในส่วน ‘${section}’` : `อ่านต่อในฉบับเต็ม · ${section}`}
+                {open ? `ไปที่คำตอบในส่วน ‘${section}’` : `ดูคำตอบต่อในส่วน ${section}`}
               </span>
             </span>
           );
@@ -52,6 +54,15 @@ export function LockedHints({ hints, partnerName, sectionLabel, onJump }: Locked
                   {question}
                   <ChevronRight className="size-4 text-inkMuted" aria-hidden="true" />
                 </a>
+              ) : onSelect ? (
+                <button
+                  type="button"
+                  onClick={() => onSelect(hint)}
+                  className="grid w-full min-h-14 grid-cols-[minmax(0,1fr)_20px] items-center gap-3 rounded-lg px-1 py-3.5 text-left transition-colors hover:bg-edgeSoft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"
+                >
+                  {question}
+                  <ChevronRight className="size-4 text-inkMuted" aria-hidden="true" />
+                </button>
               ) : (
                 <div className="px-1 py-4">{question}</div>
               )}

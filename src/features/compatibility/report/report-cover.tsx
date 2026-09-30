@@ -12,7 +12,6 @@ import {
   elementText,
   MiniSeal,
   REPORT_CARD,
-  ThaiText,
 } from './report-kit';
 import { CompatibilityTalisman, compatibilityTalismanBand } from './compatibility-talisman';
 
@@ -110,7 +109,7 @@ export function ReportCover({ content, score, readerName, partnerName, relations
         <DisplayLine text={content.archetype.tagline} />
       </p>
       <p className="mt-5 text-pretty border-t border-edge pt-[18px] font-oracle text-lg leading-[1.7] text-ink">
-        <ThaiText>{content.verdict}</ThaiText>
+        {content.verdict}
       </p>
       <div className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-inkMuted">
         <span className={`inline-flex items-center gap-1.5 font-heading font-semibold ${relationship.tone}`}>

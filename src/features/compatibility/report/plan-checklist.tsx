@@ -5,7 +5,7 @@ import { Check, ChevronDown, Heart, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import type { RelationshipType } from '@/lib-packages/shared';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
-import { REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
+import { REPORT_CARD, SectionHeading } from './report-kit';
 import { planFrameFor } from './report-copy';
 import { relationshipReportVisuals } from './report-visuals';
 
@@ -119,17 +119,17 @@ export function PlanChecklist({ plan, relationshipType, score, reportId }: PlanC
                       <p className="font-heading text-sm font-semibold text-inkMuted">แม่หมอชวนมองแบบนี้</p>
                       <p className="mt-1 text-sm leading-relaxed text-inkMuted">หยิบไปใช้เท่าที่ไหว แล้วปรับให้เป็นแบบที่คุณพูดจริงได้</p>
                       <p className="mt-1.5 text-base leading-[1.7] text-ink">
-                        <ThaiText>{step.action}</ThaiText>
+                        {step.action}
                       </p>
                     </div>
                     <div className="mt-4 max-w-[62ch] border-t border-edge pt-4">
                       <p className="font-heading text-sm font-semibold text-inkMuted">ถ้าคำพูดช่วยให้เริ่มง่ายขึ้น</p>
-                      <p className="mt-1.5 font-oracle text-lg font-light leading-[1.65] text-ink">“<ThaiText>{step.conversationStarter}</ThaiText>”</p>
+                      <p className="mt-1.5 font-oracle text-lg font-light leading-[1.65] text-ink">“{step.conversationStarter}”</p>
                     </div>
                     <div className="mt-4 max-w-[62ch] border-t border-edge pt-4">
                       <p className="font-heading text-sm font-semibold text-inkMuted">แล้วค่อยดูว่าอะไรเกิดขึ้น</p>
                       <p className="mt-1.5 text-base leading-[1.7] text-ink">
-                        <ThaiText>{step.watchFor}</ThaiText>
+                        {step.watchFor}
                       </p>
                     </div>
                     <button

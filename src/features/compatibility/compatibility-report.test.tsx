@@ -2,8 +2,8 @@ import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RELATIONSHIP_TYPES, shapeCompatibilityView } from '@/lib-packages/shared/types/compatibility';
-import type { CompatibilityV4Content, RelationshipType } from '@/lib-packages/shared/types/compatibility';
-import { CompatibilityReading } from './compatibility-reading';
+import type { CompatibilityV4Content, CompatibilityV4Stored, RelationshipType } from '@/lib-packages/shared/types/compatibility';
+import { CompatibilityReport } from './compatibility-report';
 import { compatibilityTalismanBand } from './report/compatibility-talisman';
 import { REPORT_SECTION_IDS, planFrameFor, relationshipReportCopy } from './report/report-copy';
 import { relationshipReportVisuals } from './report/report-visuals';
@@ -22,8 +22,8 @@ const content: CompatibilityV4Content = {
   generatedOn: '2026-09-27',
   archetype: { key: 'fire-metal', name: 'คู่ไฟหลอมทอง', tagline: 'ความร้อนที่ขัดเกลาให้คมขึ้น ขอแค่อย่าร้อนเกินจนเสียรูป' },
   people: {
-    reader: { element: 'metal', yinYang: 'yang', mbti: 'INFP' },
-    partner: { element: 'fire', yinYang: 'yin', mbti: 'ESTJ' },
+    reader: { element: 'metal', yinYang: 'yang' },
+    partner: { element: 'fire', yinYang: 'yin' },
   },
   palace: {
     reader: { naksat: 'มะเมีย', animal: 'ม้า', hidden: { element: 'fire', yinYang: 'yin' } },
@@ -31,10 +31,10 @@ const content: CompatibilityV4Content = {
   },
   readingMinutes: 11,
   dimensions: [
-    { key: 'chemistry', label: 'เคมี', score: 82, basis: ['dayBranch', 'element'] },
-    { key: 'communication', label: 'การสื่อสาร', score: 64, basis: ['element', 'dayBranch'] },
-    { key: 'trust', label: 'ความไว้ใจ', score: 71, basis: ['dayBranch', 'yearBranch', 'element'] },
-    { key: 'rhythm', label: 'จังหวะชีวิต', score: 43, basis: ['yearBranch', 'element'] },
+    { key: 'chemistry', label: 'เคมี', score: 82 },
+    { key: 'communication', label: 'การสื่อสาร', score: 64 },
+    { key: 'trust', label: 'ความไว้ใจ', score: 71 },
+    { key: 'rhythm', label: 'จังหวะชีวิต', score: 43 },
   ],
   cover: {
     verdict: 'ต้นกับคุณดึงกันด้วยความต่างที่ต้องคุยให้ชัด',
@@ -71,21 +71,33 @@ const content: CompatibilityV4Content = {
     { day: 3, action: 'ขั้นสอง', conversationStarter: 'พูดสอง', watchFor: 'สังเกตสอง' },
     { day: 6, action: 'ขั้นสาม', conversationStarter: 'พูดสาม', watchFor: 'สังเกตสาม' },
   ],
-  insights: [],
+};
+
+/** The same report as a current row stores it; the server shapes it per view from this. */
+const { generatedOn, archetype, people, dimensions, cover, palace, readingMinutes, overview, chapters, calendar, plan } = content;
+const stored: CompatibilityV4Stored = {
+  contentVersion: 4,
+  plan: { insights: [] },
+  inputs: {
+    reader: { name: 'มิ้นท์', birthDate: '1995-06-14T00:00:00.000Z', birthHour: null, gender: 'female', mbti: 'INFP' },
+    partner: { birthDate: '1996-01-01T00:00:00.000Z', mbti: 'ESTJ' },
+  },
+  teaser: { generatedOn, archetype, people, dimensions, cover },
+  detail: { palace, readingMinutes, overview, chapters, calendar, plan },
 };
 
 // The door reads the มู wallet through React Query; on the server render it is still loading.
 const render = (view: 'teaser' | 'full', onUnlock?: () => void, partnerName = 'ต้น', relationshipType: RelationshipType = 'romantic') =>
   renderToStaticMarkup(
     <QueryClientProvider client={new QueryClient()}>
-      <CompatibilityReading
+      <CompatibilityReport
         score={72}
-        analysis=""
-        structuredContent={shapeCompatibilityView(content, view)}
+        content={shapeCompatibilityView(stored, view)}
         relationshipType={relationshipType}
         readerName="มิ้นท์"
         partnerName={partnerName}
         onUnlock={onUnlock}
+        embedded
       />
     </QueryClientProvider>,
   );

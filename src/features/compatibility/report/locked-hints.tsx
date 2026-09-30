@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import type { CompatibilityV4Teaser, V4ChapterKey } from '@/lib-packages/shared/types/compatibility';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
-import { SectionHeading, ThaiText } from './report-kit';
+import { SectionHeading } from './report-kit';
 
 interface LockedHintsProps {
   hints: CompatibilityV4Teaser['cover']['lockedHints'];
@@ -33,7 +33,7 @@ export function LockedHints({ hints, partnerName, sectionLabel, onJump, onSelect
           const question = (
             <span>
               <span className="block font-medium leading-[1.65] text-ink">
-                <ThaiText>{hint.text}</ThaiText>
+                {hint.text}
               </span>
               <span className="mt-1 block text-sm leading-normal text-inkMuted">
                 {open ? `ไปที่คำตอบในส่วน ‘${section}’` : `ดูคำตอบต่อในส่วน ${section}`}

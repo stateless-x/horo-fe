@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUpRight, CircleCheck, CirclePause, CornerDownRight, Pau
 import type { CompatibilityV4Content, V4Chapter, V4MonthLabel } from '@/lib-packages/shared/types/compatibility';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { CopyLine } from './copy-button';
-import { ELEMENT_TH, MONTH_TONE, monthName, MoonGlyph, ThaiText } from './report-kit';
+import { ELEMENT_TH, MONTH_TONE, monthName, MoonGlyph } from './report-kit';
 
 /** Each kit block sits under a hairline with its own small heading. */
 function Kit({ title, sub, children }: { title?: string; sub?: string; children: ReactNode }) {
@@ -57,11 +57,11 @@ export function DoAvoid({ pairs }: { pairs: NonNullable<V4Chapter['pairs']> }) {
           <li key={i} className="grid gap-3 py-4 first:pt-3 last:pb-3 sm:grid-cols-2 sm:gap-6">
             <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-base leading-[1.7] text-ink">
               <ArrowUpRight className="mt-[3px] size-4 text-success" aria-hidden="true" />
-              <p><span className="mb-0.5 block font-heading text-xs font-semibold text-success sm:hidden">ลองทำแบบนี้</span><ThaiText>{pair.do}</ThaiText></p>
+              <p><span className="mb-0.5 block font-heading text-xs font-semibold text-success sm:hidden">ลองทำแบบนี้</span>{pair.do}</p>
             </div>
             <div className="grid grid-cols-[20px_minmax(0,1fr)] gap-2.5 text-base leading-[1.7] text-inkMuted">
               <Pause className="mt-[3px] size-4 text-warn" aria-hidden="true" />
-              <p><span className="mb-0.5 block font-heading text-xs font-semibold text-warn sm:hidden">เรื่องนี้พักไว้ก่อน</span><ThaiText>{pair.avoid}</ThaiText></p>
+              <p><span className="mb-0.5 block font-heading text-xs font-semibold text-warn sm:hidden">เรื่องนี้พักไว้ก่อน</span>{pair.avoid}</p>
             </div>
           </li>
         ))}
@@ -94,13 +94,13 @@ export function Scenarios({ scenarios, tone = 'romance' }: { scenarios: NonNulla
         {scenarios.map((item, i) => (
           <li key={i} className="py-3 first:pt-0">
             <p className="font-medium leading-[1.65] text-ink">
-              <ThaiText>{item.scenario}</ThaiText>
+              {item.scenario}
             </p>
             <div className="mt-2 grid grid-cols-[22px_minmax(0,1fr)] gap-2.5">
               <CornerDownRight className={`mt-[3px] size-4 ${toneClass}`} aria-hidden="true" />
               <p className="font-oracle text-lg leading-[1.7] text-ink">
                 <b className={`block font-heading text-sm font-semibold ${toneClass}`}>ซ่อมด้วย</b>
-                <ThaiText>{item.repair}</ThaiText>
+                {item.repair}
               </p>
             </div>
           </li>
@@ -117,7 +117,7 @@ export function Signals({ go, slow }: { go: string[]; slow: string[] }) {
       {items.map((item, i) => (
         <li key={i} className="relative border-t border-edge py-2 pl-[18px] text-base leading-[1.65] text-ink">
           <span className="absolute left-0.5 top-[1.05em] size-1.5 rounded-full bg-current opacity-45" aria-hidden="true" />
-          <ThaiText>{item}</ThaiText>
+          {item}
         </li>
       ))}
     </ul>
@@ -161,7 +161,7 @@ export function NextMonth({
         <div>
           <h4 className="font-heading text-base font-semibold leading-snug text-ink">ก้าวต่อไปเหมาะกับเดือน{monthName(nextStep.month)}</h4>
           <p className="mt-1 text-base leading-[1.7] text-ink">
-            <ThaiText>{nextStep.step}</ThaiText>
+            {nextStep.step}
           </p>
           <a
             href="#report-calendar-section"

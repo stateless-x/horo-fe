@@ -3,13 +3,13 @@ import { RELATIONSHIP_LABELS, RELATIONSHIP_TYPES } from '@/lib-packages/shared';
 import {
   COMPATIBILITY_VIEWS,
   shapeCompatibilityView,
-  CompatibilityV4ContentSchema,
+  CompatibilityV4StoredSchema,
 } from '@/lib-packages/shared/types/compatibility';
 import {
   COMPATIBILITY_DEV_FIXTURES,
   type DevCompatibilityRequest,
 } from '@/lib-packages/shared/types/dev-tools';
-import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
+import { CompatibilityReport } from '@/features/compatibility/compatibility-report';
 import type { DevGeneratorConfig } from '../types';
 
 const OutputSchema = z.object({
@@ -19,7 +19,8 @@ const OutputSchema = z.object({
   partnerName: z.string(),
   qualityFlags: z.array(z.string()).optional(),
 });
-const ContentSchema = CompatibilityV4ContentSchema;
+/** The dev route returns what a live check would store; it is shaped here per view. */
+const ContentSchema = CompatibilityV4StoredSchema;
 const VIEW_OPTIONS = [
   { value: 'full', label: 'ทั้งหมด' },
   { value: 'teaser', label: 'ส่วนฟรี' },
@@ -104,15 +105,15 @@ export const compatibilityGenerator: DevGeneratorConfig = {
             </ul>
           </details>
         )}
-        <CompatibilityReading
+        <CompatibilityReport
           score={output.score}
-          analysis={JSON.stringify(content)}
-          structuredContent={structuredContent}
+          content={structuredContent}
           relationshipType={output.relationshipType}
           readerName={output.readerName}
           partnerName={output.partnerName}
           // Prepared, not enforced: in the dev tool the unlock just opens the full view.
-          onUnlock={() => setVariant('view', 'full')}
+          onUnlock={view === 'teaser' ? () => setVariant('view', 'full') : undefined}
+          embedded
         />
       </>
     );

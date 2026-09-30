@@ -1,6 +1,5 @@
 import type { CompatibilityV4Shaped } from '@/lib-packages/shared/types/compatibility';
 import { type RelationshipType } from '@/lib-packages/shared';
-import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
 
 // --- Constants ---
 
@@ -73,6 +72,7 @@ export type RelationshipConfig = (typeof RELATIONSHIP_CONFIG)[RelationshipType];
 
 // --- Types ---
 
+/** GET/POST /api/fortune/compatibility(/:id)(/unlock): the canon report, teaser or full. */
 export interface CompatibilityResult {
   id: string;
   profileAId: string;
@@ -80,15 +80,11 @@ export interface CompatibilityResult {
   partnerBirthDate: string;
   relationshipType: string;
   score: number;
-  /** v1/v2 readings only: a v4 row's stored JSON never leaves the server. */
-  analysis?: string;
-  contentVersion?: number;
-  /** v2 readings, or the v4 report: the teaser view while `locked`, else the full view. */
-  structuredContent?: CompatibilityStructuredContent | CompatibilityV4Shaped | null;
-  /** A v4 report whose paid detail is not written yet; POST /compatibility/:id/unlock writes it. */
-  locked?: boolean;
-  strengths?: string[];
-  challenges?: string[];
+  contentVersion: 4;
+  /** The teaser view while `locked`, else the full view. */
+  structuredContent: CompatibilityV4Shaped;
+  /** The paid detail is not written yet; POST /compatibility/:id/unlock writes it. */
+  locked: boolean;
   userElement?: string;
   userDayMaster?: string;
   partnerElement?: string;

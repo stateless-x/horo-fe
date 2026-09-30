@@ -18,7 +18,6 @@ import { MainLoader } from '@/components/ui/main-loader';
 import { CompatibilityResultView } from '@/features/compatibility/compatibility-result';
 import { UNLOCK_FAILED } from '@/features/compatibility/report/report-door';
 import {
-  RELATIONSHIP_CONFIG,
   type CompatibilityResult,
 } from '@/features/compatibility/relationship-config';
 import {
@@ -96,12 +95,6 @@ export function CompatibilityResultPage({ resultId }: CompatibilityResultPagePro
     track({ event: 'result_opened', relationshipType: relationship.data, origin: resultOrigin });
   }, [result?.relationshipType, resultOrigin, track]);
 
-  const handleGuidanceOpen = () => {
-    const relationship = RelationshipTypeSchema.safeParse(result?.relationshipType);
-    if (!relationship.success) return;
-    track({ event: 'guidance_opened', relationshipType: relationship.data });
-  };
-
   const handleShareInitiated = (platform: CompatibilitySharePlatform) => {
     const relationship = RelationshipTypeSchema.safeParse(result?.relationshipType);
     if (!relationship.success) return;
@@ -161,12 +154,10 @@ export function CompatibilityResultPage({ resultId }: CompatibilityResultPagePro
   return (
     <CompatibilityResultView
       result={result}
-      fallbackConfig={RELATIONSHIP_CONFIG.talking}
       showShareSheet={showShareSheet}
       onOpenShareSheet={() => setShowShareSheet(true)}
       onCloseShareSheet={() => setShowShareSheet(false)}
       onBackToForm={() => router.replace(COMPATIBILITY_DASHBOARD_PATH)}
-      onGuidanceOpen={handleGuidanceOpen}
       onShareInitiated={handleShareInitiated}
       onResultOpen={handleResultOpen}
       onUnlock={handleUnlock}

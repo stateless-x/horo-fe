@@ -1,6 +1,6 @@
 import { Sparkles } from 'lucide-react';
 import type { CompatibilityV4Teaser, V4DimensionKey } from '@/lib-packages/shared/types/compatibility';
-import { SectionHeading, ThaiText } from './report-kit';
+import { SectionHeading } from './report-kit';
 
 interface DimensionBarsProps {
   dimensions: CompatibilityV4Teaser['dimensions'];
@@ -63,7 +63,7 @@ export function DimensionBars({ dimensions, lines, hideLockNote }: DimensionBars
                 </div>
                 {lines && (
                   <p className="mt-2.5 font-oracle text-base font-light leading-[1.75] text-ink">
-                    <ThaiText>{lines[dimension.key]}</ThaiText>
+                    {lines[dimension.key]}
                   </p>
                 )}
               </li>

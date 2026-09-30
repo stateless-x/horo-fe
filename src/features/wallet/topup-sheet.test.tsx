@@ -117,6 +117,13 @@ function renderSheet(context: TopupContext, initiallyOpen = true, onPaid?: OnPai
 
 const checked = (radios: HTMLElement[]) => radios.filter((radio) => radio.getAttribute('aria-checked') === 'true');
 
+
+/** The door's spend button, then the confirmation it opens (SpendConfirmSheet). */
+async function spend(view: ReturnType<typeof rtl.render>) {
+  rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
+  rtl.fireEvent.click(await view.findByText('ยืนยัน ใช้ 49 มู'));
+}
+
 describe('pack step', () => {
   test('store: every pack, p99 preselected; a tap or an arrow key moves the selection and the pay button follows', () => {
     const view = renderSheet({ kind: 'store' });
@@ -321,7 +328,7 @@ describe('ReportDoor unlock failure', () => {
       value: { writeText: async (text: string) => void copied.push(text) },
     });
     const view = renderFailingDoor(new Error('เขียนฉบับเต็มไม่สำเร็จ'));
-    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
+    await spend(view);
 
     const toast = await view.findByRole('alert');
     expect(toast.textContent).toBe('เปิดคำอ่านไม่สำเร็จ มูของคุณยังอยู่ครบ ลองใหม่ได้เลย');
@@ -336,12 +343,44 @@ describe('ReportDoor unlock failure', () => {
   test('a client timeout: no charge claim, a refresh hint, and the reference line stays', async () => {
     const timeout = Object.assign(new Error('Request timed out'), { status: 408, code: 'TIMEOUT' });
     const view = renderFailingDoor(timeout);
-    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
+    await spend(view);
 
     const toast = await view.findByRole('alert');
     expect(toast.textContent).toBe('ใช้เวลานานกว่าปกติ คำตอบอาจกำลังเสร็จ ลองรีเฟรชหน้านี้');
     expect(view.queryByText(/ยังไม่หักมู/)).toBeNull();
     expect(view.getByText('11111111')).toBeTruthy();
     expect(view.getByRole('button', { name: 'คัดลอกรหัสอ้างอิง' })).toBeTruthy();
+  });
+});
+
+describe('ReportDoor spend confirmation', () => {
+  function renderDoor(onUnlock: () => Promise<void>) {
+    mockApi(() => ({ ...wallet, balance: 60 }));
+    const client = new RQ.QueryClient({ defaultOptions: { queries: { retry: false } } });
+    return rtl.render(
+      <RQ.QueryClientProvider client={client}>
+        <ReportDoor partnerName="ต้น" readingMinutes={11} contents={[]} full={false} unlockRef={ROW} onJump={() => {}} allOpen={false} onToggleAll={() => {}} onUnlock={onUnlock} />
+      </RQ.QueryClientProvider>,
+    );
+  }
+
+  test('the spend asks first, with the balance before and after and what it is worth; cancel spends nothing', async () => {
+    let unlocks = 0;
+    const view = renderDoor(async () => void unlocks++);
+    rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
+
+    const dialog = await view.findByRole('dialog', { hidden: true, name: 'ยืนยันใช้มู' });
+    expect(dialog.textContent).toContain('เปิดคำอ่านฉบับเต็มของคุณกับต้น');
+    expect(dialog.textContent).toContain('60 มู');
+    expect(dialog.textContent).toContain('−49 มู');
+    expect(dialog.textContent).toContain('11 มู');
+    expect(dialog.textContent).toContain('49 มู เท่ากับ ฿49');
+
+    rtl.fireEvent.click(view.getByText('ยังไม่ใช้ตอนนี้'));
+    await rtl.waitFor(() => expect(view.queryByText('ยืนยัน ใช้ 49 มู')).toBeNull());
+    expect(unlocks).toBe(0);
+
+    await spend(view);
+    await rtl.waitFor(() => expect(unlocks).toBe(1));
   });
 });

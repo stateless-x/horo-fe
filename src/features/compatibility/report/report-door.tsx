@@ -12,6 +12,7 @@ import type { ApiError } from '@/lib/api';
 import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import type { RelationshipType } from '@/lib-packages/shared';
 import { PackSheet } from '@/features/wallet/pack-sheet';
+import { SpendConfirmSheet } from '@/features/wallet/spend-confirm-sheet';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 import { baht, doorPacks, units } from '@/features/wallet/wallet-copy';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
@@ -64,7 +65,7 @@ interface ReportDoorProps {
   selectedQuestion?: string;
   selectedIntent?: ReportSectionId;
   /**
-   * Teaser only: unlocks the report. A rejection with HTTP 402
+   * Teaser only: unlocks the report, after SpendConfirmSheet when it spends มู from balance. A rejection with HTTP 402
    * `insufficient_balance` (the ApiError itself, rethrown) turns the button
    * into "เติมมู"; a TIMEOUT shows the timeout copy; any other rejection
    * shows UNLOCK_FAILED with the body's `reference` (else `unlockRef`).
@@ -90,6 +91,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const [toast, setToast] = useState(0);
   const [insufficient, setInsufficient] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   const price = wallet?.prices.compat_unlock;
@@ -108,6 +110,8 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const short = insufficient || (price !== undefined && balance !== undefined && balance < price);
   // The pack the sheet preselects: the smallest that covers the shortfall. Its price is the button's baht.
   const pack = wallet && price !== undefined && balance !== undefined ? doorPacks(wallet.packs, price - balance)[0] : undefined;
+  // A spend from balance asks first; with the wallet off (lock off) the unlock is free and opens directly.
+  const spends = price !== undefined && balance !== undefined && !short;
   const presentation = unlockPresentation(relationshipType, selectedIntent, busy ? 'generating' : short ? 'short' : 'balance');
   const selectedArt = lockedSections.find((section) => section.id === presentation.artSection)?.art;
 
@@ -268,7 +272,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
                 </Button>
               )}
               {onUnlock && !(short && pack && !busy) && (
-                <Button type="button" size="lg" onClick={unlock} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
+                <Button type="button" size="lg" onClick={spends ? () => setConfirmOpen(true) : unlock} aria-haspopup={spends ? 'dialog' : undefined} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
                   {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <CurrencyImage size={24} />}
                   {busy ? 'กำลังเปิดคำอ่าน' : price !== undefined ? `เปิดคำอ่านฉบับเต็มด้วย ${units(price)}` : 'เปิดคำอ่านฉบับเต็ม'}
                 </Button>
@@ -310,6 +314,16 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           </motion.div>
         )}
       </AnimatePresence>
+      {spends && (
+        <SpendConfirmSheet
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          price={price}
+          balance={balance}
+          purpose={spaceLatinName(`เปิดคำอ่านฉบับเต็มของคุณกับ${partnerName} อ่านซ้ำได้ตลอด`, partnerName)}
+          onConfirm={unlock}
+        />
+      )}
       {wallet && price !== undefined && (
         <PackSheet
           open={sheetOpen}

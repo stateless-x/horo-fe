@@ -9,7 +9,7 @@ const content: CompatibilityV4Teaser = {
   contentVersion: 4,
   generatedOn: '2026-09-29',
   archetype: { key: 'fire-metal', name: 'คู่ไฟหลอมทอง', tagline: 'ต่างกัน แต่เติมสิ่งที่อีกคนไม่มีได้' },
-  people: { reader: { element: 'metal', yinYang: 'yang', mbti: null }, partner: { element: 'fire', yinYang: 'yin', mbti: null } },
+  people: { reader: { element: 'metal', yinYang: 'yang' }, partner: { element: 'fire', yinYang: 'yin' } },
   readingMinutes: 11,
   dimensions: [
     { key: 'chemistry', label: 'เคมี', score: 82 },

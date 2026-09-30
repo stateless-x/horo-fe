@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { ChevronDown, Sprout } from 'lucide-react';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 import type { V4Chapter } from '@/lib-packages/shared/types/compatibility';
-import { DisplayLine, ELEMENT_TH, paragraphs, REPORT_CARD, ThaiText, type ReportElement } from './report-kit';
+import { DisplayLine, ELEMENT_TH, paragraphs, REPORT_CARD, type ReportElement } from './report-kit';
 
 export interface ChapterCue {
   label: string;
@@ -60,7 +60,7 @@ export function ChapterCard({ chapter, tone, open, onToggle, kit, cue }: Chapter
         )}
       </header>
       <p className="mt-3 leading-[1.75] text-ink">
-        <ThaiText>{chapter.summary}</ThaiText>
+        {chapter.summary}
       </p>
       <button
         type="button"
@@ -84,12 +84,12 @@ export function ChapterCard({ chapter, tone, open, onToggle, kit, cue }: Chapter
                 &ldquo;
               </span>
               <p>
-                <ThaiText>{chapter.pullQuote}</ThaiText>
+                {chapter.pullQuote}
               </p>
             </blockquote>
             {paragraphs(chapter.detail).map((paragraph, i) => (
               <p key={i} className="mb-[1em] max-w-[62ch] font-oracle text-lg font-light leading-[1.8] text-ink last:mb-0">
-                <ThaiText>{paragraph}</ThaiText>
+                {paragraph}
               </p>
             ))}
             {kit}
@@ -101,7 +101,7 @@ export function ChapterCard({ chapter, tone, open, onToggle, kit, cue }: Chapter
         <div>
           <p className="font-heading text-sm font-semibold leading-snug text-[var(--chapter-tone)]">{cue?.actionLabel ?? 'ลองทำ'}</p>
           <p className="mt-0.5 font-medium leading-[1.7] text-ink">
-            <ThaiText>{chapter.move}</ThaiText>
+            {chapter.move}
           </p>
         </div>
       </footer>

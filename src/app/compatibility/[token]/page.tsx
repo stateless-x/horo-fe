@@ -1,61 +1,27 @@
 'use client';
 
-import { RelationshipClayImage } from '@/features/compatibility/relationship-clay-image';
-import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
-
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Card, CardHeader, CardTitle, CardContent, Button } from '@/lib-packages/ui';
-import { RELATIONSHIP_LABELS, RelationshipTypeSchema, type RelationshipType } from '@/lib-packages/shared';
-import type { CompatibilityStructuredContent } from '@/lib-packages/shared/types/reading';
-import {
-  Sparkles, Stars, ArrowLeftRight,
-} from 'lucide-react';
+import { Card, CardContent, Button } from '@/lib-packages/ui';
+import { RELATIONSHIP_LABELS, RelationshipTypeSchema } from '@/lib-packages/shared';
+import { Sparkles } from 'lucide-react';
 import { MainLoader } from '@/components/ui/main-loader';
-import { CompatibilityReading } from '@/features/compatibility/compatibility-reading';
 import { ReportCover } from '@/features/compatibility/report/report-cover';
 import { DimensionBars } from '@/features/compatibility/report/dimension-bars';
 import type { CompatibilityV4Share } from '@/lib-packages/shared/types/compatibility';
 
 
-const ELEMENT_NAMES_THAI: Record<string, string> = {
-  wood: 'ไม้',
-  fire: 'ไฟ',
-  earth: 'ดิน',
-  metal: 'ทอง',
-  water: 'น้ำ',
-};
-
-function toThaiElement(element: string | null | undefined): string {
-  if (!element) return '';
-  return ELEMENT_NAMES_THAI[element.toLowerCase()] || element;
-}
-
-const RELATIONSHIP_ACCENTS: Record<string, { accent: string; accentBg: string; accentBorder: string }> = {
-  romantic: { accent: 'text-pink-600 dark:text-pink-400', accentBg: 'bg-pink-500/15', accentBorder: 'border-pink-400/50' },
-  talking: { accent: 'text-pink-600 dark:text-pink-400', accentBg: 'bg-pink-500/15', accentBorder: 'border-pink-400/50' },
-  boss: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
-  coworker: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
-  friend: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
-  family: { accent: 'text-accentBright', accentBg: 'bg-accent/15', accentBorder: 'border-accentBright/50' },
-};
-
+/** GET /api/fortune/compatibility/share/:token: the free fields of a current report. Legacy rows answer 404. */
 interface SharedResult {
   partnerName: string;
   relationshipType: string;
   score: number;
-  /** Absent for v4: the stored report is paid text and never leaves the share endpoint. */
-  analysis?: string;
-  contentVersion?: number;
-  structuredContent?: CompatibilityStructuredContent | CompatibilityV4Share | null;
-  strengths?: string[];
-  challenges?: string[];
+  contentVersion: 4;
+  structuredContent: CompatibilityV4Share;
   userElement: string | null;
   partnerElement: string | null;
-  userDayMaster?: string | null;
-  partnerDayMaster?: string | null;
   createdAt: string;
 }
 
@@ -138,116 +104,25 @@ export default function CompatibilitySharePage() {
     </motion.div>
   );
 
-  // Content v4: the free cover and the score numbers, the same components as the report page.
-  if (result.structuredContent?.contentVersion === 4) {
-    const shared = result.structuredContent;
-    const relationship = RelationshipTypeSchema.safeParse(result.relationshipType);
-    return (
-      <div className="min-h-screen px-4 py-6 md:px-6">
-        <div className="mx-auto max-w-[680px] space-y-14">
-          <ReportCover
-            content={{ archetype: shared.archetype, people: shared.people, verdict: shared.verdict }}
-            score={result.score}
-            readerName="เจ้าของดวง"
-            partnerName={result.partnerName}
-            relationshipLabel={relationship.success ? `ดวง${RELATIONSHIP_LABELS[relationship.data]}` : 'ดวงคู่'}
-            full={false}
-          />
-          <DimensionBars dimensions={shared.dimensions} hideLockNote />
-          {tryYours}
-          <p className="text-center text-xs text-inkMuted/60">
-            <Link href="/" className="hover:text-inkMuted transition-colors">สายมู.com</Link> ดูดวงออนไลน์ฟรี ด้วย AI
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const accents = RELATIONSHIP_ACCENTS[result.relationshipType] || RELATIONSHIP_ACCENTS.romantic;
-  const label = RELATIONSHIP_LABELS[result.relationshipType as RelationshipType] || result.relationshipType;
-  const parsedRelationshipType = RelationshipTypeSchema.safeParse(result.relationshipType);
-
+  // The free cover and the score numbers, the same components as the report page.
+  const shared = result.structuredContent;
+  const relationship = RelationshipTypeSchema.safeParse(result.relationshipType);
   return (
-    <div className="min-h-screen p-4 md:p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-4">
-<RelationshipClayImage relationshipType={result.relationshipType} className="mx-auto size-24" sizes="96px" />
-          {/* Relationship type label */}
-          <div className="flex justify-center">
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm ${accents.accentBg} ${accents.accentBorder} border ${accents.accent}`}>
-              {label}
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl font-heading text-ink">
-            ดวง{label}กับ {result.partnerName}
-          </h1>
-
-          {result.userElement && result.partnerElement && (
-            <p className="text-inkMuted text-sm">
-              ธาตุ{toThaiElement(result.userElement)} x ธาตุ{toThaiElement(result.partnerElement)}
-            </p>
-          )}
-        </motion.div>
-
-        {/* Element visualization */}
-        {result.userElement && result.partnerElement && (
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
-            <Card className="bg-gradient-to-br from-surface2 to-surface">
-              <CardHeader>
-                <CardTitle className="text-center flex items-center justify-center gap-2">
-                  <Stars className="w-6 h-6 text-accentBright" aria-hidden="true" />
-                  <span>พลังธาตุของทั้งสองคน</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center gap-4 py-6">
-                  <div className="text-center">
-                    <ElementClayImage element={result.userElement as ClayElement} alt={`ธาตุ${toThaiElement(result.userElement)}`} sizes="80px" className="mx-auto mb-2 size-20" />
-                    <p className="text-sm text-ink">เจ้าของดวง</p>
-                    {result.userDayMaster && <p className="text-xs text-inkMuted">{result.userDayMaster}</p>}
-                  </div>
-
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.3, type: 'spring' }}
-                    className="text-inkMuted"
-                  >
-                    <ArrowLeftRight className="w-8 h-8" aria-hidden="true" />
-                  </motion.div>
-
-                  <div className="text-center">
-                    <ElementClayImage element={result.partnerElement as ClayElement} alt={`ธาตุ${toThaiElement(result.partnerElement)}`} sizes="80px" className="mx-auto mb-2 size-20" />
-                    <p className="text-sm text-ink">{result.partnerName}</p>
-                    {result.partnerDayMaster && <p className="text-xs text-inkMuted">{result.partnerDayMaster}</p>}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* Compatibility reading: v2 cards with legacy markdown fallback */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <CompatibilityReading
-            score={result.score}
-            analysis={result.analysis ?? ''}
-            structuredContent={result.structuredContent}
-            relationshipType={parsedRelationshipType.success ? parsedRelationshipType.data : undefined}
-          />
-        </motion.div>
-
-        {/* CTA: Try it yourself */}
+    <div className="min-h-screen px-4 py-6 md:px-6">
+      <div className="mx-auto max-w-[680px] space-y-14">
+        <ReportCover
+          content={{ archetype: shared.archetype, people: shared.people, verdict: shared.verdict }}
+          score={result.score}
+          readerName="เจ้าของดวง"
+          partnerName={result.partnerName}
+          relationshipLabel={relationship.success ? `ดวง${RELATIONSHIP_LABELS[relationship.data]}` : 'ดวงคู่'}
+          full={false}
+        />
+        <DimensionBars dimensions={shared.dimensions} hideLockNote />
         {tryYours}
-
-        {/* Footer */}
-        <div className="text-center py-4">
-          <p className="text-inkMuted/60 text-xs">
-            <Link href="/" className="hover:text-inkMuted transition-colors">สายมู.com</Link> ดูดวงออนไลน์ฟรี ด้วย AI
-          </p>
-        </div>
+        <p className="text-center text-xs text-inkMuted/60">
+          <Link href="/" className="hover:text-inkMuted transition-colors">สายมู.com</Link> ดูดวงออนไลน์ฟรี ด้วย AI
+        </p>
       </div>
     </div>
   );

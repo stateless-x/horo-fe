@@ -1,7 +1,7 @@
 import { ArrowUp } from 'lucide-react';
 import { useRef } from 'react';
 import type { CompatibilityV4Content } from '@/lib-packages/shared/types/compatibility';
-import { MONTH_TONE, monthName, REPORT_CARD, SectionHeading, ThaiText } from './report-kit';
+import { MONTH_TONE, monthName, REPORT_CARD, SectionHeading } from './report-kit';
 import { useHorizontalDragScroll } from './use-horizontal-drag-scroll';
 
 const CALENDAR_STATE = {
@@ -49,7 +49,7 @@ export function MonthTiles({ calendar, nextStepMonth, futureTitle, onJumpToFutur
               {CALENDAR_STATE[month.label]}
             </p>
             <p className="mt-3.5 text-base leading-[1.7] text-ink">
-              <ThaiText>{month.text}</ThaiText>
+              {month.text}
             </p>
             {month.month === nextStepMonth && (
               <a

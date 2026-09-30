@@ -19,26 +19,6 @@ export const elementText = (element: ReportElement) => ({ color: `var(--el-${ele
 export const dayMasterTh = (element: ReportElement, yinYang: 'yin' | 'yang') =>
   `เจ้าวัน${ELEMENT_TH[element]}${yinYang === 'yang' ? 'หยาง' : 'หยิน'}`;
 
-const MBTI = /\b([IE][NS][TF][JP])\b/g;
-
-/** Running text: MBTI codes set in the Latin accent font. */
-export function ThaiText({ children }: { children: string }) {
-  const parts = children.split(MBTI);
-  return (
-    <>
-      {parts.map((part, i) =>
-        i % 2 === 1 ? (
-          <span key={i} className="font-english font-medium">
-            {part}
-          </span>
-        ) : (
-          <Fragment key={i}>{part}</Fragment>
-        ),
-      )}
-    </>
-  );
-}
-
 const graphemes = new Intl.Segmenter('th', { granularity: 'grapheme' });
 const words = new Intl.Segmenter('th', { granularity: 'word' });
 const graphemeCount = (text: string) => [...graphemes.segment(text)].length;

@@ -25,7 +25,7 @@ import { BasisFacts, DoAvoid, NextMonth, ReadyLines, Scenarios, Signals } from '
 import { MonthTiles } from './report/month-tiles';
 import { PlanChecklist } from './report/plan-checklist';
 import { ShareCard } from './report/share-card';
-import { MiniSeal, paragraphs, SectionHeading, ThaiText, type ReportElement } from './report/report-kit';
+import { MiniSeal, paragraphs, SectionHeading, type ReportElement } from './report/report-kit';
 import { REPORT_SECTION_IDS, relationshipReportCopy, type ReportSectionId } from './report/report-copy';
 import { relationshipReportVisuals } from './report/report-visuals';
 import { useHorizontalDragScroll } from './report/use-horizontal-drag-scroll';
@@ -434,7 +434,7 @@ export function CompatibilityReport({
                       <div className="mt-3.5">
                         {paragraphs(full.overview.story).map((paragraph, i) => (
                           <p key={i} className="mb-[1em] max-w-[62ch] font-oracle text-lg font-light leading-[1.8] text-ink first:text-xl first:leading-[1.75]">
-                            <ThaiText>{paragraph}</ThaiText>
+                            {paragraph}
                           </p>
                         ))}
                       </div>

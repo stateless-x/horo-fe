@@ -1,11 +1,17 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useQuery, type QueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { api, type ApiError } from '@/lib/api';
 import type { OrderStatusResponse } from '@/lib-packages/shared/types/wallet';
 
 export const ORDER_POLL_MS = 3_000;
+/**
+ * How often a pending order asks the payment provider itself (`?verify=1`)
+ * instead of only reading our database. The webhook is the normal path; this
+ * bounds a lost or late webhook to about this long instead of the QR lifetime.
+ */
+export const ORDER_VERIFY_EVERY_MS = 15_000;
 
 export const orderQueryKey = (orderId: string) => ['wallet', 'order', orderId] as const;
 
@@ -18,9 +24,10 @@ export function fetchOrder(orderId: string): Promise<OrderStatusResponse> {
 /**
  * GET /api/wallet/orders/:id every `pollMs` while the order is pending and the
  * tab is visible, and at once when the tab becomes visible again (the return
- * from the bank app). Stops once the order leaves pending. `null` polls nothing.
+ * from the bank app). Every ORDER_VERIFY_EVERY_MS the poll asks the provider
+ * instead (verifyOrder). Stops once the order leaves pending. `null` polls nothing.
  */
-export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS) {
+export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS, verifyEveryMs = ORDER_VERIFY_EVERY_MS) {
   const query = useQuery({
     queryKey: orderQueryKey(orderId ?? ''),
     queryFn: () => fetchOrder(orderId!),
@@ -28,14 +35,23 @@ export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS) {
     staleTime: 0,
     refetchOnWindowFocus: false,
   });
+  const queryClient = useQueryClient();
   const pending = !query.data || query.data.status === 'pending';
   const { refetch } = query;
 
   useEffect(() => {
     if (orderId === null || !pending) return;
     const visible = () => document.visibilityState === 'visible';
+    const verifyEvery = Math.max(1, Math.round(verifyEveryMs / pollMs));
+    let ticks = 0;
     const timer = setInterval(() => {
-      if (visible()) void refetch();
+      ticks += 1;
+      if (!visible()) return;
+      if (ticks % verifyEvery === 0) {
+        verifyOrder(queryClient, orderId).catch((error) => console.error('Order verify during polling failed:', error));
+      } else {
+        void refetch();
+      }
     }, pollMs);
     const onVisibility = () => {
       if (visible()) void refetch();
@@ -45,7 +61,7 @@ export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS) {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [orderId, pending, pollMs, refetch]);
+  }, [orderId, pending, pollMs, verifyEveryMs, queryClient, refetch]);
 
   return query;
 }

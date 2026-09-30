@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   DEFAULT_AUTHENTICATED_PATH,
@@ -10,6 +10,28 @@ import {
 
 const repoRoot = join(import.meta.dir, '..', '..');
 const read = (path: string) => readFileSync(join(repoRoot, path), 'utf8');
+
+function sourceFilesUnder(dir: string): string[] {
+  return readdirSync(join(repoRoot, dir), { withFileTypes: true, recursive: true })
+    .filter((entry) => entry.isFile() && /\.(ts|tsx)$/.test(entry.name))
+    .map((entry) => join(entry.parentPath, entry.name));
+}
+
+describe('fortune dashboard routes', () => {
+  test('uses daily and monthly as the only reading routes', () => {
+    expect(existsSync(join(repoRoot, 'src/app/dashboard/fortune/daily/page.tsx'))).toBe(true);
+    expect(existsSync(join(repoRoot, 'src/app/dashboard/fortune/monthly/page.tsx'))).toBe(true);
+    expect(existsSync(join(repoRoot, 'src/app/dashboard/today/page.tsx'))).toBe(false);
+    expect(existsSync(join(repoRoot, 'src/app/dashboard/fortune/page.tsx'))).toBe(false);
+
+    const retiredRoutes = [/\/dashboard\/today(?!\/)/, /\/dashboard\/fortune(?!\/)/];
+    const offendingSource = sourceFilesUnder('src').filter((file) =>
+      retiredRoutes.some((route) => route.test(readFileSync(file, 'utf8'))),
+    );
+
+    expect(offendingSource).toEqual([]);
+  });
+});
 
 describe('authentication navigation wiring', () => {
   test('validates resumable internal destinations without allowing open redirects', () => {

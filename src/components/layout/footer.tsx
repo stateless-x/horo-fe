@@ -312,6 +312,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/terms" className="transition-colors duration-200 hover:text-accentBright">
+                  เงื่อนไขการใช้งานและสินค้า
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="transition-colors duration-200 hover:text-accentBright">
                   นโยบายความเป็นส่วนตัว
                 </Link>

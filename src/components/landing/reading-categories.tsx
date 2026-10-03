@@ -1,6 +1,3 @@
-'use client';
-
-import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 
 const categories = [
@@ -12,71 +9,34 @@ const categories = [
   { label: 'ครอบครัว', desc: 'ใกล้กันแล้ว เข้าใจกันแค่ไหน', image: 'family' },
 ] as const;
 
+/** A quiet preview of the six areas in a reading; it does not imply navigation. */
 export function ReadingCategories() {
-  const shouldReduceMotion = useReducedMotion();
-
   return (
-    <section className="py-20 px-6 relative">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-heading text-ink mb-4">
-            ช่วงนี้อยากรู้เรื่องไหนเป็นพิเศษ
-          </h2>
-          <p className="text-inkMuted font-oracle">
-            เรื่องรักก็มี เรื่องงานก็มา เลือกอ่านได้ครบ 6 ด้าน
-          </p>
-        </motion.div>
+    <section className="px-6 py-16 sm:py-20">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-8 text-center sm:mb-10">
+          <h2 className="font-heading text-3xl text-ink md:text-4xl">คำทำนายช่วยมองได้ครบ 6 ด้าน</h2>
+          <p className="mt-3 font-oracle text-inkMuted">เปิดดวงครั้งเดียว แล้วค่อยเลือกอ่านเรื่องที่อยากเริ่มก่อน</p>
+        </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: { staggerChildren: shouldReduceMotion ? 0 : 0.08 },
-            },
-          }}
-          className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4"
-        >
-          {categories.map((cat) => (
-            <motion.div
-              key={cat.label}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0 },
-              }}
-              transition={{ duration: 0.5 }}
-              className="group relative h-full"
-            >
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-2xl blur-xl opacity-0 group-hover:opacity-15 bg-accentBright/30 -z-10 transition-opacity duration-300" />
-
-              <div className="glass-card glass-card-lift flex flex-col items-center text-center p-4 md:p-5 h-full md:hover:border-accentBright/30">
-                <Image
-                  src={`/assets/clay/categories/${cat.image}.webp`}
-                  alt={`โมเดลดินปั้น ${cat.label}`}
-                  width={480}
-                  height={480}
-                  sizes="(min-width: 768px) 72px, 56px"
-                  className="mb-3 size-14 object-contain drop-shadow-[0_8px_14px_rgba(107,33,168,0.12)] md:size-[72px]"
-                />
-                <p className="font-heading text-ink text-sm md:text-base mb-1">
-                  {cat.label}
-                </p>
-                <p className="text-inkMuted text-xs font-oracle">
-                  {cat.desc}
-                </p>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-x-8 sm:gap-y-8">
+          {categories.map((category) => (
+            <div key={category.label} className="flex min-w-0 items-center gap-3 sm:flex-col sm:text-center">
+              <Image
+                src={`/assets/clay/categories/${category.image}.webp`}
+                alt=""
+                width={160}
+                height={160}
+                sizes="(min-width: 640px) 72px, 56px"
+                className="size-14 shrink-0 object-contain drop-shadow-[0_8px_14px_rgba(107,33,168,0.12)] sm:size-[72px]"
+              />
+              <div className="min-w-0">
+                <p className="font-heading text-sm text-ink md:text-base">{category.label}</p>
+                <p className="mt-0.5 text-xs font-oracle leading-relaxed text-inkMuted">{category.desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

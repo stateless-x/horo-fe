@@ -5,14 +5,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Menu, X, Settings, LogOut } from 'lucide-react';
+import { Menu, X, Settings, LogOut, ShoppingBag } from 'lucide-react';
 import { useAppLogout } from '@/hooks/use-app-logout';
 import { SYSTEMS, type DashboardTab } from '@/lib/systems';
 import { BalanceChip, WalletMenuRow } from '@/features/wallet/balance-chip';
+import { enabledWallet, useWallet } from '@/features/wallet/use-wallet';
 
 // Settings is dashboard chrome, not a fortune-telling system, so it isn't
 // part of the systems registry — it's appended here as a fixed last tab.
 const SETTINGS_TAB: DashboardTab = { key: 'settings', label: 'ตั้งค่า', href: '/dashboard/settings', icon: Settings };
+const SHOP_TAB: DashboardTab = { key: 'shop', label: 'ร้านค้า', href: '/dashboard/shop?from=nav', icon: ShoppingBag };
 
 const NAV_TABS: DashboardTab[] = [
   ...SYSTEMS.filter((system) => system.enabled).flatMap((system) => system.dashboardTabs),
@@ -21,6 +23,8 @@ const NAV_TABS: DashboardTab[] = [
 
 const LINK_REST = 'text-inkMuted hover:text-ink hover:bg-edgeSoft';
 const LINK_ACTIVE = 'bg-accent/15 text-accentBright';
+const ROMANCE_REST = 'text-romanceText font-bold hover:bg-romance/10';
+const ROMANCE_ACTIVE = 'bg-romance/10 text-romanceText font-bold';
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -28,6 +32,8 @@ export function AppHeader() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const { logout, isLoggingOut } = useAppLogout();
+  const wallet = enabledWallet(useWallet().data);
+  const tabs = wallet ? [...NAV_TABS.slice(0, -1), SHOP_TAB, SETTINGS_TAB] : NAV_TABS;
 
   // Close on route change
   useEffect(() => {
@@ -76,19 +82,23 @@ export function AppHeader() {
         {/* Inline links — desktop/tablet, beside the brand. Active route is
             an underline anchored to the bar, matching public-nav. */}
         <nav className="hidden md:flex items-center gap-1 h-full">
-          {NAV_TABS.map(({ key, href, label }) => (
-            <Link
-              key={key}
-              href={href}
-              className={`flex items-center h-full px-3 font-thai text-sm border-b-2 -mb-px transition-colors ${
-                pathname.startsWith(href)
-                  ? 'border-accent text-ink font-medium'
-                  : 'border-transparent text-inkMuted hover:text-ink'
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
+          {tabs.map(({ key, href, label }) => {
+            const active = pathname.startsWith(href.split('?')[0]);
+            return (
+              <Link
+                key={key}
+                href={href}
+                aria-current={active ? 'page' : undefined}
+                className={`flex items-center h-full px-3 font-thai text-sm border-b-2 -mb-px transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${
+                  key === 'compatibility'
+                    ? active ? 'border-romance text-romanceText font-bold' : 'border-transparent text-romanceText font-bold hover:bg-romance/10'
+                    : active ? 'border-accent text-ink font-medium' : 'border-transparent text-inkMuted hover:text-ink'
+                }`}
+              >
+                {label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5 shrink-0">
@@ -122,8 +132,8 @@ export function AppHeader() {
         transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: 'easeInOut' }}
         className="md:hidden overflow-hidden border-b border-edge bg-ground"
       >
-        <nav className="max-w-5xl mx-auto px-4 py-2 flex flex-col">
-          {NAV_TABS.map(({ key, href, label, icon: Icon }) => (
+        <nav inert={!drawerOpen} className="max-w-5xl mx-auto px-4 py-2 flex flex-col">
+          {tabs.map(({ key, href, label, icon: Icon }) => (
             <Fragment key={key}>
               {key === SETTINGS_TAB.key && (
                 <WalletMenuRow
@@ -134,8 +144,11 @@ export function AppHeader() {
               )}
               <Link
                 href={href}
-                className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${
-                  pathname.startsWith(href) ? LINK_ACTIVE : LINK_REST
+                aria-current={pathname.startsWith(href.split('?')[0]) ? 'page' : undefined}
+                className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${
+                  key === 'compatibility'
+                    ? pathname.startsWith(href.split('?')[0]) ? ROMANCE_ACTIVE : ROMANCE_REST
+                    : pathname.startsWith(href.split('?')[0]) ? LINK_ACTIVE : LINK_REST
                 }`}
               >
                 <Icon className="w-4 h-4" />

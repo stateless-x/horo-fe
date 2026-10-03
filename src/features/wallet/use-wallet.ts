@@ -3,12 +3,13 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import type { HistoryKind, WalletHistoryResponse, WalletResponse, WalletState } from '@/lib-packages/shared/types/wallet';
+import type { TicketHistoryResponse } from '@/lib-packages/shared/types/shop';
 
 /** One cache entry for the balance chip, the ดวงคู่ door and /dashboard/wallet; invalidate it after a spend. */
 export const WALLET_QUERY_KEY = ['wallet'] as const;
 
 /**
- * GET /api/wallet. The first call grants the welcome gift (horo-be/docs/wallet.md).
+ * GET /api/wallet.
  * `{ enabled: false }` while nothing is sellable: callers then show no wallet at all.
  */
 export function useWallet() {
@@ -42,6 +43,20 @@ export function useWalletHistory(kind: HistoryKind | undefined) {
       if (pageParam) params.set('cursor', pageParam);
       if (kind) params.set('kind', kind);
       return api.get<WalletHistoryResponse>(`/api/wallet/history?${params}`);
+    },
+    initialPageParam: null as string | null,
+    getNextPageParam: (last) => last.nextCursor,
+    staleTime: 30_000,
+  });
+}
+
+export function useTicketHistory() {
+  return useInfiniteQuery({
+    queryKey: [...WALLET_QUERY_KEY, 'tickets', 'history'],
+    queryFn: ({ pageParam }) => {
+      const params = new URLSearchParams();
+      if (pageParam) params.set('cursor', pageParam);
+      return api.get<TicketHistoryResponse>(`/api/wallet/tickets/history${params.size ? `?${params}` : ''}`);
     },
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.nextCursor,

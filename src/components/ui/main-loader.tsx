@@ -5,14 +5,16 @@ import Image from 'next/image';
 import { useReducedMotion } from 'framer-motion';
 
 /**
- * Display sizes. Only `page` exists on purpose: the mascot holds each pose for
- * 500ms, so it only reads as a loader on waits long enough to show several
- * poses. Short waits — a list page fetch, a button submit — would show one
- * arbitrary pose that differs on every load, so those keep lucide's `Loader2`
- * (see compatibility-history.tsx). Add a smaller tier here only alongside a
- * faster-cadence asset.
+ * The animated loader is for long waits. The compact tier uses the static
+ * poster, keeping route and session checks recognisably branded without an
+ * arbitrary single animation pose flashing on screen.
  */
 const SIZES = {
+  compact: {
+    image: 'h-auto w-28 sm:w-32',
+    frame: 'min-h-28 sm:min-h-32',
+    sizes: '(min-width: 640px) 128px, 112px',
+  },
   page: {
     image: 'h-auto w-56 sm:w-64',
     frame: 'min-h-56 sm:min-h-64',
@@ -32,6 +34,8 @@ interface MainLoaderProps {
   className?: string;
   /** Set false to drop the accent glow behind the mascot. */
   glow?: boolean;
+  /** Use the static poster for short waits such as session or route checks. */
+  animate?: boolean;
   /**
    * Render purely decoratively — no role/aria-live, no screen-reader label.
    * Use when the surrounding UI already announces loading status (e.g. a live
@@ -51,6 +55,7 @@ export function MainLoader({
   label = 'กำลังโหลด...',
   className = '',
   glow = true,
+  animate = true,
   decorative = false,
 }: MainLoaderProps) {
   const shouldReduceMotion = useReducedMotion();
@@ -60,7 +65,7 @@ export function MainLoader({
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const animated = mounted && shouldReduceMotion === false;
+  const animated = animate && mounted && shouldReduceMotion === false;
   const src = animated
     ? '/assets/clay/little-oracle-loader-v2.webp'
     : '/assets/clay/little-oracle-loader-v2-poster.webp';

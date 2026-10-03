@@ -10,7 +10,6 @@ import { useFortuneGeneration } from '@/features/fortune/hooks/use-fortune-gener
 import { useFortuneData } from '@/features/fortune/hooks/use-fortune-data';
 import { useFortuneStore } from '@/stores/fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
-import { useMinLoading } from '@/hooks/use-min-loading';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { useTrackEvent } from '@/lib/analytics';
 import { ErrorDisplay } from '@/features/fortune/error-display';
@@ -62,7 +61,7 @@ export default function FortuneChartPage() {
   const [showProfileUpdatedToast, setShowProfileUpdatedToast] = useState(false);
 
   // State management
-  const { loadingState, error, rateLimitResetAt, setShareStatus } = useFortuneStore();
+  const { loadingState, error, rateLimitResetAt } = useFortuneStore();
 
   // If user just updated their profile in settings, invalidate cached chart data
   // so useFortuneGeneration re-fetches (and triggers LLM regeneration)
@@ -109,12 +108,7 @@ export default function FortuneChartPage() {
     });
   };
 
-  // Show loading skeleton while initializing or generating
-  // Floor the loader at 3s even on a cache hit; the skeleton keeps rotating
-  // copy while loadingState is already 'complete'.
-  const holdLoader = useMinLoading(loadingState !== 'complete');
-
-  if (sessionLoading || !session || holdLoader) {
+  if (sessionLoading || !session || loadingState !== 'complete') {
     return <LoadingSkeleton loadingState={loadingState} />;
   }
 
@@ -358,7 +352,6 @@ export default function FortuneChartPage() {
                   <FourPillarsSection
                     pillars={chartData.pillars}
                     pillarInterpretations={chartData.pillarInterpretations}
-                    pillarInteractions={chartData.pillarInteractions}
                   />
                   <BirthStarSection birthStar={chartData.birthStar} />
                 </div>

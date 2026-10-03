@@ -8,6 +8,7 @@ import { Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { sanitizeReturnTo, withReturnTo } from '@/lib/auth-navigation';
+import { PageLoadingState } from '@/components/ui/page-loading-state';
 
 /**
  * Login Page
@@ -60,11 +61,7 @@ function LoginPageContent() {
 
   // Show loading state while checking session
   if (isPending || session) {
-    return (
-      <div className="min-h-screen bg-ground flex items-center justify-center">
-        <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
-      </div>
-    );
+    return <PageLoadingState label="กำลังตรวจสอบบัญชีของคุณ" />;
   }
 
   return (
@@ -198,9 +195,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-ground flex items-center justify-center">
-          <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
-        </div>
+        <PageLoadingState label="กำลังเตรียมหน้าเข้าสู่ระบบ" />
       }
     >
       <LoginPageContent />

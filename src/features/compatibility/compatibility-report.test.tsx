@@ -145,7 +145,7 @@ describe('CompatibilityReport', () => {
     for (const dimension of content.dimensions) expect(html).toContain(`${dimension.score}<span class="sr-only">จาก 100`);
     for (const hint of content.cover.lockedHints) expect(html).toContain(hint.text);
     // No balance or price until the wallet loads: never a made-up number.
-    expect(html).toContain('เปิดคำอ่านฉบับเต็ม');
+    expect(html).toContain('เปิดคำอ่านนี้ด้วยตั๋วรู้ใจ');
     expect(html).toContain('เข้าใจเขา เข้าใจเรา แล้วคุยกันได้ง่ายขึ้น');
     expect(html).toContain('ดูว่าแต่ละส่วนในฉบับเต็มมีอะไร');
     for (const paid of [content.overview.story, 'บรรทัดเคมี', 'รายละเอียดเรื่อง', 'คำคมเรื่อง', 'ข้อความเดือนตุลา', 'ขั้นแรก', 'มะเมีย']) {
@@ -232,7 +232,7 @@ describe('CompatibilityReport', () => {
     expect(html).toContain('สิ่งที่จะได้จากคำตอบฉบับเต็ม');
     expect(html).toContain('ดูสิ่งที่จะได้อ่าน');
     expect(html).toContain('เปิดครั้งเดียว กลับมาอ่านได้ตลอด');
-    expect(html).toContain('mu-gem-clay-48.webp');
+    expect(html).toContain('เปิดคำอ่านนี้ด้วยตั๋วรู้ใจ');
     for (const asset of ['four-dimensions.webp', 'two-mirrors.webp', 'listening.webp', 'next-timing.webp']) expect(html).toContain(asset);
     expect(html).not.toContain('little-oracle-mark-v1.webp');
     expect(html).not.toContain('ตัวตนของต้นในความสัมพันธ์นี้');

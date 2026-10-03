@@ -16,7 +16,7 @@ export function LedgerList({ entries }: { entries: LedgerEntry[] }) {
         <li key={entry.id} className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             <p className="text-[0.9375rem] leading-snug text-ink">
-              {entry.refName && entry.refId ? (
+              {entry.productId === 'compat_unlock' && entry.refName && entry.refId ? (
                 <Link
                   href={compatibilityResultPath(entry.refId)}
                   className="underline decoration-edge underline-offset-4 hover:decoration-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright"

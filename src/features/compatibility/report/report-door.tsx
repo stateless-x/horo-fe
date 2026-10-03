@@ -8,15 +8,10 @@ import Image from 'next/image';
 import { Button } from '@/lib-packages/ui';
 import { FailureNotice, failureReference } from '@/components/ui/failure-notice';
 import { StatusToast } from '@/components/ui/status-toast';
-import { CurrencyImage } from '@/components/ui/currency-image';
 import type { ApiError } from '@/lib/api';
-import { INSUFFICIENT_BALANCE } from '@/lib-packages/shared/types/wallet';
 import type { RelationshipType } from '@/lib-packages/shared';
-import { PackSheet } from '@/features/wallet/pack-sheet';
-import { MiniShopDialog } from '@/features/wallet/mini-shop-dialog';
-import { SpendConfirmSheet } from '@/features/wallet/spend-confirm-sheet';
+import { useMiniShop } from '@/features/shop/mini-shop-provider';
 import { WALLET_QUERY_KEY, enabledWallet, useWallet } from '@/features/wallet/use-wallet';
-import { baht, doorPacks, units } from '@/features/wallet/wallet-copy';
 import { spaceLatinName } from '@/lib-packages/shared/types/names';
 import { BOUND_FRAME, MiniSeal, REPORT_CARD } from './report-kit';
 import { lockedPreviewCopy, relationshipReportCopy, type ReportSectionId } from './report-copy';
@@ -41,7 +36,7 @@ const ENTRY_ICON: Record<NonNullable<ReportContentsEntry['icon']>, LucideIcon> =
 };
 
 /** Owner copy (2026-09-29), pronoun-free. The server answered with a failure: a failed generation charges nothing. */
-export const UNLOCK_FAILED = 'เปิดคำอ่านไม่สำเร็จ มูของคุณยังอยู่ครบ ลองใหม่ได้เลย';
+export const UNLOCK_FAILED = 'เปิดคำอ่านไม่สำเร็จ ตั๋วยังอยู่ครบ ลองใหม่ได้เลย';
 /** The client gave up waiting (api TIMEOUT): the server may still finish and charge, so no charge claim. A reload re-reads the result. */
 export const UNLOCK_TIMED_OUT = 'ใช้เวลานานกว่าปกติ คำตอบอาจกำลังเสร็จ ลองรีเฟรชหน้านี้';
 
@@ -86,6 +81,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   const queryClient = useQueryClient();
   const walletQuery = useWallet();
   const wallet = enabledWallet(walletQuery.data);
+  const { openProduct } = useMiniShop();
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState<UnlockFailure | null>(null);
   /** The server's reference for this failure, else the row id; none when neither exists. */
@@ -93,14 +89,8 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
   /** Bumped per failure so a repeat failure shows the toast again. */
   const [toast, setToast] = useState(0);
   const [successToast, setSuccessToast] = useState(0);
-  const [insufficient, setInsufficient] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [miniShopOpen, setMiniShopOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  const price = wallet?.prices.compat_unlock;
-  const balance = wallet?.balance;
   const preview = lockedPreviewCopy(relationshipType);
   const copy = relationshipReportCopy(relationshipType);
   const visuals = relationshipReportVisuals(relationshipType);
@@ -111,15 +101,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
     { id: 'conversation', title: copy.sections.conversation.label, ...preview.sections.conversation, art: visuals.sections.conversation },
     { id: 'next', title: copy.sections.next.label, ...preview.sections.next, art: visuals.next.calendar.art },
   ];
-  // Short of the price: the primary button buys and unlocks in one flow instead of spending.
-  // Compatibility no longer spends the fungible มู balance directly. The API
-  // tells a reader without a ticket to continue in the shop.
-  const short = false;
-  // The pack the sheet preselects: the smallest that covers the shortfall. Its price is the button's baht.
-  const pack = wallet && price !== undefined && balance !== undefined ? doorPacks(wallet.packs, price - balance)[0] : undefined;
-  // A spend from balance asks first; with the wallet off (lock off) the unlock is free and opens directly.
-  const spends = false;
-  const presentation = unlockPresentation(relationshipType, selectedIntent, busy ? 'generating' : short ? 'short' : 'balance');
+  const presentation = unlockPresentation(relationshipType, selectedIntent, busy ? 'generating' : 'balance');
   const selectedArt = lockedSections.find((section) => section.id === presentation.artSection)?.art;
 
   useEffect(() => {
@@ -133,12 +115,6 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
    * this settles. The backend's own unlock of this row may be running; the
    * unlock route joins it and charges the row once.
    */
-  const unlockAfterPayment = async () => {
-    setInsufficient(false);
-    await queryClient.invalidateQueries({ queryKey: WALLET_QUERY_KEY });
-    await unlock();
-  };
-
   const unlock = async () => {
     if (!onUnlock || busy) return;
     setBusy(true);
@@ -149,10 +125,7 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
     } catch (failure) {
       const refused = failure as ApiError;
       if (refused.status === 402 && refused.body?.error === 'ticket_required' && unlockRef) {
-        setMiniShopOpen(true);
-      } else if (refused.status === 402 && refused.body?.error === INSUFFICIENT_BALANCE) {
-        // The balance changed since it was read: offer the purchase, which unlocks after paying.
-        setInsufficient(true);
+        openProduct('heart_ticket', { entry: 'mini_shop', unlockRef, onComplete: unlock });
       } else {
         // A server failure charges nothing (horo-be docs/wallet.md, "The ดวงคู่ unlock"); a client
         // timeout (lib/api: code TIMEOUT, status 408) says nothing about the server's outcome.
@@ -270,25 +243,13 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
                 ))}
               </ul>
               <div className="mt-5 grid grid-cols-[minmax(0,1fr)] gap-2.5">
-              {onUnlock && short && pack && !busy && (
-                <Button
-                  type="button"
-                  size="lg"
-                  onClick={() => setSheetOpen(true)}
-                  aria-haspopup="dialog"
-                  className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading"
-                >
-                  {`เติมมูแล้วเปิดคำอ่านฉบับเต็ม ${baht(pack.priceBaht)}`}
-                </Button>
-              )}
-              {onUnlock && !(short && pack && !busy) && (
-                <Button type="button" size="lg" onClick={spends ? () => setConfirmOpen(true) : unlock} aria-haspopup={spends ? 'dialog' : undefined} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
-                  {busy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <CurrencyImage size={24} />}
-                  {busy ? 'กำลังเปิดคำอ่าน' : 'เปิดคำอ่านฉบับเต็ม'}
+              {onUnlock && (
+                <Button type="button" size="lg" onClick={wallet && wallet.tickets.usesLeft === 0 && unlockRef ? () => openProduct('heart_ticket', { entry: 'mini_shop', unlockRef, onComplete: unlock }) : unlock} aria-haspopup={wallet && wallet.tickets.usesLeft === 0 && unlockRef ? 'dialog' : undefined} aria-busy={busy} disabled={busy} className="h-auto min-h-14 w-full gap-2.5 whitespace-normal px-5 py-3 font-heading">
+                  {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
+                  {busy ? 'กำลังเปิดคำอ่าน' : wallet && wallet.tickets.usesLeft > 0 ? `ใช้ตั๋วรู้ใจ 1 ใบ (เหลือ ${wallet.tickets.usesLeft} ใบ)` : 'เปิดคำอ่านนี้ด้วยตั๋วรู้ใจ'}
                 </Button>
               )}
               {presentation.status && <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">{presentation.status}</p>}
-              {!short && <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">ใช้ตั๋วรู้ใจ 1 ใบ</p>}
               <p className="px-2 text-center text-sm leading-relaxed text-inkMuted">เปิดครั้งเดียว กลับมาอ่านได้ตลอด</p>
               <p aria-live="polite" className="empty:hidden text-sm leading-relaxed text-inkMuted">
                 {busy ? 'เสร็จแล้วคำตอบจะเปิดตรงนี้เลย ไม่ต้องกดซ้ำ' : ''}
@@ -324,26 +285,6 @@ export function ReportDoor({ partnerName, relationshipType, readingMinutes, cont
           </motion.div>
         )}
       </AnimatePresence>
-      {spends && (
-        <SpendConfirmSheet
-          open={confirmOpen}
-          onOpenChange={setConfirmOpen}
-          price={price!}
-          balance={balance!}
-          purpose={spaceLatinName(`เปิดคำอ่านฉบับเต็มของคุณกับ${partnerName} อ่านซ้ำได้ตลอด`, partnerName)}
-          onConfirm={unlock}
-        />
-      )}
-      {wallet && price !== undefined && (
-        <PackSheet
-          open={sheetOpen}
-          onOpenChange={setSheetOpen}
-          wallet={wallet}
-          context={{ kind: 'door', price, unlockRef }}
-          onPaid={unlockAfterPayment}
-        />
-      )}
-      {wallet && unlockRef && <MiniShopDialog open={miniShopOpen} onOpenChange={setMiniShopOpen} wallet={wallet} unlockRef={unlockRef} onPurchased={unlock} />}
       {busy && <UnlockProgressDialog open partnerName={partnerName} />}
       {successToast > 0 && <StatusToast key={successToast} message="คำอ่านฉบับเต็มพร้อมแล้ว" onDismiss={() => setSuccessToast(0)} />}
     </section>

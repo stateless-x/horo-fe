@@ -19,7 +19,6 @@ import {
 import { useDailyFortune, useUserProfile, getDailyHookLine } from '@/features/fortune/hooks/use-daily-fortune';
 import { LoadingSkeleton } from '@/features/fortune/loading-skeleton';
 import { MonthlyChartPromo } from '@/features/fortune/monthly-chart-promo';
-import { useMinLoading } from '@/hooks/use-min-loading';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { useTrackEvent } from '@/lib/analytics';
 import { ErrorDisplay } from '@/features/fortune/error-display';
@@ -88,9 +87,7 @@ export default function TodayPage() {
   } = useDailyFortune(isReady);
   const { data: userProfile } = useUserProfile(isReady);
 
-  // Floor the loader at 3s even on a cache hit so the rotating copy and the
-  // sponsored card are actually seen.
-  const showLoader = useMinLoading(dailyLoading);
+  const showLoader = dailyLoading;
 
   // Resumes the reading the visitor started in the onboarding teaser, once:
   // expand its category, scroll it into view, and show a small pill on it.

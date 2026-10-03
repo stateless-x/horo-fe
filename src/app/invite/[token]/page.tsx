@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useSession } from '@/lib/auth-client';
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
 import { useOnboardingStore } from '@/stores/onboarding';
+import { PageLoadingState } from '@/components/ui/page-loading-state';
 
 interface InviteData {
   inviterName: string;
@@ -70,15 +71,7 @@ export default function InvitePage() {
     fetchInvite();
   }, [token]);
 
-  // Handle authenticated user
-  useEffect(() => {
-    if (session && inviteData && !sessionLoading) {
-      // User is authenticated, mark invite as used and redirect to compatibility
-      markInviteAsUsed();
-    }
-  }, [session, inviteData, sessionLoading]);
-
-  const markInviteAsUsed = async () => {
+  const markInviteAsUsed = useCallback(async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/invite/${token}/use`,
@@ -99,7 +92,15 @@ export default function InvitePage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to process invite');
     }
-  };
+  }, [router, token]);
+
+  // Handle authenticated user
+  useEffect(() => {
+    if (session && inviteData && !sessionLoading) {
+      // User is authenticated, mark invite as used and redirect to compatibility
+      markInviteAsUsed();
+    }
+  }, [session, inviteData, sessionLoading, markInviteAsUsed]);
 
   const handleStartOnboarding = () => {
     resetFlow();
@@ -108,11 +109,7 @@ export default function InvitePage() {
 
   // Loading state
   if (loading || sessionLoading) {
-    return (
-      <div className="min-h-screen bg-ground flex items-center justify-center">
-        <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
-      </div>
-    );
+    return <PageLoadingState label="กำลังเปิดคำเชิญของคุณ" />;
   }
 
   // Error state

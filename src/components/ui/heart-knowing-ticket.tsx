@@ -25,7 +25,7 @@ export function HeartKnowingTicket({ size = 160, className = '' }: { size?: Tick
       width={source.width}
       height={source.height}
       sizes={`${size}px`}
-      className={`h-auto w-full object-contain ${className}`}
+      className={`h-auto object-contain ${className || 'w-full'}`}
     />
   );
 }

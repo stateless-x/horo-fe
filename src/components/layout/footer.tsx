@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Heart, Calendar, Orbit } from "lucide-react";
+import { Heart, Orbit } from "lucide-react";
 import { TOPIC_PAGES } from "@/lib/topic-pages";
 import { LAST_VERIFIED_TH } from "@/lib/knowledge-base";
 import { DonationButton } from "@/components/ads/donation-button";

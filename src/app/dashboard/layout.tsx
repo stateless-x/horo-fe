@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { DashboardProfileGate } from '@/components/dashboard/dashboard-profile-gate';
+import { MiniShopProvider } from '@/features/shop/mini-shop-provider';
 
 export const metadata: Metadata = {
   title: 'ดวงชะตาของคุณ',
@@ -42,5 +43,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardProfileGate>{children}</DashboardProfileGate>;
+  return <DashboardProfileGate><MiniShopProvider>{children}</MiniShopProvider></DashboardProfileGate>;
 }

@@ -94,7 +94,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch {
       // Final fallback: open image in new tab (user can long-press to save)
       window.open(QR_IMAGE_PATH, '_blank');
     }

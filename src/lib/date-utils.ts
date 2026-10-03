@@ -18,7 +18,6 @@ export function getBangkokDate(): Date {
  * Used for React Query staleTime so daily data stays fresh until the day changes.
  */
 export function getMsUntilThaiMidnight(): number {
-  const now = new Date();
   const thaiNow = getBangkokDate();
 
   // Next midnight in Thai time = today's date + 1 day, time 00:00:00 Bangkok

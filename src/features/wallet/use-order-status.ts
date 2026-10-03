@@ -27,7 +27,7 @@ export function fetchOrder(orderId: string): Promise<OrderStatusResponse> {
  * from the bank app). Every ORDER_VERIFY_EVERY_MS the poll asks the provider
  * instead (verifyOrder). Stops once the order leaves pending. `null` polls nothing.
  */
-export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS, verifyEveryMs = ORDER_VERIFY_EVERY_MS) {
+export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS, verifyEveryMs = ORDER_VERIFY_EVERY_MS, awaitFulfilment = false) {
   const query = useQuery({
     queryKey: orderQueryKey(orderId ?? ''),
     queryFn: () => fetchOrder(orderId!),
@@ -36,7 +36,7 @@ export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS, v
     refetchOnWindowFocus: false,
   });
   const queryClient = useQueryClient();
-  const pending = !query.data || query.data.status === 'pending';
+  const pending = !query.data || query.data.status === 'pending' || (awaitFulfilment && query.data.status === 'paid' && query.data.fulfilment === null);
   const { refetch } = query;
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS, v
     const timer = setInterval(() => {
       ticks += 1;
       if (!visible()) return;
-      if (ticks % verifyEvery === 0) {
+      if (query.data?.status === 'pending' && ticks % verifyEvery === 0) {
         verifyOrder(queryClient, orderId).catch((error) => console.error('Order verify during polling failed:', error));
       } else {
         void refetch();
@@ -61,7 +61,7 @@ export function useOrderStatus(orderId: string | null, pollMs = ORDER_POLL_MS, v
       clearInterval(timer);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [orderId, pending, pollMs, verifyEveryMs, queryClient, refetch]);
+  }, [orderId, pending, pollMs, verifyEveryMs, queryClient, refetch, query.data?.status]);
 
   return query;
 }

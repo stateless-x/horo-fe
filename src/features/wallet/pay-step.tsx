@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Download, Loader2, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
+import { Download, Loader2 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Button } from '@/lib-packages/ui';
 import type { CheckoutResponse } from '@/lib-packages/shared/types/wallet';
-import { SUPPORT_EMAIL, topupCopy } from './wallet-copy';
+import { SUPPORT_EMAIL, baht, topupCopy, units } from './wallet-copy';
 
 export type QrCheckout = Extract<CheckoutResponse, { payment: 'qr' }>;
 
@@ -88,7 +89,10 @@ export function PayStep({ checkout, total, serverExpired, onExpire, onNewQr, bus
 
   return (
     <div className="grid justify-items-center gap-3 text-center">
-      <p className="font-heading text-2xl font-semibold tabular-nums text-ink">{topupCopy.amount(checkout.amountBaht, total)}</p>
+      <div>
+        <p className="font-heading text-2xl font-semibold tabular-nums text-ink">ชำระ {baht(checkout.amountBaht)}</p>
+        <p className="mt-0.5 text-sm text-inkMuted">จะได้รับ {units(total)}</p>
+      </div>
 
       {expired ? (
         <div className="grid w-full justify-items-center gap-3 rounded-xl border border-edge bg-surface px-4 py-8">
@@ -100,17 +104,13 @@ export function PayStep({ checkout, total, serverExpired, onExpire, onNewQr, bus
         </div>
       ) : (
         <>
-          <div className="w-full max-w-[280px] rounded-2xl border border-edge bg-white p-3 shadow-[0_14px_40px_rgb(107_33_168/0.12)] sm:max-w-[224px]">
-            <div className="mb-2 flex items-center gap-2 rounded-xl bg-[#f5f1fb] px-3 py-2 text-left">
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white text-accent shadow-[0_3px_10px_rgb(107_33_168/0.12)]" aria-hidden="true">
-                <ShieldCheck className="size-4" />
-              </span>
-              <span className="min-w-0">
-                <span className="block font-heading text-sm font-semibold leading-snug text-[#24162f]">สแกนด้วยแอปธนาคาร</span>
-                <span className="block text-xs leading-relaxed text-[#665b70]">ตรวจสอบยอดก่อนกดยืนยัน</span>
-              </span>
+          <div className="w-full max-w-[280px] rounded-2xl bg-[var(--promptpay-blue)] p-3 text-white shadow-[0_14px_32px_rgb(0_61_102/0.18)]">
+            <div className="mb-3 flex justify-center">
+              <div className="rounded-lg bg-white px-2.5 py-1.5">
+                <Image src="/images/payments/promptpay-logo.webp" alt="พร้อมเพย์ PromptPay" width={400} height={134} className="h-auto w-[128px]" />
+              </div>
             </div>
-            <div className="overflow-hidden rounded-xl border border-[#e8e3ec] p-1">
+            <div className="overflow-hidden rounded-xl bg-white p-2">
               {checkout.qr.pngUrl ? (
                 // A provider image: next/image would need its host allow-listed for no gain.
                 // eslint-disable-next-line @next/next/no-img-element
@@ -127,7 +127,8 @@ export function PayStep({ checkout, total, serverExpired, onExpire, onNewQr, bus
                 />
               )}
             </div>
-            <p className="mt-2 text-xs leading-relaxed text-[#665b70]">ระบบจะยืนยันยอดให้อัตโนมัติหลังชำระสำเร็จ</p>
+            <p className="mt-3 font-heading text-sm font-semibold">สแกนด้วยแอปธนาคาร</p>
+            <p className="mt-0.5 text-xs text-white/85">ตรวจสอบยอดก่อนยืนยัน</p>
           </div>
           <p className="font-mono text-sm tabular-nums text-inkMuted">{topupCopy.countdown(left)}</p>
           <div className="grid w-full gap-2 sm:hidden">

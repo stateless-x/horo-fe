@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ClientDate } from '@/components/client-date';
 import { ElementShowcase } from '@/components/landing/element-showcase';
 import { ReadingCategories } from '@/components/landing/reading-categories';
 import { FortuneProofPreview } from '@/components/landing/fortune-proof-preview';
@@ -26,6 +25,15 @@ export function LandingNarrative() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const activeVideo = mounted && shouldReduceMotion === false && videoPlaying;
+  const reveal = (y: number, transition?: { delay?: number; duration?: number }) =>
+    shouldReduceMotion
+      ? { initial: false as const }
+      : {
+          initial: { opacity: 0, y },
+          whileInView: { opacity: 1, y: 0 },
+          viewport: { once: true },
+          ...(transition ? { transition } : {}),
+        };
 
   return (
     <>
@@ -98,7 +106,7 @@ export function LandingNarrative() {
             <div className="mx-auto mb-10 h-px w-48 bg-gradient-to-r from-transparent via-accentSoft/40 to-transparent" />
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col items-center gap-4">
               <Link href="/fortune" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
@@ -109,14 +117,11 @@ export function LandingNarrative() {
                 </motion.button>
               </Link>
 
-              <Link href="/login" className="w-full sm:w-auto">
-                <motion.button
-                  whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto px-10 py-4 border-2 border-accentBright/60 hover:border-accentBright text-accentBright hover:text-ink hover:bg-accentBright/10 dark:hover:bg-accentBright/15 font-heading text-lg rounded-lg transition-all touch-manipulation"
-                >
-                  เข้าสู่ระบบ
-                </motion.button>
+              <Link
+                href="/login"
+                className="inline-flex min-h-11 items-center font-heading text-sm text-accentFaint underline decoration-accentFaint/50 underline-offset-4 transition-colors hover:text-ink"
+              >
+                มีบัญชีอยู่แล้ว เข้าสู่ระบบ
               </Link>
             </div>
 
@@ -137,18 +142,13 @@ export function LandingNarrative() {
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            {...reveal(30)}
             className="text-3xl md:text-4xl font-heading text-ink text-center mb-6"
           >
             ลองอ่านสักนิด ก่อนเปิดดวงของคุณ
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            {...reveal(20, { delay: 0.1 })}
             className="text-inkMuted font-oracle text-center mb-12 max-w-2xl mx-auto"
           >
             มีทั้งภาพรวมและคำแนะนำแยกเป็นเรื่อง
@@ -157,17 +157,12 @@ export function LandingNarrative() {
 
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              {...reveal(30)}
             >
               <FortuneProofPreview />
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+              {...reveal(30, { delay: 0.1 })}
               className="space-y-6"
             >
               <div className="glass-card p-6 md:p-8">
@@ -187,59 +182,17 @@ export function LandingNarrative() {
         </div>
       </section>
 
-      {/* ===== SECTION 6: Final CTA — "The Invitation" ===== */}
-      <section className="py-24 px-6 text-center relative">
-        {/* Top divider */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto"
-        >
-          <h2 className="text-3xl md:text-5xl font-heading text-ink mb-4">
-            มีเรื่องไหนอยู่ในใจ ลองเปิดดวงดู
-          </h2>
-          <p className="text-inkMuted font-oracle mb-10">
-            บอกวันเกิด ดูผลเบื้องต้น แล้วค่อยตัดสินใจอ่านต่อ
-          </p>
-
-          <Link href="/fortune">
-            <div className="relative inline-block">
-              {/* Glow pulse behind button */}
-              <div className="absolute inset-0 bg-accent rounded-lg blur-xl animate-ctaGlow" />
-              <motion.button
-                whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative px-14 py-5 bg-accent hover:bg-accentBright text-accentInk font-heading text-xl font-semibold rounded-lg transition-all shadow-md shadow-accent/20 dark:shadow-accent/30 hover:shadow-lg hover:shadow-accentBright/20 dark:hover:shadow-accentBright/30 touch-manipulation"
-              >
-                เริ่มดูดวงฟรี
-              </motion.button>
-            </div>
-          </Link>
-
-          <p className="text-inkMuted/60 text-sm font-oracle mt-6">
-            อ่านไว้เป็นมุมมอง ทางเดินต่อจากนี้คุณเลือกเอง
-          </p>
-        </motion.div>
-      </section>
       {/* ===== SECTION 4: Three Systems ===== */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            {...reveal(30)}
             className="text-3xl md:text-4xl font-heading text-ink text-center mb-6"
           >
             ดวงเล่าเรื่องคุณจากอะไรบ้าง
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            {...reveal(20, { delay: 0.1 })}
             className="text-inkMuted font-oracle text-center mb-16 max-w-2xl mx-auto"
           >
             สายมูเป็นเว็บดูดวงออนไลน์ฟรี ใช้ AI เรียบเรียงคำทำนายจากดวงไทย ปาจื้อ และ MBTI ที่คุณเลือกบอก
@@ -248,10 +201,7 @@ export function LandingNarrative() {
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 relative max-w-md lg:max-w-none mx-auto">
             {/* Bazi */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              {...reveal(30, { duration: 0.6 })}
               className="relative group h-full"
             >
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accentBright/30 -z-10" />
@@ -294,10 +244,7 @@ export function LandingNarrative() {
 
             {/* Thai Astrology */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              {...reveal(30, { duration: 0.6, delay: 0.1 })}
               className="relative group h-full"
             >
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accent/30 -z-10" />
@@ -340,10 +287,7 @@ export function LandingNarrative() {
 
             {/* MBTI */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              {...reveal(30, { duration: 0.6, delay: 0.2 })}
               className="relative group h-full"
             >
               <div className="absolute inset-0 rounded-2xl blur-2xl opacity-15 bg-accentSoft/30 -z-10" />
@@ -393,6 +337,35 @@ export function LandingNarrative() {
         </div>
       </section>
 
+      <FinalCta shouldReduceMotion={shouldReduceMotion} />
+
     </>
+  );
+}
+
+function FinalCta({ shouldReduceMotion }: { shouldReduceMotion: boolean | null }) {
+  return (
+    <section className="relative px-6 py-24 text-center">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+      <motion.div
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+        whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mx-auto max-w-3xl"
+      >
+        <h2 className="mb-4 font-heading text-3xl text-ink md:text-5xl">มีเรื่องไหนอยู่ในใจ ลองเปิดดวงดู</h2>
+        <p className="mb-10 font-oracle text-inkMuted">บอกวันเกิด ดูผลเบื้องต้น แล้วค่อยตัดสินใจอ่านต่อ</p>
+        <Link href="/fortune" className="inline-block">
+          <motion.span
+            whileHover={shouldReduceMotion ? {} : { scale: 1.04 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex min-h-14 items-center rounded-lg bg-accent px-10 font-heading text-xl font-semibold text-accentInk shadow-md shadow-accent/20 transition-colors hover:bg-accentBright dark:shadow-accent/30"
+          >
+            เริ่มดูดวงฟรี
+          </motion.span>
+        </Link>
+        <p className="mt-6 text-sm font-oracle text-inkMuted/60">อ่านไว้เป็นมุมมอง ทางเดินต่อจากนี้คุณเลือกเอง</p>
+      </motion.div>
+    </section>
   );
 }

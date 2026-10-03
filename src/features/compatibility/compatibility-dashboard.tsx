@@ -1,6 +1,5 @@
 'use client';
 
-import { MIN_LOADING_MS, useMinLoading } from '@/hooks/use-min-loading';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
@@ -25,7 +24,7 @@ import {
 import { CompatibilityForm } from '@/features/compatibility/compatibility-form';
 import { CompatibilityLoading } from '@/features/compatibility/compatibility-loading';
 import { CompatibilityHistory } from '@/features/compatibility/compatibility-history';
-import { MainLoader } from '@/components/ui/main-loader';
+import { PageLoadingState } from '@/components/ui/page-loading-state';
 import { failureReference } from '@/components/ui/failure-notice';
 import {
   compatibilityHistoryPath,
@@ -69,8 +68,6 @@ export function CompatibilityDashboard() {
   const [calculating, setCalculating] = useState(false);
   const calculationInFlight = useRef(false);
   const [calculationStartedAt, setCalculationStartedAt] = useState(0);
-  // Floor the calculating screen at 3s so its copy and sponsored card are seen.
-  const showCalculating = useMinLoading(calculating);
   const [error, setError] = useState('');
   const [errorReference, setErrorReference] = useState<string | undefined>();
   /** Bumped per teaser failure so a repeat failure shows the toast again. */
@@ -167,10 +164,6 @@ export function CompatibilityDashboard() {
       const origin: CompatibilityResultOrigin = data.cached ? 'cache' : 'fresh';
       queryClient.setQueryData(['compatibility', data.id], data);
       queryClient.setQueryData(compatibilityResultOriginKey(data.id), origin);
-      const remainingLoadingMs = MIN_LOADING_MS - (Date.now() - startedAt);
-      if (remainingLoadingMs > 0) {
-        await new Promise((resolve) => setTimeout(resolve, remainingLoadingMs));
-      }
       router.push(compatibilityResultPath(data.id));
       // After the call resolves, so a failed or rate-limited check is not counted.
       track({ event: 'compatibility_checked', relationshipType });
@@ -220,15 +213,11 @@ export function CompatibilityDashboard() {
 
   // --- Loading screen ---
   if (sessionLoading || !session) {
-    return (
-      <div className="min-h-[calc(100vh-3.5rem)] bg-ground flex items-center justify-center">
-        <MainLoader />
-      </div>
-    );
+    return <PageLoadingState className="min-h-[calc(100vh-3.5rem)]" label="กำลังเปิดดวงคู่ของคุณ" />;
   }
 
   // --- Calculating screen ---
-  if (showCalculating) {
+  if (calculating) {
     return (
       <CompatibilityLoading
         startedAt={calculationStartedAt}

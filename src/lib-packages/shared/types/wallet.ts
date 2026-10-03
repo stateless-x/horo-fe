@@ -18,7 +18,7 @@ export const PRODUCT_IDS = ['compat_unlock', 'month_pass', 'year_reading', 'wall
 export type ProductId = (typeof PRODUCT_IDS)[number];
 
 /** Packs sold for baht. */
-export const PACK_IDS = ['p50', 'p100', 'p300', 'p500', 'p1000'] as const;
+export const PACK_IDS = ['p50', 'p100', 'p150', 'p300', 'p500', 'p1000'] as const;
 export type PackId = (typeof PACK_IDS)[number];
 
 /** Why a ledger row exists. The ledger is append-only; a correction is a new row. */

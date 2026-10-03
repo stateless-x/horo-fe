@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, type KeyboardEvent } from 'react';
+import { CurrencyImage } from '@/components/ui/currency-image';
 import type { PackId, WalletPackOffer } from '@/lib-packages/shared/types/wallet';
 import { BEST_VALUE, UNIT, baht, topupCopy } from './wallet-copy';
 
@@ -14,7 +15,7 @@ const NEXT_KEYS = ['ArrowDown', 'ArrowRight'];
 const PREV_KEYS = ['ArrowUp', 'ArrowLeft'];
 
 /**
- * The มู packs as one radio group: amount, bonus chip, คุ้มสุด on p199, baht
+ * The มู packs as one radio group: amount, bonus chip, คุ้มสุด on p1000, baht
  * price and a radio mark. Arrow keys move the selection (roving tabindex).
  * No purple text: the mark and the selected edge are fills and borders.
  */
@@ -47,10 +48,11 @@ export function PackList({ packs, selected, onSelect }: PackListProps) {
             tabIndex={checked ? 0 : -1}
             onClick={() => onSelect(pack.id)}
             onKeyDown={(event) => onKeyDown(event, index)}
-            className={`grid min-h-16 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-3 rounded-xl border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${
-              checked ? 'border-accent bg-accent/[0.06]' : 'border-edge bg-surface hover:bg-edgeSoft'
+            className={`grid min-h-14 w-full grid-cols-[24px_minmax(0,1fr)_auto_auto] items-center gap-x-2.5 rounded-xl border px-3 py-2.5 text-left transition-[background-color,border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright ${
+              checked ? 'border-accent bg-accent/10 shadow-md shadow-accent/15 dark:shadow-accent/25' : 'border-edge bg-surface hover:border-accent/40 hover:bg-edgeSoft'
             }`}
           >
+            <CurrencyImage size={24} />
             <span className="min-w-0">
               <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span className="font-heading text-lg font-semibold leading-snug text-ink">

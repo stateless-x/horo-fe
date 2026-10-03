@@ -1,63 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_Thai, Anuphan, Sarabun, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import "@fontsource/noto-sans-thai/300.css";
+import "@fontsource/noto-sans-thai/400.css";
+import "@fontsource/noto-sans-thai/500.css";
+import "@fontsource/noto-sans-thai/600.css";
+import "@fontsource/noto-sans-thai/700.css";
+import "@fontsource/anuphan/400.css";
+import "@fontsource/anuphan/500.css";
+import "@fontsource/anuphan/600.css";
+import "@fontsource/anuphan/700.css";
+import "@fontsource/sarabun/200.css";
+import "@fontsource/sarabun/300.css";
+import "@fontsource/sarabun/400.css";
+import "@fontsource/space-grotesk/300.css";
+import "@fontsource/space-grotesk/400.css";
+import "@fontsource/space-grotesk/500.css";
+import "@fontsource/space-grotesk/600.css";
+import "@fontsource/space-grotesk/700.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/600.css";
 import { Providers } from "./providers";
 import { Footer } from "@/components/layout/footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 
-
-/**
- * Fonts are self-hosted via next/font instead of the Google Fonts CSS
- * @import that used to sit at the top of globals.css. That @import created a
- * three-hop critical chain (app stylesheet -> fonts.googleapis.com ->
- * fonts.gstatic.com) with no preconnect. next/font serves the files from our
- * own origin, preloads them, and adds size-adjust fallback metrics so the
- * swap costs less CLS. Weights below mirror the ones the old @import
- * requested; each exposes a CSS variable consumed by @theme in globals.css.
- */
-const notoSansThai = Noto_Sans_Thai({
-  subsets: ["thai", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-noto-thai",
-  display: "swap",
-});
-
-const anuphan = Anuphan({
-  subsets: ["thai", "latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-anuphan",
-  display: "swap",
-});
-
-const sarabun = Sarabun({
-  subsets: ["thai", "latin"],
-  weight: ["200", "300", "400"],
-  variable: "--font-sarabun",
-  display: "swap",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-jetbrains-mono",
-  display: "swap",
-});
-
-const fontVariables = [
-  notoSansThai.variable,
-  anuphan.variable,
-  sarabun.variable,
-  spaceGrotesk.variable,
-  jetbrainsMono.variable,
-].join(" ");
 
 export const metadata: Metadata = {
   title: {
@@ -178,7 +145,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" className={fontVariables} suppressHydrationWarning>
+    <html lang="th" suppressHydrationWarning>
       <head />
       <body>
         <Analytics />

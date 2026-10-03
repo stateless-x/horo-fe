@@ -54,10 +54,9 @@ function stubClipboard() {
 }
 
 
-/** The door's spend button, then the confirmation it opens (SpendConfirmSheet). */
+/** The door uses an existing ticket directly. */
 async function spend(view: ReturnType<typeof rtl.render>) {
-  rtl.fireEvent.click(await view.findByText('เปิดคำอ่านฉบับเต็มด้วย 49 มู'));
-  rtl.fireEvent.click(await view.findByText('ยืนยัน ใช้ 49 มู'));
+  rtl.fireEvent.click(await view.findByText('ใช้ตั๋วรู้ใจ 1 ใบ (เหลือ 1 ใบ)'));
 }
 
 describe('teaserFailure (the check)', () => {
@@ -143,10 +142,10 @@ function renderDoor(error: unknown, unlockRef: string | null = ROW) {
       JSON.stringify({
         enabled: true,
         balance: 49,
-        cap: 2000,
-        packs: [{ id: 'p49', priceBaht: 49, base: 49, bonus: 0, bonusPercent: 0 }],
+        packs: [{ id: 'p50', priceBaht: 49, base: 49, bonus: 0, bonusPercent: 0 }],
         prices: { compat_unlock: 49, month_pass: 29, year_reading: 99, wallpaper: 39 },
         ledger: [],
+        tickets: { usesLeft: 1, expiring: [] },
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     )) as unknown as typeof fetch;

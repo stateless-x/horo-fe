@@ -1,5 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test';
-import { recoverDashboardProfile } from './dashboard-profile-recovery';
+import { dashboardProfileRecoveryKey, profileRecoveryFailureAction, recoverDashboardProfile } from './dashboard-profile-recovery';
 
 const validPendingProfile = {
   name: 'Purin',
@@ -8,6 +8,23 @@ const validPendingProfile = {
 };
 
 describe('dashboard profile recovery', () => {
+  test('deduplicates only identical recovery inputs', () => {
+    const base = { userId: 'user-1', authProvider: 'google', onboardingCompleted: false, attempt: 0 };
+    const key = dashboardProfileRecoveryKey(base);
+    expect(dashboardProfileRecoveryKey(base)).toBe(key);
+    expect(dashboardProfileRecoveryKey({ ...base, authProvider: 'twitter' })).not.toBe(key);
+    expect(dashboardProfileRecoveryKey({ ...base, onboardingCompleted: true })).not.toBe(key);
+    expect(dashboardProfileRecoveryKey({ ...base, attempt: 1 })).not.toBe(key);
+  });
+
+  test('does not treat a missing authenticated user row as a missing birth profile', () => {
+    expect(profileRecoveryFailureAction(401)).toBe('login');
+    expect(profileRecoveryFailureAction(400)).toBe('setup');
+    expect(profileRecoveryFailureAction(422)).toBe('setup');
+    expect(profileRecoveryFailureAction(404)).toBe('error');
+    expect(profileRecoveryFailureAction(500)).toBe('error');
+  });
+
   test('saves a valid pending profile for an incomplete signup', async () => {
     const loadServerProfile = mock(async () => false);
     const savePendingProfile = mock(async () => undefined);

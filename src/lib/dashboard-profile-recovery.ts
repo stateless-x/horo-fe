@@ -1,6 +1,28 @@
 import type { BirthProfile } from '@/lib-packages/shared';
 import { isValidProfile } from '@/lib/profile-utils';
 
+export function dashboardProfileRecoveryKey({
+  userId,
+  authProvider,
+  onboardingCompleted,
+  attempt,
+}: {
+  userId: string;
+  authProvider: string | null;
+  onboardingCompleted: boolean;
+  attempt: number;
+}): string {
+  return JSON.stringify([userId, authProvider, onboardingCompleted, attempt]);
+}
+
+export type ProfileRecoveryFailureAction = 'login' | 'setup' | 'error';
+
+export function profileRecoveryFailureAction(status: number | undefined): ProfileRecoveryFailureAction {
+  if (status === 401) return 'login';
+  if (status === 400 || status === 422) return 'setup';
+  return 'error';
+}
+
 export type DashboardProfileRecoveryResult = {
   destination: 'dashboard' | 'setup';
   shouldCompleteOnboarding: boolean;

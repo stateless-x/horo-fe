@@ -159,7 +159,7 @@ export function PublicNav() {
         transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: 'easeInOut' }}
         className="md:hidden overflow-hidden border-b border-edge bg-ground/95 backdrop-blur"
       >
-        <nav className="max-w-5xl mx-auto px-4 py-2 flex flex-col">
+        <nav inert={!drawerOpen} className="max-w-5xl mx-auto px-4 py-2 flex flex-col">
           <Link
             href={todayHref}
             className={`flex items-center gap-2 w-full min-h-[44px] px-3 rounded-lg font-oracle text-sm transition-colors ${

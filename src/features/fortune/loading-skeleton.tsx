@@ -1,66 +1,32 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { LoadingState } from '@/stores/fortune';
-import { MainLoader } from '@/components/ui/main-loader';
-import { LoadingLine } from '@/components/ui/loading-line';
+import { GenerationLoadingState } from '@/components/ui/generation-loading-state';
 import { CHART_BUDGET, DAILY_BUDGET } from '@/lib-packages/shared';
 
 interface LoadingSkeletonProps {
-  /** Loading state from the fortune store (chart flow) */
+  /** Loading state from the fortune store (chart flow). */
   loadingState?: LoadingState;
-  /** Simple loading flag — use when not using the fortune store (e.g. daily page) */
+  /** Simple loading flag for the daily reading. */
   isLoading?: boolean;
 }
 
-// When the "taking longer than usual" escape hatch may appear.
-//
-// It offers to start over, and starting over is destructive: it throws away an
-// in-flight generation and spends another rate-limit token. So it must never
-// appear while the request could still succeed. Both values come from the
-// shared budget, which places the hatch strictly after the client has actually
-// given up — the previous hand-written constants drifted behind a backend
-// change and put the daily hatch 120s inside a healthy request.
 const CHART_TIMEOUT_MS = CHART_BUDGET.escapeHatchMs;
 const DAILY_TIMEOUT_MS = DAILY_BUDGET.escapeHatchMs;
-
-// When the second-stage reassurance text kicks in, ahead of the hatch above.
-// Both flows escalate the same way: a first-cold generation runs about a
-// minute, so at 30s the wait is normal but long enough that silence reads as
-// broken, and saying the request is still healthy is the honest thing to show.
 const REASSURANCE_STAGE_MS = 30_000;
 
-/** Rotating mystical messages shown while generating */
-const MYSTICAL_MESSAGES = [
-  'กำลังเตรียมคำทำนายให้คุณ...',
-  'ดาวกำลังเรียงตัว...',
-  'กำลังอ่านพลังธาตุของคุณ...',
-  'กำลังอ่านเสาชะตาทั้งสี่...',
-  'ดวงชะตากำลังปรากฏ...',
-  'กำลังเรียบเรียงคำแนะนำ...',
-];
-
-const DAILY_MESSAGES = [
-  'กำลังเปิดดวงวันนี้ของคุณ...',
-  'ดาวกำลังเรียงตัว...',
-  'กำลังเรียบเรียงคำแนะนำ...',
-  'กำลังอ่านพลังธาตุของคุณ...',
-];
-
-const MESSAGE_INTERVAL_MS = 4_000; // Rotate every 4 seconds
-
+/**
+ * The long-wait state for a fortune. It keeps progress copy stable and only
+ * adds recovery after the backend-aligned escape hatch.
+ */
 export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProps) {
   const router = useRouter();
   const [isTimedOut, setIsTimedOut] = useState(false);
   const [isReassuring, setIsReassuring] = useState(false);
-  const [messageIndex, setMessageIndex] = useState(0);
-
-  // Determine mode: daily (simple) vs chart (store-driven)
   const isDailyMode = isLoading !== undefined;
   const isActive = isDailyMode ? isLoading : loadingState !== 'complete';
-  const messages = isDailyMode ? DAILY_MESSAGES : MYSTICAL_MESSAGES;
   const timeoutMs = isDailyMode ? DAILY_TIMEOUT_MS : CHART_TIMEOUT_MS;
 
   useEffect(() => {
@@ -69,14 +35,12 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
     return () => clearTimeout(timer);
   }, [isActive, timeoutMs]);
 
-  // Second-stage reassurance before the escape hatch, in both flows.
   useEffect(() => {
     if (!isActive) return;
     const timer = setTimeout(() => setIsReassuring(true), REASSURANCE_STAGE_MS);
     return () => clearTimeout(timer);
   }, [isActive]);
 
-  // Reset timeout when loading finishes
   useEffect(() => {
     if (!isActive) {
       setIsTimedOut(false);
@@ -84,138 +48,47 @@ export function LoadingSkeleton({ loadingState, isLoading }: LoadingSkeletonProp
     }
   }, [isActive]);
 
-  // Rotate mystical messages
-  useEffect(() => {
-    if (!isActive) return;
-    // For chart mode, only rotate during generation states
-    if (!isDailyMode && loadingState !== 'generating-chart' && loadingState !== 'generating-narrative') return;
-    const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % messages.length);
-    }, MESSAGE_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, [isActive, isDailyMode, loadingState, messages.length]);
-
-  const getLoadingMessage = useCallback(() => {
-    if (isDailyMode) {
-      return messages[messageIndex];
-    }
+  const status = (() => {
+    if (isDailyMode) return 'กำลังเปิดดวงวันนี้ให้คุณ';
     switch (loadingState) {
       case 'saving-profile':
-        return 'กำลังบันทึกข้อมูลของคุณ...';
+        return 'กำลังบันทึกข้อมูลของคุณ';
       case 'generating-chart':
       case 'generating-narrative':
-        return messages[messageIndex];
+        return 'กำลังเรียบเรียงคำทำนายให้คุณ';
       case 'initializing':
       default:
-        return 'กำลังเตรียมการ...';
+        return 'กำลังเตรียมดวงของคุณ';
     }
-  }, [isDailyMode, loadingState, messageIndex, messages]);
+  })();
 
-  const isGenerating = isDailyMode
-    ? isLoading
-    : loadingState === 'generating-chart' || loadingState === 'generating-narrative';
-
-  // The states that previously rotated MYSTICAL_MESSAGES / DAILY_MESSAGES.
-  // Only these hand off to LoadingLine; saving-profile and initializing keep
-  // their fixed status text, which reports real progress rather than filling time.
-  // 'complete' here means the page is holding the skeleton for the loading
-  // floor (useMinLoading) after data already arrived; keep the copy rotating
-  // so the floor has something to show.
-  const isRotating = isGenerating || loadingState === 'complete';
+  const isGenerating = isDailyMode || loadingState === 'generating-chart' || loadingState === 'generating-narrative';
+  const detail = isTimedOut
+    ? 'ใช้เวลานานกว่าปกติ ลองใหม่ได้เลย'
+    : isReassuring
+      ? 'ยังเรียบเรียงคำทำนายอยู่ รอที่หน้านี้ได้เลย'
+      : isGenerating
+        ? 'อาจใช้เวลาสักครู่ในการวิเคราะห์ดวงชะตา'
+        : undefined;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6">
-      {/* Spacing rhythm (DESIGN.md scale): the mascot and its status message
-          are one unit at 24px, and the ancillary hint/escape-hatch sits 48px
-          away so it reads as secondary rather than a third equal tier. A
-          single space-y-8 gave all three the same weight. */}
-      <div className="max-w-md w-full mx-auto flex flex-col items-center text-center gap-6">
-        {/* The generated clay sequence is decorative; the live message below
-            carries the loading status for assistive technology. */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        >
-          <MainLoader decorative />
-        </motion.div>
-
-        {/* Status message with crossfade */}
-        <div className="min-h-[3.5rem] flex items-center justify-center">
-          {isTimedOut ? (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-accentFaint font-oracle text-base md:text-lg"
-            >
-              ดูเหมือนจะใช้เวลานานกว่าปกติ...
-            </motion.p>
-          ) : isRotating ? (
-            // The rotating branch hands off to the shared line pool. The
-            // scripted states below it keep their fixed status text.
-            <LoadingLine
-              surface={isDailyMode ? 'today' : 'fortune'}
-              fallback={getLoadingMessage()}
-            />
-          ) : (
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={getLoadingMessage()}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.4 }}
-                className="text-accentFaint font-oracle text-base md:text-lg"
-              >
-                {getLoadingMessage()}
-              </motion.p>
-            </AnimatePresence>
-          )}
+    <GenerationLoadingState label={status} detail={detail}>
+      {isTimedOut && (
+        <div className="flex flex-wrap justify-center gap-3">
+          <button
+            onClick={() => window.location.reload()}
+            className="min-h-11 rounded-lg bg-accent px-6 py-2 font-heading text-accentInk transition-colors hover:bg-accentBright"
+          >
+            ลองใหม่
+          </button>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="min-h-11 rounded-lg border border-accent/50 px-6 py-2 font-heading text-inkMuted transition-colors hover:text-ink"
+          >
+            กลับหน้าหลัก
+          </button>
         </div>
-
-        {/* Progress hint for longer waits. Chart mode escalates from a 3s
-            "this may take a moment" note to a 30s reassurance that the
-            request is still healthy, ahead of the 150s escape hatch. */}
-        {isGenerating && !isTimedOut && (
-          <motion.p
-            key={isReassuring ? 'reassurance' : 'hint'}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: isReassuring ? 0 : 3 }}
-            className="mt-6 text-inkMuted/60 text-xs md:text-sm"
-          >
-            {isReassuring
-              ? 'ยังเรียบเรียงคำทำนายอยู่ รอที่หน้านี้ได้เลย'
-              : isDailyMode
-                ? 'อาจใช้เวลาสักครู่ในการวิเคราะห์ดวงชะตา'
-                : 'คำทำนายอาจใช้เวลาสักครู่ รอที่หน้านี้ได้เลย'}
-          </motion.p>
-        )}
-
-        {/* Escape hatch after timeout */}
-        {isTimedOut && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-6 space-y-3"
-          >
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={() => window.location.reload()}
-                className="px-6 py-2 bg-accent hover:bg-accentBright text-accentInk rounded-lg transition-colors font-heading"
-              >
-                ลองใหม่
-              </button>
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="px-6 py-2 border border-accent/50 text-inkMuted hover:text-ink rounded-lg transition-colors font-heading"
-              >
-                กลับหน้าหลัก
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </div>
-    </div>
+      )}
+    </GenerationLoadingState>
   );
 }

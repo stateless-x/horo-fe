@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type {
   EnrichedPillar,
   PillarInterpretation,
-  PillarInteraction,
 } from '@/lib-packages/shared/types/astrology';
 import { ElementClayImage, type ClayElement } from '@/components/ui/element-clay-image';
 import { PillarDetailModal } from './pillar-detail-modal';
@@ -20,7 +19,6 @@ interface FourPillarsSectionProps {
     hour?: EnrichedPillar;
   };
   pillarInterpretations: PillarInterpretation[];
-  pillarInteractions: PillarInteraction[];
 }
 
 const PILLAR_LABELS: Record<string, string> = {
@@ -35,7 +33,6 @@ type PillarKey = 'year' | 'month' | 'day' | 'hour';
 export function FourPillarsSection({
   pillars,
   pillarInterpretations,
-  pillarInteractions,
 }: FourPillarsSectionProps) {
   const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);

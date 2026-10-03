@@ -12,6 +12,7 @@ import type { Gender } from '@/lib-packages/shared';
 import { MBTI_HINT_SETTINGS } from '@/lib/mbti-copy';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { useAppLogout } from '@/hooks/use-app-logout';
+import { PageLoadingState } from '@/components/ui/page-loading-state';
 import { ThemeSetting } from '@/components/ui/theme-toggle';
 
 /**
@@ -262,11 +263,7 @@ export default function SettingsPage() {
   };
 
   if (sessionLoading || isLoading) {
-    return (
-      <div className="min-h-[calc(100vh-3.5rem)] bg-ground flex items-center justify-center">
-        <div className="text-inkMuted">กำลังโหลด...</div>
-      </div>
-    );
+    return <PageLoadingState className="min-h-[calc(100vh-3.5rem)]" label="กำลังเปิดการตั้งค่าของคุณ" />;
   }
 
   if (!session) {

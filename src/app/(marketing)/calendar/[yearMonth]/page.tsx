@@ -6,7 +6,6 @@ import { CALENDAR_MIN_YEAR, CALENDAR_MAX_YEAR, isValidMonthParam } from '@/lib/c
 import {
   DAY_PROFILES,
   getThaiDay,
-  THAI_HOLIDAYS,
   WAN_PHRA_DATES,
   WAN_KHON_DATES,
   toISODate,

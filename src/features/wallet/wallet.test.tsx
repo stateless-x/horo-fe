@@ -1,238 +1,111 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { WalletResponse, WalletState } from '@/lib-packages/shared/types/wallet';
-import { ReportDoor } from '@/features/compatibility/report/report-door';
-import { BalanceChip, WalletMenuRow } from './balance-chip';
-import { LedgerList } from './ledger-list';
-import { PackList } from './pack-list';
+import type { WalletState } from '@/lib-packages/shared/types/wallet';
 import { FeatureCreditCard } from './feature-credit-card';
-import { WALLET_QUERY_KEY } from './use-wallet';
+import { LedgerList } from './ledger-list';
+import { OfferChoices } from './mini-shop-dialog';
+import { PackList } from './pack-list';
 import { doorPacks, entryLabel, nextPackUp, shortfallLine, signed } from './wallet-copy';
 
 const wallet: WalletState = {
   enabled: true,
-  balance: 49,
-  cap: 2000,
+  balance: 55,
   packs: [
-    { id: 'p49', priceBaht: 49, base: 49, bonus: 0, bonusPercent: 0 },
-    { id: 'p99', priceBaht: 99, base: 99, bonus: 10, bonusPercent: 10 },
-    { id: 'p199', priceBaht: 199, base: 199, bonus: 30, bonusPercent: 15 },
-    { id: 'p399', priceBaht: 399, base: 399, bonus: 80, bonusPercent: 20 },
+    { id: 'p50', priceBaht: 49, base: 49, bonus: 0, bonusPercent: 0 },
+    { id: 'p100', priceBaht: 99, base: 99, bonus: 0, bonusPercent: 0 },
+    { id: 'p150', priceBaht: 149, base: 149, bonus: 0, bonusPercent: 0 },
+    { id: 'p300', priceBaht: 299, base: 299, bonus: 31, bonusPercent: 10 },
+    { id: 'p500', priceBaht: 499, base: 499, bonus: 76, bonusPercent: 15 },
+    { id: 'p1000', priceBaht: 999, base: 999, bonus: 201, bonusPercent: 20 },
   ],
-  prices: { compat_unlock: 49, compat_ticket_1: 49, compat_ticket_3: 98, month_pass: 29, year_reading: 99, wallpaper: 39 },
-  ledger: [
-    {
-      id: 'l2',
-      delta: -49,
-      kind: 'spend',
-      productId: 'compat_unlock',
-      refId: 'row',
-      refName: 'ต้น',
-      note: null,
-      expiresAt: null,
-      createdAt: '2026-09-27T10:00:00.000Z',
-      by: 'you',
-      amountBaht: null,
-    },
-    {
-      id: 'l1',
-      delta: 49,
-      kind: 'welcome',
-      productId: null,
-      refId: null,
-      refName: null,
-      note: 'ของขวัญต้อนรับ',
-      expiresAt: null,
-      createdAt: '2026-09-27T09:00:00.000Z',
-      by: 'horo',
-      amountBaht: null,
-    },
-  ],
+  prices: { compat_unlock: 49, month_pass: 29, year_reading: 99, wallpaper: 39 },
+  ledger: [{
+    id: 'exchange', delta: -99, kind: 'spend', productId: 'heart_ticket_3', refId: 'purchase-id',
+    refName: 'ตั๋วรู้ใจ 2 ใบ แถม 1', note: null, expiresAt: null,
+    createdAt: '2026-09-30T10:00:00.000Z', by: 'you', amountBaht: null,
+  }],
+  tickets: { usesLeft: 4, expiring: [{ uses: 1, expiresAt: '2026-10-30T00:00:00.000Z', source: 'promotion' }] },
 };
 
-// Owner rule for cards and the report: no purple text.
-const PURPLE_TEXT = /(?<![\w-])text-accent(Bright|Soft)?\b/;
-
-describe('wallet copy', () => {
-  test('shortfall, deltas and ledger labels', () => {
-    expect(shortfallLine(0, 49)).toBe('ยอดไม่พอ มี 0 มู ต้องใช้ 49 มู');
-    expect(signed(49)).toBe('+49');
-    expect(signed(-49)).toBe('−49');
-    expect(entryLabel(wallet.ledger[0])).toBe('ปลดล็อกดวงคู่ · ต้น');
-    expect(entryLabel({ ...wallet.ledger[0], refName: null })).toBe('ปลดล็อกดวงคู่');
-    expect(entryLabel(wallet.ledger[1])).toBe('ของขวัญต้อนรับ');
-    const purchase = { ...wallet.ledger[1], kind: 'purchase' as const, delta: 99, amountBaht: 99, by: 'you' as const };
-    expect(entryLabel(purchase)).toBe('เติมมู ฿99 → +99 มู');
-    const adjust = { ...wallet.ledger[1], kind: 'admin_adjust' as const, delta: 10 };
-    expect(entryLabel({ ...adjust, by: 'team' })).toBe('ปรับยอดโดยทีมงาน');
-    expect(entryLabel({ ...adjust, by: 'horo' })).toBe('ปรับยอด');
-  });
-});
-
-describe('doorPacks', () => {
-  test('the smallest covering pack plus one step up, never p399', () => {
-    expect(doorPacks(wallet.packs, 49).map((pack) => pack.id)).toEqual(['p49', 'p99']);
-    expect(doorPacks(wallet.packs, 60).map((pack) => pack.id)).toEqual(['p99', 'p199']);
-    expect(doorPacks(wallet.packs, 200).map((pack) => pack.id)).toEqual(['p199']);
-    expect(doorPacks(wallet.packs, 5000).map((pack) => pack.id)).toEqual(['p199']);
+describe('wallet copy and balances', () => {
+  test('shows top-up payment and received points without repeating the credit in the label', () => {
+    const purchase = { ...wallet.ledger[0], id: 'purchase', kind: 'purchase' as const, productId: null, refName: null, delta: 100, amountBaht: 100 };
+    const bonus = { ...purchase, id: 'bonus', kind: 'bonus' as const, delta: 5, amountBaht: null };
+    expect(entryLabel(purchase)).toBe('เติมมู ฿100');
+    expect(entryLabel(bonus)).toBe('โบนัสเติมมู');
+    const html = renderToStaticMarkup(<LedgerList entries={[purchase, bonus]} />);
+    expect(html).toContain('เติมมู ฿100');
+    expect(html).toContain('โบนัสเติมมู');
+    expect(html).not.toContain('→');
   });
 
-  test('the next pack up for the line after a purchase', () => {
-    expect(nextPackUp(wallet.packs, 'p99')?.id).toBe('p199');
-    expect(nextPackUp(wallet.packs, 'p399')).toBeUndefined();
-  });
-});
-
-describe('PackList', () => {
-  test('rows show มู, the bonus chip, คุ้มสุด on p199, baht and a radio mark; no ยอดนิยม', () => {
-    const html = renderToStaticMarkup(<PackList packs={wallet.packs} selected="p99" onSelect={() => {}} />);
-    for (const [total, price] of [
-      ['49', '฿49'],
-      ['109', '฿99'],
-      ['229', '฿199'],
-      ['479', '฿399'],
-    ]) {
-      expect(html).toContain(`>${total}</span> มู`);
-      expect(html).toContain(price);
-    }
-    expect(html).toContain('+10%');
-    expect(html).toContain('+15%');
-    expect(html).not.toContain('+0%');
-    expect(html.match(/>คุ้มสุด</g)).toHaveLength(1);
-    // Each radio is named by its amount, bonus, tag and price; rows carry no bonus-expiry line.
-    for (const name of ['49 มู ฿49', '109 มู +10% ฿99', '229 มู +15% คุ้มสุด ฿199', '479 มู +20% ฿399']) expect(html).toContain(`aria-label="${name}"`);
-    expect(html).not.toContain('รวมโบนัส');
-    expect(html).not.toContain('ยอดนิยม');
-    expect(html.match(/role="radio"/g)).toHaveLength(4);
-    expect(html.match(/aria-checked="true"/g)).toHaveLength(1);
-    expect(html).not.toMatch(PURPLE_TEXT);
-  });
-});
-
-describe('LedgerList', () => {
-  test('rows show what, when and a signed amount', () => {
+  test('shows มู exchange as a catalog purchase without linking a purchase id to a report', () => {
+    expect(shortfallLine(20, 99)).toBe('ยอดไม่พอ มี 20 มู ต้องใช้ 99 มู');
+    expect(signed(-99)).toBe('−99');
+    expect(entryLabel(wallet.ledger[0])).toContain('ตั๋วรู้ใจ 2 ใบ แถม 1');
     const html = renderToStaticMarkup(<LedgerList entries={wallet.ledger} />);
-    expect(html).toContain('href="/dashboard/compatibility/row"');
-    expect(html).toContain('ปลดล็อกดวงคู่ · ต้น');
-    // A deleted reading keeps the bare label and no link.
-    const gone = renderToStaticMarkup(<LedgerList entries={[{ ...wallet.ledger[0], refName: null }]} />);
-    expect(gone).toContain('ปลดล็อกดวงคู่');
-    expect(gone).not.toContain('href=');
-    expect(html).toContain('−49');
-    expect(html).toContain('+49');
-    expect(renderToStaticMarkup(<LedgerList entries={[]} />)).toContain('ยังไม่มีรายการ');
+    expect(html).toContain('ตั๋วรู้ใจ 2 ใบ แถม 1');
+    expect(html).not.toContain('href="/dashboard/compatibility/purchase-id"');
+  });
+
+  test('shows usable tickets and the soonest expiring grant separately', () => {
+    const html = renderToStaticMarkup(<FeatureCreditCard credit={wallet.tickets} onBuy={() => {}} />);
+    expect(html).toContain('<span class="font-mono tabular-nums">4</span> ใบ');
+    expect(html).toContain('1 ใบ หมดอายุ');
+    expect(html).toContain('heart-knowing-ticket-256.webp');
+    expect(html).toContain('href="/dashboard/compatibility"');
+    expect(html).toContain('ไปดูดวงคู่');
+    expect(html).toContain('ซื้อตั๋วเพิ่ม');
+  });
+
+  test('offers purchase as the primary action when no ticket is available', () => {
+    const html = renderToStaticMarkup(<FeatureCreditCard credit={{ usesLeft: 0, expiring: [] }} onBuy={() => {}} />);
+    expect(html).toContain('ซื้อตั๋ว');
+    expect(html).not.toContain('ไปดูดวงคู่');
+    expect(html).not.toContain('href="/dashboard/compatibility"');
   });
 });
 
-describe('FeatureCreditCard', () => {
-  test('keeps ตั๋วรู้ใจ separate from มู and uses the responsive ticket asset', () => {
-    const html = renderToStaticMarkup(<FeatureCreditCard credit={{ featureId: 'compat_unlock', usesLeft: 2, expiresAt: null }} />);
-    expect(html).toContain('ตั๋วรู้ใจ');
-    expect(html).toContain('เหลือ <span class="font-mono tabular-nums">2</span> ใบ');
-    expect(html).toContain('ใช้เปิดคำอ่านความสัมพันธ์');
-    expect(html).toContain('heart-knowing-ticket-512.webp');
-    expect(html).not.toContain('หมดอายุ');
+describe('top-up ladder', () => {
+  test('picks the smallest credit covering a shortfall and the next pack', () => {
+    expect(doorPacks(wallet.packs, 49).map((pack) => pack.id)).toEqual(['p50', 'p100']);
+    expect(doorPacks(wallet.packs, 79).map((pack) => pack.id)).toEqual(['p100', 'p150']);
+    expect(doorPacks(wallet.packs, 149).map((pack) => pack.id)).toEqual(['p150', 'p300']);
+    expect(doorPacks(wallet.packs, 1000).map((pack) => pack.id)).toEqual(['p1000']);
+    expect(nextPackUp(wallet.packs, 'p100')?.id).toBe('p150');
+    expect(nextPackUp(wallet.packs, 'p1000')).toBeUndefined();
+  });
+
+  test('renders all packs from wallet data with bonus percentages', () => {
+    const html = renderToStaticMarkup(<PackList packs={wallet.packs} selected="p100" onSelect={() => {}} />);
+    expect(html.match(/role="radio"/g)).toHaveLength(6);
+    expect(html).toContain('99 มู ฿99');
+    expect(html).toContain('149 มู ฿149');
+    expect(html).toContain('330 มู +10% ฿299');
+    expect(html).toContain('1,200 มู +20% คุ้มสุด ฿999');
+    expect(html).not.toContain('+0%');
+    expect(html).not.toContain('เพิ่ม ฿50');
   });
 });
 
-const door = (data: WalletResponse) => {
-  const client = new QueryClient();
-  client.setQueryData(WALLET_QUERY_KEY, data);
-  return renderToStaticMarkup(
-    <QueryClientProvider client={client}>
-      <ReportDoor
-        partnerName="ต้น"
-        readingMinutes={11}
-        contents={[{ id: 'c1', title: 'ส่วนหนึ่ง', short: 'หนึ่ง' }]}
-        full={false}
-        onJump={() => {}}
-        allOpen={false}
-        onToggleAll={() => {}}
-        onUnlock={() => {}}
-      />
-    </QueryClientProvider>,
-  );
-};
-
-const withWallet = (node: React.ReactNode, state: WalletState = { ...wallet, balance: 71 }) => {
-  const client = new QueryClient();
-  client.setQueryData(WALLET_QUERY_KEY, state);
-  return renderToStaticMarkup(<QueryClientProvider client={client}>{node}</QueryClientProvider>);
-};
-
-describe('header wallet (on)', () => {
-  test('the chip shows the crystal and the number only, and keeps its accessible name', () => {
-    const html = withWallet(<BalanceChip />);
-    expect(html).toContain('href="/dashboard/wallet"');
-    expect(html).toContain('aria-label="ยอด 71 มู เปิดกระเป๋าตัง"');
-    expect(html).toContain('mu-gem-clay-48.webp');
-    const visible = html.replace(/<[^>]*>/g, '');
-    expect(visible).toBe('71');
-  });
-
-  test('the menu row links to the wallet with the crystal and กระเป๋าตัง, no balance', () => {
-    const html = withWallet(<WalletMenuRow className="row" />);
-    expect(html).toContain('href="/dashboard/wallet"');
-    expect(html).toContain('mu-gem-clay');
-    expect(html.replace(/<[^>]*>/g, '')).toBe('กระเป๋าตัง');
-  });
-});
-
-describe('wallet off (nothing sellable)', () => {
-  test('no chip, and the door shows no balance, price or packs', () => {
-    const client = new QueryClient();
-    client.setQueryData(WALLET_QUERY_KEY, { enabled: false });
-    const chip = renderToStaticMarkup(
-      <QueryClientProvider client={client}>
-        <BalanceChip />
-      </QueryClientProvider>,
-    );
-    expect(chip).toBe('');
-    const row = renderToStaticMarkup(
-      <QueryClientProvider client={client}>
-        <WalletMenuRow className="" />
-      </QueryClientProvider>,
-    );
-    expect(row).toBe('');
-    const html = door({ enabled: false });
-    expect(html).toContain('เปิดคำอ่านฉบับเต็ม');
-    expect(html).not.toContain('มี ');
-    expect(html).not.toContain('<dialog');
-  });
-
-  test('the door carries nothing promotional', () => {
-    for (const html of [door(wallet), door({ enabled: false })]) {
-      for (const promo of ['สนับสนุน', 'ซื้อกาแฟ', 'shopee', 'Shopee', 'Pawjai', 'pawjai']) expect(html).not.toContain(promo);
-    }
-  });
-});
-
-describe('ReportDoor with a known balance', () => {
-  test('short of the price, the primary button explains the top-up and opens the เติมมู sheet', () => {
-    const html = door({ ...wallet, balance: 0 });
-    expect(html).toContain('เติมมูแล้วเปิดคำอ่านฉบับเต็ม ฿49');
-    expect(html).toContain('aria-haspopup="dialog"');
-    expect(html).not.toContain('เปิดคำอ่านฉบับเต็มด้วย 49 มู');
-    expect(html).not.toMatch(PURPLE_TEXT);
-  });
-
-  test('the CTA spends from the real wallet: price and balance', () => {
-    const html = door(wallet);
-    expect(html).not.toContain('ซื้อแพ็กคุ้มกว่า');
-    expect(html).toContain('เปิดคำอ่านฉบับเต็มด้วย 49 มู');
-    expect(html).toContain('49 มู เท่ากับ ฿49');
-    expect(html).toContain('เปิดครั้งเดียว กลับมาอ่านได้ตลอด');
-    // Owner, 2026-09-28: the pay-once line waits for the payment system.
-    expect(html).not.toContain('จ่ายครั้งเดียว');
-    expect(html).not.toContain('กลับมาอ่านได้ทุกเมื่อ');
-    expect(html).not.toMatch(PURPLE_TEXT);
-  });
-});
-
-describe('no ads next to paid content', () => {
-  test('the ดวงคู่ page mounts no Pawjai banner', async () => {
-    const page = await Bun.file(new URL('../../app/dashboard/compatibility/page.tsx', import.meta.url)).text();
-    expect(page).not.toContain('PawjaiAdsBanner');
-  });
+test('offer choices show a concise step-up and support future catalog offers', () => {
+  const offers = [
+    { id: 'one', label: '1 ใบ', quantity: 1, bonusQuantity: 0, units: 1, priceMoo: 49, badges: [] as ('bonus' | 'recommended')[] },
+    { id: 'three', label: '2 ใบ แถม 1', quantity: 2, bonusQuantity: 1, units: 3, priceMoo: 99, badges: ['bonus', 'recommended'] as ('bonus' | 'recommended')[] },
+    { id: 'five', label: '5 ใบ', quantity: 5, bonusQuantity: 0, units: 5, priceMoo: 149, badges: [] as ('bonus' | 'recommended')[] },
+    { id: 'ten', label: '10 ใบ', quantity: 10, bonusQuantity: 0, units: 10, priceMoo: 399, badges: [] as ('bonus' | 'recommended')[] },
+  ];
+  const html = renderToStaticMarkup(<OfferChoices offers={offers} selectedId="three" onSelect={() => {}} />);
+  expect(html.match(/role="radio"/g)).toHaveLength(4);
+  expect(html).not.toContain('เพิ่ม 50 มู ได้อีก 2 ใบ');
+  expect(html).toContain('149 มู');
+  expect(html).toContain('10 ใบ');
+  expect(html).toContain('399 มู');
+  expect(html).not.toContain('฿');
+  expect(html).toContain('3 ใบ');
+  expect(html).toContain('99 มู');
+  expect(html.match(/>แนะนำ</g)).toHaveLength(1);
+  expect(html).not.toContain('รวม');
+  expect(html).not.toContain('แถม');
+  expect(html).not.toContain('ประหยัด');
 });

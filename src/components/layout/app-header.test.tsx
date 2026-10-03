@@ -17,6 +17,13 @@ describe('theme control lives on settings, not in the header', () => {
     expect(header).toMatch(/key === SETTINGS_TAB\.key && \(\s*<WalletMenuRow/);
   });
 
+  test('ดวงคู่ keeps its romance emphasis in both navigation layouts', async () => {
+    const header = await source('./app-header.tsx');
+    expect(header).toContain("border-romance text-romanceText font-bold");
+    expect(header).toContain("const ROMANCE_REST = 'text-romanceText font-bold");
+    expect(header).toContain("const ROMANCE_ACTIVE = 'bg-romance/10 text-romanceText font-bold'");
+  });
+
   test('settings renders the labelled โหมดสี control', async () => {
     const html = renderToStaticMarkup(<ThemeSetting />);
     expect(html).toContain('โหมดสี');

@@ -38,15 +38,15 @@ show a short teaser reading before anyone is asked to sign up. Value first,
 account second. That order is deliberate, and it is what the whole funnel rests
 on.
 
-`/dashboard/today` is the daily reading and the reason people come back.
-`/dashboard/fortune` is the full birth chart, `/dashboard/compatibility` scores
+`/dashboard/fortune/daily` is the daily reading and the reason people come back.
+`/dashboard/fortune/monthly` is the full birth chart, `/dashboard/compatibility` scores
 two people against each other, and the marketing pages sit at the root.
 
-**Everything that authenticates lands on `/dashboard/today`.** Sign-up through
+**Everything that authenticates lands on `/dashboard/fortune/daily`.** Sign-up through
 onboarding, sign-in at `/login`, and bare `/dashboard` all resolve there. Those
 four call sites — `components/onboarding/step-auth.tsx` (both providers),
 `app/login/page.tsx`, and `app/dashboard/page.tsx` — have to agree; onboarding
-used to send new users to `/dashboard/fortune` instead, which split new arrivals
+used to send new users to `/dashboard/fortune/monthly` instead, which split new arrivals
 away from the surface built to bring them back.
 
 Before any dashboard page renders, `DashboardProfileGate` checks the server for

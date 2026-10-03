@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useOnboardingStore } from '@/stores/onboarding';
 import { sanitizeReturnTo, withReturnTo } from '@/lib/auth-navigation';
+import { PageLoadingState } from '@/components/ui/page-loading-state';
 
 /**
  * Fortune Telling Onboarding Page
@@ -104,11 +105,7 @@ function FortunePageContent() {
     !hasAppliedNewUserMode.current &&
     (currentStep === 'welcome' || currentStep === 'returning');
   if (isPending || (session && !isSetupMode) || isSkippingToName) {
-    return (
-      <div className="min-h-screen bg-ground flex items-center justify-center">
-        <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
-      </div>
-    );
+    return <PageLoadingState label="กำลังเตรียมข้อมูลของคุณ" />;
   }
 
   // Only show onboarding flow for non-logged-in users (or setup mode)
@@ -119,9 +116,7 @@ export default function FortunePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-ground flex items-center justify-center">
-          <div className="text-ink text-lg font-oracle">กำลังโหลด...</div>
-        </div>
+        <PageLoadingState label="กำลังเตรียมหน้าเปิดดวง" />
       }
     >
       <FortunePageContent />

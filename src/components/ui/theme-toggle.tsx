@@ -32,3 +32,13 @@ export function ThemeToggle() {
     </button>
   );
 }
+
+/** The "โหมดสี" row on /dashboard/settings: a label beside the same toggle. */
+export function ThemeSetting() {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <span className="text-sm font-medium text-inkMuted">โหมดสี</span>
+      <ThemeToggle />
+    </div>
+  );
+}

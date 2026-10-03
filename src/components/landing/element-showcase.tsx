@@ -1,6 +1,3 @@
-'use client';
-
-import { motion, useReducedMotion } from 'framer-motion';
 import { ELEMENT_COLORS } from '@/lib-packages/shared/constants/design';
 import { ElementClayImage } from '@/components/ui/element-clay-image';
 
@@ -12,110 +9,35 @@ const elements = [
   { key: 'water', name: 'ธาตุน้ำ', trait: 'คิดลึก', colors: ELEMENT_COLORS.water },
 ] as const;
 
+/** A compact visual glossary, not another card grid in the landing narrative. */
 export function ElementShowcase() {
-  const shouldReduceMotion = useReducedMotion();
-
   return (
-    <section className="py-20 px-6 relative">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-heading text-ink mb-4">
-            คุณเป็นคนธาตุไหนกันนะ
-          </h2>
-          <p className="text-inkMuted font-oracle">
-            ไม้ ไฟ ดิน ทอง หรือน้ำ ลองดูว่าธาตุไหนเล่าเรื่องคุณ
-          </p>
-        </motion.div>
+    <section className="px-6 py-16 sm:py-20">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-8 text-center sm:mb-10">
+          <h2 className="font-heading text-3xl text-ink md:text-4xl">คุณเป็นคนธาตุไหนกันนะ</h2>
+          <p className="mt-3 font-oracle text-inkMuted">ไม้ ไฟ ดิน ทอง หรือน้ำ ลองดูว่าธาตุไหนเล่าเรื่องคุณ</p>
+        </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: { staggerChildren: shouldReduceMotion ? 0 : 0.1 },
-            },
-          }}
-          className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-4 scrollbar-hide md:mx-0 md:grid md:grid-cols-5 md:overflow-visible md:px-0 md:pb-0"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {elements.map((el, i) => (
-            <ElementOrb key={el.key} element={el} index={i} shouldReduceMotion={shouldReduceMotion} />
+        <div className="grid grid-cols-5 gap-2 sm:gap-4">
+          {elements.map((element) => (
+            <div key={element.key} className="min-w-0 text-center">
+              <div className="mx-auto grid size-16 place-items-center sm:size-24">
+                <ElementClayImage
+                  element={element.key}
+                  alt={`โมเดลดินปั้น ${element.name}`}
+                  sizes="(min-width: 640px) 96px, 64px"
+                  className="size-full object-contain drop-shadow-[0_10px_18px_rgba(107,33,168,0.12)]"
+                />
+              </div>
+              <p className="mt-2 truncate font-heading text-xs sm:text-sm" style={{ color: `var(--el-${element.key}, ${element.colors.primary})` }}>
+                {element.name}
+              </p>
+              <p className="mt-0.5 hidden font-oracle text-xs text-inkMuted sm:block">{element.trait}</p>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
-  );
-}
-
-function ElementOrb({
-  element,
-  index,
-  shouldReduceMotion,
-}: {
-  element: (typeof elements)[number];
-  index: number;
-  shouldReduceMotion: boolean | null;
-}) {
-  const floatDuration = 2.5 + index * 0.25;
-
-  return (
-    <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0 },
-      }}
-      transition={{ duration: 0.5 }}
-      className="h-full w-28 flex-shrink-0 snap-center md:w-auto"
-    >
-      <motion.div
-        animate={
-          shouldReduceMotion
-            ? {}
-            : { y: [-3, 3, -3] }
-        }
-        transition={{
-          duration: floatDuration,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-        whileHover={shouldReduceMotion ? {} : { scale: 1.08 }}
-        className="glass-card relative overflow-hidden text-center cursor-default flex flex-col h-full"
-        style={{ boxShadow: `0 8px 24px ${element.colors.glow}` }}
-      >
-        <div className="relative aspect-square w-full overflow-hidden rounded-t-2xl bg-surface2/40 p-2">
-          <div
-            className="absolute inset-1/4 rounded-full blur-2xl opacity-25"
-            style={{ backgroundColor: element.colors.primary }}
-            aria-hidden="true"
-          />
-          <ElementClayImage
-            element={element.key}
-            alt={`โมเดลดินปั้น ${element.name}`}
-            sizes="(min-width: 768px) 176px, 112px"
-            className="relative h-full w-full drop-shadow-[0_12px_20px_rgba(107,33,168,0.12)]"
-          />
-        </div>
-
-        <div className="flex flex-col items-center px-4 py-4">
-          <p
-            className="font-heading text-sm mb-1"
-            style={{ color: `var(--el-${element.key}, ${element.colors.primary})` }}
-          >
-            {element.name}
-          </p>
-          <p className="text-inkMuted text-xs font-oracle">
-            {element.trait}
-          </p>
-        </div>
-      </motion.div>
-    </motion.div>
   );
 }

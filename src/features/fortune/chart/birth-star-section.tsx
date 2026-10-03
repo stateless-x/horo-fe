@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Moon, Compass, Palette, Hash, Calendar } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { BirthStarDetail } from "@/lib-packages/shared/types/astrology";
 import { InfoTooltip } from "@/components/ui/info-tooltip";
 import { localizeColorName, localizeDayName } from "@/lib/thai-localize";

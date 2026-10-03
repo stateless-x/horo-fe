@@ -53,6 +53,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     () => new Set(fortuneReadings[0] ? [fortuneReadings[0].key] : []),
   );
+  const strongestScore = fortuneReadings.length > 0 ? Math.max(...fortuneReadings.map((category) => category.score)) : null;
 
   const toggleCategory = (key: string) => {
     // Read the current set here rather than inside the updater: React may run
@@ -84,9 +85,9 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
           const label = categoryConfig?.fullLabel || category.key;
           const panelId = `fortune-reading-${category.key}`;
           const percent = Math.round(Math.min(100, Math.max(0, category.score)));
-          const isLove = category.key === 'love';
-          const accentClass = isLove ? 'bg-pink-500' : 'bg-accentBright';
-          const textAccentClass = isLove ? 'text-pink-600 dark:text-pink-400' : 'text-accentBright';
+          const isStrongest = strongestScore !== null && category.score === strongestScore;
+          const accentClass = categoryConfig?.chartFillClass ?? 'bg-accentBright';
+          const textAccentClass = categoryConfig?.chartValueClass ?? 'text-accentBright';
 
           return (
             <div key={category.key} className={index > 0 ? 'border-t border-edge' : ''}>
@@ -105,7 +106,10 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                   </span>
                 )}
                 <div className="min-w-0">
-                  <p className="font-heading text-lg font-semibold text-ink">{label}</p>
+                  <p className="flex flex-wrap items-center gap-2 font-heading text-lg font-semibold text-ink">
+                    {label}
+                    {isStrongest && <span className="rounded-full bg-surface2 px-2 py-0.5 text-xs font-medium text-ink">เด่นเลย</span>}
+                  </p>
                   <p className="mt-0.5 line-clamp-1 text-sm leading-relaxed text-inkMuted md:text-base">
                     {category.hook ?? readingPreview(category.reading, category.tips)}
                   </p>
@@ -113,7 +117,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                 <div className="hidden md:block">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="text-inkMuted">พลัง</span>
-                    <span className={`font-heading tabular-nums ${textAccentClass}`}>{percent}%</span>
+                    <span className={`font-heading tabular-nums ${textAccentClass} ${isStrongest ? 'text-2xl font-bold leading-none tracking-[-0.04em]' : ''}`}>{percent}%</span>
                   </div>
                   <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-edgeSoft" aria-hidden="true">
                     <div className={`h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none ${accentClass}`} style={{ width: `${percent}%` }} />
@@ -121,7 +125,7 @@ export function FortuneReadingsSection({ fortuneReadings }: FortuneReadingsSecti
                   <p className="mt-1 text-xs text-inkMuted">{scoreLabel(category.score)}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`font-heading text-lg tabular-nums md:hidden ${textAccentClass}`}>{percent}%</span>
+                  <span className={`font-heading tabular-nums md:hidden ${textAccentClass} ${isStrongest ? 'text-2xl font-bold leading-none tracking-[-0.04em]' : 'text-lg'}`}>{percent}%</span>
                   <ChevronDown className={`size-5 shrink-0 text-inkMuted transition-transform ${isExpanded ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </div>
               </button>

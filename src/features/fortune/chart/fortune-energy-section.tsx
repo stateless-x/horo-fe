@@ -38,6 +38,7 @@ export function FortuneEnergySection({ fortuneReadings, readingPeriod, onOpenRea
     .sort(byScoreDesc);
 
   if (areas.length === 0) return null;
+  const strongestScore = Math.max(...areas.map((area) => area.score));
 
   return (
     <section className="border-b border-edge py-8" aria-labelledby="fortune-energy-title">
@@ -57,17 +58,18 @@ export function FortuneEnergySection({ fortuneReadings, readingPeriod, onOpenRea
           const config = FORTUNE_CATEGORY_CONFIG[area.key as FortuneCategoryKey];
           if (!config) return null;
 
-          // Romance Pink is a reserved payload hue for love/relationship
-          // content (DESIGN.md), matching the daily page's category bars.
-          const isLove = area.key === 'love';
-          const fillClass = isLove ? 'bg-pink-500' : 'bg-accentBright';
-          const valueClass = isLove ? 'text-pink-600 dark:text-pink-400' : 'text-accentBright';
+          const fillClass = config.chartFillClass;
+          const valueClass = config.chartValueClass;
+          const isStrongest = area.score === strongestScore;
 
           return (
             <li key={area.key}>
               <div className="flex items-baseline justify-between gap-4">
-                <span className="font-thai text-ink">{config.label}</span>
-                <span className={`font-heading tabular-nums ${valueClass}`}>{area.score}%</span>
+                <span className="flex flex-wrap items-center gap-2 font-thai text-ink">
+                  {config.label}
+                  {isStrongest && <span className="rounded-full bg-surface2 px-2 py-0.5 font-heading text-xs font-medium text-ink">เด่นเลย</span>}
+                </span>
+                <span className={`font-heading tabular-nums ${valueClass} ${isStrongest ? 'text-2xl font-bold leading-none tracking-[-0.04em]' : ''}`}>{area.score}%</span>
               </div>
               <div
                 className="mt-2 h-2 overflow-hidden rounded-full bg-edgeSoft"

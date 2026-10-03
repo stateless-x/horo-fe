@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-labelledby="title">
+  <title id="title">Mu gem mark</title>
+  <path d="M8.5 16.5 16 7.5h16l7.5 9L24 41 8.5 16.5Z" fill="currentColor" fill-opacity=".13"/>
+  <path d="M8.5 16.5 16 7.5h16l7.5 9L24 41 8.5 16.5Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="m9 16.5 9.5 7.2L24 16l5.5 7.7 9.5-7.2M16 7.5l8 8.5 8-8.5M18.5 23.7 24 41l5.5-17.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24 3.5c.35 2.55 1.35 4.05 4.2 4.75-2.85.7-3.85 2.2-4.2 4.75-.35-2.55-1.35-4.05-4.2-4.75 2.85-.7 3.85-2.2 4.2-4.75Z" fill="currentColor"/>
+</svg>

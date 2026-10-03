@@ -19,7 +19,7 @@ function isDailyCategoryKey(value: unknown): value is DailyCategoryKey {
   return typeof value === 'string' && (DAILY_CATEGORY_KEYS as readonly string[]).includes(value);
 }
 
-/** Records the teaser's focus area so /dashboard/today can resume there after signup. */
+/** Records the teaser's focus area so /dashboard/fortune/daily can resume there after signup. */
 export function setContinueFocus(area: FortuneCategoryKey): void {
   if (!isDailyCategoryKey(area)) return;
   try {

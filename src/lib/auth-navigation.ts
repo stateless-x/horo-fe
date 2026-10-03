@@ -1,4 +1,4 @@
-export const DEFAULT_AUTHENTICATED_PATH = '/dashboard/today';
+export const DEFAULT_AUTHENTICATED_PATH = '/dashboard/fortune/daily';
 
 const INTERNAL_ORIGIN = 'https://saimu.local';
 

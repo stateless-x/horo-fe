@@ -19,8 +19,8 @@ const SHEET = 'src/components/share/share-sheet.tsx';
 
 /** Every surface that mounts a ShareSheet must name itself for the event. */
 const CALL_SITES: Array<{ file: string; surface: string }> = [
-  { file: 'src/app/dashboard/today/page.tsx', surface: 'today' },
-  { file: 'src/app/dashboard/fortune/page.tsx', surface: 'fortune' },
+  { file: 'src/app/dashboard/fortune/daily/page.tsx', surface: 'today' },
+  { file: 'src/app/dashboard/fortune/monthly/page.tsx', surface: 'fortune' },
   { file: 'src/features/compatibility/compatibility-result.tsx', surface: 'compatibility' },
 ];
 

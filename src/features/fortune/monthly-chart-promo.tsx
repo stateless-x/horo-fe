@@ -6,9 +6,9 @@ import { FORTUNE_CATEGORY_CONFIG } from '@/lib/fortune-category-config';
 import type { FortuneCategoryKey } from '@/lib-packages/shared';
 
 /**
- * The monthly-reading invitation on /dashboard/today.
+ * The monthly-reading invitation on /dashboard/fortune/daily.
  *
- * What it points at: /dashboard/fortune is the month's reading —
+ * What it points at: /dashboard/fortune/monthly is the month's reading —
  * "คำทำนายประจำเดือน{month} พ.ศ. {year}", regenerated at the Bangkok month
  * boundary — sitting on the Bazi chart (เสาชะตา) computed once from birth and
  * never regenerated. The copy carries both halves: only the narrative renews.
@@ -93,7 +93,7 @@ export function MonthlyChartPromo() {
           <TrackedCtaLink
             cta="today_monthly_chart"
             surface="today"
-            href="/dashboard/fortune"
+            href="/dashboard/fortune/monthly"
             className="mt-7 flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-accent px-8 font-heading text-lg text-accentInk shadow-lg shadow-accent/30 transition-all hover:bg-accentBright active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentBright focus-visible:ring-offset-2 focus-visible:ring-offset-ground sm:w-auto"
           >
             ดูดวงเดือนนี้

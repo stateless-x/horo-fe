@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Calendar, Clock, LogOut, Save, Edit2, X, Brain } from 'lucide-react';
@@ -12,6 +12,8 @@ import type { Gender } from '@/lib-packages/shared';
 import { MBTI_HINT_SETTINGS } from '@/lib/mbti-copy';
 import { useTrackSurfaceView } from '@/hooks/use-track-surface-view';
 import { useAppLogout } from '@/hooks/use-app-logout';
+import { PageLoadingState } from '@/components/ui/page-loading-state';
+import { ThemeSetting } from '@/components/ui/theme-toggle';
 
 /**
  * Settings Page - Redesigned with View/Edit Mode
@@ -59,11 +61,6 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  // Refs for date pickers
-  const dayRef = useRef<HTMLSelectElement>(null);
-  const monthRef = useRef<HTMLSelectElement>(null);
-  const yearRef = useRef<HTMLSelectElement>(null);
 
   // Redirect unauthenticated users
   useEffect(() => {
@@ -163,24 +160,15 @@ export default function SettingsPage() {
     fetchProfile();
   }, [session]);
 
-  // Center selected option in scrollable selects
-  const centerSelectedOption = (selectElement: HTMLSelectElement | null) => {
-    if (!selectElement) return;
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    if (!selectedOption) return;
-    const optionHeight = selectedOption.offsetHeight;
-    const selectHeight = selectElement.clientHeight;
-    const scrollTo = selectedOption.offsetTop - selectHeight / 2 + optionHeight / 2;
-    selectElement.scrollTop = scrollTo;
-  };
-
+  // Clamp day if the selected month/year no longer has that many days
+  // (e.g. 31 rolling over when the month changes to one with fewer days).
   useEffect(() => {
-    if (isEditMode) {
-      centerSelectedOption(dayRef.current);
-      centerSelectedOption(monthRef.current);
-      centerSelectedOption(yearRef.current);
+    const gregorianYear = toGregorianYear(year);
+    const daysInMonth = new Date(Date.UTC(gregorianYear, month + 1, 0)).getUTCDate();
+    if (day > daysInMonth) {
+      setDay(daysInMonth);
     }
-  }, [day, month, year, isEditMode]);
+  }, [year, month, day]);
 
   const handleEdit = () => {
     setIsEditMode(true);
@@ -275,11 +263,7 @@ export default function SettingsPage() {
   };
 
   if (sessionLoading || isLoading) {
-    return (
-      <div className="min-h-[calc(100vh-3.5rem)] bg-ground flex items-center justify-center">
-        <div className="text-inkMuted">กำลังโหลด...</div>
-      </div>
-    );
+    return <PageLoadingState className="min-h-[calc(100vh-3.5rem)]" label="กำลังเปิดการตั้งค่าของคุณ" />;
   }
 
   if (!session) {
@@ -287,6 +271,9 @@ export default function SettingsPage() {
   }
 
   const currentYear = new Date().getFullYear() + BE_OFFSET;
+  // Number of days in the selected month/year (BE -> Gregorian for leap-year math),
+  // same as onboarding's step-birth-date.tsx.
+  const daysInSelectedMonth = new Date(Date.UTC(toGregorianYear(year), month + 1, 0)).getUTCDate();
 
   // Helper to get time period display text
   const getTimePeriodText = () => {
@@ -392,7 +379,7 @@ export default function SettingsPage() {
                     onClick={() => setGender('male')}
                     className={`p-4 rounded-lg border transition-all ${
                       gender === 'male'
-                        ? 'border-accent bg-accent/10 text-accentInk'
+                        ? 'border-accent bg-accent/10 text-accentBright'
                         : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
                     }`}
                   >
@@ -402,7 +389,7 @@ export default function SettingsPage() {
                     onClick={() => setGender('female')}
                     className={`p-4 rounded-lg border transition-all ${
                       gender === 'female'
-                        ? 'border-accent bg-accent/10 text-accentInk'
+                        ? 'border-accent bg-accent/10 text-accentBright'
                         : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
                     }`}
                   >
@@ -434,68 +421,48 @@ export default function SettingsPage() {
                 <label className="text-sm font-medium text-inkMuted">วันเกิด</label>
               </div>
               {isEditMode ? (
-                <div className="flex gap-3">
-                  {/* Day */}
-                  <div className="flex-1">
+                // Same select recipe as the compatibility form and onboarding
+                // (see step-birth-date.tsx), so a date is entered the same way
+                // everywhere in the product: one plain dropdown per field, not
+                // a scrollable fake wheel.
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
                     <label className="block text-xs text-inkMuted mb-2 text-center">วัน</label>
-                    <div className="relative">
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
-                      <select
-                        ref={dayRef}
-                        value={day}
-                        onChange={(e) => setDay(parseInt(e.target.value))}
-                        className="w-full h-40 bg-surface border border-surface2 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                        size={5}
-                      >
-                        {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                          <option key={d} value={d} className="py-2">
-                            {d}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <select
+                      value={day}
+                      onChange={(e) => setDay(parseInt(e.target.value))}
+                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-base text-ink focus:outline-none focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
+                    >
+                      {Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1).map((d) => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
                   </div>
 
-                  {/* Month */}
-                  <div className="flex-1">
+                  <div>
                     <label className="block text-xs text-inkMuted mb-2 text-center">เดือน</label>
-                    <div className="relative">
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
-                      <select
-                        ref={monthRef}
-                        value={month}
-                        onChange={(e) => setMonth(parseInt(e.target.value))}
-                        className="w-full h-40 bg-surface border border-surface2 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                        size={5}
-                      >
-                        {THAI_MONTHS.map((m, i) => (
-                          <option key={i} value={i} className="py-2">
-                            {m}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <select
+                      value={month}
+                      onChange={(e) => setMonth(parseInt(e.target.value))}
+                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-base text-ink focus:outline-none focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
+                    >
+                      {THAI_MONTHS.map((m, i) => (
+                        <option key={i} value={i}>{m}</option>
+                      ))}
+                    </select>
                   </div>
 
-                  {/* Year */}
-                  <div className="flex-1">
+                  <div>
                     <label className="block text-xs text-inkMuted mb-2 text-center">พ.ศ.</label>
-                    <div className="relative">
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-accent/10 border-y border-accent/30 pointer-events-none z-10" />
-                      <select
-                        ref={yearRef}
-                        value={year}
-                        onChange={(e) => setYear(parseInt(e.target.value))}
-                        className="w-full h-40 bg-surface border border-surface2 rounded-lg text-center text-base text-ink focus:ring-2 focus:ring-accent focus:border-transparent overflow-y-auto scroll-smooth relative z-0"
-                        size={5}
-                      >
-                        {Array.from({ length: 70 }, (_, i) => currentYear - i).map((y) => (
-                          <option key={y} value={y} className="py-2">
-                            {y}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    <select
+                      value={year}
+                      onChange={(e) => setYear(parseInt(e.target.value))}
+                      className="w-full h-12 bg-overlay border border-inkMuted/30 rounded-lg text-center text-base text-ink focus:outline-none focus:ring-2 focus:ring-accentBright focus:border-transparent transition-all cursor-pointer hover:border-accentBright/50"
+                    >
+                      {Array.from({ length: 70 }, (_, i) => currentYear - i).map((y) => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               ) : (
@@ -538,12 +505,12 @@ export default function SettingsPage() {
                           onClick={() => setSelectedTimePeriod(index)}
                           className={`p-3 rounded-lg border transition-all ${
                             selectedTimePeriod === index
-                              ? 'border-accent bg-accent/10 text-accentInk'
+                              ? 'border-accent bg-accent/10 text-accentBright'
                               : 'border-surface2 bg-surface text-inkMuted hover:border-accent/50'
                           }`}
                         >
-                          <p className="text-sm font-heading text-ink">{period.displayName}</p>
-                          <p className="text-xs text-inkMuted">{period.timeRange.replace('-', ' ถึง ')}</p>
+                          <p className="text-sm font-heading">{period.displayName}</p>
+                          <p className="text-xs opacity-70">{period.timeRange.replace('-', ' ถึง ')}</p>
                         </button>
                       ))}
                     </div>
@@ -613,6 +580,11 @@ export default function SettingsPage() {
             </div>
           </Card>
         </motion.div>
+
+        {/* Display */}
+        <Card className="rounded-2xl p-6 shadow-[0_18px_50px_rgba(107,33,168,0.08)]">
+          <ThemeSetting />
+        </Card>
 
         {/* Action Buttons */}
         {isEditMode ? (

@@ -243,7 +243,7 @@ export const READINGS: Reading[] = [
   {
     id: 'fortune',
     name: 'ดวงชะตาฉบับเต็ม',
-    href: '/dashboard/fortune',
+    href: '/dashboard/fortune/monthly',
     requiresLogin: true,
     status: 'live',
     description: 'คำอ่านหกด้าน ได้แก่ ภาพรวมชีวิต ความรัก การงาน การเงิน สุขภาพ และครอบครัว เรียบเรียงจากศาสตร์ผสานทั้งชุด',
@@ -252,7 +252,7 @@ export const READINGS: Reading[] = [
   {
     id: 'today',
     name: 'ดวงวันนี้',
-    href: '/dashboard/today',
+    href: '/dashboard/fortune/daily',
     requiresLogin: true,
     status: 'live',
     description: 'คำอ่านสั้นรายวันที่อิงข้อมูลเกิดเดิม สำหรับคนที่กลับมาอ่านทุกเช้า',

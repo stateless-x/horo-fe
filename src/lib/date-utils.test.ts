@@ -41,9 +41,10 @@ describe('getChartReadingPeriod', () => {
 
 describe('resolveChartReadingPeriod', () => {
   test('prefers the month the backend stamped on the narrative', () => {
+    const fallback = getChartReadingPeriod();
     expect(
-      resolveChartReadingPeriod({ yearMonth: '2026-09', monthTh: 'กันยายน', yearBe: 2569 }),
-    ).toEqual({ monthTh: 'กันยายน', yearBe: 2569, renewsOn: '1 ตุลาคม' });
+      resolveChartReadingPeriod({ yearMonth: fallback.yearMonth, monthTh: fallback.currentMonth, yearBe: fallback.yearBe }),
+    ).toEqual({ monthTh: fallback.currentMonth, yearBe: fallback.yearBe, renewsOn: fallback.renewsOn, isCurrentMonth: true });
   });
 
   test('rolls renewsOn into January when the stamped month is December', () => {
@@ -52,12 +53,29 @@ describe('resolveChartReadingPeriod', () => {
     ).toBe('1 มกราคม');
   });
 
-  test('falls back to the Bangkok clock for a chart with no stamped period', () => {
+  test('falls back to the Bangkok clock for a chart with no stamped period, and that fallback is always the current month', () => {
     const fallback = getChartReadingPeriod();
     const resolved = resolveChartReadingPeriod(undefined);
 
     expect(resolved.monthTh).toBe(fallback.currentMonth);
     expect(resolved.yearBe).toBe(fallback.yearBe);
     expect(resolved.renewsOn).toBe(fallback.renewsOn);
+    expect(resolved.isCurrentMonth).toBe(true);
+  });
+
+  test('isCurrentMonth is false for a stamped period that is not this Bangkok month', () => {
+    // 1970-01 can never be "now" on any machine's clock.
+    const resolved = resolveChartReadingPeriod({ yearMonth: '1970-01', monthTh: 'มกราคม', yearBe: 2513 });
+    expect(resolved.isCurrentMonth).toBe(false);
+  });
+
+  test('isCurrentMonth is true when the stamped period matches the real Bangkok clock', () => {
+    const fallback = getChartReadingPeriod();
+    const resolved = resolveChartReadingPeriod({
+      yearMonth: fallback.yearMonth,
+      monthTh: fallback.currentMonth,
+      yearBe: fallback.yearBe,
+    });
+    expect(resolved.isCurrentMonth).toBe(true);
   });
 });

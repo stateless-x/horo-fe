@@ -27,7 +27,7 @@ export interface ApiError extends Error {
   statusText?: string;
   code?: string;
   /** Parsed JSON error body. `retryAfter`/`resetAt` come from the rate limiter. */
-  body?: { code?: string; error?: string; retryAfter?: number; resetAt?: string };
+  body?: { code?: string; error?: string; detail?: string; retryAfter?: number; resetAt?: string };
 }
 
 /** The error code a server sends with a 429, wherever it ends up on the error. */

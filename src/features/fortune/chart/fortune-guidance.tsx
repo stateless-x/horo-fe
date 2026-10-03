@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, Lightbulb, TriangleAlert } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, Pause } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { FortuneCategoryKey } from '@/lib/fortune-category-config';
 
@@ -20,12 +20,12 @@ interface FortuneGuidanceProps {
 }
 
 const CATEGORY_GUIDANCE_LABELS: Record<FortuneCategoryKey, { positive: string; negative: string }> = {
-  life_overview: { positive: 'ใช้พลังกับสิ่งนี้', negative: 'อย่าฝืนเรื่องนี้' },
-  love: { positive: 'เปิดใจในเรื่องนี้', negative: 'อย่าเพิ่งเร่ง' },
-  career: { positive: 'จังหวะที่ใช่', negative: 'เรื่องที่ควรรอ' },
-  finance: { positive: 'ทิศทางที่หนุน', negative: 'จุดที่ควรชะลอ' },
-  health: { positive: 'สิ่งที่เติมพลัง', negative: 'สิ่งที่ควรพัก' },
-  family: { positive: 'สิ่งที่เชื่อมใจ', negative: 'สิ่งที่ควรวาง' },
+  life_overview: { positive: 'ลองเริ่มจากตรงนี้', negative: 'เรื่องนี้พักไว้ก่อน' },
+  love: { positive: 'ลองเปิดใจแบบนี้', negative: 'อย่าเพิ่งรีบหาคำตอบ' },
+  career: { positive: 'งานที่ค่อย ๆ ดันได้', negative: 'งานที่ยังไม่ต้องฝืน' },
+  finance: { positive: 'ใช้เงินกับเรื่องนี้ก่อน', negative: 'รายการนี้รอดูอีกนิด' },
+  health: { positive: 'เติมพลังให้ตัวเอง', negative: 'เรื่องที่ร่างกายขอพัก' },
+  family: { positive: 'เริ่มคุยจากตรงนี้', negative: 'เรื่องที่ยังไม่ต้องเคลียร์' },
 };
 
 export function GuidanceColumns({
@@ -38,26 +38,47 @@ export function GuidanceColumns({
   if (positiveItems.length === 0 && negativeItems.length === 0) return null;
 
   return (
-    <div className={`grid gap-6 sm:grid-cols-2 ${className}`}>
+    <div className={`grid gap-5 sm:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] sm:gap-6 ${className}`}>
       {positiveItems.length > 0 && (
-        <div>
-          <h3 className="flex items-center gap-2 font-heading font-semibold text-success">
-            <Lightbulb className="size-5" aria-hidden="true" /> {positiveLabel}
-          </h3>
-          <ul className="mt-3 space-y-2 font-thai leading-relaxed text-ink">
-            {positiveItems.map((item, index) => <li key={`${item}-${index}`}>• {item}</li>)}
+        <section aria-label={positiveLabel}>
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-success/[0.1] text-success">
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+            </span>
+            <h3 className="font-heading text-base font-semibold text-ink sm:text-lg">
+              {positiveLabel}
+            </h3>
+          </div>
+          <ul className="mt-3 divide-y divide-edge border-y border-edge">
+            {positiveItems.map((item, index) => (
+              <li key={`${item}-${index}`} className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-2.5 py-3 font-thai leading-[1.7] text-ink first:pt-2.5 last:pb-2.5">
+                <ArrowUpRight className="mt-[0.3rem] size-4 text-success" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
-        </div>
+        </section>
       )}
+      {positiveItems.length > 0 && negativeItems.length > 0 && <div className="hidden bg-edge sm:block" aria-hidden="true" />}
       {negativeItems.length > 0 && (
-        <div>
-          <h3 className="flex items-center gap-2 font-heading font-semibold text-warn">
-            <TriangleAlert className="size-5" aria-hidden="true" /> {negativeLabel}
-          </h3>
-          <ul className="mt-3 space-y-2 font-thai leading-relaxed text-ink">
-            {negativeItems.map((item, index) => <li key={`${item}-${index}`}>• {item}</li>)}
+        <section aria-label={negativeLabel}>
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-warn/[0.1] text-warn">
+              <Pause className="size-4" aria-hidden="true" />
+            </span>
+            <h3 className="font-heading text-base font-semibold text-ink sm:text-lg">
+              {negativeLabel}
+            </h3>
+          </div>
+          <ul className="mt-3 divide-y divide-edge border-y border-edge">
+            {negativeItems.map((item, index) => (
+              <li key={`${item}-${index}`} className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-2.5 py-3 font-thai leading-[1.7] text-ink first:pt-2.5 last:pb-2.5">
+                <Pause className="mt-[0.3rem] size-4 text-warn" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
-        </div>
+        </section>
       )}
     </div>
   );

@@ -6,4 +6,3 @@
  */
 export const MBTI_HINT_ONBOARDING = 'บอกเพิ่มได้ คำแนะนำจะมีมุมของนิสัยคุณด้วย';
 export const MBTI_HINT_SETTINGS = 'เลือก MBTI เพื่อใช้ประกอบคำแนะนำ ไม่รู้ก็เว้นไว้ได้';
-export const MBTI_HINT_COMPATIBILITY = 'ถ้ารู้ MBTI ของอีกฝ่าย ใส่เพิ่มเพื่ออ่านมุมของนิสัยทั้งคู่';

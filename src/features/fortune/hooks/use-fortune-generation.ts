@@ -35,7 +35,6 @@ export function useFortuneGeneration() {
     resetRetryCount,
     isMaxRetriesReached,
     getBackoffDelay,
-    getRetryCount,
     maxRetries,
   } = useSessionRetry();
 
@@ -191,7 +190,23 @@ export function useFortuneGeneration() {
     }
 
     generateFortune();
-  }, [session, sessionLoading, hasAttemptedGeneration]);
+  }, [
+    session,
+    sessionLoading,
+    hasAttemptedGeneration,
+    loadingState,
+    incrementRetryCount,
+    resetRetryCount,
+    isMaxRetriesReached,
+    getBackoffDelay,
+    maxRetries,
+    queryClient,
+    router,
+    setError,
+    setHasAttemptedGeneration,
+    setLoadingState,
+    setRateLimitResetAt,
+  ]);
 
   return {
     sessionLoading,

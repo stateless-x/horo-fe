@@ -32,10 +32,10 @@ export const SYSTEMS: FortuneSystem[] = [
   {
     id: 'fortune',
     enabled: true,
-    dashboardRoute: '/dashboard/fortune',
+    dashboardRoute: '/dashboard/fortune/monthly',
     dashboardTabs: [
-      { key: 'fortune', label: 'ดวงชะตา', href: '/dashboard/fortune', icon: Orbit },
-      { key: 'today', label: 'ดวงวันนี้', href: '/dashboard/today', icon: Sun },
+      { key: 'fortune', label: 'ดวงชะตา', href: '/dashboard/fortune/monthly', icon: Orbit },
+      { key: 'today', label: 'ดวงวันนี้', href: '/dashboard/fortune/daily', icon: Sun },
       { key: 'compatibility', label: 'ดวงคู่', href: '/dashboard/compatibility', icon: Heart },
     ],
   },

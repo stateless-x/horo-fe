@@ -102,15 +102,15 @@ export function FortuneOverviewSection({
             className="size-16 shrink-0 object-contain sm:size-[72px]"
           />
           <div>
-            <h3 className="font-heading text-xl font-semibold text-ink">แนวทางที่หยิบไปใช้ได้</h3>
-            <p className="mt-1 font-thai text-sm text-inkMuted">เก็บไว้เป็นเข็มทิศ ไม่ต้องทำทุกอย่างในคราวเดียว</p>
+            <h3 className="font-heading text-xl font-semibold text-ink">เลือกเรื่องที่ไหวก่อน</h3>
+            <p className="mt-1 font-thai text-sm text-inkMuted">ทำทีละอย่างก็พอ เรื่องที่ยังไม่พร้อม พักไว้ก่อนได้</p>
           </div>
         </div>
         <GuidanceColumns
           positiveItems={recommendations.dos.slice(0, 2)}
           negativeItems={recommendations.donts.slice(0, 2)}
-          positiveLabel="เริ่มจากสิ่งนี้"
-          negativeLabel="พักเรื่องนี้ไว้ก่อน"
+          positiveLabel="ลองเริ่มจากตรงนี้"
+          negativeLabel="เรื่องนี้พักไว้ก่อน"
           className="mt-6"
         />
       </div>

@@ -16,6 +16,14 @@
 :root,
 [data-theme='light'] {
   color-scheme: light;
+  /* Local Fontsource packages keep typography deterministic in development,
+     previews, and production. They replace next/font/google, whose build-time
+     fetch can fail and silently leave one surface on a fallback font. */
+  --font-noto-thai: "Noto Sans Thai";
+  --font-anuphan: "Anuphan";
+  --font-sarabun: "Sarabun";
+  --font-space-grotesk: "Space Grotesk";
+  --font-jetbrains-mono: "JetBrains Mono";
   --ground: #faf9fd;
   --surface: #ffffff;
   --surface2: #f3f0fa;
@@ -40,6 +48,12 @@
   --success: #047857;
   --warn: #b45309;
   --danger: #b91c1c;
+  /* PromptPay QR panel is a fixed white payment surface in either app theme. */
+  --promptpay-blue: #003d66;
+  --promptpay-tint: #edf5f9;
+  --promptpay-edge: #c9dce8;
+  /* Romance Pink TEXT for ดวงคู่ surfaces: pink-700, since pink-600 drops under 4.5:1 on tinted fills. */
+  --romance-text: #be185d;
   /* MBTI group hues (16personalities). Fills keep the hue; text uses a step that passes 4.5:1. */
   --mbti-analysts: #88619a;
   --mbti-analysts-text: #88619a;
@@ -88,6 +102,7 @@
   --success: #34d399;
   --warn: #fbbf24;
   --danger: #f87171;
+  --romance-text: #f472b6;
   --mbti-analysts: #88619a;
   --mbti-analysts-text: #9470a5;
   --mbti-diplomats: #33a474;
@@ -116,6 +131,9 @@
   --color-success: var(--success);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
+  --color-romanceText: var(--romance-text);
+  /* Romance Pink fill: fixed in both themes (fills and glows, never text). */
+  --color-romance: #e85d75;
 }
 
 /* Static tokens: fonts + animations (theme-independent) */
@@ -125,10 +143,9 @@
      font-mono never resolved, so the oracle voice fell through to the body
      font on every reading. The --font-family-* aliases stay for the explicit
      body/heading rules in @layer base below. */
-  /* Font families come from next/font/google in app/layout.tsx, which
-     self-hosts the files (no fonts.googleapis.com hop), preloads them and
-     applies size-adjust fallback metrics to cut swap CLS. The --font-*-src
-     variables below are supplied by the layout's className. */
+  /* Font families come from local Fontsource packages imported by
+     app/layout.tsx. The files are served from our own origin and do not rely
+     on a build-time Google Fonts fetch. */
   --font-thai: var(--font-noto-thai), sans-serif;
   --font-heading: var(--font-anuphan), sans-serif;
   --font-english: var(--font-space-grotesk), sans-serif;

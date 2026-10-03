@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Heart, Calendar, Orbit } from "lucide-react";
+import { Heart, Orbit } from "lucide-react";
 import { TOPIC_PAGES } from "@/lib/topic-pages";
 import { LAST_VERIFIED_TH } from "@/lib/knowledge-base";
 import { DonationButton } from "@/components/ads/donation-button";
@@ -20,7 +20,7 @@ interface FooterContext {
 }
 
 const FOOTER_CONTEXT: Record<string, FooterContext> = {
-  "/dashboard/fortune": {
+  "/dashboard/fortune/monthly": {
     shareCta: "ชอบดวงชะตาของคุณหรือเปล่า? แชร์ให้เพื่อนได้เลย!",
     shareEnabled: true,
     crossLinks: [
@@ -29,14 +29,14 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
         href: "/dashboard/compatibility",
         icon: Heart,
       },
-      // { label: "ดูดวงรายวัน", href: "/dashboard/today", icon: Calendar },
+      // { label: "ดูดวงรายวัน", href: "/dashboard/fortune/daily", icon: Calendar },
     ],
   },
-  "/dashboard/today": {
+  "/dashboard/fortune/daily": {
     shareCta: "แชร์ดวงวันนี้ให้เพื่อน!",
     shareEnabled: true,
     crossLinks: [
-      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune/monthly", icon: Orbit },
       {
         label: "ดูดวงคู่",
         href: "/dashboard/compatibility",
@@ -48,7 +48,7 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareCta: "แชร์ดวงวันนี้ให้เพื่อน!",
     shareEnabled: true,
     crossLinks: [
-      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune/monthly", icon: Orbit },
       {
         label: "ดูดวงคู่",
         href: "/dashboard/compatibility",
@@ -60,8 +60,8 @@ const FOOTER_CONTEXT: Record<string, FooterContext> = {
     shareCta: "แชร์ผลดวงความสัมพันธ์ให้คนพิเศษ!",
     shareEnabled: true,
     crossLinks: [
-      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune", icon: Orbit },
-      // { label: 'ดูดวงรายวัน', href: '/dashboard/today', icon: Calendar },
+      { label: "ดูดวงแบบเต็ม", href: "/dashboard/fortune/monthly", icon: Orbit },
+      // { label: 'ดูดวงรายวัน', href: '/dashboard/fortune/daily', icon: Calendar },
     ],
   },
 };
@@ -120,6 +120,7 @@ export function Footer() {
   const pathname = usePathname();
   const context = FOOTER_CONTEXT[pathname] || DEFAULT_CONTEXT;
   const isDashboardPage = pathname.startsWith("/dashboard");
+  const isMoneyPage = pathname.startsWith("/dashboard/wallet");
   const [showDonationModal, setShowDonationModal] = useState(false);
 
   return (
@@ -241,15 +242,17 @@ export function Footer() {
           </div>
         )} */}
 
-        {/* Donation */}
-        <div className="flex flex-col items-center gap-3 mb-6">
-          <p className="font-thai text-sm text-inkMuted flex items-center gap-1">
-            ☕ ชอบใจ? ซื้อกาแฟให้พี่ภูสักแก้ว <Heart className="inline w-3 h-3 text-pink-400" />
-          </p>
-          <DonationButton variant="subtle" onClick={() => setShowDonationModal(true)}>
-            สนับสนุน
-          </DonationButton>
-        </div>
+        {/* Donation: never next to money, so not on the มู wallet page (owner, 2026-09-27). */}
+        {!isMoneyPage && (
+          <div className="flex flex-col items-center gap-3 mb-6">
+            <p className="font-thai text-sm text-inkMuted flex items-center gap-1">
+              ☕ ชอบใจ? ซื้อกาแฟให้พี่ภูสักแก้ว <Heart className="inline w-3 h-3 text-pink-400" />
+            </p>
+            <DonationButton variant="subtle" onClick={() => setShowDonationModal(true)}>
+              สนับสนุน
+            </DonationButton>
+          </div>
+        )}
 
         {/* Footer nav — crucial links only.
             What was cut and why: the three /dashboard readings (login-gated,
@@ -306,6 +309,11 @@ export function Footer() {
               <li>
                 <Link href="/contact" className="transition-colors duration-200 hover:text-accentBright">
                   ร่วมงานกับเรา
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="transition-colors duration-200 hover:text-accentBright">
+                  เงื่อนไขการใช้งานและสินค้า
                 </Link>
               </li>
               <li>

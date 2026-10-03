@@ -92,7 +92,7 @@ components:
 
 สายมู is a contemporary Thai fortune-teller's studio rendered as a website: velvet
 darkness, a single neon-amethyst light source, and a film-grain haze that makes every
-surface feel like night air. The room is mystical but never dusty — the หมอดู here
+surface feel like night air. The room is atmospheric but grounded — the หมอดู here
 reads Bazi charts next to an MBTI report, and the interface carries that fusion:
 ancient subject matter, modern typographic precision, playful Gen-Z energy in the
 shareable moments.
@@ -106,7 +106,7 @@ pulse — never busy.
 - Single-hue brand: everything purple, from void to orchid; other hues are reserved payloads
 - Film grain (3% opacity) over every page — the room's atmosphere
 - Glassmorphic cards floating on darkness, edged with `white/10`
-- Two voices: contemporary Thai (คุณ) for marketing, the oracle's เจ้า/ข้า in Sarabun Light inside readings
+- One grounded Thai voice: contemporary, warm, and specific. Refer to people by their supplied names in readings; never use เจ้า/ข้า, กู/มึง, or a mystical narrator.
 - Two moods, one room: white + purple daylight mode is the default; the Midnight Room (dark) is one toggle away. Only the landing hero band stays pinned dark (dark video art) via a `data-theme="dark"` wrapper
 
 ## Colors
@@ -163,7 +163,10 @@ not introduce a new brand hue.
 One further payload hue is reserved: **Romance Pink** (#E85D75, and Tailwind's pink
 ramp) marks love/relationship content only — the love category on daily readings,
 the compatibility (ดวงคู่) surfaces, and their CTAs. Fills and glows may stay fixed
-pink; pink TEXT must be theme-legible (`text-pink-600 dark:text-pink-400`).
+pink; pink TEXT must be theme-legible: use the `--romance-text` token
+(`text-romanceText`: pink-700 #BE185D light, pink-400 #F472B6 dark; pink-600 drops
+under 4.5:1 on tinted fills). The fixed fill is `bg-romance` (#E85D75). Older surfaces
+still use `text-pink-600 dark:text-pink-400`; new pink text uses the token.
 
 MBTI group hues are payload colors too: **Analysts** #88619A, **Diplomats**
 #33A474, **Sentinels** #4298B4, **Explorers** #E4AE3A (the 16personalities
@@ -185,21 +188,24 @@ second grain layer.
 **Mono Font:** JetBrains Mono — version tags, data labels
 
 **Character:** Anuphan's clean, softly rounded forms give headings a distinctly current Thai voice — modern without shouting, friendly enough to sit beside clay-render imagery;
-Noto Sans Thai keeps long readings effortless; Sarabun at weight 200–300 is the
-oracle whispering — airy, thin, otherworldly.
+Noto Sans Thai keeps long readings effortless; Sarabun at weight 200–300 keeps
+long-form reading calm, spacious, and easy to stay with.
 
 ### Hierarchy
 - **Display** (700, clamp(2.25rem→4.5rem), 1.15): hero headline only, gradient-filled ghostWhite→paleOrchid→lavenderGlow.
 - **Headline** (600, clamp(1.875rem→2.5rem), 1.25): section headings.
 - **Title** (600, 1.25rem, 1.4): card titles in Amethyst.
 - **Body** (400, 1rem, 1.75): all running Thai text; keep ≤ 68ch.
-- **Oracle** (300, 1.125rem, 1.8): readings and mystic descriptions; often letter-by-letter animated at 30ms/glyph.
+- **Reading** (300, 1.125rem, 1.8): long-form readings; often letter-by-letter animated at 30ms/glyph.
 - **Label** (500, 0.75rem, tracking 0.05em): mono, for metadata only — never as a "technical costume".
 
-**The Two Voices Rule.** Marketing surfaces speak contemporary Thai and address the
-visitor as คุณ, set in Anuphan/Noto Sans Thai. Inside the reading experience the
-oracle speaks as ข้า to เจ้า, set in Sarabun Light. Never mix registers in one
-sentence; never let the oracle voice write a button label on a marketing page.
+**The Grounded Voice Rule.** Every surface speaks contemporary, respectful Thai.
+In generated readings, refer to each person by their supplied name when discussing
+them directly. The voice should feel like a perceptive friend who helps make sense
+of a situation: warm, concrete, and nonjudgmental. Never use เจ้า, ข้า, กู, มึง,
+archaic wording, a mystical narrator, or language that frames an outcome as fate.
+Sarabun may support long-form reading rhythm, but it does not signal a different
+register.
 
 ## Layout
 
@@ -267,9 +273,9 @@ hand-rolled one-off button styling in page components.
   - **Link states:** rest `text-inkMuted`, hover `text-ink bg-edgeSoft`, active route `bg-accent/15 text-accentBright`.
 - **App nav:** same sticky top bar as marketing (`AppHeader`), `sticky top-0 z-40 h-14`; inline underline-active tab links ≥md, hamburger drawer <md with icon+label rows, theme toggle, and ออกจากระบบ.
 
-### Signature: the Oracle reveal
-Long-form readings appear letter-by-letter (30ms/glyph) in Sarabun Light, as if
-being spoken. Reserve it for oracle text; UI copy appears instantly.
+### Signature: the reading reveal
+Long-form readings appear letter-by-letter (30ms/glyph) in Sarabun Light for a
+quiet reading rhythm. Keep the words plain and direct; UI copy appears instantly.
 
 ### Signature: media placeholders
 Until real art lands, image slots use the `MediaPlaceholder` component: a 16px-radius
@@ -279,11 +285,91 @@ asset belongs to a ธาตุ), labeled with the exact asset spec (e.g. `1600�
 occupy the final layout box (fixed aspect-ratio) so the composition is real before
 the art is.
 
+### Signature: the ดวงคู่ report (content v4)
+Built in `src/features/compatibility/report/` and composed by `compatibility-report.tsx`.
+The report is one page: the free cover, bars and questions stay; the locked panel
+becomes the report's front page when it opens. It speaks to the reader as คุณ, an
+owner decision for this surface, set in Sarabun Light for the reading text.
+- **The compatibility talisman (owner, 2026-09-28):** one premium clay grammar covers
+  0–39 (different rhythms), 40–59 (finding rhythm), 60–79 (balanced fit), and 80–100
+  (shared momentum). Every band is equally polished and shareable. Two complete, distinct,
+  equal-status gems remain constant; only their shared orbital field changes from an open
+  connection to crossing paths, synchronized orbits, and a harmonic halo. Distance is allowed,
+  but damage, heartbreak, dullness and cheaper-looking art are not. Keep the celestial language
+  abstract: no crown, royal regalia, vajra, yantra, lotus pedestal, or other sacred object. The
+  score is accessible HTML below the art, never inside a circular badge on the cover or share
+  card. The mini seal marks an opened full edition only.
+- **The มู currency image (owner, 2026-09-29):** มู is shown only by the clay crystal
+  `public/assets/currency/mu-gem-clay-{size}.webp`, through `CurrencyImage`
+  (`src/components/ui/currency-image.tsx`). The file is at least 2× the display size, capped at 256
+  (24 px → 48, 32 → 64, 48 → 96, 64 → 128, 96–128 → 256). object-contain on a transparent
+  ground: no crop, tint, stretch, glow or sparkle, and `alt=""` beside a visible "มู" label.
+- **No purple text inside the report (owner, 2026-09-27):** edition marks, the ฉบับเต็ม flag, the
+  active chapter chip and rail entry, jump links and list arrows are ink or ink-muted. Purple
+  stays on real buttons, focus rings, controls and fills; the progress line is Romance Pink.
+- **Free-to-paid rhythm (owner, 2026-09-28):** the cover and all four dimension scores are
+  free value. The compact paid summary follows them, before the three locked questions. In a
+  locked result it groups the offer into four benefits instead of repeating a lock for every
+  chapter. On desktop, the cover/content column and sticky offer rail align inside one 1080px
+  shell; tablet and phone retain one narrative column. The detailed table of contents is full-only.
+- **Distilled report surfaces (owner, 2026-09-28):** reserve cards for the cover, conversion
+  door and genuinely interactive content. Dimension scores and personal questions use simple
+  hairline lists, with one lock explanation per section rather than a lock on every row. A collapsed
+  chapter shows its title, summary and one action; its pull quote and detail appear only after
+  “รายละเอียด”. Do not repeat back-links or saved-history reminders when the same fact is already
+  visible nearby.
+- **Double-hairline frame:** the cover and the door, once open, carry a second hairline
+  inset 5px inside the card (`BOUND_FRAME`, inset shadows so nothing shifts). It says
+  "bound edition"; don't use it elsewhere.
+- **Moon-phase month states:** full moon ดี (success), half moon กลาง (ink-muted), a crescent
+  in a broken ring ระวัง (warn), always with the word beside it, so the state reads by
+  shape as well as color.
+- **Copyable chat bubble:** a ready-to-send line is a bubble (16/16/16/4px radius, surface2,
+  Sarabun) with a soft "คัดลอก" button that confirms "คัดลอกแล้ว"; if the browser refuses,
+  it selects the text and says to long-press.
+- **Focused report sections (owner, 2026-09-28):** the opened report is not one long
+  chapter stack. After the cover, every viewport uses the same four-part journey:
+  เคมีของเรา → ใจเขา ใจเรา → คุยให้ถึงใจ → ไปต่อยังไงดี. Only the chosen part is visible;
+  `?section=` preserves it for Back/Forward and shared history URLs. Phones use a 2×2
+  tab control, while iPad and desktop use one row. Previous/next controls close each
+  part so readers can move forward without returning to the tabs. The information
+  architecture stays identical across breakpoints; only its composition adapts.
+- **Sections, not chapters (owner, 2026-09-28):** the reader-facing unit is ส่วน, never บท,
+  and nothing in the report is numbered as a chapter (no "บทที่ N", no number badge, no
+  "6 บท"). A pointer to an answer names its section: "คำตอบอยู่ในส่วน ‘ใจเขา ใจเรา’ ของฉบับเต็ม".
+  The section ids and `?section=` values (overview, people, conversation, next) stay fixed so
+  links never break when a label changes.
+- **Latin names in Thai copy (owner, 2026-09-28):** a name with Latin letters or digits gets one
+  space each side where it touches Thai ("ฉบับเต็มของคุณกับ Ice", "ของ มู2242 ที่"); a Thai-script
+  name runs into the Thai around it as usual. Every template that interpolates a name goes
+  through `spaceLatinName` (`lib-packages/shared/types/names.ts`, synced from horo-be, which
+  applies the same rule to generated readings).
+- **Clay section cues (owner, 2026-09-28):** use one small, text-free transparent clay
+  object beside a focused report heading when it replaces redundant chrome or helps a
+  reader recognise the subject at a glance. It is decorative (`alt=""`), never a state
+  indicator or the only way to understand a section; labels stay as plain Thai text.
+- **Phrase-keeping for short display lines:** Thai has no spaces between words, so short
+  display lines (archetype tagline, share card) break only at the spaces between phrases;
+  a phrase of up to 16 graphemes never breaks inside (`DisplayLine`). Running text wraps normally.
+- **Thai names on narrow screens:** below 640px, the compatibility talisman owns the first row
+  and the two people receive equal-width columns beneath it. Names stay on one line and preserve
+  complete Thai grapheme clusters; MBTI and day-master metadata wait until the wider layout.
+  Share cards reduce the center artwork before squeezing or splitting either person’s name.
+
 **The Clay Cast Rule.** All illustrative imagery is soft 3D clay-style renders —
 matte, rounded, single soft light, on transparent ground (PNG/WebP alpha), sitting
 on the purple ladder unless the subject is a user's ธาตุ. No photography, no flat
 vector illustration, no stock 3D gloss. One cast, one material, every prop in the
 diviner's room.
+
+## Documentation health
+
+FRESH before → after: F 2→2 (descriptive root filename and headings; still no docs index) ·
+R 3→3 (re-verified the compatibility report against the code and replaced the retired
+chapter-number rule and section labels; still no whole-file freshness metadata) · E 2→3 (the
+sections and Latin-name rules name the helper file and the fixed `?section=` ids an agent must
+keep) · S 3→3 · H 2→2 (still a broad design system, not a task handoff). Total: 12/15 (B) →
+13/15 (B).
 
 ## Do's and Don'ts
 
@@ -297,7 +383,7 @@ diviner's room.
 ### Don't:
 - **Don't** cast gray shadows in either mode — lift is colored (glow in dark, purple-tinted shadow in light).
 - **Don't** hardcode palette hex in components — use the semantic tokens; a section pinned to one mood wraps itself in `data-theme="dark"`.
-- **Don't** use the oracle voice (เจ้า/ข้า, Sarabun) on marketing chrome, or คุณ inside the reading experience.
+- **Don't** use เจ้า, ข้า, กู, มึง, a mystical narrator, archaic phrasing, or a fatalistic prediction anywhere in reader-facing copy. Use supplied names in readings and contemporary Thai everywhere.
 - **Don't** stack a second grain/noise layer on any surface.
 - **Don't** use emoji as icons in UI chrome (lucide-react is the icon system); emoji live only in share copy.
 - **Don't** center long-form Thai paragraphs; center only display lines of ≤2 rows.

@@ -7,7 +7,7 @@ export interface TeaserTraitChip {
   trait: string;
 }
 
-/** Today's four category scores, identical to what /dashboard/today shows. */
+/** Today's four category scores, identical to what /dashboard/fortune/daily shows. */
 export interface TeaserScores {
   date: string;
   love: number;
